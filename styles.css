@@ -51,17 +51,49 @@ body {
 }
 
 /* ============================================
-   HELLO SECTION (SVG)
+   HELLO SECTION (Animated Multi-language Text)
    ============================================ */
 
 .hello {
     width: 100%;
     display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 203px;
 }
 
-.hello svg {
-    width: 100%;
-    height: auto;
+.hello-text {
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 128px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+    margin-left: -12px; /* Compensate for font's built-in side bearings to align flush left */
+    opacity: 0;
+    animation: fadeInOut 3s ease-in-out;
+    white-space: nowrap; /* Prevent wrapping */
+    overflow: visible;
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    15% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    85% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
 }
 
 /* ============================================
@@ -330,10 +362,10 @@ body {
         padding-top: 48px;
     }
     
-    /* Scale down SVG proportionally */
-    .hello svg {
-        width: 100%;
-        height: auto;
+    /* Scale down Hello text proportionally */
+    .hello-text {
+        font-size: 64px;
+        margin-left: -5px;
     }
     
     /* Reduce header gap */
@@ -435,6 +467,12 @@ body {
     
     .main {
         padding-top: 40px;
+    }
+    
+    /* Scale down Hello text further */
+    .hello-text {
+        font-size: 64px;
+        margin-left: -4px;
     }
     
     /* Scale down fonts for small screens */

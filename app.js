@@ -1,7 +1,61 @@
 /**
  * Portfolio Geo Data Display
- * Vanilla JavaScript implementation - no dependencies
+ * Vanilla JavaScript implementation with multi-language Hello animation
  */
+
+// Multi-language Hello animations (Apple-style)
+const HELLO_LANGUAGES = [
+    { text: 'Hello.', lang: 'en' },           // English
+    { text: 'Hola.', lang: 'es' },            // Spanish  
+    { text: 'Bonjour.', lang: 'fr' },         // French
+    { text: 'Hallo.', lang: 'de' },           // German
+    { text: 'Ciao.', lang: 'it' },            // Italian
+    { text: 'Olá.', lang: 'pt' },             // Portuguese
+    { text: 'Привет.', lang: 'ru' },          // Russian
+    { text: '你好.', lang: 'zh' },             // Mandarin Chinese
+    { text: 'こんにちは.', lang: 'ja' },        // Japanese
+    { text: '안녕하세요.', lang: 'ko' },         // Korean
+    { text: 'नमस्ते.', lang: 'hi' },             // Hindi
+    { text: 'مرحبا.', lang: 'ar' },           // Arabic
+    { text: 'Hej.', lang: 'sv' },             // Swedish
+    { text: 'Hallo.', lang: 'nl' },           // Dutch
+    { text: 'Merhaba.', lang: 'tr' }          // Turkish
+];
+
+let currentLanguageIndex = 0;
+let helloAnimationInterval = null;
+
+/**
+ * Animate through different language greetings
+ */
+function cycleHelloLanguages() {
+    const helloElement = document.getElementById('hello-text');
+    if (!helloElement) return;
+    
+    // Update text
+    helloElement.textContent = HELLO_LANGUAGES[currentLanguageIndex].text;
+    helloElement.lang = HELLO_LANGUAGES[currentLanguageIndex].lang;
+    
+    // Trigger animation by removing and re-adding animation class
+    helloElement.style.animation = 'none';
+    setTimeout(() => {
+        helloElement.style.animation = 'fadeInOut 3s ease-in-out';
+    }, 10);
+    
+    // Move to next language
+    currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
+}
+
+/**
+ * Start the Hello language cycling animation
+ */
+function startHelloAnimation() {
+    // Show first greeting immediately
+    cycleHelloLanguages();
+    
+    // Cycle through languages every 3 seconds
+    helloAnimationInterval = setInterval(cycleHelloLanguages, 3000);
+}
 
 // Configuration
 const CONFIG = {
@@ -218,6 +272,9 @@ function showError(elementId, message) {
  */
 async function initializeGeoDisplay() {
     try {
+        // Start the Hello animation
+        startHelloAnimation();
+        
         // Update date, time and greeting immediately
         updateDateTime();
         updateGreeting();
