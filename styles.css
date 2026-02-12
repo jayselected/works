@@ -60,6 +60,7 @@ body {
     justify-content: flex-start;
     align-items: center;
     min-height: 203px;
+    margin-bottom: 0; /* Desktop spacing control - adjust to increase/decrease gap */
 }
 
 .hello-text {
@@ -362,6 +363,12 @@ body {
         padding-top: 48px;
     }
     
+    /* Reduce Hello section height and add negative margin to close gap on mobile */
+    .hello {
+        min-height: 100px; /* Reduced from 203px to match smaller text */
+        margin-bottom: -20px; /* Negative margin to tighten spacing - adjust as needed */
+    }
+    
     /* Scale down Hello text proportionally */
     .hello-text {
         font-size: 64px;
@@ -467,6 +474,12 @@ body {
     
     .main {
         padding-top: 40px;
+    }
+    
+    /* Further reduce Hello section spacing for very small screens */
+    .hello {
+        min-height: 90px; /* Even smaller min-height */
+        margin-bottom: -24px; /* Tighter spacing for small screens - adjust as needed */
     }
     
     /* Scale down Hello text further */
