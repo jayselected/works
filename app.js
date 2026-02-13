@@ -30,7 +30,7 @@ let currentLanguageIndex = 0;
  *   0ms    — update text, reset gradient, fade in          (0.35s)
  *   1000ms — add chroma-sweep class → gradient sweeps      (0.85s + 0.1s delay = ~0.95s)
  *   3200ms — add hello-fade-out → text fades out           (0.35s)
- *   3100ms — remove all classes, advance language, restart
+ *   3600ms — remove all classes, advance language, restart
  */
 function runHelloSequence() {
     const el = document.getElementById('hello-text');
@@ -70,7 +70,7 @@ function runHelloSequence() {
                 el.style.opacity = '0';
                 currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
                 runHelloSequence();
-            }, 3100); // Was 3600ms — cycle shortened by 500ms
+            }, 3600);
 
         });
     });
