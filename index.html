@@ -4,94 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jay Patel - Digital Designer</title>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@300;400&display=swap" rel="stylesheet">
-    
-    <!-- Stylesheets -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <main class="main">
-            <!-- Hello Section with Animated Multi-language Text -->
+
+            <!-- ===================== HELLO =====================
+                 Font: Helvetica Now Display Bold
+                 Animated via JS — cycles through languages     -->
             <section class="hello">
                 <h1 class="hello-text" id="hello-text">Hello.</h1>
             </section>
-            
-            <!-- Header Section -->
-            <section class="header">
+
+            <!-- ===================== HEADER =====================
+                 Font: Helvetica Now Display Bold
+                 All content populated by app.js — no dummy text -->
+            <header class="header">
                 <p class="header-datetime" id="datetime-display"></p>
-                
+
                 <div class="location">
                     <p class="location-greeting" id="greeting-display"></p>
                     <p class="location-weather" id="location-weather-display"></p>
                 </div>
-            </section>
-            
-            <!-- Title Section -->
+            </header>
+
+            <!-- ===================== TITLE =====================
+                 Font: Helvetica Now Display Bold                 -->
             <section class="title">
                 <p class="title-name">Jay Patel<br>Select Design Works</p>
                 <p class="title-email">Email to get in touch →</p>
             </section>
-            
-            <!-- Divide Section -->
+
+            <!-- ===================== LIBRARY =====================
+                 Heading:     Helvetica Now Display Bold
+                 Subheading:  Helvetica Now Display Medium
+                 Book meta:   Helvetica Now Display Medium        -->
+            <section class="library">
+                <div class="library-title">
+                    <p class="library-heading">Library</p>
+                    <p class="library-subheading">Recently Read</p>
+                </div>
+
+                <div class="book">
+                    <img
+                        class="book-cover"
+                        src="https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1725973984i/218676449.jpg"
+                        alt="Suspicion by Seichō Matsumoto book cover"
+                    >
+                    <div class="book-rating">
+                        <p class="book-meta">Suspicion<br>Seichō Matsumoto</p>
+                        <p class="book-stars">
+                            Rating<br>
+                            <span class="stars-filled">★★★</span><span class="stars-empty">★★</span>
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================== DIVIDE =====================
+                 Font: Helvetica Now Display Bold                 -->
             <section class="divide">
                 <p class="divide-text">· · ·</p>
             </section>
-            
-            <!-- Project-1 Section -->
+
+            <!-- ===================== PROJECT 1 =====================
+                 Project title:   Helvetica Now Display Bold
+                 Extra tags:      Helvetica Now Display Medium
+                 Description:     Helvetica Now Display Regular    -->
             <section class="project">
-                <!-- Name with Extra Info -->
-                <div class="name">
-                    <p class="project-title">Cine Asia</p>
-                    
-                    <div class="extra">
-                        <p class="extra-text">Brand Identity · Product Design</p>
-                        <p class="extra-text">Adobe Photoshop · Adobe Illustrator · Figma</p>
+
+                <div class="info">
+                    <div class="name">
+                        <p class="project-title">Cine Asia</p>
+
+                        <div class="extra">
+                            <p class="extra-text">Brand Identity · Product Design</p>
+                            <p class="extra-text">Adobe Photoshop · Adobe Illustrator · Figma</p>
+                        </div>
+                    </div>
+
+                    <div class="description">
+                        <p class="description-text">Cine Asia is a concept app created to celebrate Asian cinema — combining a curated streaming experience with the latest film news from across the continent. Designed with a clean and intuitive interface, it prioritises ease of use and viewer enjoyment.</p>
                     </div>
                 </div>
-                
-                <!-- Description -->
-                <div class="description">
-                    <p class="description-text">Cine Asia is a concept app created to celebrate Asian cinema — combining a curated streaming experience with the latest film news from across the continent. Designed with a clean and intuitive interface, it prioritises ease of use and viewer enjoyment.</p>
-                </div>
-                
-                <!-- Images -->
+
                 <div class="images">
-                    <!-- Image 1 -->
+                    <!-- Image 1: Full-width landscape -->
                     <div class="image-1">
-                        <img src="https://framerusercontent.com/images/HyNx4h88GowWDEBafQKrWsFKOdA.png" alt="Cine Asia Project Image 1">
+                        <img src="https://framerusercontent.com/images/HyNx4h88GowWDEBafQKrWsFKOdA.png" alt="Cine Asia — main screen overview">
                     </div>
-                    
-                    <!-- Image 2 - Two side by side -->
+
+                    <!-- Image 2: Two side-by-side portrait screens -->
                     <div class="image-2">
                         <div class="image-box-a">
-                            <img src="https://framerusercontent.com/images/YLYFv3RLRoqzXEOXN1MPCgujWzc.png" alt="Cine Asia Project Image 2A">
+                            <img src="https://framerusercontent.com/images/YLYFv3RLRoqzXEOXN1MPCgujWzc.png" alt="Cine Asia — browse screen">
                         </div>
                         <div class="image-box-b">
-                            <img src="https://framerusercontent.com/images/Fv3rSHBs3GHoyEPV50Q6QseKk.png" alt="Cine Asia Project Image 2B">
+                            <img src="https://framerusercontent.com/images/Fv3rSHBs3GHoyEPV50Q6QseKk.png" alt="Cine Asia — detail screen">
                         </div>
                     </div>
-                    
-                    <!-- Image 3 - Three vertical images -->
+
+                    <!-- Image 3: Three portrait screens in a row -->
                     <div class="image-3">
-                        <img src="https://framerusercontent.com/images/mOceGFSYDX9yaHxAUWocIutc9ao.png" alt="Cine Asia Project Image 3-1">
-                        <img src="https://framerusercontent.com/images/ZesIZGEiRioaQKmaRvbsuicB1q8.png" alt="Cine Asia Project Image 3-2">
-                        <img src="https://framerusercontent.com/images/lshAnkx9qNO2cWxhMs4dwadZjL8.png" alt="Cine Asia Project Image 3-3">
+                        <img src="https://framerusercontent.com/images/mOceGFSYDX9yaHxAUWocIutc9ao.png" alt="Cine Asia — screen A">
+                        <img src="https://framerusercontent.com/images/ZesIZGEiRioaQKmaRvbsuicB1q8.png" alt="Cine Asia — screen B">
+                        <img src="https://framerusercontent.com/images/lshAnkx9qNO2cWxhMs4dwadZjL8.png" alt="Cine Asia — screen C">
                     </div>
                 </div>
+
             </section>
-            
-            <!-- Footer Section -->
-            <section class="footer">
+
+            <!-- ===================== FOOTER =====================
+                 Font: Helvetica Now Display Bold                 -->
+            <footer class="footer">
                 <p class="footer-text">© 2026 · Jay Patel</p>
-            </section>
+            </footer>
+
         </main>
     </div>
-    
+
     <script src="app.js"></script>
 </body>
 </html>

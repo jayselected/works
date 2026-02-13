@@ -1,4 +1,9 @@
-/* Custom Fonts */
+/* =============================================================================
+   CUSTOM FONTS
+   Three separate named families — each loads the exact .ttf cut directly.
+   Using individual family names avoids any browser weight-synthesis artefacts.
+   ============================================================================= */
+
 @font-face {
     font-family: 'Helvetica Now Display Regular';
     src: url('fonts/Helvetica_Now_Display.ttf') format('truetype');
@@ -17,7 +22,11 @@
     font-style: normal;
 }
 
-/* Reset and Base Styles */
+
+/* =============================================================================
+   RESET & BASE
+   ============================================================================= */
+
 * {
     margin: 0;
     padding: 0;
@@ -26,13 +35,18 @@
 
 body {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
     display: flex;
     justify-content: center;
     min-height: 100vh;
 }
 
-/* Container - Desktop 1440px with 120px margins */
+
+/* =============================================================================
+   LAYOUT — CONTAINER & MAIN
+   Desktop: 1440px canvas, content centred at 648px, 120px side padding
+   ============================================================================= */
+
 .container {
     width: 100%;
     max-width: 1440px;
@@ -41,7 +55,6 @@ body {
     justify-content: center;
 }
 
-/* Main Auto Layout - 648px width, 32px vertical gap, 64px top padding */
 .main {
     width: 648px;
     display: flex;
@@ -50,17 +63,20 @@ body {
     padding-top: 64px;
 }
 
-/* ============================================
-   HELLO SECTION (Animated Multi-language Text)
-   ============================================ */
+
+/* =============================================================================
+   HELLO SECTION
+   Zeplin: height 164px (32px top + bottom padding), animated via JS
+   Font: Bold — the greeting is the loudest typographic moment on the page
+   ============================================================================= */
 
 .hello {
     width: 100%;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    min-height: 203px;
-    margin-bottom: 0; /* Desktop spacing control - adjust to increase/decrease gap */
+    height: 164px;
+    padding: 32px 0;
 }
 
 .hello-text {
@@ -70,38 +86,26 @@ body {
     letter-spacing: -0.02em;
     color: #000000;
     margin: 0;
-    padding: 0;
-    margin-left: -12px; /* Compensate for font's built-in side bearings to align flush left */
+    margin-left: -12px; /* Compensate for font's built-in side bearing — aligns flush left */
     opacity: 0;
+    white-space: nowrap;
     animation: fadeInOut 3s ease-in-out;
-    white-space: nowrap; /* Prevent wrapping */
-    overflow: visible;
 }
 
 @keyframes fadeInOut {
-    0% {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    15% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    85% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    100% {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
+    0%   { opacity: 0; transform: translateY(10px); }
+    15%  { opacity: 1; transform: translateY(0); }
+    85%  { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-10px); }
 }
 
-/* ============================================
-   HEADER SECTION
-   ============================================ */
 
-/* Header Auto Layout - 32px gap */
+/* =============================================================================
+   HEADER SECTION
+   Zeplin: height 112px, 32px gap between datetime and location row
+   Font: Bold throughout — functional data, stays bold and legible
+   ============================================================================= */
+
 .header {
     width: 100%;
     display: flex;
@@ -109,16 +113,16 @@ body {
     gap: 32px;
 }
 
-/* Header DateTime - Helvetica Bold, 16px, 20px line height */
+/* Date + time — e.g. "Monday 2 February, 2026 / 14:15:20" */
 .header-datetime {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 20px;
+    line-height: 1.25; /* 20px */
     letter-spacing: -0.02em;
     color: #000000;
 }
 
-/* Location Auto Layout - Horizontal, 32px gap */
+/* Location row — greeting left, weather right, 32px gap */
 .location {
     display: flex;
     flex-direction: row;
@@ -126,22 +130,33 @@ body {
     width: fit-content;
 }
 
-/* Location Greeting and Weather - Helvetica Bold, 16px, 20px line height */
-.location-greeting,
-.location-weather {
+/* "Good Afternoon, / You're connecting from" */
+.location-greeting {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 20px;
+    line-height: 1.25; /* 20px */
     letter-spacing: -0.02em;
     color: #000000;
     white-space: pre-line;
 }
 
-/* ============================================
-   TITLE SECTION
-   ============================================ */
+/* "Manchester, United Kingdom / Local Weather: 4.9° Cloudy ☁️" */
+.location-weather {
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.25; /* 20px */
+    letter-spacing: -0.02em;
+    color: #000000;
+    white-space: pre-line;
+}
 
-/* Title Auto Layout - Vertical, 648px width, 16px gap */
+
+/* =============================================================================
+   TITLE SECTION
+   Zeplin: height 112px, 16px gap
+   Font: Bold for name, Bold for email link (matches Zeplin weight)
+   ============================================================================= */
+
 .title {
     width: 100%;
     display: flex;
@@ -149,29 +164,127 @@ body {
     gap: 16px;
 }
 
-/* Title Name - Helvetica Bold, 32px, 36px line height */
+/* "Jay Patel / Select Design Works" */
 .title-name {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 32px;
-    line-height: 36px;
+    line-height: 1.19; /* ~38px */
     letter-spacing: -0.02em;
     color: #000000;
 }
 
-/* Title Email - Helvetica Bold, 14px, 20px line height, blue */
+/* "Email to get in touch →" */
 .title-email {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 20px;
+    line-height: 1.43; /* 20px */
     letter-spacing: -0.02em;
-    color: #3699E4;
+    color: #51a2ff;
 }
 
-/* ============================================
-   DIVIDE SECTION
-   ============================================ */
 
-/* Divide Auto Layout - Horizontal, 648px width, center align */
+/* =============================================================================
+   LIBRARY SECTION
+   Zeplin: height 154px, 16px gap between title block and book row
+   Font: Bold for heading, Medium for subheading + book details (lighter hierarchy)
+   ============================================================================= */
+
+.library {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Library heading block — "Library" above "Recently Read" */
+.library-title {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+/* "Library" — Bold, primary label */
+.library-heading {
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.25; /* 20px */
+    letter-spacing: -0.02em;
+    color: #000000;
+}
+
+/* "Recently Read" — Medium, secondary label, muted */
+.library-subheading {
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.43; /* 20px */
+    letter-spacing: -0.02em;
+    color: #9ca3af;
+}
+
+/* Book row — cover left, info right, 16px gap */
+.book {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+    height: 98px;
+}
+
+/* Book cover thumbnail */
+.book-cover {
+    width: 60px;
+    height: 98px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+/* Rating column — title/author above, star rating below */
+.book-rating {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 112px;
+}
+
+/* "Suspicion / Seichō Matsumoto" — Medium weight */
+.book-meta {
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.43; /* 20px */
+    letter-spacing: -0.02em;
+    color: #000000;
+}
+
+/* "Rating / ★★★★★" — Medium weight, muted label */
+.book-stars {
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.43; /* 20px */
+    letter-spacing: -0.02em;
+    color: #9ca3af;
+}
+
+/* Active stars — same grey as the label they sit under */
+.stars-filled {
+    color: #9ca3af;
+}
+
+/* Inactive stars — very light, almost invisible */
+.stars-empty {
+    color: #ebe6e7;
+}
+
+
+/* =============================================================================
+   DIVIDE SECTION
+   Zeplin: 648px wide, centred, height 20px
+   Font: Bold — matches all other small UI labels on the page
+   ============================================================================= */
+
 .divide {
     width: 100%;
     display: flex;
@@ -180,20 +293,20 @@ body {
     align-items: center;
 }
 
-/* Divide Text - Helvetica Bold, 14px, 20px line height */
 .divide-text {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 20px;
+    line-height: 1.43; /* 20px */
     letter-spacing: 0;
     color: #000000;
 }
 
-/* ============================================
-   PROJECT SECTION
-   ============================================ */
 
-/* Project Auto Layout - Vertical, 648px width, 32px gap, 32px bottom padding */
+/* =============================================================================
+   PROJECT SECTION
+   Zeplin: vertical stack — info (name+description) then images, 32px gap
+   ============================================================================= */
+
 .project {
     width: 100%;
     display: flex;
@@ -202,24 +315,36 @@ body {
     padding-bottom: 32px;
 }
 
-/* Name Auto Layout - Vertical, hug */
-.name {
-    width: fit-content;
+/* Info block — wraps name+extra and description, 16px gap */
+.info {
+    width: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
     gap: 16px;
 }
 
-/* Project Title - Helvetica Bold, 16px, 20px line height */
+/* Name block — project title directly above extra tags, no gap */
+.name {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 0;
+}
+
+/* "Cine Asia" — Bold, primary project label */
 .project-title {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 20px;
+    line-height: 1.25; /* 20px */
     letter-spacing: -0.02em;
     color: #000000;
 }
 
-/* Extra Auto Layout - Horizontal, hug, 16px gap, left center align */
+/* Extra tags row — horizontal on desktop, 16px gap */
 .extra {
     display: flex;
     flex-direction: row;
@@ -228,36 +353,38 @@ body {
     width: fit-content;
 }
 
-/* Extra Text - Helvetica Bold, 14px, 20px line height */
+/* "Brand Identity · Product Design" / "Adobe Photoshop · Adobe Illustrator · Figma"
+   Medium weight — sits below Bold title, visually secondary */
 .extra-text {
-    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 20px;
+    line-height: 1.43; /* 20px */
     letter-spacing: -0.02em;
-    color: #000000;
+    color: #9ca3af;
 }
 
-/* Description Auto Layout - Vertical, 600px width */
+/* Description block — 600px wide per Zeplin */
 .description {
     width: 600px;
     display: flex;
     flex-direction: column;
 }
 
-/* Description Text - Helvetica Bold, 14px, 20px line height */
+/* Project body copy — Regular weight, most readable for running text */
 .description-text {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 20px;
+    line-height: 1.43; /* 20px */
     letter-spacing: -0.02em;
-    color: #000000;
+    color: #0f1419;
 }
 
-/* ============================================
-   IMAGES SECTION
-   ============================================ */
 
-/* Images Auto Layout - Vertical, 648px width, 16px gap */
+/* =============================================================================
+   IMAGES SECTION
+   Three image blocks stacked vertically, 16px gap
+   ============================================================================= */
+
 .images {
     width: 100%;
     display: flex;
@@ -265,11 +392,10 @@ body {
     gap: 16px;
 }
 
-/* Image 1 - Horizontal, 648px width, 398px height */
+/* --- Image 1: Full-width landscape banner --- */
 .image-1 {
     width: 100%;
     height: 398px;
-    display: flex;
     overflow: hidden;
 }
 
@@ -279,7 +405,7 @@ body {
     object-fit: cover;
 }
 
-/* Image 2 - Horizontal layout, 648px width, 16px gap */
+/* --- Image 2: Two side-by-side portrait boxes --- */
 .image-2 {
     width: 100%;
     display: flex;
@@ -287,7 +413,7 @@ body {
     gap: 16px;
 }
 
-/* Image Boxes A and B - 316px width, 398px height, F2F2F2 50% fill */
+/* Each half-width box — 316px × 398px with soft grey fill */
 .image-box-a,
 .image-box-b {
     width: 316px;
@@ -299,6 +425,7 @@ body {
     overflow: hidden;
 }
 
+/* Portrait phone screens centred inside the boxes */
 .image-box-a img,
 .image-box-b img {
     width: 160px;
@@ -306,7 +433,7 @@ body {
     object-fit: cover;
 }
 
-/* Image 3 - Horizontal, 648px width, Hug height, 32px gap, F2F2F2 50% fill */
+/* --- Image 3: Three portrait screens in a row --- */
 .image-3 {
     width: 100%;
     display: flex;
@@ -324,11 +451,12 @@ body {
     object-fit: cover;
 }
 
-/* ============================================
-   FOOTER SECTION
-   ============================================ */
 
-/* Footer Auto Layout - Horizontal, 648px width, 32px padding, left center align */
+/* =============================================================================
+   FOOTER
+   Font: Bold — matches all other small UI labels on the page
+   ============================================================================= */
+
 .footer {
     width: 100%;
     display: flex;
@@ -337,235 +465,335 @@ body {
     padding: 32px 0;
 }
 
-/* Footer Text - Helvetica Bold, 12px, 16px line height, 30% opacity */
 .footer-text {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 12px;
-    line-height: 16px;
+    line-height: 1.33; /* 16px */
     letter-spacing: -0.02em;
     color: rgba(0, 0, 0, 0.3);
 }
 
-/* ============================================
-   MOBILE RESPONSIVE STYLES
-   ============================================ */
+
+/* =============================================================================
+   RESPONSIVE — TABLET  (max-width: 768px)
+   Scale is ~55% of desktop — proportional reduction, not a redesign.
+   Padding stays generous so content breathes away from edges.
+   Font comments show: desktop value → tablet value
+   ============================================================================= */
 
 @media screen and (max-width: 768px) {
-    /* Add proper breathing room - significant padding on mobile */
+
+    /* CONTAINER — side padding kept wide for breathing room */
     .container {
         padding: 0 32px;
     }
-    
-    /* Main takes full width minus padding */
+
+    /* MAIN — full width, gap: 32px → 24px, top padding: 64px → 48px */
     .main {
         width: 100%;
         max-width: 100%;
+        gap: 24px;
         padding-top: 48px;
     }
-    
-    /* Reduce Hello section height and add negative margin to close gap on mobile */
+
+    /* HELLO — height: 164px → 100px, padding: 32px → 20px */
     .hello {
-        min-height: 100px; /* Reduced from 203px to match smaller text */
-        margin-bottom: -20px; /* Negative margin to tighten spacing - adjust as needed */
+        height: 100px;
+        padding: 20px 0;
     }
-    
-    /* Scale down Hello text proportionally */
+
+    /* Hello text — 128px → 72px, bearing compensation halved */
     .hello-text {
-        font-size: 64px;
-        margin-left: -5px;
+        font-size: 72px;
+        margin-left: -6px;
     }
-    
-    /* Reduce header gap */
+
+    /* HEADER — gap: 32px → 24px */
     .header {
         gap: 24px;
     }
-    
-    /* Keep location HORIZONTAL - reduce gap and font size */
+
+    /* Datetime — 16px → 14px */
+    .header-datetime {
+        font-size: 14px;
+    }
+
+    /* Location row — stays horizontal, gap: 32px → 20px */
     .location {
-        flex-direction: row;
         gap: 20px;
     }
-    
+
+    /* Greeting + weather — 16px → 14px */
     .location-greeting,
     .location-weather {
         font-size: 14px;
-        line-height: 18px;
     }
-    
-    /* Match extra-text font size to location text */
-    .extra-text {
-        font-size: 14px;
-        line-height: 18px;
-    }
-    
-    /* Scale down title */
+
+    /* TITLE — name: 32px → 26px, email: 14px → 13px */
     .title-name {
-        font-size: 28px;
-        line-height: 32px;
+        font-size: 26px;
     }
-    
-    .name {
-    width: fit-content;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-	}	
-    
-    /* Stack extra items vertically on mobile */
+
+    .title-email {
+        font-size: 13px;
+    }
+
+    /* LIBRARY — heading: 16px → 14px, subheading: 14px → 13px */
+    .library-heading {
+        font-size: 14px;
+    }
+
+    .library-subheading {
+        font-size: 13px;
+    }
+
+    /* Book cover — 60×98px → 52×85px */
+    .book-cover {
+        width: 52px;
+        height: 85px;
+    }
+
+    .book {
+        height: auto;
+    }
+
+    /* Book meta + stars — 14px → 13px */
+    .book-meta,
+    .book-stars {
+        font-size: 13px;
+    }
+
+    /* PROJECT — gap: 32px → 24px, bottom padding: 32px → 24px */
+    .project {
+        gap: 24px;
+        padding-bottom: 24px;
+    }
+
+    /* Project title — 16px → 14px */
+    .project-title {
+        font-size: 14px;
+    }
+
+    /* Extra tags — stack vertically, gap collapses to 0 (clean line-break feel) */
     .extra {
         flex-direction: column;
         align-items: flex-start;
         gap: 0;
     }
-    
-    /* Description takes full width on mobile */
+
+    /* Extra text — 14px → 13px */
+    .extra-text {
+        font-size: 13px;
+    }
+
+    /* Description — full width, copy: 14px → 13px */
     .description {
         width: 100%;
     }
-    
-    /* Image 1 - Maintain aspect ratio, scale to container */
+
+    .description-text {
+        font-size: 13px;
+    }
+
+    /* IMAGE 1 — maintain 648:398 aspect ratio, full container width */
     .image-1 {
-        width: 100%;
         height: auto;
         aspect-ratio: 648 / 398;
     }
-    
-    /* Image 2 - Stack vertically on mobile */
+
+    /* IMAGE 2 — stack vertically, each box full width */
     .image-2 {
         flex-direction: column;
-        gap: 16px;
     }
-    
+
     .image-box-a,
     .image-box-b {
         width: 100%;
         height: auto;
         aspect-ratio: 316 / 398;
     }
-    
+
+    /* Phone images inside boxes scale proportionally */
     .image-box-a img,
     .image-box-b img {
         width: auto;
-        height: auto;
-        max-width: 40%;
-        max-height: 80%;
+        height: 75%;
+        max-height: 300px;
     }
-    
-    /* Image 3 - KEEP HORIZONTAL, scale down images to fit */
+
+    /* IMAGE 3 — stays horizontal, gap: 32px → 12px, padding: 34px → 20px */
     .image-3 {
-        flex-direction: row;
         gap: 12px;
         padding: 20px 0;
     }
-    
+
     .image-3 img {
         width: calc(33.333% - 8px);
         height: auto;
         aspect-ratio: 160 / 330;
         max-width: 120px;
     }
+
+    /* FOOTER — padding: 32px → 24px */
+    .footer {
+        padding: 24px 0;
+    }
+
 }
 
+
+/* =============================================================================
+   RESPONSIVE — SMALL PHONE  (max-width: 480px)
+   Scale is ~40% of desktop. One further font-size step down across the board.
+   ============================================================================= */
+
 @media screen and (max-width: 480px) {
-    /* More breathing room on very small screens */
+
+    /* CONTAINER — tighter side padding, still breathing room */
     .container {
         padding: 0 24px;
     }
-    
+
+    /* MAIN — gap: 24px → 20px, top padding: 48px → 40px */
     .main {
+        gap: 20px;
         padding-top: 40px;
     }
-    
-    /* Further reduce Hello section spacing for very small screens */
+
+    /* HELLO — height: 100px → 80px, padding: 20px → 16px */
     .hello {
-        min-height: 90px; /* Even smaller min-height */
-        margin-bottom: -24px; /* Tighter spacing for small screens - adjust as needed */
+        height: 80px;
+        padding: 16px 0;
     }
-    
-    /* Scale down Hello text further */
+
+    /* Hello text — 72px → 56px */
     .hello-text {
-        font-size: 64px;
-        margin-left: -4px;
+        font-size: 56px;
+        margin-left: -5px;
     }
-    
-    /* Scale down fonts for small screens */
-    .header-datetime {
-        font-size: 14px;
-        line-height: 18px;
-    }
-    
-    .location-greeting,
-    .location-weather {
-        font-size: 12px;
-        line-height: 16px;
-    }
-    
-    /* Match extra-text font size to location text */
-    .extra-text {
-        font-size: 12px;
-        line-height: 16px;
-    }
-    
-    /* Reduce gap in location to keep horizontal */
-    .location {
-        gap: 16px;
-    }
-    
-    .title-name {
-        font-size: 24px;
-        line-height: 28px;
-    }
-    
-    .title-email {
-        font-size: 12px;
-        line-height: 18px;
-    }
-    
-    /* Adjust gaps for better spacing */
-    .main {
-        gap: 24px;
-    }
-    
+
+    /* HEADER — gap: 24px → 20px */
     .header {
         gap: 20px;
     }
-    
+
+    /* Datetime — 14px → 13px */
+    .header-datetime {
+        font-size: 13px;
+    }
+
+    /* Location row — gap: 20px → 16px */
+    .location {
+        gap: 16px;
+    }
+
+    /* Greeting + weather — 14px → 13px */
+    .location-greeting,
+    .location-weather {
+        font-size: 13px;
+    }
+
+    /* TITLE — gap: 16px → 12px, name: 26px → 22px, email: 13px → 12px */
     .title {
         gap: 12px;
     }
-    
-    .project {
-        gap: 24px;
+
+    .title-name {
+        font-size: 22px;
     }
-    
-    /* Image 3 - Scale down further but KEEP HORIZONTAL */
+
+    .title-email {
+        font-size: 12px;
+    }
+
+    /* LIBRARY — heading: 14px → 13px, subheading: 13px → 12px */
+    .library-heading {
+        font-size: 13px;
+    }
+
+    .library-subheading {
+        font-size: 12px;
+    }
+
+    /* Book cover — 52×85px → 46×75px */
+    .book-cover {
+        width: 46px;
+        height: 75px;
+    }
+
+    /* Book meta + stars — 13px → 12px */
+    .book-meta,
+    .book-stars {
+        font-size: 12px;
+    }
+
+    /* PROJECT — gap: 24px → 20px, bottom padding: 24px → 20px */
+    .project {
+        gap: 20px;
+        padding-bottom: 20px;
+    }
+
+    /* Extra text — 13px → 12px */
+    .extra-text {
+        font-size: 12px;
+    }
+
+    /* Description copy — 13px → 12px */
+    .description-text {
+        font-size: 12px;
+    }
+
+    /* IMAGE 3 — gap: 12px → 8px, padding: 20px → 16px */
     .image-3 {
         gap: 8px;
         padding: 16px 0;
     }
-    
+
     .image-3 img {
         width: calc(33.333% - 6px);
         max-width: 100px;
     }
+
+    /* FOOTER — padding: 24px → 20px */
+    .footer {
+        padding: 20px 0;
+    }
+
 }
 
-/* Extra small screens - absolute minimum */
+
+/* =============================================================================
+   RESPONSIVE — VERY SMALL  (max-width: 390px — e.g. iPhone SE)
+   Minimal final adjustments only. No structural changes.
+   ============================================================================= */
+
 @media screen and (max-width: 390px) {
-    /* Minimum padding for very small devices like iPhone SE */
+
+    /* CONTAINER — minimum comfortable side padding */
     .container {
         padding: 0 20px;
     }
-    
-    /* Image 3 - Final scaling for smallest screens */
+
+    /* MAIN — top padding: 40px → 32px */
+    .main {
+        padding-top: 32px;
+    }
+
+    /* Hello text — 56px → 48px to prevent overflow on very narrow screens */
+    .hello-text {
+        font-size: 48px;
+        margin-left: -4px;
+    }
+
+    /* IMAGE 3 — final tighten for narrowest screens */
     .image-3 {
         gap: 6px;
         padding: 12px 0;
     }
-    
+
     .image-3 img {
         width: calc(33.333% - 4px);
-        max-width: 90px;
+        max-width: 88px;
     }
-}
 
+}
