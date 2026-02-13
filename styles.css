@@ -241,13 +241,13 @@ body {
     flex-shrink: 0;
 }
 
-/* Rating column — title/author above, star rating below */
+/* Rating column — flex: 1 so it fills remaining width, preventing title/author wrapping */
 .book-rating {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    width: 112px;
+    flex: 1;
 }
 
 /* "Suspicion / Seichō Matsumoto" — Medium weight */
