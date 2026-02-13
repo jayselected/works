@@ -221,7 +221,7 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    gap: 0;
+    gap: 16px;
 }
 
 /* "Cine Asia" — Bold, primary project label */
@@ -235,11 +235,9 @@ body {
 
 /* Extra tags row — horizontal on desktop, 16px gap */
 .extra {
+    width: 100%;
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 16px;
-    width: fit-content;
+    flex-direction: column;
 }
 
 /* "Brand Identity · Product Design" / "Adobe Photoshop · Adobe Illustrator · Figma"
@@ -426,31 +424,6 @@ body {
         font-size: 13px;
     }
 
-    /* LIBRARY — heading: 16px → 14px, subheading: 14px → 13px */
-    .library-heading {
-        font-size: 14px;
-    }
-
-    .library-subheading {
-        font-size: 13px;
-    }
-
-    /* Book cover — 60×98px → 52×85px */
-    .book-cover {
-        width: 52px;
-        height: 85px;
-    }
-
-    .book {
-        height: auto;
-    }
-
-    /* Book meta + stars — 14px → 13px */
-    .book-meta,
-    .book-stars {
-        font-size: 13px;
-    }
-
     /* PROJECT — gap: 32px → 24px, bottom padding: 32px → 24px */
     .project {
         gap: 24px;
@@ -594,32 +567,13 @@ body {
         font-size: 12px;
     }
 
-    /* LIBRARY — heading: 14px → 13px, subheading: 13px → 12px */
-    .library-heading {
-        font-size: 13px;
-    }
-
-    .library-subheading {
-        font-size: 12px;
-    }
-
-    /* Book cover — 52×85px → 46×75px */
-    .book-cover {
-        width: 46px;
-        height: 75px;
-    }
-
-    /* Book meta + stars — 13px → 12px */
-    .book-meta,
-    .book-stars {
-        font-size: 12px;
-    }
 
     /* PROJECT — gap: 24px → 20px, bottom padding: 24px → 20px */
     .project {
         gap: 20px;
         padding-bottom: 20px;
     }
+    
 
     /* Extra text — 13px → 12px */
     .extra-text {
