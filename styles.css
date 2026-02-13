@@ -91,8 +91,8 @@ body {
 
     /* Dual bidirectional gradients — diabrowser.com chroma effect */
     background-image:
-        linear-gradient(90deg,  transparent 0, transparent 33.33%, #c679c4 40%, #fa3d1d 45%, #ffb005 50%, #e1e1fe 55%, #0358f7 60%, #000000 66.67%, #000000),
-        linear-gradient(270deg, transparent 0, transparent 33.33%, #c679c4 40%, #fa3d1d 45%, #ffb005 50%, #e1e1fe 55%, #0358f7 60%, #000000 66.67%, #000000);
+        linear-gradient(90deg,  transparent 0, transparent 33.33%, #f7ce78 40%, #fd8c22 45%, #fa545a 50%, #ba62da 55%, #4d81fc 60%, #7bc1fb 63%, #000000 66.67%, #000000),
+        linear-gradient(270deg, transparent 0, transparent 33.33%, #f7ce78 40%, #fd8c22 45%, #fa545a 50%, #ba62da 55%, #4d81fc 60%, #7bc1fb 63%, #000000 66.67%, #000000);
     background-size: 300% 100%, 300% 100%;
     background-position: 100% 0, 100% 0;
     background-blend-mode: normal;
