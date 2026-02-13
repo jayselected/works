@@ -216,10 +216,10 @@ body {
 
 /* "Recently Read" — Medium, secondary label, muted */
 .library-subheading {
-    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 1.43; /* 20px */
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
     color: #9ca3af;
 }
 
@@ -255,16 +255,16 @@ body {
     font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 1.43; /* 20px */
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
     color: #000000;
 }
 
 /* "Rating / ★★★★★" — Medium weight, muted label */
 .book-stars {
-    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 1.43; /* 20px */
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
     color: #9ca3af;
 }
 
@@ -356,7 +356,7 @@ body {
 /* "Brand Identity · Product Design" / "Adobe Photoshop · Adobe Illustrator · Figma"
    Medium weight — sits below Bold title, visually secondary */
 .extra-text {
-    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 1.43; /* 20px */
     letter-spacing: -0.02em;
