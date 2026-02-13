@@ -71,24 +71,70 @@ body {
     padding: 32px 0;
 }
 
+/*
+  .hello-text — base state
+  Text starts transparent (opacity: 0), JS fades it in.
+  background-clip: text + transparent text-fill-color lets the gradient
+  show through the letterforms only.
+  background-position starts at 100% (shimmer parked off-screen right),
+  ready to sweep when .chroma-sweep is added by JS.
+*/
 .hello-text {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 128px;
     line-height: 1;
     letter-spacing: -0.02em;
-    color: #000000;
     margin: 0;
     margin-left: -12px; /* Compensate for font's built-in side bearing — aligns flush left */
     opacity: 0;
     white-space: nowrap;
-    animation: fadeInOut 3s ease-in-out;
+
+    /* Dual bidirectional gradients — diabrowser.com chroma effect */
+    background-image:
+        linear-gradient(90deg,  transparent 0, transparent 33.33%, #c679c4 40%, #fa3d1d 45%, #ffb005 50%, #e1e1fe 55%, #0358f7 60%, #000000 66.67%, #000000),
+        linear-gradient(270deg, transparent 0, transparent 33.33%, #c679c4 40%, #fa3d1d 45%, #ffb005 50%, #e1e1fe 55%, #0358f7 60%, #000000 66.67%, #000000);
+    background-size: 300% 100%, 300% 100%;
+    background-position: 100% 0, 100% 0;
+    background-blend-mode: normal;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    will-change: background-position;
 }
 
-@keyframes fadeInOut {
-    0%   { opacity: 0; transform: translateY(10px); }
-    15%  { opacity: 1; transform: translateY(0); }
-    85%  { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-10px); }
+/*
+  .chroma-sweep — added by JS just before each language swap.
+  Pulls both gradients inward from left + right simultaneously,
+  creating a bidirectional chroma burst across the letterforms.
+*/
+.hello-text.chroma-sweep {
+    animation: chroma-expand-bidirectional 0.85s ease-in-out 0.1s forwards;
+}
+
+@keyframes chroma-expand-bidirectional {
+    0%   { background-position: 100% 0, 100% 0; }
+    100% { background-position: 0% 0,   0% 0;   }
+}
+
+/* Fade in — JS adds this class when showing a new language */
+.hello-text.hello-fade-in {
+    animation: helloFadeIn 0.35s ease-out forwards;
+}
+
+/* Fade out — JS adds this class after the chroma sweep completes */
+.hello-text.hello-fade-out {
+    animation: helloFadeOut 0.35s ease-in forwards;
+}
+
+@keyframes helloFadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes helloFadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-6px); }
 }
 
 

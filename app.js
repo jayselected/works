@@ -23,38 +23,64 @@ const HELLO_LANGUAGES = [
 ];
 
 let currentLanguageIndex = 0;
-let helloAnimationInterval = null;
 
 /**
- * Animate through different language greetings
+ * Sequence per language (total ~4s per cycle):
+ *
+ *   0ms    — update text, reset gradient, fade in          (0.35s)
+ *   2000ms — add chroma-sweep class → gradient sweeps      (0.85s + 0.1s delay = ~0.95s)
+ *   3200ms — add hello-fade-out → text fades out           (0.35s)
+ *   3600ms — remove all classes, advance language, restart
  */
-function cycleHelloLanguages() {
-    const helloElement = document.getElementById('hello-text');
-    if (!helloElement) return;
-    
-    // Update text
-    helloElement.textContent = HELLO_LANGUAGES[currentLanguageIndex].text;
-    helloElement.lang = HELLO_LANGUAGES[currentLanguageIndex].lang;
-    
-    // Trigger animation by removing and re-adding animation class
-    helloElement.style.animation = 'none';
-    setTimeout(() => {
-        helloElement.style.animation = 'fadeInOut 3s ease-in-out';
-    }, 10);
-    
-    // Move to next language
-    currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
+function runHelloSequence() {
+    const el = document.getElementById('hello-text');
+    if (!el) return;
+
+    // --- Step 1: Set new language text and reset gradient position ---
+    el.textContent = HELLO_LANGUAGES[currentLanguageIndex].text;
+    el.lang        = HELLO_LANGUAGES[currentLanguageIndex].lang;
+
+    // Force gradient back to start position before animating in
+    el.classList.remove('hello-fade-in', 'hello-fade-out', 'chroma-sweep');
+    el.style.backgroundPosition = '100% 0, 100% 0';
+
+    // Small delay to let the browser apply the reset before re-animating
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+
+            // --- Step 2: Fade text in ---
+            el.classList.add('hello-fade-in');
+
+            // --- Step 3: Chroma sweep starts after text has been visible ---
+            setTimeout(() => {
+                el.classList.remove('hello-fade-in');
+                el.style.opacity = '1'; // Keep visible while sweep plays
+                el.classList.add('chroma-sweep');
+            }, 2000);
+
+            // --- Step 4: Fade text out after sweep completes ---
+            setTimeout(() => {
+                el.classList.remove('chroma-sweep');
+                el.classList.add('hello-fade-out');
+            }, 3200);
+
+            // --- Step 5: Advance to next language and loop ---
+            setTimeout(() => {
+                el.classList.remove('hello-fade-out');
+                el.style.opacity = '0';
+                currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
+                runHelloSequence();
+            }, 3600);
+
+        });
+    });
 }
 
 /**
  * Start the Hello language cycling animation
  */
 function startHelloAnimation() {
-    // Show first greeting immediately
-    cycleHelloLanguages();
-    
-    // Cycle through languages every 3 seconds
-    helloAnimationInterval = setInterval(cycleHelloLanguages, 3000);
+    runHelloSequence();
 }
 
 // Configuration
