@@ -28,7 +28,7 @@
 }
 
 body {
-    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Now Display Medium', 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: #ffffff;
     display: flex;
     justify-content: center;
@@ -353,7 +353,7 @@ body {
 }
 
 .footer-text {
-    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 12px;
     line-height: 1.33; /* 16px */
     letter-spacing: -0.02em;
