@@ -82,7 +82,7 @@ body {
 .hello-text {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 128px;
-    line-height: 1;
+    line-height: 1.2; /* Increased from 1 — gives descenders (j, g, Arabic etc.) room to render unclipped */
     letter-spacing: -0.02em;
     margin: 0;
     margin-left: -12px; /* Compensate for font's built-in side bearing — aligns flush left */

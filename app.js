@@ -28,7 +28,7 @@ let currentLanguageIndex = 0;
  * Sequence per language (total ~4s per cycle):
  *
  *   0ms    — update text, reset gradient, fade in          (0.35s)
- *   2000ms — add chroma-sweep class → gradient sweeps      (0.85s + 0.1s delay = ~0.95s)
+ *   1500ms — add chroma-sweep class → gradient sweeps      (0.85s + 0.1s delay = ~0.95s)
  *   3200ms — add hello-fade-out → text fades out           (0.35s)
  *   3600ms — remove all classes, advance language, restart
  */
@@ -56,7 +56,7 @@ function runHelloSequence() {
                 el.classList.remove('hello-fade-in');
                 el.style.opacity = '1'; // Keep visible while sweep plays
                 el.classList.add('chroma-sweep');
-            }, 2000);
+            }, 1500); // Was 2000ms — moved 500ms earlier so sweep fires sooner
 
             // --- Step 4: Fade text out after sweep completes ---
             setTimeout(() => {
