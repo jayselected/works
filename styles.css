@@ -157,12 +157,12 @@ body {
     color: #000000;
 }
 
-/* Title Email - Helvetica Bold, 14px, 20px line height, blue */
+/* Title Email - Helvetica Regular, 14px, 23.4px line height, normal letter spacing, blue */
 .title-email {
-    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 20px;
-    letter-spacing: -0.02em;
+    line-height: 23.4px;
+    letter-spacing: normal;
     color: #3699E4;
     text-decoration: none; /* Remove underline */
     display: inline-block;
@@ -227,15 +227,15 @@ body {
 /* Extra Auto Layout - Horizontal, hug, 16px gap, left center align */
 .extra {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 16px;
+    flex-direction: column; /* Stack vertically to keep on two lines */
+    align-items: flex-start;
+    gap: 0; /* No gap between lines */
     width: fit-content;
 }
 
-/* Extra Text - Helvetica Bold, 14px, 23.4px line height, normal letter spacing */
+/* Extra Text - Helvetica Regular, 14px, 23.4px line height, normal letter spacing, black */
 .extra-text {
-    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 23.4px;
     letter-spacing: normal;
@@ -249,7 +249,7 @@ body {
     flex-direction: column;
 }
 
-/* Description Text - Helvetica Bold, 14px, 23.4px line height, normal letter spacing */
+/* Description Text - Helvetica Regular, 14px, 23.4px line height, normal letter spacing, black */
 .description-text {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
@@ -393,9 +393,11 @@ body {
     
     /* Match extra-text font size to location text */
     .extra-text {
+        font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-size: 14px;
         line-height: 23.4px;
         letter-spacing: normal;
+        color: #000000;
     }
     
     /* Scale down title */
@@ -409,14 +411,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 16px;
-	}	
-    
-    /* Stack extra items vertically on mobile */
-    .extra {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0;
-    }
+	}
     
     /* Description takes full width on mobile */
     .description {
@@ -496,9 +491,11 @@ body {
     
     /* Match extra-text font size to location text */
     .extra-text {
+        font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-size: 12px;
         line-height: 20px;
         letter-spacing: normal;
+        color: #000000;
     }
     
     /* Reduce gap in location to keep horizontal */
