@@ -1,3 +1,4 @@
+/* Custom Fonts */
 @font-face {
     font-family: 'Helvetica Now Display Regular';
     src: url('fonts/Helvetica_Now_Display.ttf') format('truetype');
@@ -16,11 +17,7 @@
     font-style: normal;
 }
 
-
-/* =============================================================================
-   RESET & BASE
-   ============================================================================= */
-
+/* Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
@@ -28,19 +25,14 @@
 }
 
 body {
-    font-family: 'Helvetica Now Display Bold', 'Helvetica Now Display Medium', 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background-color: #ffffff;
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #FFFFFF;
     display: flex;
     justify-content: center;
     min-height: 100vh;
 }
 
-
-/* =============================================================================
-   LAYOUT — CONTAINER & MAIN
-   Desktop: 1440px canvas, content centred at 648px, 120px side padding
-   ============================================================================= */
-
+/* Container - Desktop 1440px with 120px margins */
 .container {
     width: 100%;
     max-width: 1440px;
@@ -49,6 +41,7 @@ body {
     justify-content: center;
 }
 
+/* Main Auto Layout - 648px width, 32px vertical gap, 64px top padding */
 .main {
     width: 648px;
     display: flex;
@@ -57,91 +50,57 @@ body {
     padding-top: 64px;
 }
 
-
-/* =============================================================================
-   HELLO SECTION
-   ============================================================================= */
+/* ============================================
+   HELLO SECTION (Animated Multi-language Text)
+   ============================================ */
 
 .hello {
     width: 100%;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    height: 164px;
-    padding: 32px 0;
+    min-height: 203px;
 }
 
-/*
-  .hello-text — base state
-  Text starts transparent (opacity: 0), JS fades it in.
-  background-clip: text + transparent text-fill-color lets the gradient
-  show through the letterforms only.
-  background-position starts at 100% (shimmer parked off-screen right),
-  ready to sweep when .chroma-sweep is added by JS.
-*/
 .hello-text {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 128px;
-    line-height: 1.2; /* Increased from 1 — gives descenders (j, g, Arabic etc.) room to render unclipped */
+    line-height: 1;
     letter-spacing: -0.02em;
+    color: #000000;
     margin: 0;
-    margin-left: -12px; /* Compensate for font's built-in side bearing — aligns flush left */
+    padding: 0;
+    margin-left: -12px; /* Compensate for font's built-in side bearings to align flush left */
     opacity: 0;
-    white-space: nowrap;
-
-    /* Dual bidirectional gradients — diabrowser.com chroma effect */
-    background-image:
-        linear-gradient(90deg,  transparent 0, transparent 33.33%, #f7ce78 40%, #fd8c22 45%, #fa545a 50%, #ba62da 55%, #4d81fc 60%, #7bc1fb 63%, #000000 66.67%, #000000),
-        linear-gradient(270deg, transparent 0, transparent 33.33%, #f7ce78 40%, #fd8c22 45%, #fa545a 50%, #ba62da 55%, #4d81fc 60%, #7bc1fb 63%, #000000 66.67%, #000000);
-    background-size: 300% 100%, 300% 100%;
-    background-position: 100% 0, 100% 0;
-    background-blend-mode: normal;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    will-change: background-position;
+    animation: fadeInOut 3s ease-in-out;
+    white-space: nowrap; /* Prevent wrapping */
+    overflow: visible;
 }
 
-/*
-  .chroma-sweep — added by JS just before each language swap.
-  Pulls both gradients inward from left + right simultaneously,
-  creating a bidirectional chroma burst across the letterforms.
-*/
-.hello-text.chroma-sweep {
-    animation: chroma-expand-bidirectional 0.85s ease-in-out 0.1s forwards;
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    15% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    85% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
 }
 
-@keyframes chroma-expand-bidirectional {
-    0%   { background-position: 100% 0, 100% 0; }
-    100% { background-position: 0% 0,   0% 0;   }
-}
-
-/* Fade in — JS adds this class when showing a new language */
-.hello-text.hello-fade-in {
-    animation: helloFadeIn 0.35s ease-out forwards;
-}
-
-/* Fade out — JS adds this class after the chroma sweep completes */
-.hello-text.hello-fade-out {
-    animation: helloFadeOut 0.35s ease-in forwards;
-}
-
-@keyframes helloFadeIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes helloFadeOut {
-    from { opacity: 1; transform: translateY(0); }
-    to   { opacity: 0; transform: translateY(-6px); }
-}
-
-
-/* =============================================================================
+/* ============================================
    HEADER SECTION
-   ============================================================================= */
+   ============================================ */
 
+/* Header Auto Layout - 32px gap */
 .header {
     width: 100%;
     display: flex;
@@ -149,16 +108,16 @@ body {
     gap: 32px;
 }
 
-/* Date + time — e.g. "Monday 2 February, 2026 / 14:15:20" */
+/* Header DateTime - Helvetica Bold, 16px, 20px line height */
 .header-datetime {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 1.25; /* 20px */
+    line-height: 20px;
     letter-spacing: -0.02em;
     color: #000000;
 }
 
-/* Location row — greeting left, weather right, 32px gap */
+/* Location Auto Layout - Horizontal, 32px gap */
 .location {
     display: flex;
     flex-direction: row;
@@ -166,31 +125,22 @@ body {
     width: fit-content;
 }
 
-/* "Good Afternoon, / You're connecting from" */
-.location-greeting {
-    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.25; /* 20px */
-    letter-spacing: -0.02em;
-    color: #000000;
-    white-space: pre-line;
-}
-
-/* "Manchester, United Kingdom / Local Weather: 4.9° Cloudy ☁️" */
+/* Location Greeting and Weather - Helvetica Bold, 16px, 20px line height */
+.location-greeting,
 .location-weather {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 1.25; /* 20px */
+    line-height: 20px;
     letter-spacing: -0.02em;
     color: #000000;
     white-space: pre-line;
 }
 
-
-/* =============================================================================
+/* ============================================
    TITLE SECTION
-   ============================================================================= */
+   ============================================ */
 
+/* Title Auto Layout - Vertical, 648px width, 16px gap */
 .title {
     width: 100%;
     display: flex;
@@ -198,30 +148,35 @@ body {
     gap: 16px;
 }
 
-/* "Jay Patel / Select Design Works" */
+/* Title Name - Helvetica Bold, 32px, 36px line height */
 .title-name {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 32px;
-    line-height: 1.19; /* ~38px */
+    line-height: 36px;
     letter-spacing: -0.02em;
     color: #000000;
 }
 
-/* "Email to get in touch →" */
+/* Title Email - Helvetica Bold, 14px, 20px line height, blue */
 .title-email {
-    font-family: 'Helvetica Now Display Mediu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 1.43; /* 20px */
+    line-height: 20px;
     letter-spacing: -0.02em;
-    color: #51a2ff;
-    text-decoration: underline;
+    color: #3699E4;
+    text-decoration: none; /* Remove underline */
+    display: inline-block;
 }
 
+.title-email:hover {
+    text-decoration: underline; /* Underline on hover for usability */
+}
 
-/* =============================================================================
+/* ============================================
    DIVIDE SECTION
-   ============================================================================= */
+   ============================================ */
 
+/* Divide Auto Layout - Horizontal, 648px width, center align */
 .divide {
     width: 100%;
     display: flex;
@@ -230,19 +185,20 @@ body {
     align-items: center;
 }
 
+/* Divide Text - Helvetica Bold, 14px, 20px line height */
 .divide-text {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 1.43; /* 20px */
+    line-height: 20px;
     letter-spacing: 0;
     color: #000000;
 }
 
-
-/* =============================================================================
+/* ============================================
    PROJECT SECTION
-   ============================================================================= */
+   ============================================ */
 
+/* Project Auto Layout - Vertical, 648px width, 32px gap, 32px bottom padding */
 .project {
     width: 100%;
     display: flex;
@@ -251,74 +207,62 @@ body {
     padding-bottom: 32px;
 }
 
-/* Info block — wraps name+extra and description, 16px gap */
-.info {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 16px;
-}
-
-/* Name block — project title directly above extra tags, no gap */
+/* Name Auto Layout - Vertical, hug */
 .name {
-    width: 100%;
+    width: fit-content;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
     gap: 16px;
 }
 
-/* "Cine Asia" — Bold, primary project label */
+/* Project Title - Helvetica Bold, 16px, 23.4px line height, normal letter spacing */
 .project-title {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 1.25; /* 20px */
-    letter-spacing: -0.02em;
+    line-height: 23.4px;
+    letter-spacing: normal;
     color: #000000;
 }
 
-/* Extra tags row — horizontal on desktop, 16px gap */
+/* Extra Auto Layout - Horizontal, hug, 16px gap, left center align */
 .extra {
-    width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    width: fit-content;
 }
 
-/* "Brand Identity · Product Design" / "Adobe Photoshop · Adobe Illustrator · Figma"
-   Medium weight — sits below Bold title, visually secondary */
+/* Extra Text - Helvetica Bold, 14px, 23.4px line height, normal letter spacing */
 .extra-text {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 1.43; /* 20px */
-    letter-spacing: -0.02em;
-    color: #9ca3af;
+    line-height: 23.4px;
+    letter-spacing: normal;
+    color: #000000;
 }
 
-/* Description block — 600px wide per Zeplin */
+/* Description Auto Layout - Vertical, 600px width */
 .description {
     width: 600px;
     display: flex;
     flex-direction: column;
 }
 
-/* Project body copy — Regular weight, most readable for running text */
+/* Description Text - Helvetica Bold, 14px, 23.4px line height, normal letter spacing */
 .description-text {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 1.43; /* 20px */
-    letter-spacing: -0.02em;
-    color: #0f1419;
+    line-height: 23.4px;
+    letter-spacing: normal;
+    color: #000000;
 }
 
-
-/* =============================================================================
+/* ============================================
    IMAGES SECTION
-   Three image blocks stacked vertically, 16px gap
-   ============================================================================= */
+   ============================================ */
 
+/* Images Auto Layout - Vertical, 648px width, 16px gap */
 .images {
     width: 100%;
     display: flex;
@@ -326,10 +270,11 @@ body {
     gap: 16px;
 }
 
-/* --- Image 1: Full-width landscape banner --- */
+/* Image 1 - Horizontal, 648px width, 398px height */
 .image-1 {
     width: 100%;
     height: 398px;
+    display: flex;
     overflow: hidden;
 }
 
@@ -339,7 +284,7 @@ body {
     object-fit: cover;
 }
 
-/* --- Image 2: Two side-by-side portrait boxes --- */
+/* Image 2 - Horizontal layout, 648px width, 16px gap */
 .image-2 {
     width: 100%;
     display: flex;
@@ -347,7 +292,7 @@ body {
     gap: 16px;
 }
 
-/* Each half-width box — 316px × 398px with soft grey fill */
+/* Image Boxes A and B - 316px width, 398px height, F2F2F2 50% fill */
 .image-box-a,
 .image-box-b {
     width: 316px;
@@ -359,7 +304,6 @@ body {
     overflow: hidden;
 }
 
-/* Portrait phone screens centred inside the boxes */
 .image-box-a img,
 .image-box-b img {
     width: 160px;
@@ -367,7 +311,7 @@ body {
     object-fit: cover;
 }
 
-/* --- Image 3: Three portrait screens in a row --- */
+/* Image 3 - Horizontal, 648px width, Hug height, 32px gap, F2F2F2 50% fill */
 .image-3 {
     width: 100%;
     display: flex;
@@ -385,11 +329,11 @@ body {
     object-fit: cover;
 }
 
+/* ============================================
+   FOOTER SECTION
+   ============================================ */
 
-/* =============================================================================
-   FOOTER
-   ============================================================================= */
-
+/* Footer Auto Layout - Horizontal, 648px width, 32px padding, left center align */
 .footer {
     width: 100%;
     display: flex;
@@ -398,291 +342,225 @@ body {
     padding: 32px 0;
 }
 
+/* Footer Text - Helvetica Bold, 12px, 16px line height, 30% opacity */
 .footer-text {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 12px;
-    line-height: 1.33; /* 16px */
+    line-height: 16px;
     letter-spacing: -0.02em;
     color: rgba(0, 0, 0, 0.3);
 }
 
-
-/* =============================================================================
-   RESPONSIVE — TABLET  (max-width: 768px)
-   Scale is ~55% of desktop — proportional reduction, not a redesign.
-   Padding stays generous so content breathes away from edges.
-   Font comments show: desktop value → tablet value
-   ============================================================================= */
+/* ============================================
+   MOBILE RESPONSIVE STYLES
+   ============================================ */
 
 @media screen and (max-width: 768px) {
-
-    /* CONTAINER — side padding kept wide for breathing room */
+    /* Add proper breathing room - significant padding on mobile */
     .container {
         padding: 0 32px;
     }
-
-    /* MAIN — full width, gap: 32px → 24px, top padding: 64px → 48px */
+    
+    /* Main takes full width minus padding */
     .main {
         width: 100%;
         max-width: 100%;
-        gap: 24px;
         padding-top: 48px;
     }
-
-    /* HELLO — height: 164px → 100px, padding: 32px → 20px */
-    .hello {
-        height: 100px;
-        padding: 20px 0;
-    }
-
-    /* Hello text — 128px → 72px, bearing compensation halved */
+    
+    /* Scale down Hello text proportionally */
     .hello-text {
-        font-size: 72px;
-        margin-left: -6px;
+        font-size: 64px;
+        margin-left: -5px;
     }
-
-    /* HEADER — gap: 32px → 24px */
+    
+    /* Reduce header gap */
     .header {
         gap: 24px;
     }
-
-    /* Datetime — 16px → 14px */
-    .header-datetime {
-        font-size: 14px;
-    }
-
-    /* Location row — stays horizontal, gap: 32px → 20px */
+    
+    /* Keep location HORIZONTAL - reduce gap and font size */
     .location {
+        flex-direction: row;
         gap: 20px;
     }
-
-    /* Greeting + weather — 16px → 14px */
+    
     .location-greeting,
     .location-weather {
         font-size: 14px;
+        line-height: 18px;
     }
-
-    /* TITLE — name: 32px → 26px, email: 14px → 13px */
-    .title-name {
-        font-size: 26px;
-    }
-
-    .title-email {
-        font-size: 13px;
-    }
-
-    /* PROJECT — gap: 32px → 24px, bottom padding: 32px → 24px */
-    .project {
-        gap: 24px;
-        padding-bottom: 24px;
-    }
-
-    /* Project title — 16px → 14px */
-    .project-title {
+    
+    /* Match extra-text font size to location text */
+    .extra-text {
         font-size: 14px;
+        line-height: 23.4px;
+        letter-spacing: normal;
     }
-
-    /* Extra tags — stack vertically, gap collapses to 0 (clean line-break feel) */
+    
+    /* Scale down title */
+    .title-name {
+        font-size: 28px;
+        line-height: 32px;
+    }
+    
+    .name {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+	}	
+    
+    /* Stack extra items vertically on mobile */
     .extra {
         flex-direction: column;
         align-items: flex-start;
         gap: 0;
     }
-
-    /* Extra text — 14px → 13px */
-    .extra-text {
-        font-size: 13px;
-    }
-
-    /* Description — full width, copy: 14px → 13px */
+    
+    /* Description takes full width on mobile */
     .description {
         width: 100%;
     }
-
-    .description-text {
-        font-size: 13px;
-    }
-
-    /* IMAGE 1 — maintain 648:398 aspect ratio, full container width */
+    
+    /* Image 1 - Maintain aspect ratio, scale to container */
     .image-1 {
+        width: 100%;
         height: auto;
         aspect-ratio: 648 / 398;
     }
-
-    /* IMAGE 2 — stack vertically, each box full width */
+    
+    /* Image 2 - Stack vertically on mobile */
     .image-2 {
         flex-direction: column;
+        gap: 16px;
     }
-
+    
     .image-box-a,
     .image-box-b {
         width: 100%;
         height: auto;
         aspect-ratio: 316 / 398;
     }
-
-    /* Phone images inside boxes scale proportionally */
+    
     .image-box-a img,
     .image-box-b img {
         width: auto;
-        height: 75%;
-        max-height: 300px;
+        height: auto;
+        max-width: 40%;
+        max-height: 80%;
     }
-
-    /* IMAGE 3 — stays horizontal, gap: 32px → 12px, padding: 34px → 20px */
+    
+    /* Image 3 - KEEP HORIZONTAL, scale down images to fit */
     .image-3 {
+        flex-direction: row;
         gap: 12px;
         padding: 20px 0;
     }
-
+    
     .image-3 img {
         width: calc(33.333% - 8px);
         height: auto;
         aspect-ratio: 160 / 330;
         max-width: 120px;
     }
-
-    /* FOOTER — padding: 32px → 24px */
-    .footer {
-        padding: 24px 0;
-    }
-
 }
 
-
-/* =============================================================================
-   RESPONSIVE — SMALL PHONE  (max-width: 480px)
-   Scale is ~40% of desktop. One further font-size step down across the board.
-   ============================================================================= */
-
 @media screen and (max-width: 480px) {
-
-    /* CONTAINER — tighter side padding, still breathing room */
+    /* More breathing room on very small screens */
     .container {
         padding: 0 24px;
     }
-
-    /* MAIN — gap: 24px → 20px, top padding: 48px → 40px */
+    
     .main {
-        gap: 20px;
         padding-top: 40px;
     }
-
-    /* HELLO — height: 100px → 80px, padding: 20px → 16px */
-    .hello {
-        height: 80px;
-        padding: 16px 0;
-    }
-
-    /* Hello text — 72px → 56px */
+    
+    /* Scale down Hello text further */
     .hello-text {
-        font-size: 56px;
-        margin-left: -5px;
+        font-size: 64px;
+        margin-left: -4px;
     }
-
-    /* HEADER — gap: 24px → 20px */
-    .header {
-        gap: 20px;
-    }
-
-    /* Datetime — 14px → 13px */
+    
+    /* Scale down fonts for small screens */
     .header-datetime {
-        font-size: 13px;
+        font-size: 14px;
+        line-height: 18px;
     }
-
-    /* Location row — gap: 20px → 16px */
+    
+    .location-greeting,
+    .location-weather {
+        font-size: 12px;
+        line-height: 16px;
+    }
+    
+    /* Match extra-text font size to location text */
+    .extra-text {
+        font-size: 12px;
+        line-height: 20px;
+        letter-spacing: normal;
+    }
+    
+    /* Reduce gap in location to keep horizontal */
     .location {
         gap: 16px;
     }
-
-    /* Greeting + weather — 14px → 13px */
-    .location-greeting,
-    .location-weather {
-        font-size: 13px;
+    
+    .title-name {
+        font-size: 24px;
+        line-height: 28px;
     }
-
-    /* TITLE — gap: 16px → 12px, name: 26px → 22px, email: 13px → 12px */
+    
+    .title-email {
+        font-size: 12px;
+        line-height: 18px;
+    }
+    
+    /* Adjust gaps for better spacing */
+    .main {
+        gap: 24px;
+    }
+    
+    .header {
+        gap: 20px;
+    }
+    
     .title {
         gap: 12px;
     }
-
-    .title-name {
-        font-size: 22px;
-    }
-
-    .title-email {
-        font-size: 12px;
-    }
-
-
-    /* PROJECT — gap: 24px → 20px, bottom padding: 24px → 20px */
+    
     .project {
-        gap: 20px;
-        padding-bottom: 20px;
+        gap: 24px;
     }
     
-
-    /* Extra text — 13px → 12px */
-    .extra-text {
-        font-size: 12px;
-    }
-
-    /* Description copy — 13px → 12px */
-    .description-text {
-        font-size: 12px;
-    }
-
-    /* IMAGE 3 — gap: 12px → 8px, padding: 20px → 16px */
+    /* Image 3 - Scale down further but KEEP HORIZONTAL */
     .image-3 {
         gap: 8px;
         padding: 16px 0;
     }
-
+    
     .image-3 img {
         width: calc(33.333% - 6px);
         max-width: 100px;
     }
-
-    /* FOOTER — padding: 24px → 20px */
-    .footer {
-        padding: 20px 0;
-    }
-
 }
 
-
-/* =============================================================================
-   RESPONSIVE — VERY SMALL  (max-width: 390px — e.g. iPhone SE)
-   Minimal final adjustments only. No structural changes.
-   ============================================================================= */
-
+/* Extra small screens - absolute minimum */
 @media screen and (max-width: 390px) {
-
-    /* CONTAINER — minimum comfortable side padding */
+    /* Minimum padding for very small devices like iPhone SE */
     .container {
         padding: 0 20px;
     }
-
-    /* MAIN — top padding: 40px → 32px */
-    .main {
-        padding-top: 32px;
-    }
-
-    /* Hello text — 56px → 48px to prevent overflow on very narrow screens */
-    .hello-text {
-        font-size: 48px;
-        margin-left: -4px;
-    }
-
-    /* IMAGE 3 — final tighten for narrowest screens */
+    
+    /* Image 3 - Final scaling for smallest screens */
     .image-3 {
         gap: 6px;
         padding: 12px 0;
     }
-
+    
     .image-3 img {
         width: calc(33.333% - 4px);
-        max-width: 88px;
+        max-width: 90px;
     }
-
 }
+
