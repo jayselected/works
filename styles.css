@@ -108,11 +108,11 @@ body {
     gap: 32px;
 }
 
-/* Header DateTime - Helvetica Bold, 16px, 20px line height */
+/* Header DateTime - Helvetica Bold, 16px, 23.4px line height */
 .header-datetime {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 20px;
+    line-height: 23.4px;
     letter-spacing: -0.02em;
     color: #000000;
 }
@@ -125,12 +125,12 @@ body {
     width: fit-content;
 }
 
-/* Location Greeting and Weather - Helvetica Bold, 16px, 20px line height */
+/* Location Greeting and Weather - Helvetica Bold, 16px, 23.4px line height */
 .location-greeting,
 .location-weather {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 20px;
+    line-height: 23.4px;
     letter-spacing: -0.02em;
     color: #000000;
     white-space: pre-line;
@@ -157,19 +157,13 @@ body {
     color: #000000;
 }
 
-/* Title Email - Helvetica Regular, 14px, 23.4px line height, normal letter spacing, blue */
+/* Title Email - Helvetica Bold, 14px, 20px line height, blue */
 .title-email {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 23.4px;
-    letter-spacing: normal;
+    line-height: 20px;
+    letter-spacing: -0.02em;
     color: #3699E4;
-    text-decoration: none; /* Remove underline */
-    display: inline-block;
-}
-
-.title-email:hover {
-    text-decoration: underline; /* Underline on hover for usability */
 }
 
 /* ============================================
@@ -215,30 +209,30 @@ body {
     gap: 16px;
 }
 
-/* Project Title - Helvetica Bold, 16px, 23.4px line height, normal letter spacing */
+/* Project Title - Helvetica Bold, 16px, 20px line height */
 .project-title {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 23.4px;
-    letter-spacing: normal;
+    line-height: 20px;
+    letter-spacing: -0.02em;
     color: #000000;
 }
 
 /* Extra Auto Layout - Horizontal, hug, 16px gap, left center align */
 .extra {
     display: flex;
-    flex-direction: column; /* Stack vertically to keep on two lines */
-    align-items: flex-start;
-    gap: 0; /* No gap between lines */
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
     width: fit-content;
 }
 
-/* Extra Text - Helvetica Regular, 14px, 23.4px line height, normal letter spacing, black */
+/* Extra Text - Helvetica Bold, 14px, 20px line height */
 .extra-text {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 23.4px;
-    letter-spacing: normal;
+    line-height: 20px;
+    letter-spacing: -0.02em;
     color: #000000;
 }
 
@@ -249,12 +243,12 @@ body {
     flex-direction: column;
 }
 
-/* Description Text - Helvetica Regular, 14px, 23.4px line height, normal letter spacing, black */
+/* Description Text - Helvetica Bold, 14px, 20px line height */
 .description-text {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 23.4px;
-    letter-spacing: normal;
+    line-height: 20px;
+    letter-spacing: -0.02em;
     color: #000000;
 }
 
@@ -393,11 +387,8 @@ body {
     
     /* Match extra-text font size to location text */
     .extra-text {
-        font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-size: 14px;
-        line-height: 23.4px;
-        letter-spacing: normal;
-        color: #000000;
+        line-height: 18px;
     }
     
     /* Scale down title */
@@ -411,7 +402,14 @@ body {
     display: flex;
     flex-direction: column;
     gap: 16px;
-	}
+	}	
+    
+    /* Stack extra items vertically on mobile */
+    .extra {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+    }
     
     /* Description takes full width on mobile */
     .description {
@@ -491,11 +489,8 @@ body {
     
     /* Match extra-text font size to location text */
     .extra-text {
-        font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-size: 12px;
-        line-height: 20px;
-        letter-spacing: normal;
-        color: #000000;
+        line-height: 16px;
     }
     
     /* Reduce gap in location to keep horizontal */
