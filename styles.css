@@ -108,11 +108,11 @@ body {
     gap: 32px;
 }
 
-/* Header DateTime - Helvetica Bold, 16px, 23.4px line height */
+/* Header DateTime - Helvetica Bold, 16px, 24px line height */
 .header-datetime {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 23.4px;
+    line-height: 24px;
     letter-spacing: -0.02em;
     color: #000000;
 }
@@ -125,12 +125,12 @@ body {
     width: fit-content;
 }
 
-/* Location Greeting and Weather - Helvetica Bold, 16px, 23.4px line height */
+/* Location Greeting and Weather - Helvetica Bold, 16px, 24px line height */
 .location-greeting,
 .location-weather {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 23.4px;
+    line-height: 24px;
     letter-spacing: -0.02em;
     color: #000000;
     white-space: pre-line;
@@ -157,11 +157,11 @@ body {
     color: #000000;
 }
 
-/* Title Email - Helvetica Regular, 14px, 23.4px line height, normal letter spacing, blue */
+/* Title Email - Helvetica Regular, 14px, 24px line height, normal letter spacing, blue */
 .title-email {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 23.4px;
+    line-height: 24px;
     letter-spacing: normal;
     color: #3699E4;
     text-decoration: none; /* Remove underline */
@@ -198,12 +198,12 @@ body {
    PROJECT SECTION
    ============================================ */
 
-/* Project Auto Layout - Vertical, 648px width, 32px gap, 32px bottom padding */
+/* Project Auto Layout - Vertical, 648px width, 16px gap, 32px bottom padding */
 .project {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 16px;
     padding-bottom: 32px;
 }
 
@@ -233,11 +233,11 @@ body {
     width: fit-content;
 }
 
-/* Extra Text - Helvetica Regular, 14px, 23.4px line height, normal letter spacing, black */
+/* Extra Text - Helvetica Regular, 14px, 24px line height, normal letter spacing, black */
 .extra-text {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 23.4px;
+    line-height: 24px;
     letter-spacing: normal;
     color: #000000;
 }
@@ -249,11 +249,11 @@ body {
     flex-direction: column;
 }
 
-/* Description Text - Helvetica Regular, 14px, 23.4px line height, normal letter spacing, black */
+/* Description Text - Helvetica Regular, 14px, 24px line height, normal letter spacing, black */
 .description-text {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 23.4px;
+    line-height: 24px;
     letter-spacing: normal;
     color: #000000;
 }
@@ -320,7 +320,7 @@ body {
     justify-content: center;
     gap: 32px;
     background-color: rgba(242, 242, 242, 0.5);
-    padding: 34px 0;
+    padding: 32px 0;
 }
 
 .image-3 img {
@@ -395,7 +395,7 @@ body {
     .extra-text {
         font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-size: 14px;
-        line-height: 23.4px;
+        line-height: 24px;
         letter-spacing: normal;
         color: #000000;
     }
@@ -527,7 +527,7 @@ body {
     }
     
     .project {
-        gap: 24px;
+        gap: 16px;
     }
     
     /* Image 3 - Scale down further but KEEP HORIZONTAL */
@@ -551,7 +551,7 @@ body {
     
     /* Image 3 - Final scaling for smallest screens */
     .image-3 {
-        gap: 6px;
+        gap: 8px;
         padding: 12px 0;
     }
     
