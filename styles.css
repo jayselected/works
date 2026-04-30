@@ -1,20 +1,146 @@
+/* Custom Fonts */
+@font-face {
+    font-family: 'Helvetica Now Display Regular';
+    src: url('fonts/Helvetica_Now_Display.ttf') format('truetype');
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Helvetica Now Display Medium';
+    src: url('fonts/Helvetica_Now_Display_Medium.ttf') format('truetype');
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Helvetica Now Display Bold';
+    src: url('fonts/Helvetica_Now_Display_Bold.ttf') format('truetype');
+    font-style: normal;
+}
+
 /* =========================
    MICRO TYPOGRAPHY TONE
    ========================= */
 
-/* Primary, Secondary, Tertiary tone system */
 :root {
     --text-primary: #000000;
     --text-secondary: rgba(0, 0, 0, 0.6);
     --text-tertiary: rgba(0, 0, 0, 0.35);
 }
 
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #FFFFFF;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* Container - Desktop 1440px with 120px margins */
+.container {
+    width: 100%;
+    max-width: 1440px;
+    padding: 0 120px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Main Auto Layout - 648px width, 32px vertical gap, 64px top padding */
+.main {
+    width: 648px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding-top: 64px;
+}
+
 /* ============================================
-   HEADER SECTION (Refined Tone)
+   HELLO SECTION (Animated Multi-language Text)
    ============================================ */
 
+.hello {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 203px;
+}
+
+.hello-text {
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 128px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    margin-left: -12px;
+    opacity: 0;
+    animation: fadeInOut 3s ease-in-out;
+    white-space: nowrap;
+    overflow: visible;
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    15% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    85% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+/* ============================================
+   HEADER SECTION
+   ============================================ */
+
+.header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* Header DateTime */
 .header-datetime {
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.02em;
     color: var(--text-tertiary);
+}
+
+/* Location */
+.location {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+    width: fit-content;
+}
+
+.location-greeting,
+.location-weather {
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.02em;
+    white-space: pre-line;
 }
 
 .location-greeting {
@@ -29,30 +155,383 @@
    TITLE SECTION
    ============================================ */
 
+.title {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.title-name {
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 32px;
+    line-height: 36px;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+}
+
 .title-email {
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: normal;
     color: var(--text-secondary);
+    text-decoration: none;
+    display: inline-block;
+}
+
+.title-email:hover {
+    text-decoration: underline;
+}
+
+/* ============================================
+   DIVIDE SECTION
+   ============================================ */
+
+.divide {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.divide-text {
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0;
+    color: var(--text-tertiary);
 }
 
 /* ============================================
    PROJECT SECTION
    ============================================ */
 
+.project {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 32px;
+}
+
+.name {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
 .project-title {
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: -0.02em;
     color: var(--text-primary);
 }
 
+.extra {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    width: fit-content;
+}
+
 .extra-text {
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: normal;
     color: var(--text-secondary);
 }
 
+.description {
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
 .description-text {
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: normal;
     color: var(--text-secondary);
 }
 
 /* ============================================
-   DIVIDER
+   IMAGES SECTION
    ============================================ */
 
-.divide-text {
+.images {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.image-1 {
+    width: 100%;
+    height: 398px;
+    display: flex;
+    overflow: hidden;
+}
+
+.image-1 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-2 {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+}
+
+.image-box-a,
+.image-box-b {
+    width: 316px;
+    height: 398px;
+    background-color: rgba(242, 242, 242, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.image-box-a img,
+.image-box-b img {
+    width: 160px;
+    height: 330px;
+    object-fit: cover;
+}
+
+.image-3 {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    background-color: rgba(242, 242, 242, 0.5);
+    padding: 32px 0;
+}
+
+.image-3 img {
+    width: 160px;
+    height: 330px;
+    object-fit: cover;
+}
+
+/* ============================================
+   FOOTER SECTION
+   ============================================ */
+
+.footer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 32px 0;
+}
+
+.footer-text {
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: -0.02em;
     color: var(--text-tertiary);
+}
+
+/* ============================================
+   MOBILE RESPONSIVE STYLES
+   ============================================ */
+
+@media screen and (max-width: 768px) {
+    .container {
+        padding: 0 32px;
+    }
+    
+    .main {
+        width: 100%;
+        max-width: 100%;
+        padding-top: 48px;
+    }
+    
+    .hello-text {
+        font-size: 64px;
+        margin-left: -5px;
+    }
+    
+    .header {
+        gap: 24px;
+    }
+    
+    .location {
+        flex-direction: row;
+        gap: 20px;
+    }
+    
+    .location-greeting,
+    .location-weather {
+        font-size: 14px;
+        line-height: 18px;
+    }
+    
+    .extra-text {
+        font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        line-height: 24px;
+        letter-spacing: normal;
+        color: var(--text-secondary);
+    }
+    
+    .title-name {
+        font-size: 28px;
+        line-height: 32px;
+    }
+    
+    .name {
+        width: fit-content;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .description {
+        width: 100%;
+    }
+    
+    .image-1 {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 648 / 398;
+    }
+    
+    .image-2 {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .image-box-a,
+    .image-box-b {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 316 / 398;
+    }
+    
+    .image-box-a img,
+    .image-box-b img {
+        width: auto;
+        height: auto;
+        max-width: 40%;
+        max-height: 80%;
+    }
+    
+    .image-3 {
+        flex-direction: row;
+        gap: 12px;
+        padding: 20px 0;
+    }
+    
+    .image-3 img {
+        width: calc(33.333% - 8px);
+        height: auto;
+        aspect-ratio: 160 / 330;
+        max-width: 120px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .container {
+        padding: 0 24px;
+    }
+    
+    .main {
+        padding-top: 40px;
+    }
+    
+    .hello-text {
+        font-size: 64px;
+        margin-left: -4px;
+    }
+    
+    .header-datetime {
+        font-size: 14px;
+        line-height: 18px;
+    }
+    
+    .location-greeting,
+    .location-weather {
+        font-size: 12px;
+        line-height: 16px;
+    }
+    
+    .extra-text {
+        font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 12px;
+        line-height: 20px;
+        letter-spacing: normal;
+        color: var(--text-secondary);
+    }
+    
+    .location {
+        gap: 16px;
+    }
+    
+    .title-name {
+        font-size: 24px;
+        line-height: 28px;
+    }
+    
+    .title-email {
+        font-size: 12px;
+        line-height: 18px;
+    }
+    
+    .main {
+        gap: 24px;
+    }
+    
+    .header {
+        gap: 20px;
+    }
+    
+    .title {
+        gap: 12px;
+    }
+    
+    .project {
+        gap: 16px;
+    }
+    
+    .image-3 {
+        gap: 8px;
+        padding: 16px 0;
+    }
+    
+    .image-3 img {
+        width: calc(33.333% - 6px);
+        max-width: 100px;
+    }
+}
+
+@media screen and (max-width: 390px) {
+    .container {
+        padding: 0 20px;
+    }
+    
+    .image-3 {
+        gap: 8px;
+        padding: 12px 0;
+    }
+    
+    .image-3 img {
+        width: calc(33.333% - 4px);
+        max-width: 90px;
+    }
 }
