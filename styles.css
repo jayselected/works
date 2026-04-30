@@ -42,19 +42,21 @@ body {
     top: 0;
     z-index: 100;
     width: 100%;
-    height: 72px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 120px;
     background-color: #FFFFFF;
-    transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease, border-bottom-color 0.3s ease;
+    border-bottom: 1px solid transparent;
 }
 
 .site-header.scrolled {
     background-color: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom-color: rgba(0, 0, 0, 0.06);
 }
 
 .header-left,
@@ -89,8 +91,8 @@ body {
     letter-spacing: -0.02em;
     color: #000000;
     padding: 6px 14px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
     border-radius: 6px;
-    background-color: #fafafa;
 }
 
 .header-contact {
@@ -174,31 +176,41 @@ body {
 }
 
 /* ============================================
-   HELLO SECTION
+   HELLO MARQUEE SECTION
    ============================================ */
 
 .hello {
-    width: 100%;
-    height: 203px;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    height: 160px;
     display: flex;
-    justify-content: flex-start;
     align-items: center;
     overflow: hidden;
+    border-top: 1px solid #f4f4f4;
+    border-bottom: 1px solid #f4f4f4;
 }
 
-.hello-text {
-    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 128px;
-    line-height: 1;
-    letter-spacing: -0.02em;
-    color: #000000;
-    display: block;
-    min-height: 128px;
-    margin: 0;
-    padding: 0;
-    margin-left: -12px;
-    opacity: 0;
+@keyframes marquee-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.marquee-track {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     white-space: nowrap;
+    animation: marquee-scroll 30s linear infinite;
+    will-change: transform;
+}
+
+.marquee-item {
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 96px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: #000000;
+    padding-right: 80px;
 }
 
 /* ============================================
@@ -411,21 +423,9 @@ body {
         height: 100px;
     }
 
-    .hello-text {
-        font-size: 64px;
-        min-height: 64px;
-        margin-left: -5px;
-    }
-
-    .header-datetime {
-        font-size: 14px;
-        line-height: 18px;
-    }
-
-    .location-greeting,
-    .location-weather {
-        font-size: 14px;
-        line-height: 20px;
+    .marquee-item {
+        font-size: 60px;
+        padding-right: 48px;
     }
 
     .description {
@@ -514,10 +514,9 @@ body {
         height: 80px;
     }
 
-    .hello-text {
-        font-size: 64px;
-        min-height: 64px;
-        margin-left: -4px;
+    .marquee-item {
+        font-size: 48px;
+        padding-right: 40px;
     }
 
     .location-greeting,
