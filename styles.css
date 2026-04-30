@@ -182,7 +182,7 @@ body {
 .hello {
     width: 100vw;
     margin-left: calc(-50vw + 50%);
-    height: 160px;
+    height: 203px;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -200,15 +200,15 @@ body {
     flex-direction: row;
     align-items: center;
     white-space: nowrap;
-    animation: marquee-scroll 30s linear infinite;
+    animation: marquee-scroll 60s linear infinite;
     will-change: transform;
 }
 
 .marquee-item {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 96px;
+    font-size: 128px;
     line-height: 1;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
     color: #000000;
     padding-right: 80px;
 }
@@ -420,12 +420,12 @@ body {
     }
 
     .hello {
-        height: 100px;
+        height: 140px;
     }
 
     .marquee-item {
-        font-size: 60px;
-        padding-right: 48px;
+        font-size: 96px;
+        padding-right: 60px;
     }
 
     .description {
@@ -511,12 +511,12 @@ body {
     }
 
     .hello {
-        height: 80px;
+        height: 100px;
     }
 
     .marquee-item {
-        font-size: 48px;
-        padding-right: 40px;
+        font-size: 64px;
+        padding-right: 48px;
     }
 
     .location-greeting,
