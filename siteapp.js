@@ -1,6 +1,6 @@
 /**
  * Portfolio Geo Data Display
- * Vanilla JavaScript implementation with multi-language Hello MARQUEE animation
+ * Vanilla JavaScript implementation with multi-language Hello FADE animation
  */
 
 const HELLO_LANGUAGES = [
@@ -17,26 +17,49 @@ const HELLO_LANGUAGES = [
     { text: 'नमस्ते.' },
     { text: 'مرحبا.' },
     { text: 'Hej.' },
-    { text: 'Hallo.' },
     { text: 'Merhaba.' }
 ];
 
+let currentLanguageIndex = 0;
+
 /**
- * Build and start the marquee animation
+ * Fade the hello text to the next language
  */
-function startMarquee() {
-    const track = document.getElementById('marquee-track');
-    if (!track) return;
+function runFadeSequence() {
+    const el = document.getElementById('hello-text');
+    if (!el) return;
 
-    // Duplicate the list for seamless infinite loop
-    const items = [...HELLO_LANGUAGES, ...HELLO_LANGUAGES];
+    // Fade out
+    el.classList.remove('visible');
 
-    items.forEach(({ text }) => {
-        const span = document.createElement('span');
-        span.textContent = text;
-        span.className = 'marquee-item';
-        track.appendChild(span);
-    });
+    setTimeout(() => {
+        // Swap text while invisible
+        el.textContent = HELLO_LANGUAGES[currentLanguageIndex].text;
+        currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
+
+        // Fade in
+        el.classList.add('visible');
+
+        // Hold then repeat
+        setTimeout(runFadeSequence, 2400);
+    }, 800);
+}
+
+/**
+ * Start the Hello language fade animation
+ */
+function startHelloAnimation() {
+    const el = document.getElementById('hello-text');
+    if (!el) return;
+
+    el.textContent = HELLO_LANGUAGES[currentLanguageIndex].text;
+    currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
+
+    // Small delay on first load so the page settles before fading in
+    setTimeout(() => {
+        el.classList.add('visible');
+        setTimeout(runFadeSequence, 2400);
+    }, 300);
 }
 
 const CONFIG = {
@@ -177,7 +200,7 @@ function showError(elementId, message) {
 
 async function initializeGeoDisplay() {
     try {
-        startMarquee();
+        startHelloAnimation();
         updateDateTime();
         updateGreeting();
         showLoading();
