@@ -178,7 +178,7 @@ function getWeatherDisplay(apiCondition) {
         'Dust':         { label: 'Dusty',            emoji: '🌫️'  },
         'Sand':         { label: 'Sandstorm',        emoji: '🌫️'  },
         'Ash':          { label: 'Volcanic Ash',     emoji: '🌫️'  },
-        'Squall':       { label: 'Squalls',          emoji: '💨'  },
+        'Wind':         { label: 'Windy',          emoji: '💨'  },
         'Tornado':      { label: 'Tornado',          emoji: '🌪️'  }
     };
 
