@@ -42,21 +42,19 @@ body {
     top: 0;
     z-index: 100;
     width: 100%;
-    height: 48px;
+    height: 72px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 120px;
     background-color: #FFFFFF;
-    transition: background-color 0.3s ease, backdrop-filter 0.3s ease, border-bottom-color 0.3s ease;
-    border-bottom: 1px solid transparent;
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
 }
 
 .site-header.scrolled {
     background-color: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-bottom-color: rgba(0, 0, 0, 0.06);
 }
 
 .header-left,
@@ -122,8 +120,6 @@ body {
     justify-content: space-between;
     padding: 0 120px;
     background-color: #FFFFFF;
-    border-top: 1px solid #f4f4f4;
-    border-bottom: 1px solid #f4f4f4;
 }
 
 .header-datetime {
@@ -172,7 +168,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 32px;
-    padding-top: 64px;
+    padding-top: 32px;
 }
 
 /* ============================================
@@ -203,24 +199,6 @@ body {
 
 .hello-text.visible {
     opacity: 1;
-}
-
-/* ============================================
-   DIVIDE SECTION
-   ============================================ */
-
-.divide {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.divide-text {
-    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 20px;
-    color: #000000;
 }
 
 /* ============================================
@@ -408,7 +386,7 @@ body {
     .main {
         width: 100%;
         max-width: 100%;
-        padding-top: 48px;
+        padding-top: 32px;
     }
 
     .hello {
@@ -498,7 +476,7 @@ body {
     }
 
     .main {
-        padding-top: 40px;
+        padding-top: 32px;
         gap: 24px;
     }
 
