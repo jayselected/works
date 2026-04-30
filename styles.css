@@ -42,21 +42,19 @@ body {
     top: 0;
     z-index: 100;
     width: 100%;
-    height: 48px;
+    height: 72px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 120px;
     background-color: #FFFFFF;
-    transition: background-color 0.3s ease, backdrop-filter 0.3s ease, border-bottom-color 0.3s ease;
-    border-bottom: 1px solid transparent;
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
 }
 
 .site-header.scrolled {
     background-color: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-bottom-color: rgba(0, 0, 0, 0.06);
 }
 
 .header-left,
@@ -91,8 +89,8 @@ body {
     letter-spacing: -0.02em;
     color: #000000;
     padding: 6px 14px;
-    border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 6px;
+    background-color: #fafafa;
 }
 
 .header-contact {
@@ -121,7 +119,6 @@ body {
     justify-content: center;
 }
 
-/* Main Auto Layout - 648px width, 32px vertical gap, 64px top padding */
 .main {
     width: 648px;
     display: flex;
@@ -162,8 +159,9 @@ body {
 .header-section {
     width: 100%;
     display: flex;
-    flex-direction: column;
-    gap: 32px;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
 }
 
 .header-datetime {
@@ -368,7 +366,9 @@ body {
     }
 
     .header-section {
-        gap: 24px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
     }
 
     .header-datetime {
@@ -457,10 +457,6 @@ body {
     .hello-text {
         font-size: 64px;
         margin-left: -4px;
-    }
-
-    .header-section {
-        gap: 20px;
     }
 
     .location-greeting,
