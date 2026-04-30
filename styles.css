@@ -108,6 +108,60 @@ body {
 }
 
 /* ============================================
+   HEADER SECTION (datetime + location bar)
+   ============================================ */
+
+.header-section {
+    position: sticky;
+    top: 72px;
+    z-index: 99;
+    width: 100%;
+    height: 72px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 0 120px;
+    background-color: #FFFFFF;
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.header-section.scrolled {
+    background-color: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+.header-datetime {
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.02em;
+    color: #000000;
+    white-space: nowrap;
+}
+
+.location {
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+}
+
+.location-greeting,
+.location-weather {
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.02em;
+    color: #000000;
+    white-space: nowrap;
+}
+
+.location-greeting::after {
+    content: '\00a0';
+}
+
+/* ============================================
    CONTAINER
    ============================================ */
 
@@ -150,41 +204,6 @@ body {
     margin-left: -12px;
     opacity: 0;
     white-space: nowrap;
-}
-
-/* ============================================
-   HEADER SECTION (datetime + location)
-   ============================================ */
-
-.header-section {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-}
-
-.header-datetime {
-    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    line-height: 24px;
-    letter-spacing: -0.02em;
-    color: #000000;
-}
-
-.location {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-}
-
-.location-greeting,
-.location-weather {
-    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    line-height: 24px;
-    letter-spacing: -0.02em;
-    color: #000000;
 }
 
 /* ============================================
@@ -233,14 +252,40 @@ body {
 
 .extra {
     display: flex;
+    flex-direction: row;
+    border: 1px solid #f4f4f4;
+    border-radius: 6px;
+    overflow: hidden;
+    width: fit-content;
+}
+
+.deliverables,
+.applications {
+    display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 2px;
+    padding: 12px 16px;
+}
+
+.extra-divider {
+    width: 1px;
+    background-color: #f4f4f4;
+    align-self: stretch;
+}
+
+.extra-label {
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 11px;
+    line-height: 16px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.35);
 }
 
 .extra-text {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 24px;
+    line-height: 20px;
     letter-spacing: normal;
     color: #000000;
 }
@@ -350,6 +395,14 @@ body {
         padding: 0 32px;
     }
 
+    .header-section {
+        padding: 0 32px;
+        height: auto;
+        min-height: 72px;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
     .container {
         padding: 0 32px;
     }
@@ -363,12 +416,6 @@ body {
     .hello-text {
         font-size: 64px;
         margin-left: -5px;
-    }
-
-    .header-section {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
     }
 
     .header-datetime {
@@ -445,6 +492,10 @@ body {
         font-size: 13px;
     }
 
+    .header-section {
+        padding: 0 24px;
+    }
+
     .container {
         padding: 0 24px;
     }
@@ -463,6 +514,17 @@ body {
     .location-weather {
         font-size: 12px;
         line-height: 16px;
+    }
+
+    .extra {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .extra-divider {
+        width: 100%;
+        height: 1px;
+        align-self: auto;
     }
 
     .extra-text {
@@ -491,6 +553,10 @@ body {
 
 @media screen and (max-width: 390px) {
     .site-header {
+        padding: 0 20px;
+    }
+
+    .header-section {
         padding: 0 20px;
     }
 
