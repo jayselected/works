@@ -28,11 +28,91 @@ body {
     font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: #FFFFFF;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     min-height: 100vh;
 }
 
-/* Container - Desktop 1440px with 120px margins */
+/* ============================================
+   SITE HEADER
+   ============================================ */
+
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 120px;
+    background-color: #FFFFFF;
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease, border-bottom-color 0.3s ease;
+    border-bottom: 1px solid transparent;
+}
+
+.site-header.scrolled {
+    background-color: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+.header-left,
+.header-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.header-right {
+    justify-content: flex-end;
+}
+
+.header-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-label {
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #000000;
+}
+
+.header-name {
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #000000;
+    padding: 6px 14px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+}
+
+.header-contact {
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #000000;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.header-contact:hover {
+    opacity: 0.5;
+}
+
+/* ============================================
+   CONTAINER
+   ============================================ */
+
 .container {
     width: 100%;
     max-width: 1440px;
@@ -76,10 +156,10 @@ body {
 }
 
 /* ============================================
-   HEADER SECTION
+   HEADER SECTION (datetime + location)
    ============================================ */
 
-.header {
+.header-section {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -94,7 +174,6 @@ body {
     color: #000000;
 }
 
-/* Location - stacked vertically, two lines */
 .location {
     display: flex;
     flex-direction: column;
@@ -108,35 +187,6 @@ body {
     line-height: 24px;
     letter-spacing: -0.02em;
     color: #000000;
-}
-
-/* ============================================
-   TITLE SECTION
-   ============================================ */
-
-.title {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.title-name {
-    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 32px;
-    line-height: 36px;
-    letter-spacing: -0.02em;
-    color: #000000;
-}
-
-.title-email {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 24px;
-    letter-spacing: normal;
-    color: #3699E4;
-    text-decoration: none;
-    display: inline-block;
 }
 
 /* ============================================
@@ -298,6 +348,10 @@ body {
    ============================================ */
 
 @media screen and (max-width: 768px) {
+    .site-header {
+        padding: 0 32px;
+    }
+
     .container {
         padding: 0 32px;
     }
@@ -313,7 +367,7 @@ body {
         margin-left: -5px;
     }
 
-    .header {
+    .header-section {
         gap: 24px;
     }
 
@@ -326,11 +380,6 @@ body {
     .location-weather {
         font-size: 14px;
         line-height: 20px;
-    }
-
-    .title-name {
-        font-size: 28px;
-        line-height: 32px;
     }
 
     .description {
@@ -379,6 +428,23 @@ body {
    ============================================ */
 
 @media screen and (max-width: 480px) {
+    .site-header {
+        padding: 0 24px;
+    }
+
+    .header-label {
+        font-size: 13px;
+    }
+
+    .header-name {
+        font-size: 13px;
+        padding: 5px 10px;
+    }
+
+    .header-contact {
+        font-size: 13px;
+    }
+
     .container {
         padding: 0 24px;
     }
@@ -393,7 +459,7 @@ body {
         margin-left: -4px;
     }
 
-    .header {
+    .header-section {
         gap: 20px;
     }
 
@@ -401,20 +467,6 @@ body {
     .location-weather {
         font-size: 12px;
         line-height: 16px;
-    }
-
-    .title {
-        gap: 12px;
-    }
-
-    .title-name {
-        font-size: 24px;
-        line-height: 28px;
-    }
-
-    .title-email {
-        font-size: 12px;
-        line-height: 18px;
     }
 
     .extra-text {
@@ -442,6 +494,10 @@ body {
    ============================================ */
 
 @media screen and (max-width: 390px) {
+    .site-header {
+        padding: 0 20px;
+    }
+
     .container {
         padding: 0 20px;
     }
