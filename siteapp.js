@@ -3,7 +3,6 @@
  * Vanilla JavaScript implementation with multi-language Hello TYPING animation
  */
 
-// Multi-language Hello animations (Typing effect)
 const HELLO_LANGUAGES = [
     { text: 'Hello.', lang: 'en' },
     { text: 'Hola.', lang: 'es' },
@@ -197,7 +196,7 @@ function formatCurrentTime() {
 function updateDateTime() {
     const element = document.getElementById('datetime-display');
     if (element) {
-        element.innerHTML = `${formatCurrentDate()}<br>${formatCurrentTime()}`;
+        element.innerHTML = `${formatCurrentDate()} ${formatCurrentTime()}`;
     }
 }
 
@@ -246,7 +245,7 @@ async function initializeGeoDisplay() {
                     .join(', ') || 'Unknown Location';
 
                 const el = document.getElementById('location-weather-display');
-                if (el) el.innerHTML = `${locationText} · ${temp}° ${label} ${emoji}`;
+                if (el) el.innerHTML = `${locationText} ${temp}° ${label} ${emoji}`;
 
             } catch (weatherError) {
                 console.error('Weather error:', weatherError);
@@ -254,7 +253,7 @@ async function initializeGeoDisplay() {
                     .filter(Boolean)
                     .join(', ') || 'Unknown Location';
                 const el = document.getElementById('location-weather-display');
-                if (el) el.innerHTML = `${locationText} · Weather Unavailable`;
+                if (el) el.innerHTML = `${locationText} Weather Unavailable`;
             }
         } else {
             showError('location-weather-display', 'Location Unavailable');
