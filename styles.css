@@ -183,6 +183,7 @@ body {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    overflow: hidden;
 }
 
 .hello-text {
@@ -191,6 +192,8 @@ body {
     line-height: 1;
     letter-spacing: -0.02em;
     color: #000000;
+    display: block;
+    min-height: 128px;
     margin: 0;
     padding: 0;
     margin-left: -12px;
@@ -410,6 +413,7 @@ body {
 
     .hello-text {
         font-size: 64px;
+        min-height: 64px;
         margin-left: -5px;
     }
 
@@ -512,6 +516,7 @@ body {
 
     .hello-text {
         font-size: 64px;
+        min-height: 64px;
         margin-left: -4px;
     }
 
