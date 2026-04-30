@@ -4,21 +4,21 @@
  */
 
 const HELLO_LANGUAGES = [
-    { text: 'Hello.',      lang: 'en' },
-    { text: 'Hola.',       lang: 'es' },
-    { text: 'Bonjour.',    lang: 'fr' },
-    { text: 'Hallo.',      lang: 'de' },
-    { text: 'Ciao.',       lang: 'it' },
-    { text: 'Olá.',        lang: 'pt' },
-    { text: 'Привет.',     lang: 'ru' },
-    { text: '你好.',        lang: 'zh' },
-    { text: 'こんにちは.', lang: 'ja' },
-    { text: '안녕하세요.', lang: 'ko' },
-    { text: 'नमस्ते.',     lang: 'hi' },
-    { text: 'مرحبا.',      lang: 'ar' },
-    { text: 'Hej.',        lang: 'sv' },
-    { text: 'Hallo.',      lang: 'nl' },
-    { text: 'Merhaba.',    lang: 'tr' }
+    { text: 'Hello.' },
+    { text: 'Hola.' },
+    { text: 'Bonjour.' },
+    { text: 'Hallo.' },
+    { text: 'Ciao.' },
+    { text: 'Olá.' },
+    { text: 'Привет.' },
+    { text: '你好.' },
+    { text: 'こんにちは.' },
+    { text: '안녕하세요.' },
+    { text: 'नमस्ते.' },
+    { text: 'مرحبا.' },
+    { text: 'Hej.' },
+    { text: 'Hallo.' },
+    { text: 'Merhaba.' }
 ];
 
 /**
@@ -31,10 +31,9 @@ function startMarquee() {
     // Duplicate the list for seamless infinite loop
     const items = [...HELLO_LANGUAGES, ...HELLO_LANGUAGES];
 
-    items.forEach(({ text, lang }) => {
+    items.forEach(({ text }) => {
         const span = document.createElement('span');
         span.textContent = text;
-        span.lang = lang;
         span.className = 'marquee-item';
         track.appendChild(span);
     });
