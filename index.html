@@ -7,11 +7,23 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@300;400&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+    <header class="site-header" id="site-header">
+        <div class="header-left">
+            <p class="header-label">Select Design Works</p>
+        </div>
+        <div class="header-center">
+            <p class="header-name">Jay Patel</p>
+        </div>
+        <div class="header-right">
+            <a href="mailto:jayarchiveone@gmail.com" class="header-contact">Get In Touch →</a>
+        </div>
+    </header>
+
     <div class="container">
         <main class="main">
 
@@ -19,18 +31,13 @@
                 <h1 class="hello-text" id="hello-text">Hello.</h1>
             </section>
 
-            <section class="header">
+            <section class="header-section">
                 <p class="header-datetime" id="datetime-display"></p>
 
                 <div class="location">
                     <p class="location-greeting" id="greeting-display"></p>
                     <p class="location-weather" id="location-weather-display"></p>
                 </div>
-            </section>
-
-            <section class="title">
-                <p class="title-name">Jay Patel<br>Select Design Works</p>
-                <a href="mailto:jayarchiveone@gmail.com" class="title-email">Email to get in touch →</a>
             </section>
 
             <section class="divide">
@@ -80,5 +87,15 @@
     </div>
 
     <script src="siteapp.js"></script>
+    <script>
+        const header = document.getElementById('site-header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 0) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        }, { passive: true });
+    </script>
 </body>
 </html>
