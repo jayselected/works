@@ -120,6 +120,8 @@ body {
     justify-content: space-between;
     padding: 0 120px;
     background-color: #FFFFFF;
+    border-top: 1px solid #f4f4f4;
+    border-bottom: 1px solid #f4f4f4;
 }
 
 .header-datetime {
@@ -253,23 +255,23 @@ body {
 .applications {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 6px;
     padding: 12px 16px;
 }
 
 .extra-divider {
     height: 1px;
-    width: 100%;
     background-color: #f4f4f4;
+    margin: 0 16px;
 }
 
 .extra-label {
     font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 11px;
     line-height: 16px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: rgba(0, 0, 0, 0.35);
+    letter-spacing: normal;
+    text-transform: none;
+    color: #000000;
 }
 
 .extra-text {
