@@ -25,7 +25,7 @@
 }
 
 body {
-    font-family: 'Helvetica Now Display Medium';
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: #FFFFFF;
     display: flex;
     flex-direction: column;
@@ -75,18 +75,18 @@ body {
 }
 
 .header-label {
-    font-family: 'Helvetica Now Display Medium';
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 1;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     color: #000000;
 }
 
 .header-name {
-    font-family: 'Helvetica Now Display Medium';
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 1;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     color: #000000;
     padding: 6px 14px;
     border: 1px solid rgba(0, 0, 0, 0.12);
@@ -94,10 +94,10 @@ body {
 }
 
 .header-contact {
-    font-family: 'Helvetica Now Display Medium';
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 1;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     color: #000000;
     text-decoration: none;
     transition: opacity 0.2s ease;
@@ -129,29 +129,29 @@ body {
 }
 
 .location-greeting {
-    font-family: 'Helvetica Now Display Medium';
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 24px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     color: #000000;
     white-space: nowrap;
     margin-right: 4px;
 }
 
 .header-datetime {
-    font-family: 'Helvetica Now Display Medium';
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 24px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     color: #000000;
     white-space: nowrap;
 }
 
 .location-weather {
-    font-family: 'Helvetica Now Display Medium';
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 24px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     color: #000000;
     white-space: nowrap;
 }
@@ -188,10 +188,10 @@ body {
 }
 
 .hello-text {
-    font-family: 'Helvetica Now Display Bold';
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 128px;
     line-height: 1;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     color: #000000;
     margin: 0;
     padding: 0;
@@ -235,10 +235,10 @@ body {
 }
 
 .project-title {
-    font-family: 'Helvetica Now Display Medium';
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 20px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     color: #000000;
 }
 
@@ -266,14 +266,14 @@ body {
 }
 
 .details-label {
-    font-family: 'Helvetica Now Display Medium';
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 20px;
     color: #000000;
 }
 
 .details-text {
-    font-family: 'Helvetica Now Display Regular';
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 20px;
     color: #000000;
@@ -284,7 +284,7 @@ body {
 }
 
 .project-description-text {
-    font-family: 'Helvetica Now Display Regular';
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 24px;
     color: #000000;
@@ -367,10 +367,10 @@ body {
 }
 
 .footer-text {
-    font-family: 'Helvetica Now Display Medium';
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 12px;
     line-height: 16px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     color: rgba(0, 0, 0, 0.3);
 }
 
@@ -464,5 +464,76 @@ body {
         height: auto;
         aspect-ratio: 160 / 330;
         max-width: 120px;
+    }
+}
+
+/* ============================================
+   MOBILE RESPONSIVE — 480px
+   ============================================ */
+
+@media screen and (max-width: 480px) {
+    .site-header {
+        padding: 0 24px;
+    }
+
+    .header-section {
+        padding: 16px 24px;
+    }
+
+    .container {
+        padding: 0 24px;
+    }
+
+    .main {
+        padding-top: 32px;
+        gap: 32px;
+    }
+
+    .hello-text {
+        font-size: 56px;
+        margin-left: -4px;
+    }
+
+    .image-3 {
+        gap: 8px;
+        padding: 16px 0;
+    }
+
+    .image-3 img {
+        width: calc(33.333% - 6px);
+        max-width: 100px;
+    }
+}
+
+/* ============================================
+   MOBILE RESPONSIVE — 390px
+   ============================================ */
+
+@media screen and (max-width: 390px) {
+    .site-header {
+        padding: 0 20px;
+    }
+
+    .header-section {
+        padding: 16px 20px;
+    }
+
+    .container {
+        padding: 0 20px;
+    }
+
+    .hello-text {
+        font-size: 52px;
+        margin-left: -4px;
+    }
+
+    .image-3 {
+        gap: 8px;
+        padding: 12px 0;
+    }
+
+    .image-3 img {
+        width: calc(33.333% - 4px);
+        max-width: 90px;
     }
 }
