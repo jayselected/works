@@ -126,7 +126,6 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0;
 }
 
 .location-greeting {
@@ -136,10 +135,7 @@ body {
     letter-spacing: -0.02em;
     color: #000000;
     white-space: nowrap;
-}
-
-.location-greeting::after {
-    content: '\00a0';
+    margin-right: 4px;
 }
 
 .header-datetime {
@@ -210,7 +206,18 @@ body {
 }
 
 /* ============================================
-   PROJECT SECTION
+   WORKS SECTION
+   ============================================ */
+
+.works {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+}
+
+/* ============================================
+   PROJECT ARTICLE
    ============================================ */
 
 .project {
@@ -221,7 +228,7 @@ body {
     padding-bottom: 32px;
 }
 
-.name {
+.project-meta {
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -235,7 +242,7 @@ body {
     color: #000000;
 }
 
-.extra {
+.project-details {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -244,53 +251,50 @@ body {
     overflow: hidden;
 }
 
-.deliverables,
-.applications {
+.project-deliverables,
+.project-applications {
     display: flex;
     flex-direction: column;
     gap: 6px;
     padding: 12px 16px;
 }
 
-.extra-divider {
+.details-divider {
     height: 1px;
     background-color: #f4f4f4;
     margin: 0 16px;
 }
 
-.extra-label {
+.details-label {
     font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 20px;
-    letter-spacing: normal;
     color: #000000;
 }
 
-.extra-text {
+.details-text {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 20px;
-    letter-spacing: normal;
     color: #000000;
 }
 
-.description {
+.project-description {
     width: 600px;
 }
 
-.description-text {
+.project-description-text {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 24px;
-    letter-spacing: normal;
     color: #000000;
 }
 
 /* ============================================
-   IMAGES SECTION
+   PROJECT IMAGES
    ============================================ */
 
-.images {
+.project-images {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -352,10 +356,10 @@ body {
 }
 
 /* ============================================
-   FOOTER SECTION
+   SITE FOOTER
    ============================================ */
 
-.footer {
+.site-footer {
     width: 100%;
     display: flex;
     align-items: center;
@@ -371,7 +375,7 @@ body {
 }
 
 /* ============================================
-   MOBILE RESPONSIVE - 768px
+   MOBILE RESPONSIVE — 768px
    ============================================ */
 
 @media screen and (max-width: 768px) {
@@ -384,7 +388,6 @@ body {
         height: auto;
         flex-direction: column;
         align-items: flex-start;
-        justify-content: center;
         gap: 4px;
     }
 
@@ -409,25 +412,21 @@ body {
         gap: 32px;
     }
 
-    .hello {
-        width: 100%;
-    }
-
     .hello-text {
         font-size: 72px;
         margin-left: -5px;
     }
 
     .project-title,
-    .extra-label,
-    .extra-text,
-    .description-text,
+    .details-label,
+    .details-text,
+    .project-description-text,
     .footer-text {
         font-size: 13px;
         line-height: 20px;
     }
 
-    .description {
+    .project-description {
         width: 100%;
     }
 
@@ -469,7 +468,7 @@ body {
 }
 
 /* ============================================
-   MOBILE RESPONSIVE - 480px
+   MOBILE RESPONSIVE — 480px
    ============================================ */
 
 @media screen and (max-width: 480px) {
@@ -507,7 +506,7 @@ body {
 }
 
 /* ============================================
-   MOBILE RESPONSIVE - 390px
+   MOBILE RESPONSIVE — 390px
    ============================================ */
 
 @media screen and (max-width: 390px) {
