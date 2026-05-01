@@ -42,7 +42,7 @@ body {
     top: 0;
     z-index: 100;
     width: 100%;
-    height: 108px;
+    height: 72px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -70,18 +70,8 @@ body {
 
 .header-center {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-}
-
-.header-avatar {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
 }
 
 .header-label {
@@ -93,11 +83,14 @@ body {
 }
 
 .header-name {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.01em;
     color: #000000;
+    padding: 6px 14px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 6px;
 }
 
 .header-contact {
@@ -409,6 +402,7 @@ body {
     }
 
     .header-label,
+    .header-name,
     .header-contact,
     .header-datetime,
     .location-greeting,
@@ -562,15 +556,7 @@ body {
 
     .header-center {
         justify-content: flex-start;
-        flex-direction: row;
-        align-items: center;
-        gap: 8px;
         flex: 1;
-    }
-
-    .header-avatar {
-        width: 28px;
-        height: 28px;
     }
 
     .header-section {
