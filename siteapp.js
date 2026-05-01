@@ -1,144 +1,272 @@
 /**
- * Portfolio Core Engine
- * Restored with full Emoji Weather Mapping and 1-second Clock logic.
+ * Portfolio Geo Data Display
+ * Vanilla JavaScript implementation with multi-language Hello TYPING animation
  */
+
+const HELLO_LANGUAGES = [
+    { text: 'Hello.', lang: 'en' },
+    { text: 'Hola.', lang: 'es' },
+    { text: 'Bonjour.', lang: 'fr' },
+    { text: 'Hallo.', lang: 'de' },
+    { text: 'Ciao.', lang: 'it' },
+    { text: 'Olá.', lang: 'pt' },
+    { text: 'Привет.', lang: 'ru' },
+    { text: '你好.', lang: 'zh' },
+    { text: 'こんにちは.', lang: 'ja' },
+    { text: '안녕하세요.', lang: 'ko' },
+    { text: 'नमस्ते.', lang: 'hi' },
+    { text: 'مرحبا.', lang: 'ar' },
+    { text: 'Hej.', lang: 'sv' },
+    { text: 'Hallo.', lang: 'nl' },
+    { text: 'Merhaba.', lang: 'tr' }
+];
+
+let currentLanguageIndex = 0;
+let typingTimeout = null;
+
+function typeText(element, text, callback) {
+    let charIndex = 0;
+    element.textContent = '';
+    element.style.opacity = '1';
+
+    function typeChar() {
+        if (charIndex < text.length) {
+            element.textContent += text.charAt(charIndex);
+            charIndex++;
+            typingTimeout = setTimeout(typeChar, 80);
+        } else {
+            typingTimeout = setTimeout(() => {
+                if (callback) callback();
+            }, 2000);
+        }
+    }
+
+    typeChar();
+}
+
+function clearText(element, callback) {
+    const text = element.textContent;
+    let charIndex = text.length;
+
+    function clearChar() {
+        if (charIndex > 0) {
+            element.textContent = text.substring(0, charIndex - 1);
+            charIndex--;
+            typingTimeout = setTimeout(clearChar, 40);
+        } else {
+            if (callback) callback();
+        }
+    }
+
+    clearChar();
+}
+
+function runTypingSequence() {
+    const el = document.getElementById('hello-text');
+    if (!el) return;
+
+    el.lang = HELLO_LANGUAGES[currentLanguageIndex].lang;
+    const text = HELLO_LANGUAGES[currentLanguageIndex].text;
+
+    typeText(el, text, () => {
+        clearText(el, () => {
+            currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
+            typingTimeout = setTimeout(runTypingSequence, 300);
+        });
+    });
+}
+
+function startHelloAnimation() {
+    runTypingSequence();
+}
 
 const CONFIG = {
     CACHE_DURATION: 3600000,
     WEATHER_API_KEY: 'd4fd2a9a46a63423027edc6d00dd9651',
     IPAPI_URL: 'https://ipapi.co/json/',
-    WEATHER_API_URL: 'https://api.openweathermap.org/data/2.5/weather',
-    HELLO_LANGS: [
-        { text: 'Hello.' }, { text: 'Hola.' }, { text: 'Bonjour.' },
-        { text: 'Hallo.' }, { text: 'Ciao.' }, { text: 'Olá.' },
-        { text: 'Привет.' }, { text: '你好.' }, { text: 'こんにちは.' },
-        { text: '안녕하세요.' }, { text: 'नमस्ते.' }, { text: 'مرحبا.' },
-        { text: 'Hej.' }, { text: 'Merhaba.' }
-    ]
+    WEATHER_API_URL: 'https://api.openweathermap.org/data/2.5/weather'
 };
 
-let currentLanguageIndex = 0;
-
-/* ============================================
-   HELLO ANIMATION
-   ============================================ */
-function runFadeSequence() {
-    const el = document.getElementById('hello-text');
-    if (!el) return;
-    el.classList.remove('visible');
-    setTimeout(() => {
-        el.textContent = CONFIG.HELLO_LANGS[currentLanguageIndex].text;
-        currentLanguageIndex = (currentLanguageIndex + 1) % CONFIG.HELLO_LANGS.length;
-        el.classList.add('visible');
-        setTimeout(runFadeSequence, 2400);
-    }, 800);
-}
-
-function startHelloAnimation() {
-    const el = document.getElementById('hello-text');
-    if (!el) return;
-    el.textContent = CONFIG.HELLO_LANGS[0].text;
-    currentLanguageIndex = 1;
-    setTimeout(() => {
-        el.classList.add('visible');
-        setTimeout(runFadeSequence, 2400);
-    }, 300);
-}
-
-/* ============================================
-   WEATHER & GEO DATA (Restored Emojis)
-   ============================================ */
 const CACHE_KEYS = {
-    LOC: 'geo_location_cache',
-    WEATH: 'geo_weather_cache',
-    TIME: 'geo_cache_timestamp'
+    LOCATION: 'geo_location_cache',
+    WEATHER: 'geo_weather_cache',
+    TIMESTAMP: 'geo_cache_timestamp'
 };
 
-function getWeatherInfo(condition) {
-    const map = {
-        'Clear': { label: 'Sunny', emoji: '☀️' },
-        'Clouds': { label: 'Cloudy', emoji: '☁️' },
-        'Rain': { label: 'Rain', emoji: '🌧️' },
-        'Drizzle': { label: 'Drizzle', emoji: '🌦️' },
-        'Thunderstorm': { label: 'Thunderstorm', emoji: '⛈️' },
-        'Snow': { label: 'Snow', emoji: '🌨️' },
-        'Mist': { label: 'Mist', emoji: '🌫️' },
-        'Fog': { label: 'Fog', emoji: '🌫️' },
-        'Haze': { label: 'Hazy', emoji: '🌫️' }
-    };
-    return map[condition] || { label: condition, emoji: '🌡️' };
+function isCacheValid() {
+    const timestamp = sessionStorage.getItem(CACHE_KEYS.TIMESTAMP);
+    if (!timestamp) return false;
+    return Date.now() - parseInt(timestamp, 10) < CONFIG.CACHE_DURATION;
 }
 
-async function initGeo() {
+function getCachedData(key) {
     try {
-        // Cache Logic
-        const ts = sessionStorage.getItem(CACHE_KEYS.TIME);
-        const isFresh = ts && (Date.now() - parseInt(ts) < CONFIG.CACHE_DURATION);
-        
-        let loc = isFresh ? JSON.parse(sessionStorage.getItem(CACHE_KEYS.LOC)) : null;
-        if (!loc) {
-            const res = await fetch(CONFIG.IPAPI_URL);
-            loc = await res.json();
-            sessionStorage.setItem(CACHE_KEYS.LOC, JSON.stringify(loc));
-            sessionStorage.setItem(CACHE_KEYS.TIME, Date.now().toString());
-        }
-
-        let weath = isFresh ? JSON.parse(sessionStorage.getItem(CACHE_KEYS.WEATH)) : null;
-        if (!weath && loc.latitude) {
-            const res = await fetch(`${CONFIG.WEATHER_API_URL}?lat=${loc.latitude}&lon=${loc.longitude}&appid=${CONFIG.WEATHER_API_KEY}&units=metric`);
-            weath = await res.json();
-            sessionStorage.setItem(CACHE_KEYS.WEATH, JSON.stringify(weath));
-        }
-
-        if (weath) {
-            const { label, emoji } = getWeatherInfo(weath.weather[0].main);
-            const temp = Math.round(weath.main.temp);
-            document.getElementById('location-weather-display').innerHTML = 
-                `${loc.city}, ${loc.country_code} ${temp}° ${label} ${emoji}`;
-        }
-    } catch (e) { console.error("Geo Error", e); }
+        const data = sessionStorage.getItem(key);
+        return data ? JSON.parse(data) : null;
+    } catch (e) {
+        console.warn('Cache read error:', e);
+        return null;
+    }
 }
 
-/* ============================================
-   DATE & TIME (Restored 1s Update)
-   ============================================ */
-function updateClock() {
-    const timeEl = document.getElementById('datetime-display');
-    const greetEl = document.getElementById('greeting-display');
-    if (!timeEl) return;
+function setCachedData(key, data) {
+    try {
+        sessionStorage.setItem(key, JSON.stringify(data));
+        sessionStorage.setItem(CACHE_KEYS.TIMESTAMP, Date.now().toString());
+    } catch (e) {
+        console.warn('Cache write error:', e);
+    }
+}
 
+async function fetchLocationData() {
+    try {
+        const response = await fetch(CONFIG.IPAPI_URL);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        setCachedData(CACHE_KEYS.LOCATION, data);
+        return data;
+    } catch (error) {
+        console.error('Location fetch error:', error);
+        const cached = getCachedData(CACHE_KEYS.LOCATION);
+        if (cached) return cached;
+        throw error;
+    }
+}
+
+function getWeatherDisplay(apiCondition) {
+    const conditionMap = {
+        'Clear':        { label: 'Sunny',        emoji: '☀️'  },
+        'Clouds':       { label: 'Cloudy',        emoji: '☁️'  },
+        'Rain':         { label: 'Rain',          emoji: '🌧️'  },
+        'Drizzle':      { label: 'Drizzle',       emoji: '🌦️'  },
+        'Thunderstorm': { label: 'Thunderstorm',  emoji: '⛈️'  },
+        'Snow':         { label: 'Snow',          emoji: '🌨️'  },
+        'Mist':         { label: 'Mist',          emoji: '🌫️'  },
+        'Fog':          { label: 'Fog',           emoji: '🌫️'  },
+        'Haze':         { label: 'Hazy',          emoji: '🌫️'  },
+        'Smoke':        { label: 'Smoke',         emoji: '🌫️'  },
+        'Dust':         { label: 'Dusty',         emoji: '🌫️'  },
+        'Sand':         { label: 'Sandstorm',     emoji: '🌫️'  },
+        'Ash':          { label: 'Volcanic Ash',  emoji: '🌫️'  },
+        'Squall':       { label: 'Windy',         emoji: '💨'  },
+        'Tornado':      { label: 'Tornado',       emoji: '🌪️'  }
+    };
+
+    return conditionMap[apiCondition] || { label: apiCondition, emoji: '🌡️' };
+}
+
+async function fetchWeatherData(lat, lon) {
+    try {
+        const url = `${CONFIG.WEATHER_API_URL}?lat=${lat}&lon=${lon}&appid=${CONFIG.WEATHER_API_KEY}&units=metric`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        setCachedData(CACHE_KEYS.WEATHER, data);
+        return data;
+    } catch (error) {
+        console.error('Weather fetch error:', error);
+        const cached = getCachedData(CACHE_KEYS.WEATHER);
+        if (cached) return cached;
+        throw error;
+    }
+}
+
+function formatCurrentDate() {
     const now = new Date();
-    const hours = now.getHours();
-    
-    let greeting = "Good Night";
-    if (hours >= 5 && hours < 12) greeting = "Good Morning";
-    else if (hours >= 12 && hours < 17) greeting = "Good Afternoon";
-    else if (hours >= 17 && hours < 22) greeting = "Good Evening";
-
-    greetEl.textContent = `${greeting}.`;
-    
-    const dateStr = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    timeEl.textContent = `${dateStr} ${timeStr}`;
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    return `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]}, ${now.getFullYear()}`;
 }
 
-/* ============================================
-   SCROLL EFFECT
-   ============================================ */
-function initScroll() {
-    const header = document.getElementById('site-header');
-    window.addEventListener('scroll', () => {
-        header.classList.toggle('scrolled', window.scrollY > 0);
-    }, { passive: true });
+function getGreeting() {
+    const hour = new Date().getHours();
+    if (hour >= 5  && hour < 12) return 'Good Morning';
+    if (hour >= 12 && hour < 17) return 'Good Afternoon';
+    if (hour >= 17 && hour < 22) return 'Good Evening';
+    return 'Good Night';
 }
 
-/* ============================================
-   BOOTSTRAP
-   ============================================ */
-document.addEventListener('DOMContentLoaded', () => {
-    startHelloAnimation();
-    initGeo();
-    initScroll();
-    updateClock();
-    setInterval(updateClock, 1000);
-});
+function formatCurrentTime() {
+    const now = new Date();
+    return [now.getHours(), now.getMinutes(), now.getSeconds()]
+        .map(n => String(n).padStart(2, '0'))
+        .join(':');
+}
+
+function updateDateTime() {
+    const element = document.getElementById('datetime-display');
+    if (element) {
+        element.innerHTML = `${formatCurrentDate()} ${formatCurrentTime()}`;
+    }
+}
+
+function updateGreeting() {
+    const element = document.getElementById('greeting-display');
+    if (element) {
+        element.innerHTML = `${getGreeting()}.`;
+    }
+}
+
+function showLoading() {
+    const el = document.getElementById('location-weather-display');
+    if (el) el.innerHTML = 'Loading...';
+}
+
+function showError(elementId, message) {
+    const element = document.getElementById(elementId);
+    if (element) element.innerHTML = message;
+}
+
+async function initializeGeoDisplay() {
+    try {
+        startHelloAnimation();
+        updateDateTime();
+        updateGreeting();
+        showLoading();
+
+        setInterval(() => {
+            updateDateTime();
+            updateGreeting();
+        }, 1000);
+
+        let locationData = isCacheValid() ? getCachedData(CACHE_KEYS.LOCATION) : null;
+        if (!locationData) locationData = await fetchLocationData();
+
+        if (locationData?.latitude && locationData?.longitude) {
+            try {
+                let weatherData = isCacheValid() ? getCachedData(CACHE_KEYS.WEATHER) : null;
+                if (!weatherData) weatherData = await fetchWeatherData(locationData.latitude, locationData.longitude);
+
+                const temp = Math.round(weatherData.main.temp * 10) / 10;
+                const { label, emoji } = getWeatherDisplay(weatherData.weather[0].main);
+
+                const locationText = [locationData.city, locationData.country_name]
+                    .filter(Boolean)
+                    .join(', ') || 'Unknown Location';
+
+                const el = document.getElementById('location-weather-display');
+                if (el) el.innerHTML = `${locationText} ${temp}° ${label} ${emoji}`;
+
+            } catch (weatherError) {
+                console.error('Weather error:', weatherError);
+                const locationText = [locationData.city, locationData.country_name]
+                    .filter(Boolean)
+                    .join(', ') || 'Unknown Location';
+                const el = document.getElementById('location-weather-display');
+                if (el) el.innerHTML = `${locationText} Weather Unavailable`;
+            }
+        } else {
+            showError('location-weather-display', 'Location Unavailable');
+        }
+
+    } catch (error) {
+        console.error('Initialization error:', error);
+        showError('location-weather-display', 'Location data unavailable');
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeGeoDisplay);
+} else {
+    initializeGeoDisplay();
+}
