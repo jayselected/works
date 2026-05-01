@@ -237,35 +237,75 @@ body {
 
 .project-title {
     font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.4;
+    font-size: 26px;
+    line-height: 1.2;
     letter-spacing: -0.01em;
     color: #000000;
 }
 
+/* ============================================
+   PROJECT DETAILS (accordion)
+   ============================================ */
+
 .project-details {
     display: flex;
     flex-direction: column;
+    gap: 6px;
     width: 100%;
-    border: 1px solid #f4f4f4;
+}
+
+.detail-item {
+    background-color: #f1f1ed;
+    border: 1px solid #ecece8;
     border-radius: 6px;
     overflow: hidden;
 }
 
-.details-line {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    letter-spacing: -0.01em;
-    color: rgba(38, 37, 30, 0.5);
+.detail-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 12px 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
 }
 
-.details-divider {
-    height: 1px;
-    background-color: #f4f4f4;
-    margin: 0 16px;
+.detail-label {
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: #777671;
 }
+
+.detail-chevron {
+    display: block;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.detail-item.is-closed .detail-chevron {
+    transform: rotate(-90deg);
+}
+
+.detail-body {
+    padding: 0 16px 12px;
+}
+
+.detail-value {
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    color: #777671;
+}
+
+/* ============================================
+   PROJECT DESCRIPTION
+   ============================================ */
 
 .project-description {
     width: 600px;
@@ -409,9 +449,8 @@ body {
         margin-left: -5px;
     }
 
-    .project-title,
-    .details-line {
-        font-size: 13px;
+    .project-title {
+        font-size: 22px;
     }
 
     .project-description-text {
@@ -488,6 +527,10 @@ body {
     .hello-text {
         font-size: 56px;
         margin-left: -4px;
+    }
+
+    .project-title {
+        font-size: 20px;
     }
 
     .project-description-text {
