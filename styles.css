@@ -1,6 +1,4 @@
-/* ============================================
-   CUSTOM FONTS
-   ============================================ */
+/* Custom Fonts */
 @font-face {
     font-family: 'Helvetica Now Display Regular';
     src: url('fonts/Helvetica_Now_Display.ttf') format('truetype');
@@ -19,9 +17,7 @@
     font-style: normal;
 }
 
-/* ============================================
-   RESET & BASE
-   ============================================ */
+/* Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
@@ -29,40 +25,41 @@
 }
 
 body {
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #FFFFFF;
     display: flex;
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    background-color: #FFFFFF;
-    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    color: #000000;
-    -webkit-font-smoothing: antialiased;
 }
 
 /* ============================================
-   SITE HEADER (Sticky Navigation)
+   SITE HEADER
    ============================================ */
+
 .site-header {
     position: sticky;
     top: 0;
     z-index: 100;
+    width: 100%;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
-    height: 72px;
     padding: 0 120px;
     background-color: #FFFFFF;
-    transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease, border-bottom-color 0.3s ease;
+    border-bottom: 1px solid transparent;
 }
 
 .site-header.scrolled {
     background-color: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom-color: rgba(0, 0, 0, 0.06);
 }
 
-.header-left, 
+.header-left,
 .header-right {
     flex: 1;
     display: flex;
@@ -80,24 +77,26 @@ body {
 }
 
 .header-label {
-    font-family: 'Helvetica Now Display Regular', sans-serif;
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.02em;
+    color: #000000;
 }
 
 .header-name {
-    padding: 6px 14px;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    border-radius: 6px;
-    font-family: 'Helvetica Now Display Medium', sans-serif;
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.02em;
+    color: #000000;
+    padding: 6px 14px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
 }
 
 .header-contact {
-    font-family: 'Helvetica Now Display Regular', sans-serif;
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.02em;
@@ -111,170 +110,164 @@ body {
 }
 
 /* ============================================
-   GEO SECTION (Greeting + Time + Weather)
+   CONTAINER
    ============================================ */
-.header-section {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+
+.container {
     width: 100%;
-    height: 64px;
+    max-width: 1440px;
     padding: 0 120px;
-    background-color: #FFFFFF;
+    display: flex;
+    justify-content: center;
+}
+
+/* Main Auto Layout - 648px width, 32px vertical gap, 64px top padding */
+.main {
+    width: 648px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding-top: 64px;
+}
+
+/* ============================================
+   HELLO SECTION
+   ============================================ */
+
+.hello {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 203px;
+}
+
+.hello-text {
+    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 128px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+    margin-left: -12px;
+    opacity: 0;
+    white-space: nowrap;
+}
+
+/* ============================================
+   HEADER SECTION (datetime + location)
+   ============================================ */
+
+.header-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.header-datetime {
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.02em;
+    color: #000000;
 }
 
 .location {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 0;
 }
 
-.location-greeting {
-    margin-right: 4px;
-    font-family: 'Helvetica Now Display Regular', sans-serif;
-    font-size: 16px;
-    line-height: 24px;
-    letter-spacing: -0.02em;
-    white-space: nowrap;
-}
-
-.header-datetime, 
+.location-greeting,
 .location-weather {
-    font-family: 'Helvetica Now Display Regular', sans-serif;
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 24px;
     letter-spacing: -0.02em;
-    white-space: nowrap;
+    color: #000000;
 }
 
 /* ============================================
-   LAYOUT CONTAINER
+   DIVIDE SECTION
    ============================================ */
-.container {
+
+.divide {
+    width: 100%;
     display: flex;
     justify-content: center;
-    width: 100%;
-    max-width: 1440px;
-    padding: 0 120px;
-}
-
-.main {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-    width: 648px;
-    padding-top: 32px;
-}
-
-/* ============================================
-   HELLO SECTION (Fade Animation)
-   ============================================ */
-.hello {
-    display: flex;
     align-items: center;
-    justify-content: flex-start;
-    width: 100%;
 }
 
-.hello-text {
-    margin: 0 0 0 -12px;
-    padding: 0;
-    font-family: 'Helvetica Now Display Bold', sans-serif;
-    font-size: 128px;
-    line-height: 1;
-    letter-spacing: -0.02em;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.8s ease;
-}
-
-.hello-text.visible {
-    opacity: 1;
+.divide-text {
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    color: #000000;
 }
 
 /* ============================================
-   WORKS & PROJECT ARTICLES
+   PROJECT SECTION
    ============================================ */
-.works {
-    display: flex;
-    flex-direction: column;
-    gap: 64px;
-    width: 100%;
-}
 
 .project {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 16px;
-    width: 100%;
     padding-bottom: 32px;
 }
 
-.project-meta {
+.name {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
 .project-title {
-    font-family: 'Helvetica Now Display Medium', sans-serif;
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 20px;
     letter-spacing: -0.02em;
+    color: #000000;
 }
 
-.project-details {
+.extra {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    border: 1px solid #f4f4f4;
-    border-radius: 6px;
-    overflow: hidden;
+    gap: 0;
 }
 
-.project-deliverables, 
-.project-applications {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 12px 16px;
-}
-
-.details-divider {
-    height: 1px;
-    margin: 0 16px;
-    background-color: #f4f4f4;
-}
-
-.details-label {
-    font-family: 'Helvetica Now Display Medium', sans-serif;
+.extra-text {
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 20px;
+    line-height: 24px;
+    letter-spacing: normal;
+    color: #000000;
 }
 
-.details-text {
-    font-family: 'Helvetica Now Display Regular', sans-serif;
-    font-size: 14px;
-    line-height: 20px;
-}
-
-.project-description {
+.description {
     width: 600px;
 }
 
-.project-description-text {
-    font-family: 'Helvetica Now Display Regular', sans-serif;
+.description-text {
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 24px;
+    letter-spacing: normal;
+    color: #000000;
 }
 
 /* ============================================
-   PROJECT IMAGES (Fixed Dimensions Preserved)
+   IMAGES SECTION
    ============================================ */
-.project-images {
+
+.images {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 16px;
-    width: 100%;
 }
 
 .image-1 {
@@ -290,24 +283,24 @@ body {
 }
 
 .image-2 {
+    width: 100%;
     display: flex;
     flex-direction: row;
     gap: 16px;
-    width: 100%;
 }
 
-.image-box-a, 
+.image-box-a,
 .image-box-b {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 316px;
     height: 398px;
     background-color: rgba(242, 242, 242, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
 }
 
-.image-box-a img, 
+.image-box-a img,
 .image-box-b img {
     width: 160px;
     height: 330px;
@@ -315,14 +308,14 @@ body {
 }
 
 .image-3 {
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 32px;
-    width: 100%;
-    padding: 32px 0;
     background-color: rgba(242, 242, 242, 0.5);
+    padding: 32px 0;
 }
 
 .image-3 img {
@@ -332,17 +325,18 @@ body {
 }
 
 /* ============================================
-   SITE FOOTER
+   FOOTER SECTION
    ============================================ */
-.site-footer {
+
+.footer {
+    width: 100%;
     display: flex;
     align-items: center;
-    width: 100%;
     padding: 32px 0;
 }
 
 .footer-text {
-    font-family: 'Helvetica Now Display Medium', sans-serif;
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 12px;
     line-height: 16px;
     letter-spacing: -0.02em;
@@ -350,18 +344,171 @@ body {
 }
 
 /* ============================================
-   MOBILE RESPONSIVE (Preserved breakpoints)
+   MOBILE RESPONSIVE - 768px
    ============================================ */
+
 @media screen and (max-width: 768px) {
-    .site-header { padding: 0 32px; }
-    .header-section { height: auto; flex-direction: column; align-items: flex-start; gap: 4px; padding: 16px 32px; }
-    .container { padding: 0 32px; }
-    .main { width: 100%; max-width: 100%; }
-    .hello-text { font-size: 72px; margin-left: -5px; }
-    .project-description { width: 100%; }
-    .image-1 { height: auto; aspect-ratio: 648 / 398; }
-    .image-2 { flex-direction: column; }
-    .image-box-a, .image-box-b { width: 100%; height: auto; aspect-ratio: 316 / 398; }
-    .image-3 { gap: 12px; padding: 20px 0; }
-    .image-3 img { width: calc(33.333% - 8px); height: auto; aspect-ratio: 160 / 330; }
+    .site-header {
+        padding: 0 32px;
+    }
+
+    .container {
+        padding: 0 32px;
+    }
+
+    .main {
+        width: 100%;
+        max-width: 100%;
+        padding-top: 48px;
+    }
+
+    .hello-text {
+        font-size: 64px;
+        margin-left: -5px;
+    }
+
+    .header-section {
+        gap: 24px;
+    }
+
+    .header-datetime {
+        font-size: 14px;
+        line-height: 18px;
+    }
+
+    .location-greeting,
+    .location-weather {
+        font-size: 14px;
+        line-height: 20px;
+    }
+
+    .description {
+        width: 100%;
+    }
+
+    .image-1 {
+        height: auto;
+        aspect-ratio: 648 / 398;
+    }
+
+    .image-2 {
+        flex-direction: column;
+    }
+
+    .image-box-a,
+    .image-box-b {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 316 / 398;
+    }
+
+    .image-box-a img,
+    .image-box-b img {
+        width: auto;
+        height: auto;
+        max-width: 40%;
+        max-height: 80%;
+    }
+
+    .image-3 {
+        gap: 12px;
+        padding: 20px 0;
+    }
+
+    .image-3 img {
+        width: calc(33.333% - 8px);
+        height: auto;
+        aspect-ratio: 160 / 330;
+        max-width: 120px;
+    }
+}
+
+/* ============================================
+   MOBILE RESPONSIVE - 480px
+   ============================================ */
+
+@media screen and (max-width: 480px) {
+    .site-header {
+        padding: 0 24px;
+    }
+
+    .header-label {
+        font-size: 13px;
+    }
+
+    .header-name {
+        font-size: 13px;
+        padding: 5px 10px;
+    }
+
+    .header-contact {
+        font-size: 13px;
+    }
+
+    .container {
+        padding: 0 24px;
+    }
+
+    .main {
+        padding-top: 40px;
+        gap: 24px;
+    }
+
+    .hello-text {
+        font-size: 64px;
+        margin-left: -4px;
+    }
+
+    .header-section {
+        gap: 20px;
+    }
+
+    .location-greeting,
+    .location-weather {
+        font-size: 12px;
+        line-height: 16px;
+    }
+
+    .extra-text {
+        font-size: 12px;
+        line-height: 20px;
+    }
+
+    .project {
+        gap: 16px;
+    }
+
+    .image-3 {
+        gap: 8px;
+        padding: 16px 0;
+    }
+
+    .image-3 img {
+        width: calc(33.333% - 6px);
+        max-width: 100px;
+    }
+}
+
+/* ============================================
+   MOBILE RESPONSIVE - 390px
+   ============================================ */
+
+@media screen and (max-width: 390px) {
+    .site-header {
+        padding: 0 20px;
+    }
+
+    .container {
+        padding: 0 20px;
+    }
+
+    .image-3 {
+        gap: 8px;
+        padding: 12px 0;
+    }
+
+    .image-3 img {
+        width: calc(33.333% - 4px);
+        max-width: 90px;
+    }
 }
