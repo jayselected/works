@@ -1,28 +1,4 @@
-/* ============================================
-   VARIABLES & RESET
-   ============================================ */
-:root {
-    --bg-color: #FFFFFF;
-    --text-primary: #000000;
-    --text-secondary: rgba(0, 0, 0, 0.3);
-    --border-color: rgba(0, 0, 0, 0.12);
-    --divider-color: #f4f4f4;
-    --accent-bg: rgba(242, 242, 242, 0.5);
-    
-    --font-regular: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    --font-medium: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    --font-bold: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    
-    --container-max-width: 648px;
-    --transition-speed: 0.3s;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+/* Custom Fonts */
 @font-face {
     font-family: 'Helvetica Now Display Regular';
     src: url('fonts/Helvetica_Now_Display.ttf') format('truetype');
@@ -35,19 +11,29 @@
 
 @font-face {
     font-family: 'Helvetica Now Display Bold';
-    src: url('fonts/Helvetica_Now_Display_Bold.ttf') format('truetype');
+    src: url('fonts/Helvetica_Now_Display.ttf') format('truetype');
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    font-family: var(--font-medium);
-    background-color: var(--bg-color);
-    color: var(--text-primary);
-    line-height: 1.5;
+    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #FFFFFF;
+    color: #000000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
     -webkit-font-smoothing: antialiased;
 }
 
 /* ============================================
-   NAVIGATION (Sticky Header)
+   SITE HEADER
    ============================================ */
 .site-header {
     position: sticky;
@@ -59,8 +45,8 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 0 120px;
-    background-color: var(--bg-color);
-    transition: background-color var(--transition-speed), backdrop-filter var(--transition-speed);
+    background-color: #FFFFFF;
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
 }
 
 .site-header.scrolled {
@@ -69,62 +55,65 @@ body {
     -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
-.header-left, .header-right { flex: 1; display: flex; }
+.header-left, .header-right { flex: 1; display: flex; align-items: center; }
 .header-right { justify-content: flex-end; }
 
-.header-label, .header-contact {
-    font-family: var(--font-regular);
+.header-label {
+    font-family: 'Helvetica Now Display Regular', sans-serif;
     font-size: 16px;
     letter-spacing: -0.02em;
 }
 
 .header-name {
-    padding: 6px 14px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
+    font-family: 'Helvetica Now Display Medium', sans-serif;
     font-size: 16px;
+    padding: 6px 14px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 6px;
 }
 
 .header-contact {
+    font-family: 'Helvetica Now Display Regular', sans-serif;
+    font-size: 16px;
     text-decoration: none;
-    color: var(--text-primary);
+    color: #000000;
     transition: opacity 0.2s ease;
 }
 
 .header-contact:hover { opacity: 0.5; }
 
 /* ============================================
-   GEO-DATA SECTION
+   GEO SECTION
    ============================================ */
 .header-section {
     width: 100%;
     display: flex;
     justify-content: space-between;
     padding: 16px 120px;
-    background-color: var(--bg-color);
+    background-color: #FFFFFF;
 }
 
-.location-info { display: flex; gap: 4px; }
+.location-group { display: flex; gap: 4px; }
 
 .location-greeting, .header-datetime, .location-weather {
-    font-family: var(--font-regular);
+    font-family: 'Helvetica Now Display Regular', sans-serif;
     font-size: 16px;
     letter-spacing: -0.02em;
 }
 
 /* ============================================
-   LAYOUT CONTAINER
+   CONTAINER & MAIN
    ============================================ */
 .container {
     width: 100%;
+    max-width: 1440px;
+    padding: 0 120px;
     display: flex;
     justify-content: center;
-    padding: 0 120px;
 }
 
 .main {
-    width: 100%;
-    max-width: var(--container-max-width);
+    width: 648px;
     display: flex;
     flex-direction: column;
     gap: 64px;
@@ -132,10 +121,10 @@ body {
 }
 
 /* ============================================
-   HELLO ANIMATION
+   HELLO SECTION
    ============================================ */
 .hello-text {
-    font-family: var(--font-bold);
+    font-family: 'Helvetica Now Display Bold', sans-serif;
     font-size: 128px;
     line-height: 1;
     letter-spacing: -0.02em;
@@ -147,22 +136,22 @@ body {
 .hello-text.visible { opacity: 1; }
 
 /* ============================================
-   PROJECT BLOCKS (Duplicatable)
+   PROJECT ARTICLE
    ============================================ */
 .project {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 24px;
-    padding-bottom: 64px;
 }
 
 .project-title {
+    font-family: 'Helvetica Now Display Medium', sans-serif;
     font-size: 16px;
-    margin-bottom: 16px;
 }
 
 .project-details {
-    border: 1px solid var(--divider-color);
+    border: 1px solid #f4f4f4;
     border-radius: 6px;
     overflow: hidden;
 }
@@ -171,70 +160,85 @@ body {
     padding: 12px 16px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
 }
 
 .details-divider {
     height: 1px;
-    background-color: var(--divider-color);
+    background-color: #f4f4f4;
     margin: 0 16px;
 }
 
-.details-label { font-size: 14px; color: var(--text-primary); }
-.details-text { font-family: var(--font-regular); font-size: 14px; }
+.details-label {
+    font-family: 'Helvetica Now Display Medium', sans-serif;
+    font-size: 14px;
+}
+
+.details-text {
+    font-family: 'Helvetica Now Display Regular', sans-serif;
+    font-size: 14px;
+}
 
 .project-description-text {
-    font-family: var(--font-regular);
+    font-family: 'Helvetica Now Display Regular', sans-serif;
     font-size: 14px;
-    line-height: 1.7;
+    line-height: 24px;
     max-width: 600px;
 }
 
 /* ============================================
-   IMAGE GRID SYSTEM
+   PROJECT IMAGES
    ============================================ */
 .project-images { display: flex; flex-direction: column; gap: 16px; }
 
-.img-full { width: 100%; height: auto; object-fit: cover; }
+.img-full { width: 100%; height: 398px; object-fit: cover; }
 
 .image-row-2 { display: flex; gap: 16px; }
 
 .img-box-half {
-    flex: 1;
-    aspect-ratio: 316 / 398;
-    background-color: var(--accent-bg);
+    width: 316px;
+    height: 398px;
+    background-color: rgba(242, 242, 242, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
 }
 
-.img-box-half img { width: 50%; height: auto; object-fit: contain; }
+.img-box-half img { width: 160px; height: 330px; object-fit: cover; }
 
 .image-row-3 {
+    width: 100%;
     display: flex;
     justify-content: center;
     gap: 32px;
-    background-color: var(--accent-bg);
-    padding: 32px;
+    background-color: rgba(242, 242, 242, 0.5);
+    padding: 32px 0;
 }
 
-.image-row-3 img { width: 25%; height: auto; }
+.image-row-3 img { width: 160px; height: 330px; object-fit: cover; }
 
 /* ============================================
    FOOTER
    ============================================ */
-.site-footer { padding: 64px 0 32px; }
-.footer-text { font-size: 12px; color: var(--text-secondary); }
+.site-footer { padding: 32px 0; }
+.footer-text {
+    font-family: 'Helvetica Now Display Medium', sans-serif;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.3);
+}
 
 /* ============================================
-   RESPONSIVE (Mobile Optimized)
+   MOBILE RESPONSIVE
    ============================================ */
-@media (max-width: 768px) {
-    .site-header, .header-section, .container { padding: 0 24px; }
+@media screen and (max-width: 768px) {
+    .site-header, .header-section, .container { padding: 0 32px; }
     .header-section { flex-direction: column; gap: 4px; padding-top: 16px; }
-    .hello-text { font-size: 64px; margin-left: -4px; }
+    .main { width: 100%; }
+    .hello-text { font-size: 72px; margin-left: -5px; }
+    .img-full { height: auto; aspect-ratio: 648 / 398; }
     .image-row-2 { flex-direction: column; }
-    .image-row-3 { gap: 12px; padding: 16px; }
-    .image-row-3 img { width: 30%; }
+    .img-box-half { width: 100%; height: auto; aspect-ratio: 316 / 398; }
+    .image-row-3 { gap: 12px; padding: 20px 0; }
+    .image-row-3 img { width: calc(33.333% - 8px); height: auto; aspect-ratio: 160 / 330; }
 }
