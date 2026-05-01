@@ -1,83 +1,65 @@
 /**
  * Portfolio Geo Data Display
- * Vanilla JavaScript implementation with multi-language Hello TYPING animation
+ * Vanilla JavaScript implementation with multi-language Hello FADE animation
  */
 
 const HELLO_LANGUAGES = [
-    { text: 'Hello.', lang: 'en' },
-    { text: 'Hola.', lang: 'es' },
-    { text: 'Bonjour.', lang: 'fr' },
-    { text: 'Hallo.', lang: 'de' },
-    { text: 'Ciao.', lang: 'it' },
-    { text: 'Olá.', lang: 'pt' },
-    { text: 'Привет.', lang: 'ru' },
-    { text: '你好.', lang: 'zh' },
-    { text: 'こんにちは.', lang: 'ja' },
-    { text: '안녕하세요.', lang: 'ko' },
-    { text: 'नमस्ते.', lang: 'hi' },
-    { text: 'مرحبا.', lang: 'ar' },
-    { text: 'Hej.', lang: 'sv' },
-    { text: 'Hallo.', lang: 'nl' },
-    { text: 'Merhaba.', lang: 'tr' }
+    { text: 'Hello.' },
+    { text: 'Hola.' },
+    { text: 'Bonjour.' },
+    { text: 'Hallo.' },
+    { text: 'Ciao.' },
+    { text: 'Olá.' },
+    { text: 'Привет.' },
+    { text: '你好.' },
+    { text: 'こんにちは.' },
+    { text: '안녕하세요.' },
+    { text: 'नमस्ते.' },
+    { text: 'مرحبا.' },
+    { text: 'Hej.' },
+    { text: 'Merhaba.' }
 ];
 
 let currentLanguageIndex = 0;
-let typingTimeout = null;
 
-function typeText(element, text, callback) {
-    let charIndex = 0;
-    element.textContent = '';
-    element.style.opacity = '1';
-
-    function typeChar() {
-        if (charIndex < text.length) {
-            element.textContent += text.charAt(charIndex);
-            charIndex++;
-            typingTimeout = setTimeout(typeChar, 80);
-        } else {
-            typingTimeout = setTimeout(() => {
-                if (callback) callback();
-            }, 2000);
-        }
-    }
-
-    typeChar();
-}
-
-function clearText(element, callback) {
-    const text = element.textContent;
-    let charIndex = text.length;
-
-    function clearChar() {
-        if (charIndex > 0) {
-            element.textContent = text.substring(0, charIndex - 1);
-            charIndex--;
-            typingTimeout = setTimeout(clearChar, 40);
-        } else {
-            if (callback) callback();
-        }
-    }
-
-    clearChar();
-}
-
-function runTypingSequence() {
+/**
+ * Fade the hello text to the next language
+ */
+function runFadeSequence() {
     const el = document.getElementById('hello-text');
     if (!el) return;
 
-    el.lang = HELLO_LANGUAGES[currentLanguageIndex].lang;
-    const text = HELLO_LANGUAGES[currentLanguageIndex].text;
+    // Fade out
+    el.classList.remove('visible');
 
-    typeText(el, text, () => {
-        clearText(el, () => {
-            currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
-            typingTimeout = setTimeout(runTypingSequence, 300);
-        });
-    });
+    setTimeout(() => {
+        // Swap text while invisible
+        el.textContent = HELLO_LANGUAGES[currentLanguageIndex].text;
+        currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
+
+        // Fade in
+        el.classList.add('visible');
+
+        // Hold then repeat
+        setTimeout(runFadeSequence, 2400);
+    }, 800);
 }
 
+/**
+ * Start the Hello language fade animation
+ */
 function startHelloAnimation() {
-    runTypingSequence();
+    const el = document.getElementById('hello-text');
+    if (!el) return;
+
+    el.textContent = HELLO_LANGUAGES[currentLanguageIndex].text;
+    currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
+
+    // Small delay on first load so the page settles before fading in
+    setTimeout(() => {
+        el.classList.add('visible');
+        setTimeout(runFadeSequence, 2400);
+    }, 300);
 }
 
 const CONFIG = {
@@ -135,23 +117,22 @@ async function fetchLocationData() {
 
 function getWeatherDisplay(apiCondition) {
     const conditionMap = {
-        'Clear':        { label: 'Sunny',        emoji: '☀️'  },
-        'Clouds':       { label: 'Cloudy',        emoji: '☁️'  },
-        'Rain':         { label: 'Rain',          emoji: '🌧️'  },
-        'Drizzle':      { label: 'Drizzle',       emoji: '🌦️'  },
-        'Thunderstorm': { label: 'Thunderstorm',  emoji: '⛈️'  },
-        'Snow':         { label: 'Snow',          emoji: '🌨️'  },
-        'Mist':         { label: 'Mist',          emoji: '🌫️'  },
-        'Fog':          { label: 'Fog',           emoji: '🌫️'  },
-        'Haze':         { label: 'Hazy',          emoji: '🌫️'  },
-        'Smoke':        { label: 'Smoke',         emoji: '🌫️'  },
-        'Dust':         { label: 'Dusty',         emoji: '🌫️'  },
-        'Sand':         { label: 'Sandstorm',     emoji: '🌫️'  },
-        'Ash':          { label: 'Volcanic Ash',  emoji: '🌫️'  },
-        'Squall':       { label: 'Windy',         emoji: '💨'  },
-        'Tornado':      { label: 'Tornado',       emoji: '🌪️'  }
+        'Clear':        { label: 'Sunny',        emoji: '☀️' },
+        'Clouds':       { label: 'Cloudy',        emoji: '☁️' },
+        'Rain':         { label: 'Rain',          emoji: '🌧️' },
+        'Drizzle':      { label: 'Drizzle',       emoji: '🌦️' },
+        'Thunderstorm': { label: 'Thunderstorm',  emoji: '⛈️' },
+        'Snow':         { label: 'Snow',          emoji: '🌨️' },
+        'Mist':         { label: 'Mist',          emoji: '🌫️' },
+        'Fog':          { label: 'Fog',           emoji: '🌫️' },
+        'Haze':         { label: 'Hazy',          emoji: '🌫️' },
+        'Smoke':        { label: 'Smoke',         emoji: '🌫️' },
+        'Dust':         { label: 'Dusty',         emoji: '🌫️' },
+        'Sand':         { label: 'Sandstorm',     emoji: '🌫️' },
+        'Ash':          { label: 'Volcanic Ash',  emoji: '🌫️' },
+        'Squall':       { label: 'Windy',         emoji: '💨' },
+        'Tornado':      { label: 'Tornado',       emoji: '🌪️' }
     };
-
     return conditionMap[apiCondition] || { label: apiCondition, emoji: '🌡️' };
 }
 
