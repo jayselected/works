@@ -177,10 +177,10 @@ body {
 
 .hello {
     width: 100%;
-    min-height: 203px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    padding: 48px 0;
 }
 
 .hello-text {
@@ -374,9 +374,21 @@ body {
     .header-section {
         padding: 0 32px;
         height: auto;
-        min-height: 64px;
+        min-height: 56px;
         flex-wrap: wrap;
-        gap: 4px;
+        gap: 2px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+
+    .header-label,
+    .header-name,
+    .header-contact,
+    .header-datetime,
+    .location-greeting,
+    .location-weather {
+        font-size: 13px;
+        line-height: 20px;
     }
 
     .container {
@@ -387,15 +399,25 @@ body {
         width: 100%;
         max-width: 100%;
         padding-top: 32px;
+        gap: 24px;
     }
 
     .hello {
-        min-height: 120px;
+        padding: 32px 0;
     }
 
     .hello-text {
         font-size: 72px;
         margin-left: -5px;
+    }
+
+    .project-title,
+    .extra-label,
+    .extra-text,
+    .description-text,
+    .footer-text {
+        font-size: 13px;
+        line-height: 20px;
     }
 
     .description {
@@ -448,27 +470,12 @@ body {
         padding: 0 24px;
     }
 
-    .header-label {
-        font-size: 13px;
-    }
-
-    .header-name {
-        font-size: 13px;
-        padding: 5px 10px;
-    }
-
-    .header-contact {
-        font-size: 13px;
-    }
-
     .header-section {
-        padding: 0 24px;
+        padding: 12px 24px;
         flex-direction: column;
         align-items: flex-start;
         height: auto;
-        min-height: 64px;
         gap: 2px;
-        justify-content: center;
     }
 
     .container {
@@ -481,27 +488,12 @@ body {
     }
 
     .hello {
-        min-height: 90px;
+        padding: 32px 0;
     }
 
     .hello-text {
         font-size: 56px;
         margin-left: -4px;
-    }
-
-    .location-greeting,
-    .location-weather {
-        font-size: 12px;
-        line-height: 16px;
-    }
-
-    .extra-text {
-        font-size: 12px;
-        line-height: 20px;
-    }
-
-    .project {
-        gap: 16px;
     }
 
     .image-3 {
@@ -525,11 +517,20 @@ body {
     }
 
     .header-section {
-        padding: 0 20px;
+        padding: 12px 20px;
     }
 
     .container {
         padding: 0 20px;
+    }
+
+    .hello {
+        padding: 28px 0;
+    }
+
+    .hello-text {
+        font-size: 52px;
+        margin-left: -4px;
     }
 
     .image-3 {
