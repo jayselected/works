@@ -43,9 +43,31 @@
                     <div class="project-meta">
                         <p class="project-title">Cine Asia</p>
                         <div class="project-details">
-                            <p class="details-line">Deliverables: Brand Identity · Product Design</p>
-                            <div class="details-divider"></div>
-                            <p class="details-line">Applications: Adobe Photoshop · Adobe Illustrator · Figma</p>
+
+                            <div class="detail-item" id="detail-deliverables">
+                                <button class="detail-header" aria-expanded="true" aria-controls="detail-deliverables-body">
+                                    <span class="detail-label">Deliverables</span>
+                                    <svg class="detail-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                                        <path d="M4 6L8 10L12 6" stroke="#777671" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                                <div class="detail-body" id="detail-deliverables-body">
+                                    <p class="detail-value">Brand Identity · Product Design</p>
+                                </div>
+                            </div>
+
+                            <div class="detail-item" id="detail-applications">
+                                <button class="detail-header" aria-expanded="true" aria-controls="detail-applications-body">
+                                    <span class="detail-label">Applications</span>
+                                    <svg class="detail-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                                        <path d="M4 6L8 10L12 6" stroke="#777671" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                                <div class="detail-body" id="detail-applications-body">
+                                    <p class="detail-value">Adobe Photoshop · Adobe Illustrator · Figma</p>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
@@ -84,6 +106,7 @@
 
     <script src="siteapp.js"></script>
     <script>
+        // Scroll handler for sticky header
         const header = document.getElementById('site-header');
         const headerSection = document.getElementById('header-section');
         window.addEventListener('scroll', () => {
@@ -95,6 +118,32 @@
                 headerSection.classList.remove('scrolled');
             }
         }, { passive: true });
+
+        // Detail accordion toggle
+        function initDetailItems() {
+            const isMobile = window.innerWidth < 768;
+            document.querySelectorAll('.detail-item').forEach(item => {
+                const btn = item.querySelector('.detail-header');
+                const body = item.querySelector('.detail-body');
+                const isOpen = !isMobile;
+                btn.setAttribute('aria-expanded', isOpen);
+                body.style.display = isOpen ? 'block' : 'none';
+                item.classList.toggle('is-closed', !isOpen);
+            });
+        }
+
+        document.querySelectorAll('.detail-header').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.closest('.detail-item');
+                const body = item.querySelector('.detail-body');
+                const isOpen = btn.getAttribute('aria-expanded') === 'true';
+                btn.setAttribute('aria-expanded', !isOpen);
+                body.style.display = isOpen ? 'none' : 'block';
+                item.classList.toggle('is-closed', isOpen);
+            });
+        });
+
+        initDetailItems();
     </script>
 
 </body>
