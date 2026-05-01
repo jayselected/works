@@ -73,7 +73,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 8px;
 }
 
 .header-avatar {
