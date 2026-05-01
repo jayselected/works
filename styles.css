@@ -131,7 +131,7 @@ body {
 .location-greeting {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 24px;
+    line-height: 1.5;
     letter-spacing: -0.01em;
     color: #000000;
     white-space: nowrap;
@@ -141,7 +141,7 @@ body {
 .header-datetime {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 24px;
+    line-height: 1.5;
     letter-spacing: -0.01em;
     color: #000000;
     white-space: nowrap;
@@ -150,7 +150,7 @@ body {
 .location-weather {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 24px;
+    line-height: 1.5;
     letter-spacing: -0.01em;
     color: #000000;
     white-space: nowrap;
@@ -232,13 +232,13 @@ body {
 .project-meta {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 10px;
 }
 
 .project-title {
     font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 20px;
+    line-height: 1.4;
     letter-spacing: -0.01em;
     color: #000000;
 }
@@ -246,40 +246,19 @@ body {
 .project-details {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    border: 1px solid #f4f4f4;
-    border-radius: 6px;
-    overflow: hidden;
+    gap: 4px;
 }
 
-.project-deliverables,
-.project-applications {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 12px 16px;
-}
-
-.details-divider {
-    height: 1px;
-    background-color: #f4f4f4;
-    margin: 0 16px;
+.details-line {
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+    color: rgba(38, 37, 30, 0.5);
 }
 
 .details-label {
     font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 20px;
-    letter-spacing: -0.01em;
-    color: #000000;
-}
-
-.details-text {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 20px;
-    letter-spacing: -0.01em;
-    color: #000000;
 }
 
 .project-description {
@@ -288,8 +267,8 @@ body {
 
 .project-description-text {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 24px;
+    font-size: 16px;
+    line-height: 1.65;
     letter-spacing: -0.01em;
     color: #000000;
 }
@@ -373,7 +352,7 @@ body {
 .footer-text {
     font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 12px;
-    line-height: 16px;
+    line-height: 1.4;
     letter-spacing: -0.01em;
     color: rgba(0, 0, 0, 0.3);
 }
@@ -402,7 +381,6 @@ body {
     .location-greeting,
     .location-weather {
         font-size: 13px;
-        line-height: 20px;
     }
 
     .container {
@@ -426,12 +404,13 @@ body {
     }
 
     .project-title,
-    .details-label,
-    .details-text,
-    .project-description-text,
-    .footer-text {
-        font-size: 13px;
-        line-height: 20px;
+    .details-line,
+    .project-description-text {
+        font-size: 14px;
+    }
+
+    .project-description-text {
+        font-size: 15px;
     }
 
     .project-description {
@@ -504,6 +483,10 @@ body {
     .hello-text {
         font-size: 56px;
         margin-left: -4px;
+    }
+
+    .project-description-text {
+        font-size: 14px;
     }
 
     .image-3 {
