@@ -22,32 +22,20 @@ const HELLO_LANGUAGES = [
 
 let currentLanguageIndex = 0;
 
-/**
- * Fade the hello text to the next language
- */
 function runFadeSequence() {
     const el = document.getElementById('hello-text');
     if (!el) return;
 
-    // Fade out
     el.classList.remove('visible');
 
     setTimeout(() => {
-        // Swap text while invisible
         el.textContent = HELLO_LANGUAGES[currentLanguageIndex].text;
         currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
-
-        // Fade in
         el.classList.add('visible');
-
-        // Hold then repeat
         setTimeout(runFadeSequence, 2400);
     }, 800);
 }
 
-/**
- * Start the Hello language fade animation
- */
 function startHelloAnimation() {
     const el = document.getElementById('hello-text');
     if (!el) return;
@@ -55,7 +43,6 @@ function startHelloAnimation() {
     el.textContent = HELLO_LANGUAGES[currentLanguageIndex].text;
     currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
 
-    // Small delay on first load so the page settles before fading in
     setTimeout(() => {
         el.classList.add('visible');
         setTimeout(runFadeSequence, 2400);
