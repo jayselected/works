@@ -78,7 +78,7 @@ body {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: #000000;
 }
 
@@ -86,7 +86,7 @@ body {
     font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: #000000;
     padding: 6px 14px;
     border: 1px solid rgba(0, 0, 0, 0.12);
@@ -97,7 +97,7 @@ body {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: #000000;
     text-decoration: none;
     transition: opacity 0.2s ease;
@@ -132,7 +132,7 @@ body {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 24px;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: #000000;
     white-space: nowrap;
     margin-right: 4px;
@@ -142,7 +142,7 @@ body {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 24px;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: #000000;
     white-space: nowrap;
 }
@@ -151,7 +151,7 @@ body {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 24px;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: #000000;
     white-space: nowrap;
 }
@@ -182,6 +182,7 @@ body {
 
 .hello {
     width: 100%;
+    min-height: 160px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -191,7 +192,7 @@ body {
     font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 128px;
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: #000000;
     margin: 0;
     padding: 0;
@@ -238,7 +239,7 @@ body {
     font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 20px;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: #000000;
 }
 
@@ -269,6 +270,7 @@ body {
     font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 20px;
+    letter-spacing: -0.01em;
     color: #000000;
 }
 
@@ -276,6 +278,7 @@ body {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 20px;
+    letter-spacing: -0.01em;
     color: #000000;
 }
 
@@ -287,6 +290,7 @@ body {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 24px;
+    letter-spacing: -0.01em;
     color: #000000;
 }
 
@@ -370,7 +374,7 @@ body {
     font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 12px;
     line-height: 16px;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: rgba(0, 0, 0, 0.3);
 }
 
@@ -410,6 +414,10 @@ body {
         max-width: 100%;
         padding-top: 32px;
         gap: 32px;
+    }
+
+    .hello {
+        min-height: 100px;
     }
 
     .hello-text {
@@ -489,6 +497,10 @@ body {
         gap: 32px;
     }
 
+    .hello {
+        min-height: 72px;
+    }
+
     .hello-text {
         font-size: 56px;
         margin-left: -4px;
@@ -520,6 +532,10 @@ body {
 
     .container {
         padding: 0 20px;
+    }
+
+    .hello {
+        min-height: 64px;
     }
 
     .hello-text {
