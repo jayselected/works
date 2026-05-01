@@ -227,6 +227,32 @@ body {
     color: #000000;
 }
 
+/* Info label */
+.info {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 8px;
+    height: 28px;
+    border: 1px solid #f4f4f4;
+    border-radius: 100px;
+}
+
+.info svg {
+    display: block;
+    flex-shrink: 0;
+    fill: #000000;
+}
+
+.info-text {
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1;
+    letter-spacing: normal;
+    color: #000000;
+}
+
+/* Extra */
 .extra {
     display: flex;
     flex-direction: column;
