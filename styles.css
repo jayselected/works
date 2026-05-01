@@ -77,8 +77,8 @@ body {
 }
 
 .header-avatar {
-    width: 32px;
-    height: 32px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     object-fit: cover;
     display: block;
