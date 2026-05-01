@@ -108,7 +108,7 @@ body {
 }
 
 /* ============================================
-   HEADER SECTION (datetime + location bar)
+   HEADER SECTION (greeting + datetime + weather)
    ============================================ */
 
 .header-section {
@@ -122,23 +122,14 @@ body {
     background-color: #FFFFFF;
 }
 
-.header-datetime {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    line-height: 24px;
-    letter-spacing: -0.02em;
-    color: #000000;
-    white-space: nowrap;
-}
-
 .location {
     display: flex;
     flex-direction: row;
+    align-items: center;
     gap: 0;
 }
 
-.location-greeting,
-.location-weather {
+.location-greeting {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 24px;
@@ -149,6 +140,24 @@ body {
 
 .location-greeting::after {
     content: '\00a0';
+}
+
+.header-datetime {
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.02em;
+    color: #000000;
+    white-space: nowrap;
+}
+
+.location-weather {
+    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.02em;
+    color: #000000;
+    white-space: nowrap;
 }
 
 /* ============================================
@@ -180,7 +189,6 @@ body {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding: 48px 0;
 }
 
 .hello-text {
@@ -372,13 +380,12 @@ body {
     }
 
     .header-section {
-        padding: 0 32px;
+        padding: 16px 32px;
         height: auto;
-        min-height: 56px;
-        flex-wrap: wrap;
-        gap: 2px;
-        padding-top: 12px;
-        padding-bottom: 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 4px;
     }
 
     .header-label,
@@ -399,11 +406,11 @@ body {
         width: 100%;
         max-width: 100%;
         padding-top: 32px;
-        gap: 24px;
+        gap: 32px;
     }
 
     .hello {
-        padding: 32px 0;
+        width: 100%;
     }
 
     .hello-text {
@@ -471,11 +478,7 @@ body {
     }
 
     .header-section {
-        padding: 12px 24px;
-        flex-direction: column;
-        align-items: flex-start;
-        height: auto;
-        gap: 2px;
+        padding: 16px 24px;
     }
 
     .container {
@@ -484,11 +487,7 @@ body {
 
     .main {
         padding-top: 32px;
-        gap: 24px;
-    }
-
-    .hello {
-        padding: 32px 0;
+        gap: 32px;
     }
 
     .hello-text {
@@ -517,15 +516,11 @@ body {
     }
 
     .header-section {
-        padding: 12px 20px;
+        padding: 16px 20px;
     }
 
     .container {
         padding: 0 20px;
-    }
-
-    .hello {
-        padding: 28px 0;
     }
 
     .hello-text {
