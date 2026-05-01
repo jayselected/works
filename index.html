@@ -3,31 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jay Patel - Digital Designer</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>Jay Patel — Digital Designer</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
     <header class="site-header" id="site-header">
         <div class="header-left">
-            <p class="header-label">Select Design Works</p>
+            <span class="header-label">Select Design Works</span>
         </div>
         <div class="header-center">
-            <p class="header-name">Jay Patel</p>
+            <span class="header-name">Jay Patel</span>
         </div>
         <div class="header-right">
             <a href="mailto:jayarchiveone@gmail.com" class="header-contact">Get In Touch →</a>
         </div>
     </header>
 
-    <div class="header-section" id="header-section">
-        <div class="location">
-            <p class="location-greeting" id="greeting-display"></p>
-            <p class="header-datetime" id="datetime-display"></p>
+    <div class="header-section">
+        <div class="location-info">
+            <span id="greeting-display" class="location-greeting"></span>
+            <span id="datetime-display" class="header-datetime"></span>
         </div>
-        <p class="location-weather" id="location-weather-display"></p>
+        <span id="location-weather-display" class="location-weather"></span>
     </div>
 
     <div class="container">
@@ -39,18 +37,19 @@
 
             <section class="works">
 
+                <!-- START OF PROJECT BLOCK (Duplicate this article for new projects) -->
                 <article class="project">
                     <div class="project-meta">
-                        <p class="project-title">Cine Asia</p>
+                        <h2 class="project-title">Cine Asia</h2>
                         <div class="project-details">
-                            <div class="project-deliverables">
-                                <p class="details-label">Deliverables</p>
-                                <p class="details-text">Brand Identity · Product Design</p>
+                            <div class="detail-row">
+                                <span class="details-label">Deliverables</span>
+                                <span class="details-text">Brand Identity · Product Design</span>
                             </div>
                             <div class="details-divider"></div>
-                            <div class="project-applications">
-                                <p class="details-label">Applications</p>
-                                <p class="details-text">Adobe Photoshop · Adobe Illustrator · Figma</p>
+                            <div class="detail-row">
+                                <span class="details-label">Applications</span>
+                                <span class="details-text">Adobe Photoshop · Adobe Illustrator · Figma</span>
                             </div>
                         </div>
                     </div>
@@ -60,24 +59,25 @@
                     </div>
 
                     <div class="project-images">
-                        <div class="image-1">
-                            <img src="https://framerusercontent.com/images/HyNx4h88GowWDEBafQKrWsFKOdA.png" alt="Cine Asia Project Image 1">
-                        </div>
-                        <div class="image-2">
-                            <div class="image-box-a">
-                                <img src="https://framerusercontent.com/images/YLYFv3RLRoqzXEOXN1MPCgujWzc.png" alt="Cine Asia Project Image 2A">
+                        <img src="https://framerusercontent.com/images/HyNx4h88GowWDEBafQKrWsFKOdA.png" alt="Cine Asia Full View" class="img-full">
+                        
+                        <div class="image-row-2">
+                            <div class="img-box-half">
+                                <img src="https://framerusercontent.com/images/YLYFv3RLRoqzXEOXN1MPCgujWzc.png" alt="Cine Asia Mobile UI 1">
                             </div>
-                            <div class="image-box-b">
-                                <img src="https://framerusercontent.com/images/Fv3rSHBs3GHoyEPV50Q6QseKk.png" alt="Cine Asia Project Image 2B">
+                            <div class="img-box-half">
+                                <img src="https://framerusercontent.com/images/Fv3rSHBs3GHoyEPV50Q6QseKk.png" alt="Cine Asia Mobile UI 2">
                             </div>
                         </div>
-                        <div class="image-3">
-                            <img src="https://framerusercontent.com/images/mOceGFSYDX9yaHxAUWocIutc9ao.png" alt="Cine Asia Project Image 3-1">
-                            <img src="https://framerusercontent.com/images/ZesIZGEiRioaQKmaRvbsuicB1q8.png" alt="Cine Asia Project Image 3-2">
-                            <img src="https://framerusercontent.com/images/lshAnkx9qNO2cWxhMs4dwadZjL8.png" alt="Cine Asia Project Image 3-3">
+
+                        <div class="image-row-3">
+                            <img src="https://framerusercontent.com/images/mOceGFSYDX9yaHxAUWocIutc9ao.png" alt="Cine Asia View 1">
+                            <img src="https://framerusercontent.com/images/ZesIZGEiRioaQKmaRvbsuicB1q8.png" alt="Cine Asia View 2">
+                            <img src="https://framerusercontent.com/images/lshAnkx9qNO2cWxhMs4dwadZjL8.png" alt="Cine Asia View 3">
                         </div>
                     </div>
                 </article>
+                <!-- END OF PROJECT BLOCK -->
 
             </section>
 
@@ -89,19 +89,5 @@
     </div>
 
     <script src="siteapp.js"></script>
-    <script>
-        const header = document.getElementById('site-header');
-        const headerSection = document.getElementById('header-section');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 0) {
-                header.classList.add('scrolled');
-                headerSection.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-                headerSection.classList.remove('scrolled');
-            }
-        }, { passive: true });
-    </script>
-
 </body>
 </html>
