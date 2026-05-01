@@ -244,63 +244,44 @@ body {
 }
 
 /* ============================================
-   PROJECT DETAILS (accordion)
+   PROJECT DETAILS — Option A two-column
    ============================================ */
 
 .project-details {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    width: 100%;
 }
 
-.detail-item {
-    background-color: rgba(242, 242, 242, 0.5);
-    border: 1px solid #ecece8;
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-.detail-header {
-    width: 100%;
+.detail-row {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-align: left;
+    flex-direction: row;
+    align-items: baseline;
+    padding: 10px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.detail-row:last-child {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .detail-label {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 1;
+    line-height: 1.5;
     letter-spacing: -0.01em;
     color: #777671;
-}
-
-.detail-chevron {
-    display: block;
+    width: 140px;
     flex-shrink: 0;
-    transition: transform 0.2s ease;
-}
-
-.detail-item.is-closed .detail-chevron {
-    transform: rotate(-90deg);
-}
-
-.detail-body {
-    padding: 0 14px 10px;
 }
 
 .detail-value {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 1;
+    line-height: 1.5;
     letter-spacing: -0.01em;
     color: #777671;
+    flex: 1;
 }
 
 /* ============================================
@@ -451,6 +432,21 @@ body {
 
     .project-title {
         font-size: 22px;
+    }
+
+    .detail-row {
+        flex-direction: column;
+        gap: 4px;
+        padding: 12px 0;
+    }
+
+    .detail-label {
+        width: auto;
+        font-size: 13px;
+    }
+
+    .detail-value {
+        font-size: 13px;
     }
 
     .project-description-text {
