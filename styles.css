@@ -1,6 +1,4 @@
-/* ============================================
-   CUSTOM FONTS
-   ============================================ */
+/* Custom Fonts */
 @font-face {
     font-family: 'Helvetica Now Display Regular';
     src: url('fonts/Helvetica_Now_Display.ttf') format('truetype');
@@ -19,9 +17,7 @@
     font-style: normal;
 }
 
-/* ============================================
-   RESET & BASE
-   ============================================ */
+/* Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
@@ -29,18 +25,18 @@
 }
 
 body {
-    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Medium';
     background-color: #FFFFFF;
     display: flex;
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
 }
 
 /* ============================================
    SITE HEADER
    ============================================ */
+
 .site-header {
     position: sticky;
     top: 0;
@@ -61,23 +57,36 @@ body {
     -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
-.header-left, .header-right { flex: 1; display: flex; align-items: center; }
-.header-right { justify-content: flex-end; }
-.header-center { display: flex; align-items: center; justify-content: center; }
+.header-left,
+.header-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.header-right {
+    justify-content: flex-end;
+}
+
+.header-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 .header-label {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Medium';
     font-size: 16px;
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: #000000;
 }
 
 .header-name {
-    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Medium';
     font-size: 16px;
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: #000000;
     padding: 6px 14px;
     border: 1px solid rgba(0, 0, 0, 0.12);
@@ -85,20 +94,23 @@ body {
 }
 
 .header-contact {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Medium';
     font-size: 16px;
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: #000000;
     text-decoration: none;
     transition: opacity 0.2s ease;
 }
 
-.header-contact:hover { opacity: 0.5; }
+.header-contact:hover {
+    opacity: 0.5;
+}
 
 /* ============================================
-   HEADER SECTION (Geo-Data)
+   HEADER SECTION (greeting + datetime + weather)
    ============================================ */
+
 .header-section {
     width: 100%;
     height: 64px;
@@ -110,30 +122,44 @@ body {
     background-color: #FFFFFF;
 }
 
-.location { display: flex; flex-direction: row; align-items: center; }
+.location {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
 
 .location-greeting {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Medium';
     font-size: 16px;
     line-height: 24px;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: #000000;
     white-space: nowrap;
     margin-right: 4px;
 }
 
-.header-datetime, .location-weather {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+.header-datetime {
+    font-family: 'Helvetica Now Display Medium';
     font-size: 16px;
     line-height: 24px;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
+    color: #000000;
+    white-space: nowrap;
+}
+
+.location-weather {
+    font-family: 'Helvetica Now Display Medium';
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.01em;
     color: #000000;
     white-space: nowrap;
 }
 
 /* ============================================
-   CONTAINER & LAYOUT
+   CONTAINER
    ============================================ */
+
 .container {
     width: 100%;
     max-width: 1440px;
@@ -150,27 +176,50 @@ body {
     padding-top: 32px;
 }
 
-.hello { width: 100%; display: flex; justify-content: flex-start; align-items: center; }
+/* ============================================
+   HELLO SECTION
+   ============================================ */
+
+.hello {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
 
 .hello-text {
-    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Bold';
     font-size: 128px;
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: #000000;
+    margin: 0;
+    padding: 0;
     margin-left: -12px;
     white-space: nowrap;
     opacity: 0;
     transition: opacity 0.8s ease;
 }
 
-.hello-text.visible { opacity: 1; }
+.hello-text.visible {
+    opacity: 1;
+}
 
-.works { width: 100%; display: flex; flex-direction: column; gap: 64px; }
+/* ============================================
+   WORKS SECTION
+   ============================================ */
+
+.works {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+}
 
 /* ============================================
    PROJECT ARTICLE
    ============================================ */
+
 .project {
     width: 100%;
     display: flex;
@@ -179,13 +228,17 @@ body {
     padding-bottom: 32px;
 }
 
-.project-meta { display: flex; flex-direction: column; gap: 16px; }
+.project-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
 
 .project-title {
-    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Medium';
     font-size: 16px;
     line-height: 20px;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: #000000;
 }
 
@@ -198,33 +251,40 @@ body {
     overflow: hidden;
 }
 
-.project-deliverables, .project-applications {
+.project-deliverables,
+.project-applications {
     display: flex;
     flex-direction: column;
     gap: 6px;
     padding: 12px 16px;
 }
 
-.details-divider { height: 1px; background-color: #f4f4f4; margin: 0 16px; }
+.details-divider {
+    height: 1px;
+    background-color: #f4f4f4;
+    margin: 0 16px;
+}
 
 .details-label {
-    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Medium';
     font-size: 14px;
     line-height: 20px;
     color: #000000;
 }
 
 .details-text {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Regular';
     font-size: 14px;
     line-height: 20px;
     color: #000000;
 }
 
-.project-description { width: 600px; }
+.project-description {
+    width: 600px;
+}
 
 .project-description-text {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Regular';
     font-size: 14px;
     line-height: 24px;
     color: #000000;
@@ -233,14 +293,35 @@ body {
 /* ============================================
    PROJECT IMAGES
    ============================================ */
-.project-images { width: 100%; display: flex; flex-direction: column; gap: 16px; }
 
-.image-1 { width: 100%; height: 398px; overflow: hidden; }
-.image-1 img { width: 100%; height: 100%; object-fit: cover; }
+.project-images {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
 
-.image-2 { width: 100%; display: flex; flex-direction: row; gap: 16px; }
+.image-1 {
+    width: 100%;
+    height: 398px;
+    overflow: hidden;
+}
 
-.image-box-a, .image-box-b {
+.image-1 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-2 {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+}
+
+.image-box-a,
+.image-box-b {
     width: 316px;
     height: 398px;
     background-color: rgba(242, 242, 242, 0.5);
@@ -250,7 +331,12 @@ body {
     overflow: hidden;
 }
 
-.image-box-a img, .image-box-b img { width: 160px; height: 330px; object-fit: cover; }
+.image-box-a img,
+.image-box-b img {
+    width: 160px;
+    height: 330px;
+    object-fit: cover;
+}
 
 .image-3 {
     width: 100%;
@@ -263,44 +349,120 @@ body {
     padding: 32px 0;
 }
 
-.image-3 img { width: 160px; height: 330px; object-fit: cover; }
+.image-3 img {
+    width: 160px;
+    height: 330px;
+    object-fit: cover;
+}
 
-.site-footer { width: 100%; display: flex; align-items: center; padding: 32px 0; }
+/* ============================================
+   SITE FOOTER
+   ============================================ */
+
+.site-footer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 32px 0;
+}
 
 .footer-text {
-    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display Medium';
     font-size: 12px;
     line-height: 16px;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: rgba(0, 0, 0, 0.3);
 }
 
 /* ============================================
-   MOBILE RESPONSIVE (768px)
+   MOBILE RESPONSIVE — 768px
    ============================================ */
-@media screen and (max-width: 768px) {
-    .site-header { padding: 0 32px; }
-    .header-section { padding: 16px 32px; height: auto; flex-direction: column; align-items: flex-start; gap: 4px; }
-    .header-label, .header-name, .header-contact, .header-datetime, .location-greeting, .location-weather { font-size: 13px; line-height: 20px; }
-    .container { padding: 0 32px; }
-    .main { width: 100%; max-width: 100%; padding-top: 32px; gap: 32px; }
-    .hello-text { font-size: 72px; margin-left: -5px; }
-    .project-title, .details-label, .details-text, .project-description-text, .footer-text { font-size: 13px; line-height: 20px; }
-    .project-description { width: 100%; }
-    .image-1 { height: auto; aspect-ratio: 648 / 398; }
-    .image-2 { flex-direction: column; }
-    .image-box-a, .image-box-b { width: 100%; height: auto; aspect-ratio: 316 / 398; }
-    .image-box-a img, .image-box-b img { width: auto; height: auto; max-width: 40%; max-height: 80%; }
-    .image-3 { gap: 12px; padding: 20px 0; }
-    .image-3 img { width: calc(33.333% - 8px); height: auto; aspect-ratio: 160 / 330; max-width: 120px; }
-}
 
-/* ============================================
-   MOBILE RESPONSIVE (480px)
-   ============================================ */
-@media screen and (max-width: 480px) {
-    .site-header { padding: 0 24px; }
-    .header-section { padding: 16px 24px; }
-    .container { padding: 0 24px; }
-    .hello-text { font-size: 56px; margin-left: -4px; }
+@media screen and (max-width: 768px) {
+    .site-header {
+        padding: 0 32px;
+    }
+
+    .header-section {
+        padding: 16px 32px;
+        height: auto;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .header-label,
+    .header-name,
+    .header-contact,
+    .header-datetime,
+    .location-greeting,
+    .location-weather {
+        font-size: 13px;
+        line-height: 20px;
+    }
+
+    .container {
+        padding: 0 32px;
+    }
+
+    .main {
+        width: 100%;
+        max-width: 100%;
+        padding-top: 32px;
+        gap: 32px;
+    }
+
+    .hello-text {
+        font-size: 72px;
+        margin-left: -5px;
+    }
+
+    .project-title,
+    .details-label,
+    .details-text,
+    .project-description-text,
+    .footer-text {
+        font-size: 13px;
+        line-height: 20px;
+    }
+
+    .project-description {
+        width: 100%;
+    }
+
+    .image-1 {
+        height: auto;
+        aspect-ratio: 648 / 398;
+    }
+
+    .image-2 {
+        flex-direction: column;
+    }
+
+    .image-box-a,
+    .image-box-b {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 316 / 398;
+    }
+
+    .image-box-a img,
+    .image-box-b img {
+        width: auto;
+        height: auto;
+        max-width: 40%;
+        max-height: 80%;
+    }
+
+    .image-3 {
+        gap: 12px;
+        padding: 20px 0;
+    }
+
+    .image-3 img {
+        width: calc(33.333% - 8px);
+        height: auto;
+        aspect-ratio: 160 / 330;
+        max-width: 120px;
+    }
 }
