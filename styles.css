@@ -31,7 +31,7 @@ body {
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    padding-bottom: 96px; /* clearance for dock */
+    padding-bottom: 96px;
 }
 
 /* ============================================
@@ -43,7 +43,7 @@ body {
     top: 0;
     z-index: 100;
     width: 100%;
-    height: 64px;
+    height: 42px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -62,8 +62,8 @@ body {
 
 .location-greeting {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
+    font-size: 14px;
+    line-height: 1;
     letter-spacing: -0.01em;
     color: #000000;
     white-space: nowrap;
@@ -72,8 +72,8 @@ body {
 
 .header-datetime {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
+    font-size: 14px;
+    line-height: 1;
     letter-spacing: -0.01em;
     color: #000000;
     white-space: nowrap;
@@ -81,8 +81,8 @@ body {
 
 .location-weather {
     font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
+    font-size: 14px;
+    line-height: 1;
     letter-spacing: -0.01em;
     color: #000000;
     white-space: nowrap;
@@ -104,7 +104,7 @@ body {
     gap: 24px;
     width: fit-content;
     max-width: 440px;
-    padding: 0 20px;
+    padding: 0 12px 0 8px;
     height: 52px;
     background-color: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(20px) saturate(180%);
@@ -113,21 +113,25 @@ body {
     border-radius: 16px;
 }
 
+/* Logo — white square container with matched border-radius ratio */
 .dock-logo {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #000000;
+    width: 36px;
+    height: 36px;
+    background-color: #FFFFFF;
+    border-radius: 10px; /* ~28% of 36px, matches dock's ~31% of 52px */
     flex-shrink: 0;
     transition: opacity 0.2s ease;
 }
 
 .dock-logo:hover {
-    opacity: 0.5;
+    opacity: 0.6;
 }
 
-.dock-logo svg {
-    width: 14px;
+.dock-logo img {
+    width: 22px;
     height: 22px;
     display: block;
 }
@@ -390,25 +394,26 @@ body {
 
 @media screen and (max-width: 768px) {
     .header-section {
-        padding: 0 32px;
         height: auto;
-        min-height: 56px;
-        flex-wrap: wrap;
-        gap: 2px;
-        padding-top: 12px;
-        padding-bottom: 12px;
-    }
-
-    .header-section .location {
+        padding: 10px 32px;
         flex-direction: column;
         align-items: flex-start;
-        gap: 2px;
+        gap: 4px;
+    }
+
+    .location {
+        flex-direction: row;
+        align-items: center;
     }
 
     .location-greeting,
     .header-datetime,
     .location-weather {
-        font-size: 13px;
+        font-size: 12px;
+    }
+
+    .location-weather {
+        white-space: nowrap;
     }
 
     .container {
@@ -492,7 +497,7 @@ body {
 
     .dock {
         max-width: calc(100% - 48px);
-        padding: 0 16px;
+        padding: 0 12px 0 8px;
         gap: 16px;
     }
 
@@ -511,7 +516,7 @@ body {
 
 @media screen and (max-width: 480px) {
     .header-section {
-        padding: 12px 24px;
+        padding: 10px 24px;
     }
 
     .container {
@@ -557,7 +562,7 @@ body {
 
 @media screen and (max-width: 390px) {
     .header-section {
-        padding: 12px 20px;
+        padding: 10px 20px;
     }
 
     .container {
@@ -575,7 +580,7 @@ body {
 
     .dock {
         max-width: calc(100% - 40px);
-        padding: 0 14px;
+        padding: 0 12px 0 8px;
         gap: 12px;
     }
 
