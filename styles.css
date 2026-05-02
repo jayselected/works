@@ -659,11 +659,19 @@ body {
 
 @media screen and (max-width: 480px) {
     .header-section {
-        padding: 10px 24px;
+        padding: 20px 24px;
     }
 
     .container {
         padding: 0 24px;
+    }
+
+    .location-greeting,
+    .header-datetime,
+    .location-city,
+    .location-weather {
+        font-size: 16px;
+        line-height: 1.4;
     }
 
     .main {
