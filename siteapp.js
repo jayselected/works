@@ -15,7 +15,7 @@ const HELLO_LANGUAGES = [
     { text: 'こんにちは.' },
     { text: '안녕하세요.' },
     { text: 'नमस्ते.' },
-    { text: 'مرحبा.' },
+    { text: 'مرحبا.' },
     { text: 'Hej.' },
     { text: 'Merhaba.' }
 ];
