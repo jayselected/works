@@ -528,7 +528,7 @@ body {
 @media screen and (max-width: 768px) {
     .header-section {
         height: auto;
-        padding: 10px 32px;
+        padding: 20px 32px;
         align-items: flex-start;
     }
 
