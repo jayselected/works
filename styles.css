@@ -1,4 +1,57 @@
-/* Custom Fonts */
+/* ============================================
+   FONTS — SF Pro Display (Active)
+   ============================================ */
+
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('fonts/SF Pro/SF Pro Display Regular.woff2') format('woff2'),
+         url('fonts/SF Pro/SF Pro Display Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('fonts/SF Pro/SF Pro Display Medium.woff2') format('woff2'),
+         url('fonts/SF Pro/SF Pro Display Medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('fonts/SF Pro/SF Pro Display Bold.woff2') format('woff2'),
+         url('fonts/SF Pro/SF Pro Display Bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('fonts/SF Pro/SF Pro Display Heavy.woff2') format('woff2'),
+         url('fonts/SF Pro/SF Pro Display Heavy.woff') format('woff');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('fonts/SF Pro/SF Pro Display Black.woff2') format('woff2'),
+         url('fonts/SF Pro/SF Pro Display Black.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ============================================
+   FONTS — Helvetica Now Display (Inactive)
+   ============================================ */
+
+/*
 @font-face {
     font-family: 'Helvetica Now Display Regular';
     src: url('fonts/Helvetica_Now_Display.ttf') format('truetype');
@@ -16,6 +69,7 @@
     src: url('fonts/Helvetica_Now_Display_Bold.ttf') format('truetype');
     font-style: normal;
 }
+*/
 
 /* Reset and Base Styles */
 * {
@@ -25,7 +79,9 @@
 }
 
 body {
-    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 500;
     background-color: #FFFFFF;
     display: flex;
     flex-direction: column;
@@ -69,7 +125,9 @@ body {
 }
 
 .location-greeting {
-    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 500;
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.01em;
@@ -78,7 +136,9 @@ body {
 }
 
 .header-datetime {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 400;
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.01em;
@@ -87,7 +147,9 @@ body {
 }
 
 .location-city {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 400;
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.01em;
@@ -96,7 +158,9 @@ body {
 }
 
 .location-weather {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 400;
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.01em;
@@ -179,7 +243,9 @@ body {
 }
 
 .dock-label {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 400;
     font-size: 14px;
     line-height: 1;
     letter-spacing: -0.01em;
@@ -188,7 +254,9 @@ body {
 }
 
 .dock-sublabel {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 400;
     font-size: 14px;
     line-height: 1;
     letter-spacing: -0.01em;
@@ -197,7 +265,9 @@ body {
 }
 
 .dock-contact {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 400;
     font-size: 14px;
     line-height: 1;
     letter-spacing: -0.01em;
@@ -244,7 +314,9 @@ body {
 }
 
 .hello-text {
-    font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 700;
     font-size: 128px;
     line-height: 1;
     letter-spacing: -0.01em;
@@ -291,7 +363,9 @@ body {
 }
 
 .project-title {
-    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 500;
     font-size: 26px;
     line-height: 1.2;
     letter-spacing: -0.01em;
@@ -321,7 +395,9 @@ body {
 }
 
 .detail-label {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 400;
     font-size: 14px;
     line-height: 1.5;
     letter-spacing: -0.01em;
@@ -331,7 +407,9 @@ body {
 }
 
 .detail-value {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 400;
     font-size: 14px;
     line-height: 1.5;
     letter-spacing: -0.01em;
@@ -348,7 +426,9 @@ body {
 }
 
 .project-description-text {
-    font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 400;
     font-size: 16px;
     line-height: 1.65;
     letter-spacing: -0.01em;
@@ -432,7 +512,9 @@ body {
 }
 
 .footer-text {
-    font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 500;
     font-size: 12px;
     line-height: 1.4;
     letter-spacing: -0.01em;
