@@ -286,11 +286,11 @@ body {
     flex-direction: row;
     align-items: baseline;
     padding: 10px 0;
-    border-top: 1px solid rgba(242, 242, 242, 0.5);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .detail-row:last-child {
-    border-bottom: 1px solid rgba(242, 242, 242, 0.5);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .detail-label {
