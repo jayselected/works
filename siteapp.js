@@ -147,7 +147,7 @@ function formatCurrentDate() {
                        'July', 'August', 'September', 'October', 'November', 'December'];
     const isMobile  = window.innerWidth < 768;
     const day       = isMobile ? daysShort[now.getDay()] : daysFull[now.getDay()];
-    return `${day} ${now.getDate()} ${months[now.getMonth()]}, ${now.getFullYear()}`;
+    return `${day} ${now.getDate()} ${months[now.getMonth()]}`;
 }
 
 function getGreeting() {
