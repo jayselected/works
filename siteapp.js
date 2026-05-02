@@ -15,7 +15,7 @@ const HELLO_LANGUAGES = [
     { text: 'こんにちは.' },
     { text: '안녕하세요.' },
     { text: 'नमस्ते.' },
-    { text: 'مرحبا.' },
+    { text: 'مرحبा.' },
     { text: 'Hej.' },
     { text: 'Merhaba.' }
 ];
@@ -141,12 +141,12 @@ async function fetchWeatherData(lat, lon) {
 
 function formatCurrentDate() {
     const now = new Date();
-    const daysFull = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const daysFull  = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const daysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const months = ['January', 'February', 'March', 'April', 'May', 'June',
-                    'July', 'August', 'September', 'October', 'November', 'December'];
-    const isMobile = window.innerWidth < 768;
-    const day = isMobile ? daysShort[now.getDay()] : daysFull[now.getDay()];
+    const months    = ['January', 'February', 'March', 'April', 'May', 'June',
+                       'July', 'August', 'September', 'October', 'November', 'December'];
+    const isMobile  = window.innerWidth < 768;
+    const day       = isMobile ? daysShort[now.getDay()] : daysFull[now.getDay()];
     return `${day} ${now.getDate()} ${months[now.getMonth()]}, ${now.getFullYear()}`;
 }
 
@@ -180,8 +180,10 @@ function updateGreeting() {
 }
 
 function showLoading() {
-    const el = document.getElementById('location-weather-display');
-    if (el) el.innerHTML = 'Loading...';
+    const cityEl    = document.getElementById('location-city-display');
+    const weatherEl = document.getElementById('location-weather-display');
+    if (cityEl)    cityEl.innerHTML    = 'Loading...';
+    if (weatherEl) weatherEl.innerHTML = '';
 }
 
 function showError(elementId, message) {
@@ -216,24 +218,30 @@ async function initializeGeoDisplay() {
                     .filter(Boolean)
                     .join(', ') || 'Unknown Location';
 
-                const el = document.getElementById('location-weather-display');
-                if (el) el.innerHTML = `${locationText} ${temp}° ${label} ${emoji}`;
+                const cityEl    = document.getElementById('location-city-display');
+                const weatherEl = document.getElementById('location-weather-display');
+                if (cityEl)    cityEl.innerHTML    = locationText;
+                if (weatherEl) weatherEl.innerHTML = `${temp}° ${label} ${emoji}`;
 
             } catch (weatherError) {
                 console.error('Weather error:', weatherError);
                 const locationText = [locationData.city, locationData.country_name]
                     .filter(Boolean)
                     .join(', ') || 'Unknown Location';
-                const el = document.getElementById('location-weather-display');
-                if (el) el.innerHTML = `${locationText} Weather Unavailable`;
+                const cityEl    = document.getElementById('location-city-display');
+                const weatherEl = document.getElementById('location-weather-display');
+                if (cityEl)    cityEl.innerHTML    = locationText;
+                if (weatherEl) weatherEl.innerHTML = 'Weather Unavailable';
             }
         } else {
-            showError('location-weather-display', 'Location Unavailable');
+            showError('location-city-display',    'Location Unavailable');
+            showError('location-weather-display', '');
         }
 
     } catch (error) {
         console.error('Initialization error:', error);
-        showError('location-weather-display', 'Location data unavailable');
+        showError('location-city-display',    'Location data unavailable');
+        showError('location-weather-display', '');
     }
 }
 
