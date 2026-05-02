@@ -87,7 +87,7 @@ body {
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    padding-bottom: 96px;
+    padding-bottom: 80px; /* dock height 52px + 28px clearance */
 }
 
 /* ============================================
@@ -508,7 +508,7 @@ body {
     width: 100%;
     display: flex;
     align-items: center;
-    padding: 32px 0;
+    padding: 24px 0;
 }
 
 .footer-text {
@@ -559,17 +559,22 @@ body {
     .main {
         width: 100%;
         max-width: 100%;
-        padding-top: 32px;
-        gap: 32px;
+        padding-top: 24px;
+        gap: 24px;
     }
 
     .hello {
-        padding: 32px 0;
+        padding: 24px 0;
     }
 
     .hello-text {
         font-size: 72px;
         margin-left: -5px;
+    }
+
+    .project {
+        gap: 20px;
+        padding-bottom: 0;
     }
 
     .project-title {
@@ -593,6 +598,10 @@ body {
 
     .project-description-text {
         font-size: 15px;
+    }
+
+    .site-footer {
+        padding: 16px 0;
     }
 
     .image-1 {
@@ -658,12 +667,12 @@ body {
     }
 
     .main {
-        padding-top: 32px;
-        gap: 32px;
+        padding-top: 20px;
+        gap: 20px;
     }
 
     .hello {
-        padding: 24px 0;
+        padding: 20px 0;
     }
 
     .hello-text {
