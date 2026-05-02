@@ -123,7 +123,6 @@ body {
     padding: 0 14px 0 8px;
     height: 52px;
 
-    /* Liquid glass base */
     background: linear-gradient(
         135deg,
         rgba(255, 255, 255, 0.28) 0%,
@@ -132,51 +131,28 @@ body {
     backdrop-filter: blur(32px) saturate(200%) brightness(1.08);
     -webkit-backdrop-filter: blur(32px) saturate(200%) brightness(1.08);
 
-    /* Refraction border — lighter on top-left, darker on bottom-right */
-    border: 1px solid transparent;
-    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 16px;
 
-    /* Layered shadows for depth and glass edge */
     box-shadow:
-        /* Frosted highlight — top edge */
-        inset 0 1.5px 0 rgba(255, 255, 255, 0.75),
-        /* Subtle inner depth — bottom edge */
-        inset 0 -1px 0 rgba(0, 0, 0, 0.06),
-        /* Left edge catch */
-        inset 1px 0 0 rgba(255, 255, 255, 0.3),
-        /* Outer ambient lift */
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.04),
+        inset 1px 0 0 rgba(255, 255, 255, 0.2),
         0 8px 32px rgba(0, 0, 0, 0.08),
-        /* Tight drop shadow for grounding */
         0 2px 8px rgba(0, 0, 0, 0.06);
-
-    /* Refraction border via outline trick */
-    outline: 1px solid rgba(255, 255, 255, 0.5);
-    outline-offset: -1px;
 }
 
-/* Inner border overlay for refraction effect */
 .dock::before {
     content: '';
     position: absolute;
     inset: 0;
     border-radius: 16px;
-    padding: 1px;
     background: linear-gradient(
         145deg,
-        rgba(255, 255, 255, 0.55) 0%,
-        rgba(255, 255, 255, 0.08) 40%,
-        rgba(0, 0, 0, 0.04) 70%,
-        rgba(0, 0, 0, 0.08) 100%
+        rgba(255, 255, 255, 0.35) 0%,
+        rgba(255, 255, 255, 0.0) 50%,
+        rgba(0, 0, 0, 0.03) 100%
     );
-    -webkit-mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-    mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
     pointer-events: none;
 }
 
