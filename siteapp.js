@@ -141,9 +141,13 @@ async function fetchWeatherData(lat, lon) {
 
 function formatCurrentDate() {
     const now = new Date();
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    return `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]}, ${now.getFullYear()}`;
+    const daysFull = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const daysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+    const isMobile = window.innerWidth < 768;
+    const day = isMobile ? daysShort[now.getDay()] : daysFull[now.getDay()];
+    return `${day} ${now.getDate()} ${months[now.getMonth()]}, ${now.getFullYear()}`;
 }
 
 function getGreeting() {
