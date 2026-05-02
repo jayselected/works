@@ -26,18 +26,7 @@
 </head>
 <body>
 
-    <header class="site-header" id="site-header">
-        <div class="header-left">
-            <p class="header-label">Select Design Works</p>
-        </div>
-        <div class="header-center">
-            <p class="header-name">Jay Patel</p>
-        </div>
-        <div class="header-right">
-            <a href="mailto:jayarchiveone@gmail.com" class="header-contact">Get In Touch →</a>
-        </div>
-    </header>
-
+    <!-- Sticky top bar -->
     <div class="header-section" id="header-section">
         <div class="location">
             <p class="location-greeting" id="greeting-display"></p>
@@ -106,16 +95,27 @@
         </main>
     </div>
 
+    <!-- Bottom dock navigation -->
+    <nav class="dock" aria-label="Site navigation">
+        <a class="dock-logo" href="/" aria-label="Homepage">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 184 287" fill="none" aria-hidden="true">
+                <path d="M138.297 22.0838C138.297 34.2744 148.52 44.1686 161.149 44.1686C173.777 44.1686 184 34.2744 184 22.0838C184 9.89398 173.777 -4.46868e-07 161.149 -9.98858e-07C148.52 -1.55086e-06 138.297 9.89398 138.297 22.0838Z" fill="currentColor"/>
+                <path fill-rule="evenodd" d="M89.3463 287C132.933 287 175.36 250.995 178.246 203.487L178.249 141.514L0.0329528 141.514L0.0329501 203.384C1.47065 250.754 44.777 287 89.3463 287ZM34.4503 203.413C35.7851 233.47 61.1879 253.733 89.0381 253.733C116.939 253.733 142.297 233.504 143.727 203.465L143.729 175.376L34.3473 175.376L34.3473 197.425L34.4503 203.413Z" fill="currentColor"/>
+                <path d="M115.363 118.264L73.2674 118.264L73.2674 66.446L115.363 66.446L115.363 118.264Z" fill="currentColor"/>
+                <path d="M122.954 42.2958L1.341e-05 42.2958L1.51792e-05 1.82119L122.954 1.8212L122.954 42.2958Z" fill="currentColor"/>
+            </svg>
+        </a>
+        <p class="dock-label">Select Design Works</p>
+        <a href="mailto:jayarchiveone@gmail.com" class="dock-contact">Get In Touch →</a>
+    </nav>
+
     <script src="siteapp.js"></script>
     <script>
-        const header = document.getElementById('site-header');
         const headerSection = document.getElementById('header-section');
         window.addEventListener('scroll', () => {
             if (window.scrollY > 0) {
-                header.classList.add('scrolled');
                 headerSection.classList.add('scrolled');
             } else {
-                header.classList.remove('scrolled');
                 headerSection.classList.remove('scrolled');
             }
         }, { passive: true });
