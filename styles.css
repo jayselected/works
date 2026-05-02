@@ -570,10 +570,6 @@ body {
         font-size: 14px;
     }
 
-    .dock-sublabel {
-        display: none;
-    }
-
     .image-3 {
         gap: 8px;
         padding: 16px 0;
@@ -611,10 +607,6 @@ body {
         max-width: calc(100% - 40px);
         padding: 0 12px 0 8px;
         gap: 12px;
-    }
-
-    .dock-label {
-        display: none;
     }
 
     .image-3 {
