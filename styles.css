@@ -366,7 +366,7 @@ body {
     /* font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
     font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
     font-weight: 500;
-    font-size: 26px;
+    font-size: 16px;
     line-height: 1.2;
     letter-spacing: -0.01em;
     color: #222222;
@@ -434,7 +434,7 @@ body {
     /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
     font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
     font-weight: 400;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.65;
     letter-spacing: -0.01em;
     color: #222222;
@@ -583,7 +583,7 @@ body {
     }
 
     .project-title {
-        font-size: 22px;
+        font-size: 16px;
     }
 
     .detail-row {
@@ -604,7 +604,7 @@ body {
     }
 
     .project-description-text {
-        font-size: 15px;
+        font-size: 14px;
     }
 
     .site-footer {
@@ -696,7 +696,7 @@ body {
     }
 
     .project-title {
-        font-size: 20px;
+        font-size: 16px;
     }
 
     .project-description-text {
