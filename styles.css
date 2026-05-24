@@ -352,14 +352,14 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 24px;
     padding-bottom: 16px;
 }
 
 .project-meta {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 24px;
 }
 
 .project-title {
@@ -448,7 +448,7 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 24px;
 }
 
 .image-1 {
@@ -578,7 +578,7 @@ body {
     }
 
     .project {
-        gap: 16px;
+        gap: 24px;
         padding-bottom: 0;
     }
 
