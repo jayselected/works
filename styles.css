@@ -386,7 +386,7 @@ body {
     display: flex;
     flex-direction: row;
     align-items: baseline;
-    gap: 8px;
+    gap: 12px;
     padding: 6px 0;
     border-top: 1px solid rgba(34, 34, 34, 0.08);
 }
@@ -589,7 +589,7 @@ body {
     .detail-row {
         flex-direction: row;
         align-items: baseline;
-        gap: 6px;
+        gap: 10px;
         padding: 6px 0;
     }
 
@@ -697,6 +697,10 @@ body {
 
     .project-title {
         font-size: 16px;
+    }
+
+    .detail-row {
+        gap: 8px;
     }
 
     .project-description-text {
