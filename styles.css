@@ -387,7 +387,7 @@ body {
     flex-direction: row;
     align-items: baseline;
     gap: 8px;
-    padding: 12px 0;
+    padding: 10px 0;
     border-top: 1px solid rgba(34, 34, 34, 0.08);
 }
 
@@ -496,7 +496,7 @@ body {
     justify-content: center;
     gap: 32px;
     background-color: rgba(242, 242, 242, 0.5);
-    padding: 32px 0;
+    padding: 24px 0;
 }
 
 .image-3 img {
@@ -590,7 +590,7 @@ body {
         flex-direction: row;
         align-items: baseline;
         gap: 6px;
-        padding: 10px 0;
+        padding: 8px 0;
     }
 
     .detail-label {
@@ -618,6 +618,7 @@ body {
 
     .image-2 {
         flex-direction: column;
+        gap: 24px;
     }
 
     .image-box-a,
@@ -637,7 +638,7 @@ body {
 
     .image-3 {
         gap: 12px;
-        padding: 20px 0;
+        padding: 24px 0;
     }
 
     .image-3 img {
@@ -700,7 +701,7 @@ body {
     }
 
     .detail-row {
-        padding: 8px 0;
+        padding: 6px 0;
     }
 
     .project-description-text {
@@ -709,7 +710,7 @@ body {
 
     .image-3 {
         gap: 8px;
-        padding: 16px 0;
+        padding: 24px 0;
     }
 
     .image-3 img {
@@ -756,7 +757,7 @@ body {
 
     .image-3 {
         gap: 8px;
-        padding: 12px 0;
+        padding: 24px 0;
     }
 
     .image-3 img {
