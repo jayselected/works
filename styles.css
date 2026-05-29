@@ -422,11 +422,11 @@ body {
     align-items: baseline;
     gap: var(--detail-gap);
     padding: var(--detail-row-y) 0;
-    border-top: 1px solid #000000;
+    border-top: 1px solid rgba(0, 0, 0, 0.56);
 }
 
 .detail-row:last-child {
-    border-bottom: 1px solid #000000;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.56);
 }
 
 .detail-label {
@@ -436,7 +436,7 @@ body {
     font-size: 14px;
     line-height: 1.5;
     letter-spacing: -0.01em;
-    color: #000000;
+    color: rgba(0, 0, 0, 0.56);
     width: 140px;
     flex-shrink: 0;
 }
@@ -452,7 +452,7 @@ body {
     font-size: 14px;
     line-height: 1.5;
     letter-spacing: -0.01em;
-    color: #000000;
+    color: rgba(0, 0, 0, 0.56);
     flex: 1;
 }
 
