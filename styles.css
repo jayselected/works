@@ -102,8 +102,8 @@
     --project-rhythm: var(--space-6);
     --detail-row-y: 10px;
     --detail-gap: var(--space-2);
-    --detail-ink: rgba(0, 0, 0, 0.32);
-    --detail-line: rgba(34, 34, 34, 0.08);
+    --detail-ink: #686f78;
+    --detail-line: #dbdbdb;
     --image-pair-gap: var(--space-4);
     --image-trio-gap: clamp(8px, calc(-10.286px + 2.976vw), 32px);
 
@@ -167,7 +167,7 @@ body {
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #222222;
+    color: #0c1014;
     white-space: nowrap;
 }
 
@@ -178,7 +178,7 @@ body {
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #222222;
+    color: #0c1014;
     white-space: nowrap;
 }
 
@@ -189,7 +189,7 @@ body {
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #222222;
+    color: #0c1014;
     white-space: nowrap;
 }
 
@@ -200,7 +200,7 @@ body {
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #222222;
+    color: #0c1014;
     white-space: nowrap;
 }
 
@@ -285,7 +285,7 @@ body {
     font-size: 14px;
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #222222;
+    color: #0c1014;
     white-space: nowrap;
 }
 
@@ -296,7 +296,7 @@ body {
     font-size: 14px;
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #222222;
+    color: #0c1014;
     white-space: nowrap;
 }
 
@@ -307,7 +307,7 @@ body {
     font-size: 14px;
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #222222;
+    color: #0c1014;
     text-decoration: none;
     white-space: nowrap;
     transition: opacity 0.2s ease;
@@ -356,7 +356,7 @@ body {
     font-size: clamp(52px, 9.375vw, 128px);
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #222222;
+    color: #0c1014;
     margin: 0;
     padding: 0;
     margin-left: clamp(-12px, -0.833vw, -4px);
@@ -405,7 +405,7 @@ body {
     font-size: 16px;
     line-height: 1.2;
     letter-spacing: -0.01em;
-    color: #222222;
+    color: #0c1014;
 }
 
 /* ============================================
@@ -424,11 +424,11 @@ body {
     align-items: baseline;
     gap: var(--detail-gap);
     padding: var(--detail-row-y) 0;
-    border-top: 1px solid var(--detail-line);
+    border-top: 0.5px solid var(--detail-line);
 }
 
 .detail-row:last-child {
-    border-bottom: 1px solid var(--detail-line);
+    border-bottom: 0.5px solid var(--detail-line);
 }
 
 .detail-label {
@@ -473,7 +473,7 @@ body {
     font-size: 14px;
     line-height: 1.65;
     letter-spacing: -0.01em;
-    color: #222222;
+    color: #0c1014;
 }
 
 /* ============================================
@@ -560,7 +560,7 @@ body {
     font-size: 12px;
     line-height: 1.4;
     letter-spacing: -0.01em;
-    color: rgba(34, 34, 34, 0.5);
+    color: #686f78;
 }
 
 /* ============================================
