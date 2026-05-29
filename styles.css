@@ -99,11 +99,9 @@
     --main-gap: var(--space-8);
     --hello-y: var(--space-12);
     --works-gap: var(--space-16);
-    --project-gap: var(--space-6);
-    --project-meta-gap: var(--space-6);
-    --detail-row-y: var(--space-3);
+    --project-rhythm: var(--space-6);
+    --detail-row-y: 10px;
     --detail-gap: var(--space-2);
-    --image-stack-gap: var(--space-6);
     --image-pair-gap: var(--space-4);
     --image-trio-gap: clamp(8px, calc(-10.286px + 2.976vw), 32px);
 
@@ -388,14 +386,14 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--project-gap);
+    gap: var(--project-rhythm);
     padding-bottom: var(--space-4);
 }
 
 .project-meta {
     display: flex;
     flex-direction: column;
-    gap: var(--project-meta-gap);
+    gap: var(--project-rhythm);
 }
 
 .project-title {
@@ -424,11 +422,11 @@ body {
     align-items: baseline;
     gap: var(--detail-gap);
     padding: var(--detail-row-y) 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    border-top: 1px solid #000000;
 }
 
 .detail-row:last-child {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid #000000;
 }
 
 .detail-label {
@@ -484,7 +482,7 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--image-stack-gap);
+    gap: var(--project-rhythm);
 }
 
 .image-1 {
@@ -572,8 +570,8 @@ body {
         --main-top: var(--space-6);
         --main-gap: var(--space-6);
         --hello-y: var(--space-6);
-        --project-gap: var(--space-6);
-        --project-meta-gap: var(--space-6);
+        --project-rhythm: var(--space-6);
+        --detail-row-y: 9px;
         --image-pair-gap: var(--space-6);
         --dock-gap: 14px;
     }
@@ -664,6 +662,7 @@ body {
         --main-top: var(--space-5);
         --main-gap: var(--space-5);
         --hello-y: var(--space-5);
+        --detail-row-y: var(--space-2);
     }
 
     .location-greeting,
