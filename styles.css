@@ -102,7 +102,7 @@
     --project-rhythm: var(--space-6);
     --detail-row-y: 10px;
     --detail-gap: var(--space-2);
-    --detail-ink: rgba(0, 0, 0, 0.36);
+    --detail-ink: rgba(0, 0, 0, 0.32);
     --image-pair-gap: var(--space-4);
     --image-trio-gap: clamp(8px, calc(-10.286px + 2.976vw), 32px);
 
