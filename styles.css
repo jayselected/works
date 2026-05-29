@@ -436,7 +436,7 @@ body {
     font-size: 14px;
     line-height: 1.5;
     letter-spacing: -0.01em;
-    color: #777671;
+    color: #4d74ff;
     width: 140px;
     flex-shrink: 0;
 }
@@ -452,7 +452,7 @@ body {
     font-size: 14px;
     line-height: 1.5;
     letter-spacing: -0.01em;
-    color: #777671;
+    color: rgba(34, 34, 34, 0.55);
     flex: 1;
 }
 
