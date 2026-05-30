@@ -100,10 +100,10 @@
     --hello-y: var(--space-12);
     --works-gap: var(--space-16);
     --project-rhythm: var(--space-6);
-    --detail-row-y: 10px;
-    --detail-gap: var(--space-2);
-    --detail-ink: #686f78;
-    --detail-line: #dbdbdb;
+    --detail-row-y: var(--space-2);
+    --detail-gap: var(--space-1);
+    --detail-ink: #6F7680;
+    --detail-line: #DBDFE4;
     --image-pair-gap: var(--space-4);
     --image-trio-gap: clamp(8px, calc(-10.286px + 2.976vw), 32px);
 
@@ -167,7 +167,7 @@ body {
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #0c1014;
+    color: #0C1014;
     white-space: nowrap;
 }
 
@@ -178,7 +178,7 @@ body {
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #0c1014;
+    color: #0C1014;
     white-space: nowrap;
 }
 
@@ -189,7 +189,7 @@ body {
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #0c1014;
+    color: #0C1014;
     white-space: nowrap;
 }
 
@@ -200,7 +200,7 @@ body {
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #0c1014;
+    color: #0C1014;
     white-space: nowrap;
 }
 
@@ -352,11 +352,11 @@ body {
 .hello-text {
     /* font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
     font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 700;
+    font-weight: 500;
     font-size: clamp(52px, 9.375vw, 128px);
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #0c1014;
+    color: #0C1014;
     margin: 0;
     padding: 0;
     margin-left: clamp(-12px, -0.833vw, -4px);
@@ -439,7 +439,7 @@ body {
     line-height: 1.5;
     letter-spacing: -0.01em;
     color: var(--detail-ink);
-    width: 140px;
+    width: 112px;
     flex-shrink: 0;
 }
 
@@ -485,6 +485,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--project-rhythm);
+    background-color: #F3F4F6;
 }
 
 .image-1 {
@@ -573,7 +574,7 @@ body {
         --main-gap: var(--space-6);
         --hello-y: var(--space-6);
         --project-rhythm: var(--space-6);
-        --detail-row-y: 9px;
+        --detail-row-y: var(--space-2);
         --image-pair-gap: var(--space-6);
         --dock-gap: 14px;
     }
