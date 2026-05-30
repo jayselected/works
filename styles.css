@@ -100,6 +100,10 @@
     --hello-y: var(--space-12);
     --works-gap: var(--space-16);
     --project-rhythm: var(--space-6);
+    --detail-row-y: var(--space-2);
+    --detail-gap: var(--space-1);
+    --detail-ink: #6F7680;
+    --detail-line: #DBDFE4;
     --image-pair-gap: var(--space-4);
     --image-trio-gap: clamp(8px, calc(-10.286px + 2.976vw), 32px);
 
@@ -365,14 +369,14 @@ body {
     display: flex;
     flex-direction: row;
     align-items: baseline;
-    gap: var(--space-1);
-    padding: var(--space-2) 0;
-    color: #6F7680;
-    border-top: 0.5px solid #DBDFE4;
+    gap: var(--detail-gap);
+    padding: var(--detail-row-y) 0;
+    color: var(--detail-ink);
+    border-top: 0.5px solid var(--detail-line);
 }
 
 .detail-row:last-child {
-    border-bottom: 0.5px solid #DBDFE4;
+    border-bottom: 0.5px solid var(--detail-line);
 }
 
 .detail-label,
@@ -506,6 +510,7 @@ body {
         --main-gap: var(--space-6);
         --hello-y: var(--space-6);
         --project-rhythm: var(--space-6);
+        --detail-row-y: 9px;
         --image-pair-gap: var(--space-6);
         --dock-gap: 14px;
     }
@@ -546,6 +551,7 @@ body {
     .detail-row {
         flex-direction: row;
         align-items: baseline;
+        gap: var(--detail-gap);
     }
 
     .detail-label {
@@ -595,6 +601,7 @@ body {
         --main-top: var(--space-5);
         --main-gap: var(--space-5);
         --hello-y: var(--space-5);
+        --detail-row-y: var(--space-2);
     }
 
     .location-greeting,
