@@ -474,8 +474,12 @@ body {
     padding: var(--space-6) 0;
 }
 
+/* Fluid trio sizing: preserves the 160/330 mockup ratio while scaling smoothly between desktop, tablet, and mobile widths. */
 .image-3 img {
-    width: min(160px, calc((100% - (var(--image-trio-gap) * 2)) / 3));
+    width: min(
+        clamp(96px, 20vw, 160px),
+        calc((100% - (var(--image-trio-gap) * 2)) / 3)
+    );
     height: auto;
     aspect-ratio: 160 / 330;
     object-fit: cover;
@@ -590,10 +594,6 @@ body {
         padding: var(--space-6) var(--space-5);
     }
 
-    .image-3 img {
-        width: min(104px, calc((100% - (var(--image-trio-gap) * 2)) / 3));
-    }
-
     .dock-label,
     .dock-sublabel,
     .dock-contact {
@@ -649,9 +649,5 @@ body {
 
     .image-3 {
         padding: var(--space-6) 18px;
-    }
-
-    .image-3 img {
-        width: min(96px, calc((100% - (var(--image-trio-gap) * 2)) / 3));
     }
 }
