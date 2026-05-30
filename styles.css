@@ -100,10 +100,6 @@
     --hello-y: var(--space-12);
     --works-gap: var(--space-16);
     --project-rhythm: var(--space-6);
-    --detail-row-y: var(--space-2);
-    --detail-gap: var(--space-1);
-    --detail-ink: #6F7680;
-    --detail-line: #DBDFE4;
     --image-pair-gap: var(--space-4);
     --image-trio-gap: clamp(8px, calc(-10.286px + 2.976vw), 32px);
 
@@ -115,9 +111,9 @@
 }
 
 body {
-    /* font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
     font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
     font-weight: 500;
+    color: #0C1014;
     background-color: #FFFFFF;
     display: flex;
     flex-direction: column;
@@ -141,18 +137,13 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 20px var(--page-edge);
+    color: #0C1014;
     background-color: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
-.header-left {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: var(--space-1);
-}
-
+.header-left,
 .header-right {
     display: flex;
     flex-direction: row;
@@ -160,48 +151,24 @@ body {
     gap: var(--space-1);
 }
 
-.location-greeting {
-    /* font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 1;
-    letter-spacing: -0.01em;
-    color: #0C1014;
-    white-space: nowrap;
-}
-
-.header-datetime {
-    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 1;
-    letter-spacing: -0.01em;
-    color: #0C1014;
-    white-space: nowrap;
-}
-
-.location-city {
-    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 1;
-    letter-spacing: -0.01em;
-    color: #0C1014;
-    white-space: nowrap;
-}
-
+.location-greeting,
+.header-datetime,
+.location-city,
 .location-weather {
-    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 400;
     font-size: 16px;
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #0C1014;
     white-space: nowrap;
+}
+
+.location-greeting {
+    font-weight: 500;
+}
+
+.header-datetime,
+.location-city,
+.location-weather {
+    font-weight: 400;
 }
 
 /* ============================================
@@ -220,8 +187,8 @@ body {
     gap: var(--dock-gap);
     width: fit-content;
     max-width: min(560px, calc(100% - (var(--dock-edge) * 2)));
-    padding: 0 var(--space-4) 0 var(--space-2);
     height: var(--dock-height);
+    padding: 0 var(--space-4) 0 var(--space-2);
 
     background: linear-gradient(
         135deg,
@@ -278,38 +245,19 @@ body {
     display: block;
 }
 
-.dock-label {
-    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+.dock-label,
+.dock-sublabel,
+.dock-contact {
     font-weight: 400;
     font-size: 14px;
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #0c1014;
-    white-space: nowrap;
-}
-
-.dock-sublabel {
-    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 1;
-    letter-spacing: -0.01em;
-    color: #0c1014;
+    color: #0C1014;
     white-space: nowrap;
 }
 
 .dock-contact {
-    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 1;
-    letter-spacing: -0.01em;
-    color: #0c1014;
     text-decoration: none;
-    white-space: nowrap;
     transition: opacity 0.2s ease;
 }
 
@@ -347,16 +295,14 @@ body {
     justify-content: flex-start;
     align-items: center;
     padding: var(--hello-y) 0;
+    color: #0C1014;
 }
 
 .hello-text {
-    /* font-family: 'Helvetica Now Display Bold', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
     font-weight: 500;
     font-size: clamp(52px, 9.375vw, 128px);
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #0C1014;
     margin: 0;
     padding: 0;
     margin-left: clamp(-12px, -0.833vw, -4px);
@@ -399,13 +345,10 @@ body {
 }
 
 .project-title {
-    /* font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
     font-weight: 500;
     font-size: 16px;
     line-height: 1.2;
     letter-spacing: -0.01em;
-    color: #0c1014;
 }
 
 /* ============================================
@@ -422,23 +365,25 @@ body {
     display: flex;
     flex-direction: row;
     align-items: baseline;
-    gap: var(--detail-gap);
-    padding: var(--detail-row-y) 0;
-    border-top: 0.5px solid var(--detail-line);
+    gap: var(--space-1);
+    padding: var(--space-2) 0;
+    color: #6F7680;
+    border-top: 0.5px solid #DBDFE4;
 }
 
 .detail-row:last-child {
-    border-bottom: 0.5px solid var(--detail-line);
+    border-bottom: 0.5px solid #DBDFE4;
 }
 
-.detail-label {
-    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+.detail-label,
+.detail-value {
     font-weight: 400;
     font-size: 14px;
     line-height: 1.5;
     letter-spacing: -0.01em;
-    color: var(--detail-ink);
+}
+
+.detail-label {
     width: 112px;
     flex-shrink: 0;
 }
@@ -448,13 +393,6 @@ body {
 }
 
 .detail-value {
-    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 1.5;
-    letter-spacing: -0.01em;
-    color: var(--detail-ink);
     flex: 1;
 }
 
@@ -467,13 +405,10 @@ body {
 }
 
 .project-description-text {
-    /* font-family: 'Helvetica Now Display Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
     font-weight: 400;
     font-size: 14px;
     line-height: 1.65;
     letter-spacing: -0.01em;
-    color: #0c1014;
 }
 
 /* ============================================
@@ -485,12 +420,12 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--project-rhythm);
-    background-color: #F3F4F6;
 }
 
 .image-1 {
     width: 100%;
     aspect-ratio: 648 / 398;
+    background-color: #F3F4F6;
     overflow: hidden;
 }
 
@@ -505,13 +440,14 @@ body {
     display: flex;
     flex-direction: row;
     gap: var(--image-pair-gap);
+    background-color: #F3F4F6;
 }
 
 .image-box-a,
 .image-box-b {
     width: calc((100% - var(--image-pair-gap)) / 2);
     aspect-ratio: 316 / 398;
-    background-color: rgba(242, 242, 242, 0.5);
+    background-color: #F3F4F6;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -532,8 +468,8 @@ body {
     align-items: center;
     justify-content: center;
     gap: var(--image-trio-gap);
-    background-color: rgba(242, 242, 242, 0.5);
     padding: var(--space-6) 0;
+    background-color: #F3F4F6;
 }
 
 .image-3 img {
@@ -555,8 +491,6 @@ body {
 }
 
 .footer-text {
-    /* font-family: 'Helvetica Now Display Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
     font-weight: 500;
     font-size: 12px;
     line-height: 1.4;
@@ -574,7 +508,6 @@ body {
         --main-gap: var(--space-6);
         --hello-y: var(--space-6);
         --project-rhythm: var(--space-6);
-        --detail-row-y: var(--space-2);
         --image-pair-gap: var(--space-6);
         --dock-gap: 14px;
     }
@@ -615,7 +548,6 @@ body {
     .detail-row {
         flex-direction: row;
         align-items: baseline;
-        gap: var(--detail-gap);
     }
 
     .detail-label {
@@ -665,7 +597,6 @@ body {
         --main-top: var(--space-5);
         --main-gap: var(--space-5);
         --hello-y: var(--space-5);
-        --detail-row-y: var(--space-2);
     }
 
     .location-greeting,
