@@ -79,6 +79,7 @@
 }
 
 :root {
+    --viewport-floor: 390px;
     --page-max: 1440px;
     --main-width: 648px;
 
@@ -114,6 +115,11 @@
     --dock-gap: var(--space-5);
 }
 
+html,
+body {
+    min-width: var(--viewport-floor);
+}
+
 body {
     font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
     font-weight: 500;
@@ -135,6 +141,7 @@ body {
     top: 0;
     z-index: 100;
     width: 100%;
+    min-width: var(--viewport-floor);
     height: var(--header-height);
     display: flex;
     flex-direction: row;
@@ -649,5 +656,10 @@ body {
 
     .image-3 {
         padding: var(--space-6) 18px;
+    }
+
+    .dock {
+        left: calc(var(--viewport-floor) / 2);
+        max-width: calc(var(--viewport-floor) - 40px);
     }
 }
