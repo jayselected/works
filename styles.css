@@ -512,6 +512,7 @@ body {
         --project-rhythm: var(--space-6);
         --detail-row-y: 9px;
         --image-pair-gap: var(--space-6);
+        --image-trio-gap: 16px;
         --dock-gap: 14px;
     }
 
@@ -586,13 +587,11 @@ body {
     }
 
     .image-3 {
-        gap: 8px;
-        padding: 24px 0;
+        padding: var(--space-6) 0;
     }
 
     .image-3 img {
-        width: calc(33.333% - 6px);
-        max-width: 100px;
+        width: min(112px, calc((100% - (var(--image-trio-gap) * 2)) / 3));
     }
 
     .dock-label,
@@ -636,6 +635,10 @@ body {
    ============================================ */
 
 @media screen and (max-width: 390px) {
+    :root {
+        --image-trio-gap: 12px;
+    }
+
     .location-greeting,
     .header-datetime,
     .location-city,
@@ -644,13 +647,7 @@ body {
         line-height: 1.4;
     }
 
-    .image-3 {
-        gap: 8px;
-        padding: 24px 0;
-    }
-
     .image-3 img {
-        width: calc(33.333% - 4px);
-        max-width: 90px;
+        width: min(100px, calc((100% - (var(--image-trio-gap) * 2)) / 3));
     }
 }
