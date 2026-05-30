@@ -425,7 +425,6 @@ body {
 .image-1 {
     width: 100%;
     aspect-ratio: 648 / 398;
-    background-color: #F3F4F6;
     overflow: hidden;
 }
 
@@ -440,7 +439,6 @@ body {
     display: flex;
     flex-direction: row;
     gap: var(--image-pair-gap);
-    background-color: #F3F4F6;
 }
 
 .image-box-a,
@@ -468,8 +466,8 @@ body {
     align-items: center;
     justify-content: center;
     gap: var(--image-trio-gap);
-    padding: var(--space-6) 0;
     background-color: #F3F4F6;
+    padding: var(--space-6) 0;
 }
 
 .image-3 img {
