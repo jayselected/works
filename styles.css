@@ -149,6 +149,7 @@ body {
 }
 
 .header-left,
+.header-center,
 .header-right {
     display: flex;
     flex-direction: row;
@@ -161,12 +162,8 @@ body {
 }
 
 .header-center {
-    display: grid;
-    grid-template-columns: auto 22ch;
-    align-items: center;
     justify-content: center;
     justify-self: center;
-    column-gap: var(--space-1);
 }
 
 .header-right {
@@ -205,6 +202,8 @@ body {
 }
 
 .header-datetime {
+    width: 20ch;
+    flex: 0 0 20ch;
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
     text-align: left;
@@ -543,10 +542,10 @@ body {
 
     .header-center {
         grid-area: center;
-        grid-template-columns: auto 20ch;
-        justify-content: end;
+        justify-content: flex-end;
         justify-self: end;
         min-width: 0;
+        max-width: 100%;
     }
 
     .header-center .header-datetime {
@@ -576,12 +575,6 @@ body {
         min-width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
-    }
-
-    .header-datetime {
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: clip;
     }
 
     .location-greeting {
