@@ -149,7 +149,6 @@ body {
 }
 
 .header-left,
-.header-center,
 .header-right {
     display: flex;
     flex-direction: row;
@@ -162,7 +161,11 @@ body {
 }
 
 .header-center {
+    display: grid;
+    grid-template-columns: auto 34ch;
+    align-items: center;
     justify-content: center;
+    column-gap: var(--space-1);
 }
 
 .header-right {
@@ -203,6 +206,7 @@ body {
 .header-datetime {
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
+    text-align: left;
 }
 
 /* ============================================
@@ -538,9 +542,9 @@ body {
 
     .header-center {
         grid-area: center;
+        grid-template-columns: auto 24ch;
         justify-content: flex-end;
         min-width: 0;
-        flex-wrap: nowrap;
     }
 
     .header-right {
@@ -569,11 +573,7 @@ body {
     }
 
     .header-datetime {
-        flex: 0 0 20ch;
-        width: 20ch;
-        min-width: 20ch;
-        max-width: 20ch;
-        text-align: left;
+        min-width: 0;
         overflow: hidden;
         text-overflow: clip;
     }
