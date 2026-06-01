@@ -313,7 +313,7 @@ body {
 
 .hello-text {
     font-weight: 500;
-    font-size: 72px;
+    font-size: clamp(48px, 11.5vw, 72px);
     line-height: 1;
     letter-spacing: -0.01em;
     margin: 0;
@@ -329,7 +329,7 @@ body {
 
 .hello-subtext {
     font-weight: 500;
-    font-size: 72px;
+    font-size: clamp(48px, 11.5vw, 72px);
     line-height: 1;
     letter-spacing: -0.01em;
     color: #0C1014;
