@@ -511,22 +511,26 @@ body {
 
     .header-section {
         height: auto;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1fr) auto;
         grid-template-areas:
             "left right"
-            "center center";
-        align-items: flex-start;
+            "center right";
+        align-items: start;
         row-gap: 3px;
+        column-gap: var(--space-4);
     }
 
     .header-left {
         grid-area: left;
         justify-content: flex-start;
+        min-width: 0;
     }
 
     .header-center {
         grid-area: center;
         justify-content: flex-start;
+        min-width: 0;
+        flex-wrap: nowrap;
     }
 
     .header-right {
@@ -535,6 +539,14 @@ body {
         align-items: flex-end;
         justify-content: flex-start;
         gap: 3px;
+        min-width: 0;
+    }
+
+    .header-datetime,
+    .location-city,
+    .location-weather {
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .project {
