@@ -85,6 +85,7 @@
 
     --space-1: 4px;
     --space-2: 8px;
+    --space-3: 12px;
     --space-4: 16px;
     --space-5: 20px;
     --space-6: 24px;
@@ -97,8 +98,13 @@
 
     --main-top: var(--space-8);
     --main-gap: var(--space-8);
+    --hello-y: var(--space-12);
     --works-gap: var(--space-16);
     --project-rhythm: var(--space-6);
+    --detail-row-y: var(--space-2);
+    --detail-gap: var(--space-1);
+    --detail-ink: #6F7680;
+    --detail-line: #DBDFE4;
     --image-pair-gap: var(--space-4);
     --image-trio-gap: clamp(8px, calc(-10.286px + 2.976vw), 32px);
 
@@ -115,8 +121,8 @@ body {
 }
 
 body {
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
-    font-weight: 400;
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 500;
     color: #0C1014;
     background-color: #FFFFFF;
     display: flex;
@@ -137,10 +143,10 @@ body {
     width: 100%;
     min-width: var(--viewport-floor);
     height: var(--header-height);
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    display: flex;
+    flex-direction: row;
     align-items: center;
-    column-gap: var(--space-4);
+    justify-content: space-between;
     padding: 20px var(--page-edge);
     color: #0C1014;
     background-color: rgba(255, 255, 255, 0.72);
@@ -149,7 +155,6 @@ body {
 }
 
 .header-left,
-.header-center,
 .header-right {
     display: flex;
     flex-direction: row;
@@ -157,53 +162,24 @@ body {
     gap: var(--space-1);
 }
 
-.header-left {
-    justify-content: flex-start;
-}
-
-.header-center {
-    justify-content: center;
-    justify-self: center;
-}
-
-.header-right {
-    justify-content: flex-end;
-}
-
-.hello-text,
 .location-greeting,
 .header-datetime,
 .location-city,
 .location-weather {
-    font-size: 14px;
-    line-height: 1.4;
+    font-size: 16px;
+    line-height: 1;
     letter-spacing: -0.01em;
     white-space: nowrap;
 }
 
-.hello-text,
 .location-greeting {
     font-weight: 500;
-}
-
-.hello-text {
-    opacity: 0;
-    transition: opacity 0.8s ease;
-}
-
-.hello-text.visible {
-    opacity: 1;
 }
 
 .header-datetime,
 .location-city,
 .location-weather {
     font-weight: 400;
-}
-
-.header-datetime {
-    font-variant-numeric: tabular-nums;
-    font-feature-settings: "tnum" 1;
 }
 
 /* ============================================
@@ -321,6 +297,36 @@ body {
 }
 
 /* ============================================
+   HELLO SECTION
+   ============================================ */
+
+.hello {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: var(--hello-y) 0;
+    color: #0C1014;
+}
+
+.hello-text {
+    font-weight: 500;
+    font-size: clamp(52px, 9.375vw, 128px);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    margin: 0;
+    padding: 0;
+    margin-left: clamp(-12px, -0.833vw, -4px);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.hello-text.visible {
+    opacity: 1;
+}
+
+/* ============================================
    WORKS SECTION
    ============================================ */
 
@@ -350,8 +356,8 @@ body {
 }
 
 .project-title {
-    font-weight: 400;
-    font-size: 24px;
+    font-weight: 500;
+    font-size: 16px;
     line-height: 1.2;
     letter-spacing: -0.01em;
 }
@@ -370,20 +376,26 @@ body {
     display: flex;
     flex-direction: row;
     align-items: baseline;
-    gap: var(--space-1);
-    padding: 0;
-    color: #0C1014;
+    gap: var(--detail-gap);
+    padding: var(--detail-row-y) 0;
+    color: var(--detail-ink);
+    border-top: 0.5px solid var(--detail-line);
+}
+
+.detail-row:last-child {
+    border-bottom: 0.5px solid var(--detail-line);
 }
 
 .detail-label,
 .detail-value {
+    font-weight: 400;
     font-size: 14px;
-    line-height: 24px;
+    line-height: 1.5;
     letter-spacing: -0.01em;
 }
 
 .detail-label {
-    font-weight: 500;
+    width: 112px;
     flex-shrink: 0;
 }
 
@@ -392,9 +404,7 @@ body {
 }
 
 .detail-value {
-    font-weight: 400;
     flex: 1;
-    min-width: 0;
 }
 
 /* ============================================
@@ -408,7 +418,7 @@ body {
 .project-description-text {
     font-weight: 400;
     font-size: 14px;
-    line-height: 24px;
+    line-height: 1.65;
     letter-spacing: -0.01em;
 }
 
@@ -494,8 +504,8 @@ body {
 }
 
 .footer-text {
-    font-weight: 400;
-    font-size: 14px;
+    font-weight: 500;
+    font-size: 12px;
     line-height: 1.4;
     letter-spacing: -0.01em;
     color: #686f78;
@@ -509,7 +519,9 @@ body {
     :root {
         --main-top: var(--space-6);
         --main-gap: var(--space-6);
+        --hello-y: var(--space-6);
         --project-rhythm: var(--space-6);
+        --detail-row-y: 9px;
         --image-pair-gap: var(--space-6);
         --image-trio-gap: 14px;
         --dock-gap: 14px;
@@ -517,67 +529,27 @@ body {
 
     .header-section {
         height: auto;
-        grid-template-columns: minmax(0, auto) minmax(0, 1fr);
-        grid-template-areas:
-            "left center"
-            "right right";
-        align-items: start;
-        row-gap: 3px;
-        column-gap: var(--space-4);
+        align-items: flex-start;
     }
 
     .header-left {
-        grid-area: left;
-        justify-content: flex-start;
-        min-width: 0;
-    }
-
-    .hello-text {
-        width: 5.75em;
-        display: block;
-        overflow: hidden;
-    }
-
-    .header-center {
-        grid-area: center;
-        justify-content: flex-end;
-        justify-self: end;
-        min-width: 0;
-        max-width: 100%;
-        width: max-content;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 3px;
     }
 
     .header-right {
-        grid-area: right;
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        align-items: center;
-        justify-content: stretch;
-        width: 100%;
-        min-width: 0;
-        gap: var(--space-4);
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 3px;
     }
 
-    .location-city {
-        justify-self: start;
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
+    .location-greeting,
+    .header-datetime,
+    .location-city,
     .location-weather {
-        justify-self: end;
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .location-greeting {
-        flex-shrink: 0;
-    }
-
-    .header-datetime {
-        flex-shrink: 0;
+        font-size: 16px;
+        line-height: 1.4;
     }
 
     .project {
@@ -585,8 +557,27 @@ body {
     }
 
     .project-title {
-        font-size: 18px;
-        line-height: 24px;
+        font-size: 16px;
+    }
+
+    .detail-row {
+        flex-direction: row;
+        align-items: baseline;
+        gap: var(--detail-gap);
+    }
+
+    .detail-label {
+        width: auto;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .detail-value {
+        font-size: 13px;
+    }
+
+    .project-description-text {
+        font-size: 14px;
     }
 
     .image-2 {
@@ -609,6 +600,12 @@ body {
     .image-3 {
         padding: var(--space-6) var(--space-5);
     }
+
+    .dock-label,
+    .dock-sublabel,
+    .dock-contact {
+        font-size: 13px;
+    }
 }
 
 /* ============================================
@@ -619,6 +616,24 @@ body {
     :root {
         --main-top: var(--space-5);
         --main-gap: var(--space-5);
+        --hello-y: var(--space-5);
+        --detail-row-y: var(--space-2);
+    }
+
+    .location-greeting,
+    .header-datetime,
+    .location-city,
+    .location-weather {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .project-title {
+        font-size: 16px;
+    }
+
+    .project-description-text {
+        font-size: 14px;
     }
 }
 
@@ -629,6 +644,14 @@ body {
 @media screen and (max-width: 390px) {
     :root {
         --image-trio-gap: 12px;
+    }
+
+    .location-greeting,
+    .header-datetime,
+    .location-city,
+    .location-weather {
+        font-size: 14px;
+        line-height: 1.4;
     }
 
     .image-3 {
