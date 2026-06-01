@@ -85,7 +85,6 @@
 
     --space-1: 4px;
     --space-2: 8px;
-    --space-3: 12px;
     --space-4: 16px;
     --space-5: 20px;
     --space-6: 24px;
@@ -102,7 +101,6 @@
     --works-gap: var(--space-16);
     --project-rhythm: var(--space-6);
     --detail-row-y: var(--space-2);
-    --detail-gap: var(--space-1);
     --detail-ink: #6F7680;
     --detail-line: #DBDFE4;
     --image-pair-gap: var(--space-4);
@@ -376,7 +374,7 @@ body {
     display: flex;
     flex-direction: row;
     align-items: baseline;
-    gap: var(--detail-gap);
+    gap: var(--space-1);
     padding: var(--detail-row-y) 0;
     color: var(--detail-ink);
     border-top: 0.5px solid var(--detail-line);
@@ -556,28 +554,13 @@ body {
         padding-bottom: 0;
     }
 
-    .project-title {
-        font-size: 16px;
-    }
-
-    .detail-row {
-        flex-direction: row;
-        align-items: baseline;
-        gap: var(--detail-gap);
-    }
-
     .detail-label {
         width: auto;
         font-size: 13px;
-        flex-shrink: 0;
     }
 
     .detail-value {
         font-size: 13px;
-    }
-
-    .project-description-text {
-        font-size: 14px;
     }
 
     .image-2 {
@@ -627,14 +610,6 @@ body {
         font-size: 14px;
         line-height: 1.4;
     }
-
-    .project-title {
-        font-size: 16px;
-    }
-
-    .project-description-text {
-        font-size: 14px;
-    }
 }
 
 /* ============================================
@@ -644,14 +619,6 @@ body {
 @media screen and (max-width: 390px) {
     :root {
         --image-trio-gap: 12px;
-    }
-
-    .location-greeting,
-    .header-datetime,
-    .location-city,
-    .location-weather {
-        font-size: 14px;
-        line-height: 1.4;
     }
 
     .image-3 {
