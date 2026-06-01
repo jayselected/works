@@ -371,7 +371,7 @@ body {
     display: flex;
     flex-direction: row;
     align-items: baseline;
-    gap: 10px;
+    gap: var(--space-1);
     padding: 0;
     color: #0C1014;
 }
@@ -536,6 +536,11 @@ body {
 
     .project {
         padding-bottom: 0;
+    }
+
+    .project-title {
+        font-size: 14px;
+        line-height: 24px;
     }
 
     .image-2 {
