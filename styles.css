@@ -162,9 +162,10 @@ body {
 
 .header-center {
     display: grid;
-    grid-template-columns: auto 34ch;
+    grid-template-columns: auto 22ch;
     align-items: center;
     justify-content: center;
+    justify-self: center;
     column-gap: var(--space-1);
 }
 
@@ -542,9 +543,14 @@ body {
 
     .header-center {
         grid-area: center;
-        grid-template-columns: auto 24ch;
-        justify-content: flex-end;
+        grid-template-columns: auto 20ch;
+        justify-content: end;
+        justify-self: end;
         min-width: 0;
+    }
+
+    .header-center .header-datetime {
+        text-align: right;
     }
 
     .header-right {
