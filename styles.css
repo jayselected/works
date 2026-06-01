@@ -377,10 +377,11 @@ body {
     gap: 10px;
     padding: var(--detail-row-y) 0;
     color: var(--detail-ink);
+    border-top: 0.5px solid var(--detail-line);
 }
 
-.detail-row + .detail-row {
-    border-top: 0.5px solid var(--detail-line);
+.detail-row:last-child {
+    border-bottom: 0.5px solid var(--detail-line);
 }
 
 .detail-label,
@@ -553,6 +554,11 @@ body {
         padding-bottom: 0;
     }
 
+    .project-title,
+    .project-description-text {
+        font-size: 16px;
+    }
+
     .image-2 {
         flex-direction: column;
     }
@@ -599,6 +605,11 @@ body {
     .location-weather {
         font-size: 14px;
         line-height: 1.4;
+    }
+
+    .project-title,
+    .project-description-text {
+        font-size: 14px;
     }
 }
 
