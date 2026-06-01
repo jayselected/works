@@ -365,17 +365,16 @@ body {
    ============================================ */
 
 .project-details {
-    width: fit-content;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    max-width: 100%;
 }
 
 .detail-row {
     display: flex;
     flex-direction: row;
     align-items: baseline;
-    gap: var(--space-1);
+    gap: 10px;
     padding: var(--detail-row-y) 0;
     color: var(--detail-ink);
     border-top: 0.5px solid var(--detail-line);
