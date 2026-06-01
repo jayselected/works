@@ -200,6 +200,11 @@ body {
     font-weight: 400;
 }
 
+.header-datetime {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+}
+
 /* ============================================
    BOTTOM DOCK NAVIGATION
    ============================================ */
