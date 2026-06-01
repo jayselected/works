@@ -368,44 +368,43 @@ body {
 
 .project-details {
     width: 100%;
-    display: grid;
-    grid-template-columns: max-content max-content max-content max-content;
-    justify-content: space-between;
-    column-gap: var(--space-4);
-    row-gap: var(--space-4);
+    display: flex;
+    flex-direction: column;
 }
 
 .detail-row {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-1);
-    min-width: 0;
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--detail-gap);
+    padding: var(--detail-row-y) 0;
     color: var(--detail-ink);
+    border-top: 0.5px solid var(--detail-line);
+}
+
+.detail-row:last-child {
+    border-bottom: 0.5px solid var(--detail-line);
 }
 
 .detail-label,
 .detail-value {
     font-weight: 400;
     font-size: 14px;
+    line-height: 1.5;
     letter-spacing: -0.01em;
 }
 
 .detail-label {
-    line-height: 1.2;
+    width: 112px;
+    flex-shrink: 0;
+}
+
+.detail-label::after {
+    content: ':';
 }
 
 .detail-value {
-    line-height: 1.35;
-    white-space: nowrap;
-}
-
-.detail-value span {
-    display: inline;
-}
-
-.detail-value span:not(:last-child)::after {
-    content: ', ';
+    flex: 1;
 }
 
 /* ============================================
@@ -418,8 +417,8 @@ body {
 
 .project-description-text {
     font-weight: 400;
-    font-size: 16px;
-    line-height: 1.7;
+    font-size: 14px;
+    line-height: 1.65;
     letter-spacing: -0.01em;
 }
 
@@ -561,20 +560,24 @@ body {
         font-size: 16px;
     }
 
-    .project-details {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        justify-content: stretch;
-        column-gap: var(--space-6);
-        row-gap: var(--space-4);
+    .detail-row {
+        flex-direction: row;
+        align-items: baseline;
+        gap: var(--detail-gap);
+    }
+
+    .detail-label {
+        width: auto;
+        font-size: 13px;
+        flex-shrink: 0;
     }
 
     .detail-value {
-        white-space: normal;
+        font-size: 13px;
     }
 
     .project-description-text {
-        font-size: clamp(14px, calc(11.936px + 0.529vw), 16px);
-        line-height: 1.7;
+        font-size: 14px;
     }
 
     .image-2 {
@@ -627,6 +630,10 @@ body {
 
     .project-title {
         font-size: 16px;
+    }
+
+    .project-description-text {
+        font-size: 14px;
     }
 }
 
