@@ -1,7 +1,8 @@
 /* ============================================
-   FONTS — SF Pro Display (Active)
+   FONTS — SF Pro Display (Inactive)
    ============================================ */
 
+/*
 @font-face {
     font-family: 'SF Pro Display';
     src: url('fonts/SF Pro/SF Pro Display Regular.woff2') format('woff2'),
@@ -46,6 +47,7 @@
     font-style: normal;
     font-display: swap;
 }
+*/
 
 /* ============================================
    FONTS — Helvetica Now Display (Inactive)
@@ -100,9 +102,6 @@
     --hello-y: var(--space-12);
     --works-gap: var(--space-16);
     --project-rhythm: var(--space-6);
-    --detail-row-y: var(--space-2);
-    --detail-ink: #6F7680;
-    --detail-line: #DBDFE4;
     --image-pair-gap: var(--space-4);
     --image-trio-gap: clamp(8px, calc(-10.286px + 2.976vw), 32px);
 
@@ -119,8 +118,8 @@ body {
 }
 
 body {
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 500;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+    font-weight: 400;
     color: #0C1014;
     background-color: #FFFFFF;
     display: flex;
@@ -164,8 +163,8 @@ body {
 .header-datetime,
 .location-city,
 .location-weather {
-    font-size: 16px;
-    line-height: 1;
+    font-size: 14px;
+    line-height: 1.4;
     letter-spacing: -0.01em;
     white-space: nowrap;
 }
@@ -354,8 +353,8 @@ body {
 }
 
 .project-title {
-    font-weight: 500;
-    font-size: 16px;
+    font-weight: 400;
+    font-size: 24px;
     line-height: 1.2;
     letter-spacing: -0.01em;
 }
@@ -375,24 +374,19 @@ body {
     flex-direction: row;
     align-items: baseline;
     gap: 10px;
-    padding: var(--detail-row-y) 0;
-    color: var(--detail-ink);
-    border-top: 0.5px solid var(--detail-line);
-}
-
-.detail-row:last-child {
-    border-bottom: 0.5px solid var(--detail-line);
+    padding: 0;
+    color: #0C1014;
 }
 
 .detail-label,
 .detail-value {
-    font-weight: 400;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 24px;
     letter-spacing: -0.01em;
 }
 
 .detail-label {
+    font-weight: 500;
     flex-shrink: 0;
 }
 
@@ -401,6 +395,7 @@ body {
 }
 
 .detail-value {
+    font-weight: 400;
     flex: 1;
     min-width: 0;
 }
@@ -415,7 +410,7 @@ body {
 
 .project-description-text {
     font-weight: 400;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 24px;
     letter-spacing: -0.01em;
 }
@@ -502,8 +497,8 @@ body {
 }
 
 .footer-text {
-    font-weight: 500;
-    font-size: 12px;
+    font-weight: 400;
+    font-size: 14px;
     line-height: 1.4;
     letter-spacing: -0.01em;
     color: #686f78;
@@ -519,7 +514,6 @@ body {
         --main-gap: var(--space-6);
         --hello-y: var(--space-6);
         --project-rhythm: var(--space-6);
-        --detail-row-y: 9px;
         --image-pair-gap: var(--space-6);
         --image-trio-gap: 14px;
         --dock-gap: 14px;
@@ -542,21 +536,8 @@ body {
         gap: 3px;
     }
 
-    .location-greeting,
-    .header-datetime,
-    .location-city,
-    .location-weather {
-        font-size: 16px;
-        line-height: 1.4;
-    }
-
     .project {
         padding-bottom: 0;
-    }
-
-    .project-title,
-    .project-description-text {
-        font-size: 16px;
     }
 
     .image-2 {
@@ -579,12 +560,6 @@ body {
     .image-3 {
         padding: var(--space-6) var(--space-5);
     }
-
-    .dock-label,
-    .dock-sublabel,
-    .dock-contact {
-        font-size: 13px;
-    }
 }
 
 /* ============================================
@@ -596,20 +571,6 @@ body {
         --main-top: var(--space-5);
         --main-gap: var(--space-5);
         --hello-y: var(--space-5);
-        --detail-row-y: var(--space-2);
-    }
-
-    .location-greeting,
-    .header-datetime,
-    .location-city,
-    .location-weather {
-        font-size: 14px;
-        line-height: 1.4;
-    }
-
-    .project-title,
-    .project-description-text {
-        font-size: 14px;
     }
 }
 
