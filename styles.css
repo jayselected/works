@@ -531,6 +531,11 @@ body {
         min-width: 0;
     }
 
+    .hello-text {
+        width: 5.75em;
+        display: block;
+    }
+
     .header-center {
         grid-area: center;
         justify-content: flex-end;
