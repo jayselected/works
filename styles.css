@@ -569,9 +569,13 @@ body {
     }
 
     .header-datetime {
-        min-width: 0;
+        flex: 0 0 20ch;
+        width: 20ch;
+        min-width: 20ch;
+        max-width: 20ch;
+        text-align: left;
         overflow: hidden;
-        text-overflow: ellipsis;
+        text-overflow: clip;
     }
 
     .location-greeting {
