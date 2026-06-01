@@ -4,20 +4,20 @@
  */
 
 const HELLO_LANGUAGES = [
-    { text: 'Hello.' },
-    { text: 'Hola.' },
-    { text: 'Bonjour.' },
-    { text: 'Hallo.' },
-    { text: 'Ciao.' },
-    { text: 'Olá.' },
-    { text: 'Привет.' },
-    { text: '你好.' },
-    { text: 'こんにちは.' },
-    { text: '안녕하세요.' },
-    { text: 'नमस्ते.' },
-    { text: 'مرحبا.' },
-    { text: 'Hej.' },
-    { text: 'Merhaba.' }
+    { text: 'Hello,' },
+    { text: 'Hola,' },
+    { text: 'Bonjour,' },
+    { text: 'Hallo,' },
+    { text: 'Ciao,' },
+    { text: 'Olá,' },
+    { text: 'Привет,' },
+    { text: '你好,' },
+    { text: 'こんにちは,' },
+    { text: '안녕하세요,' },
+    { text: 'नमस्ते,' },
+    { text: 'مرحبا,' },
+    { text: 'Hej,' },
+    { text: 'Merhaba,' }
 ];
 
 let currentLanguageIndex = 0;
