@@ -313,7 +313,7 @@ body {
 
 .hello-text {
     font-weight: 500;
-    font-size: clamp(52px, 9.375vw, 128px);
+    font-size: 72px;
     line-height: 1;
     letter-spacing: -0.01em;
     margin: 0;
@@ -330,8 +330,8 @@ body {
 
 .hello-subtext {
     font-weight: 400;
-    font-size: 16px;
-    line-height: 1.4;
+    font-size: 72px;
+    line-height: 1;
     letter-spacing: -0.01em;
     color: #0C1014;
 }
