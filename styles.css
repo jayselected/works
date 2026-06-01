@@ -368,6 +368,7 @@ body {
     width: fit-content;
     display: flex;
     flex-direction: column;
+    max-width: 100%;
 }
 
 .detail-row {
@@ -393,7 +394,6 @@ body {
 }
 
 .detail-label {
-    width: 112px;
     flex-shrink: 0;
 }
 
@@ -403,6 +403,7 @@ body {
 
 .detail-value {
     flex: 1;
+    min-width: 0;
 }
 
 /* ============================================
@@ -554,11 +555,7 @@ body {
         padding-bottom: 0;
     }
 
-    .detail-label {
-        width: auto;
-        font-size: 13px;
-    }
-
+    .detail-label,
     .detail-value {
         font-size: 13px;
     }
