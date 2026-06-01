@@ -365,7 +365,7 @@ body {
    ============================================ */
 
 .project-details {
-    width: 100%;
+    width: fit-content;
     display: flex;
     flex-direction: column;
 }
