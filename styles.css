@@ -97,7 +97,6 @@
 
     --main-top: var(--space-8);
     --main-gap: var(--space-8);
-    --hello-y: var(--space-12);
     --works-gap: var(--space-16);
     --project-rhythm: var(--space-6);
     --image-pair-gap: var(--space-4);
@@ -157,6 +156,7 @@ body {
     gap: var(--space-1);
 }
 
+.hello-text,
 .location-greeting,
 .header-datetime,
 .location-city,
@@ -167,8 +167,18 @@ body {
     white-space: nowrap;
 }
 
+.hello-text,
 .location-greeting {
     font-weight: 500;
+}
+
+.hello-text {
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.hello-text.visible {
+    opacity: 1;
 }
 
 .header-datetime,
@@ -289,36 +299,6 @@ body {
     flex-direction: column;
     gap: var(--main-gap);
     padding-top: var(--main-top);
-}
-
-/* ============================================
-   HELLO SECTION
-   ============================================ */
-
-.hello {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: var(--hello-y) 0;
-    color: #0C1014;
-}
-
-.hello-text {
-    font-weight: 500;
-    font-size: clamp(52px, 9.375vw, 128px);
-    line-height: 1;
-    letter-spacing: -0.01em;
-    margin: 0;
-    padding: 0;
-    margin-left: clamp(-12px, -0.833vw, -4px);
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.8s ease;
-}
-
-.hello-text.visible {
-    opacity: 1;
 }
 
 /* ============================================
@@ -510,7 +490,6 @@ body {
     :root {
         --main-top: var(--space-6);
         --main-gap: var(--space-6);
-        --hello-y: var(--space-6);
         --project-rhythm: var(--space-6);
         --image-pair-gap: var(--space-6);
         --image-trio-gap: 14px;
@@ -573,7 +552,6 @@ body {
     :root {
         --main-top: var(--space-5);
         --main-gap: var(--space-5);
-        --hello-y: var(--space-5);
     }
 }
 
