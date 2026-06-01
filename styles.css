@@ -1,7 +1,8 @@
 /* ============================================
-   FONTS — SF Pro Display (Active)
+   FONTS — SF Pro Display (Inactive)
    ============================================ */
 
+/*
 @font-face {
     font-family: 'SF Pro Display';
     src: url('fonts/SF Pro/SF Pro Display Regular.woff2') format('woff2'),
@@ -46,30 +47,35 @@
     font-style: normal;
     font-display: swap;
 }
+*/
 
 /* ============================================
-   FONTS — Helvetica Now Display (Inactive)
+   FONTS — Helvetica Now Display (Active)
    ============================================ */
 
-/*
 @font-face {
-    font-family: 'Helvetica Now Display Regular';
+    font-family: 'Helvetica Now Display';
     src: url('fonts/Helvetica_Now_Display.ttf') format('truetype');
+    font-weight: 400;
     font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
-    font-family: 'Helvetica Now Display Medium';
+    font-family: 'Helvetica Now Display';
     src: url('fonts/Helvetica_Now_Display_Medium.ttf') format('truetype');
+    font-weight: 500;
     font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
-    font-family: 'Helvetica Now Display Bold';
+    font-family: 'Helvetica Now Display';
     src: url('fonts/Helvetica_Now_Display_Bold.ttf') format('truetype');
+    font-weight: 700;
     font-style: normal;
+    font-display: swap;
 }
-*/
 
 /* Reset and Base Styles */
 * {
@@ -121,8 +127,8 @@ body {
 }
 
 body {
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 500;
+    font-family: 'Helvetica Now Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 700;
     color: #0C1014;
     background-color: #FFFFFF;
     display: flex;
@@ -173,7 +179,7 @@ body {
 }
 
 .location-greeting {
-    font-weight: 500;
+    font-weight: 700;
 }
 
 .header-datetime,
@@ -306,19 +312,18 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    gap: var(--space-4);
+    gap: 0;
     padding: var(--hello-y) 0;
     color: #0C1014;
 }
 
 .hello-text {
-    font-weight: 500;
+    font-weight: 700;
     font-size: 72px;
     line-height: 1;
     letter-spacing: -0.01em;
     margin: 0;
     padding: 0;
-    margin-left: clamp(-12px, -0.833vw, -4px);
     white-space: nowrap;
     opacity: 0;
     transition: opacity 0.8s ease;
@@ -329,7 +334,7 @@ body {
 }
 
 .hello-subtext {
-    font-weight: 400;
+    font-weight: 700;
     font-size: 72px;
     line-height: 1;
     letter-spacing: -0.01em;
@@ -366,7 +371,7 @@ body {
 }
 
 .project-title {
-    font-weight: 500;
+    font-weight: 700;
     font-size: 16px;
     line-height: 1.2;
     letter-spacing: -0.01em;
@@ -514,7 +519,7 @@ body {
 }
 
 .footer-text {
-    font-weight: 500;
+    font-weight: 700;
     font-size: 12px;
     line-height: 1.4;
     letter-spacing: -0.01em;
