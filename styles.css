@@ -539,11 +539,8 @@ body {
         min-width: 0;
     }
 
-    .location-city {
-        display: none;
-    }
-
     .header-datetime,
+    .location-city,
     .location-weather {
         min-width: 0;
         overflow: hidden;
