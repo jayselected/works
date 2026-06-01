@@ -562,22 +562,14 @@ body {
     }
 
     .project-details {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         justify-content: stretch;
-        column-gap: var(--space-6);
+        column-gap: var(--space-3);
         row-gap: var(--space-4);
     }
 
     .detail-value {
         white-space: normal;
-    }
-
-    .detail-value span {
-        display: block;
-    }
-
-    .detail-value span:not(:last-child)::after {
-        content: '';
     }
 
     .project-description-text {
