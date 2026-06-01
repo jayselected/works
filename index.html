@@ -1,628 +1,124 @@
-/* ============================================
-   FONTS — SF Pro Display (Active)
-   ============================================ */
-
-@font-face {
-    font-family: 'SF Pro Display';
-    src: url('fonts/SF Pro/SF Pro Display Regular.woff2') format('woff2'),
-         url('fonts/SF Pro/SF Pro Display Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Display';
-    src: url('fonts/SF Pro/SF Pro Display Medium.woff2') format('woff2'),
-         url('fonts/SF Pro/SF Pro Display Medium.woff') format('woff');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Display';
-    src: url('fonts/SF Pro/SF Pro Display Bold.woff2') format('woff2'),
-         url('fonts/SF Pro/SF Pro Display Bold.woff') format('woff');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Display';
-    src: url('fonts/SF Pro/SF Pro Display Heavy.woff2') format('woff2'),
-         url('fonts/SF Pro/SF Pro Display Heavy.woff') format('woff');
-    font-weight: 800;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Display';
-    src: url('fonts/SF Pro/SF Pro Display Black.woff2') format('woff2'),
-         url('fonts/SF Pro/SF Pro Display Black.woff') format('woff');
-    font-weight: 900;
-    font-style: normal;
-    font-display: swap;
-}
-
-/* ============================================
-   FONTS — Helvetica Now Display (Inactive)
-   ============================================ */
-
-/*
-@font-face {
-    font-family: 'Helvetica Now Display Regular';
-    src: url('fonts/Helvetica_Now_Display.ttf') format('truetype');
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Helvetica Now Display Medium';
-    src: url('fonts/Helvetica_Now_Display_Medium.ttf') format('truetype');
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Helvetica Now Display Bold';
-    src: url('fonts/Helvetica_Now_Display_Bold.ttf') format('truetype');
-    font-style: normal;
-}
-*/
-
-/* Reset and Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-    --viewport-floor: 390px;
-    --page-max: 1440px;
-    --main-width: 648px;
-
-    --space-1: 4px;
-    --space-2: 8px;
-    --space-4: 16px;
-    --space-5: 20px;
-    --space-6: 24px;
-    --space-8: 32px;
-    --space-12: 48px;
-    --space-16: 64px;
-
-    --page-edge: clamp(20px, calc(-68.571px + 13.095vw), 120px);
-    --header-height: 52px;
-
-    --main-top: var(--space-8);
-    --main-gap: var(--space-8);
-    --hello-y: var(--space-12);
-    --works-gap: var(--space-16);
-    --project-rhythm: var(--space-6);
-    --detail-row-y: var(--space-2);
-    --detail-ink: #6F7680;
-    --detail-line: #DBDFE4;
-    --image-pair-gap: var(--space-4);
-    --image-trio-gap: clamp(8px, calc(-10.286px + 2.976vw), 32px);
-
-    --dock-height: 52px;
-    --dock-bottom: var(--space-6);
-    --dock-clearance: calc(var(--dock-height) + var(--dock-bottom) + var(--space-6));
-    --dock-edge: clamp(20px, 6.25vw, 48px);
-    --dock-gap: var(--space-5);
-}
-
-html,
-body {
-    min-width: var(--viewport-floor);
-}
-
-body {
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 500;
-    color: #0C1014;
-    background-color: #FFFFFF;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    padding-bottom: var(--dock-clearance);
-}
-
-/* ============================================
-   HEADER SECTION (sticky top bar)
-   ============================================ */
-
-.header-section {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    width: 100%;
-    min-width: var(--viewport-floor);
-    height: var(--header-height);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px var(--page-edge);
-    color: #0C1014;
-    background-color: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-}
-
-.header-left,
-.header-right {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: var(--space-1);
-}
-
-.location-greeting,
-.header-datetime,
-.location-city,
-.location-weather {
-    font-size: 16px;
-    line-height: 1;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-}
-
-.location-greeting {
-    font-weight: 500;
-}
-
-.header-datetime,
-.location-city,
-.location-weather {
-    font-weight: 400;
-}
-
-/* ============================================
-   BOTTOM DOCK NAVIGATION
-   ============================================ */
-
-.dock {
-    position: fixed;
-    bottom: var(--dock-bottom);
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 200;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--dock-gap);
-    width: fit-content;
-    max-width: min(560px, calc(100% - (var(--dock-edge) * 2)));
-    height: var(--dock-height);
-    padding: 0 var(--space-4) 0 var(--space-2);
-
-    background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.18) 0%,
-        rgba(255, 255, 255, 0.09) 100%
-    );
-    backdrop-filter: blur(14px) saturate(200%) brightness(1.08);
-    -webkit-backdrop-filter: blur(14px) saturate(200%) brightness(1.08);
-
-    border: 1px solid rgba(34, 34, 34, 0.08);
-    border-radius: var(--space-4);
-
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.6),
-        inset 0 -1px 0 rgba(34, 34, 34, 0.04),
-        inset 1px 0 0 rgba(255, 255, 255, 0.2),
-        0 8px 32px rgba(34, 34, 34, 0.08),
-        0 2px 8px rgba(34, 34, 34, 0.06);
-}
-
-.dock::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: var(--space-4);
-    background: linear-gradient(
-        145deg,
-        rgba(255, 255, 255, 0.35) 0%,
-        rgba(255, 255, 255, 0.0) 50%,
-        rgba(34, 34, 34, 0.03) 100%
-    );
-    pointer-events: none;
-}
-
-.dock-logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    background-color: #FFFFFF;
-    border-radius: 10px;
-    flex-shrink: 0;
-    transition: opacity 0.2s ease;
-}
-
-.dock-logo:hover {
-    opacity: 0.6;
-}
-
-.dock-logo img {
-    width: 26px;
-    height: 26px;
-    display: block;
-}
-
-.dock-label,
-.dock-sublabel,
-.dock-contact {
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 1;
-    letter-spacing: -0.01em;
-    color: #0C1014;
-    white-space: nowrap;
-}
-
-.dock-contact {
-    text-decoration: none;
-    transition: opacity 0.2s ease;
-}
-
-.dock-contact:hover {
-    opacity: 0.5;
-}
-
-/* ============================================
-   CONTAINER
-   ============================================ */
-
-.container {
-    width: 100%;
-    max-width: var(--page-max);
-    padding: 0 var(--page-edge);
-    display: flex;
-    justify-content: center;
-}
-
-.main {
-    width: min(100%, var(--main-width));
-    display: flex;
-    flex-direction: column;
-    gap: var(--main-gap);
-    padding-top: var(--main-top);
-}
-
-/* ============================================
-   HELLO SECTION
-   ============================================ */
-
-.hello {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: var(--hello-y) 0;
-    color: #0C1014;
-}
-
-.hello-text {
-    font-weight: 500;
-    font-size: clamp(52px, 9.375vw, 128px);
-    line-height: 1;
-    letter-spacing: -0.01em;
-    margin: 0;
-    padding: 0;
-    margin-left: clamp(-12px, -0.833vw, -4px);
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.8s ease;
-}
-
-.hello-text.visible {
-    opacity: 1;
-}
-
-/* ============================================
-   WORKS SECTION
-   ============================================ */
-
-.works {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--works-gap);
-}
-
-/* ============================================
-   PROJECT ARTICLE
-   ============================================ */
-
-.project {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--project-rhythm);
-    padding-bottom: var(--space-4);
-}
-
-.project-meta {
-    display: flex;
-    flex-direction: column;
-    gap: var(--project-rhythm);
-}
-
-.project-title {
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-}
-
-/* ============================================
-   PROJECT DETAILS
-   ============================================ */
-
-.project-details {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.detail-row {
-    display: flex;
-    flex-direction: row;
-    align-items: baseline;
-    gap: 10px;
-    padding: var(--detail-row-y) 0;
-    color: var(--detail-ink);
-    border-top: 0.5px solid var(--detail-line);
-}
-
-.detail-row:last-child {
-    border-bottom: 0.5px solid var(--detail-line);
-}
-
-.detail-label,
-.detail-value {
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 1.5;
-    letter-spacing: -0.01em;
-}
-
-.detail-label {
-    flex-shrink: 0;
-}
-
-.detail-label::after {
-    content: ':';
-}
-
-.detail-value {
-    flex: 1;
-    min-width: 0;
-}
-
-/* ============================================
-   PROJECT DESCRIPTION
-   ============================================ */
-
-.project-description {
-    width: 100%;
-}
-
-.project-description-text {
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 1.65;
-    letter-spacing: -0.01em;
-}
-
-/* ============================================
-   PROJECT IMAGES
-   ============================================ */
-
-.project-images {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--project-rhythm);
-}
-
-.image-1 {
-    width: 100%;
-    aspect-ratio: 648 / 398;
-    overflow: hidden;
-}
-
-.image-1 img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.image-2 {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    gap: var(--image-pair-gap);
-}
-
-.image-box-a,
-.image-box-b {
-    width: calc((100% - var(--image-pair-gap)) / 2);
-    aspect-ratio: 316 / 398;
-    background-color: rgba(243, 244, 246, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-.image-box-a img,
-.image-box-b img {
-    width: 160px;
-    height: 330px;
-    object-fit: cover;
-}
-
-.image-3 {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: var(--image-trio-gap);
-    background-color: rgba(243, 244, 246, 0.6);
-    padding: var(--space-6) 0;
-}
-
-/* Fluid trio sizing: preserves the 160/330 mockup ratio while scaling smoothly between desktop, tablet, and mobile widths. */
-.image-3 img {
-    width: min(
-        clamp(96px, 20vw, 160px),
-        calc((100% - (var(--image-trio-gap) * 2)) / 3)
-    );
-    height: auto;
-    aspect-ratio: 160 / 330;
-    object-fit: cover;
-}
-
-/* ============================================
-   SITE FOOTER
-   ============================================ */
-
-.site-footer {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: var(--space-4) 0;
-}
-
-.footer-text {
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 1.4;
-    letter-spacing: -0.01em;
-    color: #686f78;
-}
-
-/* ============================================
-   MOBILE RESPONSIVE — 768px
-   ============================================ */
-
-@media screen and (max-width: 768px) {
-    :root {
-        --main-top: var(--space-6);
-        --main-gap: var(--space-6);
-        --hello-y: var(--space-6);
-        --project-rhythm: var(--space-6);
-        --detail-row-y: 9px;
-        --image-pair-gap: var(--space-6);
-        --image-trio-gap: 14px;
-        --dock-gap: 14px;
-    }
-
-    .header-section {
-        height: auto;
-        align-items: flex-start;
-    }
-
-    .header-left {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 3px;
-    }
-
-    .header-right {
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 3px;
-    }
-
-    .location-greeting,
-    .header-datetime,
-    .location-city,
-    .location-weather {
-        font-size: 16px;
-        line-height: 1.4;
-    }
-
-    .project {
-        padding-bottom: 0;
-    }
-
-    .detail-label,
-    .detail-value {
-        font-size: 13px;
-    }
-
-    .image-2 {
-        flex-direction: column;
-    }
-
-    .image-box-a,
-    .image-box-b {
-        width: 100%;
-    }
-
-    .image-box-a img,
-    .image-box-b img {
-        width: auto;
-        height: auto;
-        max-width: 44%;
-        max-height: 84%;
-    }
-
-    .image-3 {
-        padding: var(--space-6) var(--space-5);
-    }
-
-    .dock-label,
-    .dock-sublabel,
-    .dock-contact {
-        font-size: 13px;
-    }
-}
-
-/* ============================================
-   MOBILE RESPONSIVE — 480px
-   ============================================ */
-
-@media screen and (max-width: 480px) {
-    :root {
-        --main-top: var(--space-5);
-        --main-gap: var(--space-5);
-        --hello-y: var(--space-5);
-        --detail-row-y: var(--space-2);
-    }
-
-    .location-greeting,
-    .header-datetime,
-    .location-city,
-    .location-weather {
-        font-size: 14px;
-        line-height: 1.4;
-    }
-}
-
-/* ============================================
-   MOBILE RESPONSIVE — 390px
-   ============================================ */
-
-@media screen and (max-width: 390px) {
-    :root {
-        --image-trio-gap: 12px;
-    }
-
-    .image-3 {
-        padding: var(--space-6) 18px;
-    }
-
-    .dock {
-        left: calc(var(--viewport-floor) / 2);
-        max-width: calc(var(--viewport-floor) - 40px);
-    }
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jay Patel</title>
+    <meta name="description" content="Select Design Works by Jay Patel.">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jayselected.vercel.app">
+    <meta property="og:title" content="Jay Patel">
+    <meta property="og:description" content="Select Design Works by Jay Patel.">
+    <meta property="og:image" content="https://jayselected.vercel.app/og-image.png">
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://jayselected.vercel.app">
+    <meta name="twitter:title" content="Jay Patel">
+    <meta name="twitter:description" content="Select Design Works by Jay Patel.">
+    <meta name="twitter:image" content="https://jayselected.vercel.app/og-image.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Sticky top bar -->
+    <div class="header-section" id="header-section">
+        <div class="header-left">
+            <p class="location-greeting" id="greeting-display"></p>
+            <p class="header-datetime" id="datetime-display"></p>
+        </div>
+        <div class="header-right">
+            <p class="location-city" id="location-city-display"></p>
+            <p class="location-weather" id="location-weather-display"></p>
+        </div>
+    </div>
+
+    <div class="container">
+        <main class="main">
+
+            <section class="hello">
+                <h1 class="hello-text" id="hello-text"></h1>
+            </section>
+
+            <section class="works">
+
+                <article class="project">
+                    <div class="project-meta">
+                        <p class="project-title">Cine Asia</p>
+                        <div class="project-details">
+                            
+                            <div class="detail-row">
+                                <span class="detail-label">Program</span>
+                                <span class="detail-value">Brand Identity · Product Design</span>
+                            </div>
+
+                            <div class="detail-row">
+                                <span class="detail-label">Stack</span>
+                                <span class="detail-value">Adobe Photoshop · Adobe Illustrator · Figma</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="project-description">
+                        <p class="project-description-text">Cine Asia is a concept app celebrating Asian cinema through a curated streaming experience and editorial film coverage from across the continent. Designed with a clean, intuitive interface, it keeps discovery simple, focused, and enjoyable.</p>
+                    </div>
+
+                    <div class="project-images">
+                        <div class="image-1">
+                            <img src="https://framerusercontent.com/images/HyNx4h88GowWDEBafQKrWsFKOdA.png" alt="Cine Asia Banner Image">
+                        </div>
+                        <div class="image-2">
+                            <div class="image-box-a">
+                                <img src="images/cineasia/cineasia-1.png" alt="Cine Asia Home">
+                            </div>
+                            <div class="image-box-b">
+                                <img src="images/cineasia/cineasia-2.png" alt="Cine Asia, browsing films">
+                            </div>
+                        </div>
+                        <div class="image-3">
+                            <img src="images/cineasia/cineasia-3.png" alt="Cine Asia, browsing articles">
+                            <img src="images/cineasia/cineasia-4.png" alt="Cine Asia, read article page">
+                            <img src="images/cineasia/cineasia-5.png" alt="Cine Asia, Spirited Away film screen">
+                        </div>
+                    </div>
+                </article>
+
+            </section>
+
+            <footer class="site-footer">
+                <p class="footer-text">© 2026 · Jay Patel</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Bottom dock navigation -->
+    <nav class="dock" aria-label="Site navigation">
+        <a class="dock-logo" href="/" aria-label="Homepage">
+            <img src="face.svg" alt="" aria-hidden="true" width="22" height="22">
+        </a>
+        <p class="dock-label">Jay Patel</p>
+        <p class="dock-sublabel">Select Design Works</p>
+        <a href="mailto:jayarchiveone@gmail.com" class="dock-contact">Get In Touch →</a>
+    </nav>
+
+    <script src="siteapp.js"></script>
+    <script>
+        const headerSection = document.getElementById('header-section');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 0) {
+                headerSection.classList.add('scrolled');
+            } else {
+                headerSection.classList.remove('scrolled');
+            }
+        }, { passive: true });
+    </script>
+
+</body>
+</html>
