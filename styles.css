@@ -202,11 +202,8 @@ body {
 }
 
 .header-datetime {
-    width: 20ch;
-    flex: 0 0 20ch;
     font-variant-numeric: tabular-nums;
-    font-feature-settings: "tnum";
-    text-align: left;
+    font-feature-settings: "tnum" 1;
 }
 
 /* ============================================
@@ -538,6 +535,7 @@ body {
     .hello-text {
         width: 5.75em;
         display: block;
+        overflow: hidden;
     }
 
     .header-center {
@@ -546,10 +544,7 @@ body {
         justify-self: end;
         min-width: 0;
         max-width: 100%;
-    }
-
-    .header-center .header-datetime {
-        text-align: right;
+        width: max-content;
     }
 
     .header-right {
@@ -578,6 +573,10 @@ body {
     }
 
     .location-greeting {
+        flex-shrink: 0;
+    }
+
+    .header-datetime {
         flex-shrink: 0;
     }
 
