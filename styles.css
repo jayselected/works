@@ -535,13 +535,30 @@ body {
 
     .header-right {
         grid-area: right;
-        justify-content: flex-start;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        justify-content: stretch;
+        width: 100%;
         min-width: 0;
+        gap: var(--space-4);
     }
 
-    .header-datetime,
-    .location-city,
+    .location-city {
+        justify-self: start;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     .location-weather {
+        justify-self: end;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .header-datetime {
         min-width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
