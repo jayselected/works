@@ -150,8 +150,7 @@ body {
 
 .header-left,
 .header-center,
-.header-right,
-.header-location {
+.header-right {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -515,7 +514,7 @@ body {
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         grid-template-areas:
             "left right"
-            "center right";
+            "center center";
         align-items: flex-start;
         row-gap: 3px;
     }
@@ -536,10 +535,6 @@ body {
         align-items: flex-end;
         justify-content: flex-start;
         gap: 3px;
-    }
-
-    .header-location {
-        justify-content: flex-end;
     }
 
     .project {
