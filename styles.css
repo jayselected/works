@@ -387,18 +387,25 @@ body {
 .detail-label,
 .detail-value {
     font-weight: 400;
+    font-size: 14px;
     letter-spacing: -0.01em;
 }
 
 .detail-label {
-    font-size: 12px;
     line-height: 1.2;
 }
 
 .detail-value {
-    font-size: 13px;
     line-height: 1.35;
     white-space: nowrap;
+}
+
+.detail-value span {
+    display: inline;
+}
+
+.detail-value span:not(:last-child)::after {
+    content: ', ';
 }
 
 /* ============================================
@@ -411,8 +418,8 @@ body {
 
 .project-description-text {
     font-weight: 400;
-    font-size: 14px;
-    line-height: 1.65;
+    font-size: 16px;
+    line-height: 1.7;
     letter-spacing: -0.01em;
 }
 
@@ -565,8 +572,17 @@ body {
         white-space: normal;
     }
 
+    .detail-value span {
+        display: block;
+    }
+
+    .detail-value span:not(:last-child)::after {
+        content: '';
+    }
+
     .project-description-text {
-        font-size: 14px;
+        font-size: clamp(14px, calc(11.936px + 0.529vw), 16px);
+        line-height: 1.7;
     }
 
     .image-2 {
@@ -619,10 +635,6 @@ body {
 
     .project-title {
         font-size: 16px;
-    }
-
-    .project-description-text {
-        font-size: 14px;
     }
 }
 
