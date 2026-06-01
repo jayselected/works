@@ -303,8 +303,10 @@ body {
 .hello {
     width: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start;
+    gap: var(--space-4);
     padding: var(--hello-y) 0;
     color: #0C1014;
 }
@@ -324,6 +326,14 @@ body {
 
 .hello-text.visible {
     opacity: 1;
+}
+
+.hello-subtext {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: #0C1014;
 }
 
 /* ============================================
