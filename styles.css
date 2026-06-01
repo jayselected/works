@@ -1,8 +1,7 @@
 /* ============================================
-   FONTS — SF Pro Display (Inactive)
+   FONTS — SF Pro Display (Active)
    ============================================ */
 
-/*
 @font-face {
     font-family: 'SF Pro Display';
     src: url('fonts/SF Pro/SF Pro Display Regular.woff2') format('woff2'),
@@ -47,7 +46,6 @@
     font-style: normal;
     font-display: swap;
 }
-*/
 
 /* ============================================
    FONTS — Helvetica Now Display (Inactive)
@@ -118,7 +116,7 @@ body {
 }
 
 body {
-    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
     font-weight: 400;
     color: #0C1014;
     background-color: #FFFFFF;
