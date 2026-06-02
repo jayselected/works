@@ -49,8 +49,7 @@
     --main-width: 600px;
 
     --font-size-sm: 0.875rem;
-    --font-size-md: 1.0625rem;
-    --line-height-tight: 1.35;
+    --font-size-md: clamp(1rem, calc(0.95rem + 0.2vw), 1.0625rem);
     --line-height-base: 1.47059;
     --letter-spacing-tight: -0.022em;
 
@@ -71,14 +70,7 @@
     --hello-y: var(--space-12);
     --works-gap: var(--space-16);
 
-    --project-rhythm: 1em;
-    --project-meta-gap: 0.35em;
-    --project-list-gap: 1em;
-
-    --detail-row-y: 0;
-    --detail-gap: var(--space-1);
-    --detail-ink: #6F7680;
-    --quiet-ink: rgba(12, 16, 20, 0.5);
+    --detail-ink: rgba(12, 16, 20, 0.5);
 
     --image-pair-gap: var(--space-4);
     --image-trio-gap: clamp(12px, 4vw, 32px);
@@ -346,14 +338,14 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--project-rhythm);
-    padding-bottom: var(--project-list-gap);
+    gap: 24px;
+    padding-bottom: 24px;
 }
 
 .project-meta {
     display: flex;
     flex-direction: column;
-    gap: var(--project-meta-gap);
+    gap: 8px;
 }
 
 .project-title {
@@ -367,37 +359,19 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0;
-    color: var(--detail-ink);
+    gap: 2px;
 }
 
 .detail-row {
-    display: flex;
-    align-items: baseline;
-    gap: var(--detail-gap);
-    padding: var(--detail-row-y) 0;
+    display: block;
 }
 
-.detail-label,
-.detail-value {
+.detail-text {
     font-weight: 400;
     font-size: var(--font-size-sm);
     line-height: var(--line-height-base);
     letter-spacing: var(--letter-spacing-tight);
-}
-
-.detail-label {
-    width: 112px;
-    flex-shrink: 0;
-    color: var(--quiet-ink);
-}
-
-.detail-label::after {
-    content: ':';
-}
-
-.detail-value {
-    flex: 1;
+    color: var(--detail-ink);
 }
 
 .project-description {
@@ -419,7 +393,7 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--project-rhythm);
+    gap: 24px;
 }
 
 .image-1 {
@@ -494,7 +468,7 @@ body {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-base);
     letter-spacing: var(--letter-spacing-tight);
-    color: var(--quiet-ink);
+    color: var(--detail-ink);
 }
 
 /* ============================================
@@ -507,9 +481,6 @@ body {
         --main-top: var(--space-6);
         --main-gap: var(--space-6);
         --hello-y: var(--space-6);
-        --project-rhythm: 1em;
-        --project-meta-gap: 0.35em;
-        --detail-row-y: 0;
         --image-pair-gap: var(--space-6);
         --image-trio-gap: 14px;
         --dock-bottom: var(--space-5);
@@ -534,8 +505,13 @@ body {
         gap: 3px;
     }
 
-    .detail-label {
-        width: auto;
+    .project {
+        gap: 24px;
+        padding-bottom: 24px;
+    }
+
+    .project-meta {
+        gap: 8px;
     }
 
     .image-2 {
