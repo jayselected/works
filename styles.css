@@ -291,13 +291,6 @@ body {
     background: rgba(0, 0, 0, 0.125);
 }
 
-.hello-mark {
-    width: 26px;
-    height: 26px;
-    display: block;
-    margin-bottom: 1em;
-}
-
 .hello-text {
     font-weight: 500;
     font-size: var(--font-size-md);
