@@ -62,17 +62,23 @@
     --space-12: 48px;
     --space-16: 64px;
 
+    --gap-sm: 12px;
+    --gap-md: clamp(18px, 3vw, 24px);
+    --gap-lg: clamp(32px, 5vw, 48px);
+    --gap-xl: clamp(64px, 10vw, 144px);
+
     --page-edge: 2rem;
     --header-height: 52px;
 
     --main-top: 0;
-    --main-gap: var(--space-8);
-    --hello-y: 18vh;
+    --main-gap: var(--gap-lg);
+    --hello-y: var(--gap-xl);
+    --hello-rule-gap: var(--gap-lg);
     --works-gap: var(--space-16);
 
     --detail-ink: rgba(12, 16, 20, 0.5);
 
-    --image-pair-gap: var(--space-4);
+    --image-pair-gap: var(--gap-md);
     --image-trio-gap: clamp(12px, 4vw, 32px);
 
     --dock-height: 52px;
@@ -287,7 +293,7 @@ body {
     content: '';
     width: 100%;
     height: 1px;
-    margin: 3em 0 0;
+    margin: var(--hello-rule-gap) 0 0;
     background: rgba(0, 0, 0, 0.125);
 }
 
@@ -346,14 +352,14 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    padding-bottom: 24px;
+    gap: var(--gap-md);
+    padding-bottom: var(--gap-md);
 }
 
 .project-meta {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--gap-sm);
 }
 
 .project-title {
@@ -401,7 +407,7 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: var(--gap-md);
 }
 
 .image-1 {
@@ -486,10 +492,6 @@ body {
 @media screen and (max-width: 700px) {
     :root {
         --page-edge: 1.4rem;
-        --hello-y: clamp(48px, 10vh, 72px);
-        --main-gap: var(--space-6);
-        --image-pair-gap: var(--space-6);
-        --image-trio-gap: 14px;
         --dock-bottom: var(--space-5);
     }
 
