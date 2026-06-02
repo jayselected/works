@@ -49,7 +49,7 @@
     --main-width: 600px;
 
     --font-size-sm: 0.875rem;
-    --font-size-md: clamp(1rem, calc(0.95rem + 0.2vw), 1.0625rem);
+    --font-size-md: 1.0625rem;
     --line-height-base: 1.47059;
     --letter-spacing-tight: -0.022em;
 
@@ -143,7 +143,7 @@ body {
 .header-datetime,
 .location-city,
 .location-weather {
-    font-size: var(--font-size-md);
+    font-size: var(--font-size-sm);
     line-height: var(--line-height-base);
     letter-spacing: var(--letter-spacing-tight);
     white-space: nowrap;
@@ -289,6 +289,13 @@ body {
     height: 1px;
     margin: 3em 0 0;
     background: rgba(0, 0, 0, 0.125);
+}
+
+.hello-mark {
+    width: 26px;
+    height: 26px;
+    display: block;
+    margin-bottom: 1em;
 }
 
 .hello-text {
@@ -486,7 +493,7 @@ body {
 @media screen and (max-width: 700px) {
     :root {
         --page-edge: 1.4rem;
-        --hello-y: 18vh;
+        --hello-y: clamp(48px, 10vh, 72px);
         --main-gap: var(--space-6);
         --image-pair-gap: var(--space-6);
         --image-trio-gap: 14px;
@@ -510,19 +517,6 @@ body {
         flex-direction: column;
         align-items: flex-end;
         gap: 3px;
-    }
-
-    .project {
-        gap: 24px;
-        padding-bottom: 24px;
-    }
-
-    .project-meta {
-        gap: 12px;
-    }
-
-    .project-details {
-        gap: 0;
     }
 
     .image-2 {
