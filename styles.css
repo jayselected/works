@@ -1,5 +1,5 @@
 /* ============================================
-   FONTS
+   Fonts
    ============================================ */
 
 @font-face {
@@ -35,7 +35,7 @@
 }
 
 /* ============================================
-   FOUNDATION
+   Foundation
    ============================================ */
 
 * {
@@ -46,44 +46,32 @@
 
 :root {
     --viewport-floor: 390px;
-    --main-width: 600px;
+    --content-width: 600px;
+    --page-edge: 2rem;
 
     --font-size-sm: 0.875rem;
     --font-size-md: 1.0625rem;
     --line-height-base: 1.47059;
     --letter-spacing-tight: -0.022em;
 
-    --space-1: 4px;
-    --space-2: 8px;
-    --space-4: 16px;
-    --space-5: 20px;
-    --space-6: 24px;
-    --space-8: 32px;
-    --space-12: 48px;
-    --space-16: 64px;
+    --color-ink: #0C1014;
+    --color-muted: rgba(12, 16, 20, 0.5);
+    --color-panel: rgba(243, 244, 246, 0.6);
 
-    --gap-sm: 12px;
-    --gap-md: clamp(18px, 3vw, 24px);
-    --section-gap: clamp(56px, 15vw, 100px);
+    --space-inline: 4px;
+    --space-sm: 12px;
+    --space-md: clamp(18px, 3vw, 24px);
+    --space-section: clamp(56px, 15vw, 100px);
 
-    --page-edge: 2rem;
     --header-height: 52px;
 
-    --main-top: 0;
-    --main-gap: var(--section-gap);
-    --hello-y: var(--section-gap);
-    --works-gap: var(--space-16);
-
-    --detail-ink: rgba(12, 16, 20, 0.5);
-
-    --image-pair-gap: var(--gap-md);
     --image-trio-gap: clamp(12px, 4vw, 32px);
 
     --dock-height: 52px;
-    --dock-bottom: var(--space-6);
+    --dock-bottom: 24px;
     --dock-edge: clamp(20px, 5vw, 32px);
     --dock-gap: clamp(10px, 2.8vw, 20px);
-    --dock-clearance: calc(var(--dock-height) + var(--dock-bottom) + var(--space-6));
+    --dock-clearance: calc(var(--dock-height) + var(--dock-bottom) + 24px);
 }
 
 html {
@@ -101,7 +89,7 @@ body {
     font-size: var(--font-size-md);
     line-height: var(--line-height-base);
     letter-spacing: var(--letter-spacing-tight);
-    color: #0C1014;
+    color: var(--color-ink);
     background-color: #FFFFFF;
     font-style: normal;
     font-synthesis: none;
@@ -116,7 +104,7 @@ body {
 }
 
 /* ============================================
-   LIVE HEADER
+   Live header
    ============================================ */
 
 .header-section {
@@ -130,7 +118,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 0 var(--page-edge);
-    color: #0C1014;
+    color: var(--color-ink);
     background-color: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -140,7 +128,7 @@ body {
 .header-right {
     display: flex;
     align-items: center;
-    gap: var(--space-1);
+    gap: var(--space-inline);
 }
 
 .location-greeting,
@@ -164,7 +152,7 @@ body {
 }
 
 /* ============================================
-   DOCK
+   Dock
    ============================================ */
 
 .dock {
@@ -180,7 +168,7 @@ body {
     width: fit-content;
     max-width: min(560px, calc(100% - (var(--dock-edge) * 2)));
     height: var(--dock-height);
-    padding: 0 var(--space-4) 0 var(--space-2);
+    padding: 0 16px 0 8px;
     background: linear-gradient(
         135deg,
         rgba(255, 255, 255, 0.18) 0%,
@@ -189,7 +177,7 @@ body {
     backdrop-filter: blur(14px) saturate(200%) brightness(1.08);
     -webkit-backdrop-filter: blur(14px) saturate(200%) brightness(1.08);
     border: 1px solid rgba(34, 34, 34, 0.08);
-    border-radius: var(--space-4);
+    border-radius: 16px;
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.6),
         inset 0 -1px 0 rgba(34, 34, 34, 0.04),
@@ -202,7 +190,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: var(--space-4);
+    border-radius: 16px;
     background: linear-gradient(
         145deg,
         rgba(255, 255, 255, 0.35) 0%,
@@ -241,7 +229,7 @@ body {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-base);
     letter-spacing: var(--letter-spacing-tight);
-    color: #0C1014;
+    color: var(--color-ink);
     white-space: nowrap;
 }
 
@@ -255,7 +243,7 @@ body {
 }
 
 /* ============================================
-   PAGE
+   Page
    ============================================ */
 
 .container {
@@ -266,15 +254,14 @@ body {
 }
 
 .main {
-    width: min(100%, var(--main-width));
+    width: min(100%, var(--content-width));
     display: flex;
     flex-direction: column;
-    gap: var(--main-gap);
-    padding-top: var(--main-top);
+    gap: var(--space-section);
 }
 
 /* ============================================
-   INTRO
+   Intro
    ============================================ */
 
 .hello {
@@ -283,8 +270,8 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: 0;
-    padding: var(--hello-y) 0 0;
-    color: #0C1014;
+    padding-top: var(--space-section);
+    color: var(--color-ink);
 }
 
 .hello-text {
@@ -305,8 +292,7 @@ body {
 
 .hello-intro {
     display: flex;
-    flex-direction: row;
-    gap: var(--space-1);
+    gap: var(--space-inline);
     white-space: nowrap;
 }
 
@@ -315,7 +301,7 @@ body {
     font-size: var(--font-size-md);
     line-height: var(--line-height-base);
     letter-spacing: var(--letter-spacing-tight);
-    color: #0C1014;
+    color: var(--color-ink);
     white-space: nowrap;
 }
 
@@ -324,32 +310,32 @@ body {
     font-size: var(--font-size-md);
     line-height: var(--line-height-base);
     letter-spacing: var(--letter-spacing-tight);
-    color: #0C1014;
+    color: var(--color-ink);
 }
 
 /* ============================================
-   WORK
+   Work
    ============================================ */
 
 .works {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--works-gap);
+    gap: var(--space-section);
 }
 
 .project {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--gap-md);
-    padding-bottom: var(--gap-md);
+    gap: var(--space-md);
+    padding-bottom: var(--space-md);
 }
 
 .project-meta {
     display: flex;
     flex-direction: column;
-    gap: var(--gap-sm);
+    gap: var(--space-sm);
 }
 
 .project-title {
@@ -375,7 +361,7 @@ body {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-base);
     letter-spacing: var(--letter-spacing-tight);
-    color: var(--detail-ink);
+    color: var(--color-muted);
 }
 
 .project-description {
@@ -390,14 +376,14 @@ body {
 }
 
 /* ============================================
-   IMAGES
+   Images
    ============================================ */
 
 .project-images {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--gap-md);
+    gap: var(--space-md);
 }
 
 .image-1 {
@@ -415,14 +401,14 @@ body {
 .image-2 {
     width: 100%;
     display: flex;
-    gap: var(--image-pair-gap);
+    gap: var(--space-md);
 }
 
 .image-box-a,
 .image-box-b {
-    width: calc((100% - var(--image-pair-gap)) / 2);
+    width: calc((100% - var(--space-md)) / 2);
     aspect-ratio: 316 / 398;
-    background-color: rgba(243, 244, 246, 0.6);
+    background-color: var(--color-panel);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -442,8 +428,8 @@ body {
     align-items: center;
     justify-content: center;
     gap: var(--image-trio-gap);
-    background-color: rgba(243, 244, 246, 0.6);
-    padding: var(--space-6) 0;
+    background-color: var(--color-panel);
+    padding: 24px 0;
 }
 
 .image-3 img {
@@ -457,14 +443,14 @@ body {
 }
 
 /* ============================================
-   FOOTER
+   Footer
    ============================================ */
 
 .site-footer {
     width: 100%;
     display: flex;
     align-items: center;
-    padding: var(--space-4) 0;
+    padding: 16px 0;
 }
 
 .footer-text {
@@ -472,17 +458,17 @@ body {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-base);
     letter-spacing: var(--letter-spacing-tight);
-    color: var(--detail-ink);
+    color: var(--color-muted);
 }
 
 /* ============================================
-   RESPONSIVE
+   Responsive
    ============================================ */
 
 @media screen and (max-width: 700px) {
     :root {
         --page-edge: 1.4rem;
-        --dock-bottom: var(--space-5);
+        --dock-bottom: 20px;
     }
 
     .header-section {
@@ -522,7 +508,7 @@ body {
     }
 
     .image-3 {
-        padding: var(--space-6) var(--space-5);
+        padding: 24px 20px;
     }
 }
 
@@ -532,7 +518,7 @@ body {
     }
 
     .image-3 {
-        padding: var(--space-6) 18px;
+        padding: 24px 18px;
     }
 
     .dock {
