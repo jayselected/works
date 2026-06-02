@@ -321,6 +321,27 @@ body {
     margin: 0;
     padding: 0;
     white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.hello-text.visible {
+    opacity: 1;
+}
+
+.hello-intro {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.hello-name {
+    font-weight: 500;
+    font-size: 17px;
+    line-height: 25px;
+    letter-spacing: -0.01em;
+    color: #0C1014;
+    white-space: nowrap;
 }
 
 .hello-subtext {
