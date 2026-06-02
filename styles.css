@@ -123,6 +123,8 @@ body {
 body {
     font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
     font-weight: 500;
+    font-size: 17px;
+    line-height: 25px;
     color: #0C1014;
     background-color: #FFFFFF;
     display: flex;
@@ -166,8 +168,8 @@ body {
 .header-datetime,
 .location-city,
 .location-weather {
-    font-size: 16px;
-    line-height: 1;
+    font-size: 17px;
+    line-height: 25px;
     letter-spacing: -0.01em;
     white-space: nowrap;
 }
@@ -260,8 +262,8 @@ body {
 .dock-sublabel,
 .dock-contact {
     font-weight: 400;
-    font-size: 14px;
-    line-height: 1;
+    font-size: 17px;
+    line-height: 25px;
     letter-spacing: -0.01em;
     color: #0C1014;
     white-space: nowrap;
@@ -313,31 +315,20 @@ body {
 
 .hello-text {
     font-weight: 500;
-    font-size: clamp(48px, 11.5vw, 72px);
-    line-height: 1;
+    font-size: 17px;
+    line-height: 25px;
     letter-spacing: -0.01em;
     margin: 0;
     padding: 0;
     white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.8s ease;
-}
-
-.hello-text.visible {
-    opacity: 1;
 }
 
 .hello-subtext {
-    font-weight: 500;
-    font-size: clamp(48px, 11.5vw, 72px);
-    line-height: 1;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 25px;
     letter-spacing: -0.01em;
     color: #0C1014;
-}
-
-.hello-name {
-    display: block;
-    white-space: nowrap;
 }
 
 /* ============================================
@@ -371,8 +362,8 @@ body {
 
 .project-title {
     font-weight: 500;
-    font-size: 16px;
-    line-height: 1.2;
+    font-size: 17px;
+    line-height: 25px;
     letter-spacing: -0.01em;
 }
 
@@ -403,8 +394,8 @@ body {
 .detail-label,
 .detail-value {
     font-weight: 400;
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 17px;
+    line-height: 25px;
     letter-spacing: -0.01em;
 }
 
@@ -431,8 +422,8 @@ body {
 
 .project-description-text {
     font-weight: 400;
-    font-size: 14px;
-    line-height: 1.65;
+    font-size: 17px;
+    line-height: 25px;
     letter-spacing: -0.01em;
 }
 
@@ -519,8 +510,8 @@ body {
 
 .footer-text {
     font-weight: 500;
-    font-size: 12px;
-    line-height: 1.4;
+    font-size: 17px;
+    line-height: 25px;
     letter-spacing: -0.01em;
     color: #686f78;
 }
@@ -562,8 +553,8 @@ body {
     .header-datetime,
     .location-city,
     .location-weather {
-        font-size: 16px;
-        line-height: 1.4;
+        font-size: 17px;
+        line-height: 25px;
     }
 
     .project {
@@ -571,7 +562,7 @@ body {
     }
 
     .project-title {
-        font-size: 16px;
+        font-size: 17px;
     }
 
     .detail-row {
@@ -582,16 +573,16 @@ body {
 
     .detail-label {
         width: auto;
-        font-size: 13px;
+        font-size: 17px;
         flex-shrink: 0;
     }
 
     .detail-value {
-        font-size: 13px;
+        font-size: 17px;
     }
 
     .project-description-text {
-        font-size: 14px;
+        font-size: 17px;
     }
 
     .image-2 {
@@ -618,7 +609,7 @@ body {
     .dock-label,
     .dock-sublabel,
     .dock-contact {
-        font-size: 13px;
+        font-size: 17px;
     }
 }
 
@@ -638,16 +629,16 @@ body {
     .header-datetime,
     .location-city,
     .location-weather {
-        font-size: 14px;
-        line-height: 1.4;
+        font-size: 17px;
+        line-height: 25px;
     }
 
     .project-title {
-        font-size: 16px;
+        font-size: 17px;
     }
 
     .project-description-text {
-        font-size: 14px;
+        font-size: 17px;
     }
 }
 
@@ -664,8 +655,8 @@ body {
     .header-datetime,
     .location-city,
     .location-weather {
-        font-size: 14px;
-        line-height: 1.4;
+        font-size: 17px;
+        line-height: 25px;
     }
 
     .image-3 {
