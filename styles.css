@@ -1,5 +1,5 @@
 /* ============================================
-   FONTS — SF Pro Text (Active)
+   FONTS — SF Pro Text (Available)
    ============================================ */
 
 @font-face {
@@ -159,12 +159,16 @@ body {
 }
 
 body {
-    font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 500;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 400;
     font-size: 17px;
     line-height: 25px;
+    letter-spacing: -0.022em;
     color: #0C1014;
     background-color: #FFFFFF;
+    font-style: normal;
+    font-synthesis: none;
+    -webkit-font-smoothing: antialiased;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -208,7 +212,7 @@ body {
 .location-weather {
     font-size: 17px;
     line-height: 25px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.022em;
     white-space: nowrap;
 }
 
@@ -302,7 +306,7 @@ body {
     font-weight: 400;
     font-size: 14px;
     line-height: 25px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.022em;
     color: #0C1014;
     white-space: nowrap;
 }
@@ -355,7 +359,7 @@ body {
     font-weight: 500;
     font-size: 17px;
     line-height: 25px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.022em;
     margin: 0;
     padding: 0;
     white-space: nowrap;
@@ -378,7 +382,7 @@ body {
     font-weight: 500;
     font-size: 17px;
     line-height: 25px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.022em;
     color: #0C1014;
     white-space: nowrap;
 }
@@ -387,7 +391,7 @@ body {
     font-weight: 400;
     font-size: 17px;
     line-height: 25px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.022em;
     color: #0C1014;
 }
 
@@ -424,7 +428,7 @@ body {
     font-weight: 500;
     font-size: 17px;
     line-height: 25px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.022em;
 }
 
 /* ============================================
@@ -456,7 +460,7 @@ body {
     font-weight: 400;
     font-size: 17px;
     line-height: 25px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.022em;
 }
 
 .detail-label {
@@ -484,7 +488,7 @@ body {
     font-weight: 400;
     font-size: 17px;
     line-height: 25px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.022em;
 }
 
 /* ============================================
@@ -572,7 +576,7 @@ body {
     font-weight: 400;
     font-size: 14px;
     line-height: 25px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.022em;
     color: #686f78;
 }
 
