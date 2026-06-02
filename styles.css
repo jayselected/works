@@ -64,7 +64,6 @@
 
     --gap-sm: 12px;
     --gap-md: clamp(18px, 3vw, 24px);
-    --gap-lg: clamp(32px, 5vw, 48px);
     --section-gap: clamp(56px, 15vw, 100px);
 
     --page-edge: 2rem;
@@ -73,7 +72,6 @@
     --main-top: 0;
     --main-gap: var(--section-gap);
     --hello-y: var(--section-gap);
-    --hello-rule-gap: var(--gap-lg);
     --works-gap: var(--space-16);
 
     --detail-ink: rgba(12, 16, 20, 0.5);
@@ -287,14 +285,6 @@ body {
     gap: 0;
     padding: var(--hello-y) 0 0;
     color: #0C1014;
-}
-
-.hello::after {
-    content: '';
-    width: 100%;
-    height: 1px;
-    margin: var(--hello-rule-gap) 0 0;
-    background: rgba(0, 0, 0, 0.125);
 }
 
 .hello-text {
