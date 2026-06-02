@@ -371,7 +371,7 @@ body {
 
 .project-description-text {
     font-weight: 400;
-    font-size: var(--font-size-md);
+    font-size: var(--font-size-sm);
     line-height: var(--line-height-base);
     letter-spacing: var(--letter-spacing-tight);
 }
