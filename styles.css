@@ -348,16 +348,9 @@ body {
 
 .project-details {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
 }
 
-.detail-row {
-    display: block;
-}
-
-.detail-text {
+.project-details-text {
     font-weight: 400;
     font-size: var(--font-size-sm);
     line-height: var(--line-height-base);
