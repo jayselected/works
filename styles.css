@@ -257,7 +257,7 @@ body {
     width: min(100%, var(--content-width));
     display: flex;
     flex-direction: column;
-    gap: var(--space-section);
+    gap: 0;
 }
 
 /* ============================================
@@ -271,6 +271,7 @@ body {
     align-items: flex-start;
     gap: 0;
     padding-top: var(--space-section);
+    margin-bottom: var(--space-section);
     color: var(--color-ink);
 }
 
@@ -322,6 +323,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--space-section);
+    margin-bottom: var(--space-md);
 }
 
 .project {
@@ -329,7 +331,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
-    padding-bottom: var(--space-md);
 }
 
 .project-meta {
