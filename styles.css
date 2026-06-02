@@ -1,7 +1,44 @@
 /* ============================================
-   FONTS — SF Pro Display (Active)
+   FONTS — SF Pro Text (Active)
    ============================================ */
 
+@font-face {
+    font-family: 'SF Pro Text';
+    src: url('fonts/SF Pro Text/SF Pro Text Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SF Pro Text';
+    src: url('fonts/SF Pro Text/SF Pro Text Medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SF Pro Text';
+    src: url('fonts/SF Pro Text/SF Pro Text Bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SF Pro Text';
+    src: url('fonts/SF Pro Text/SF Pro Text Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ============================================
+   FONTS — SF Pro Display (Inactive)
+   ============================================ */
+
+/*
 @font-face {
     font-family: 'SF Pro Display';
     src: url('fonts/SF Pro/SF Pro Display Regular.woff2') format('woff2'),
@@ -46,6 +83,7 @@
     font-style: normal;
     font-display: swap;
 }
+*/
 
 /* ============================================
    FONTS — Helvetica Now Display (Inactive)
@@ -121,7 +159,7 @@ body {
 }
 
 body {
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
     font-weight: 500;
     font-size: 17px;
     line-height: 25px;
