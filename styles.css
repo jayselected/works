@@ -65,14 +65,14 @@
     --gap-sm: 12px;
     --gap-md: clamp(18px, 3vw, 24px);
     --gap-lg: clamp(32px, 5vw, 48px);
-    --gap-xl: clamp(64px, 10vw, 144px);
+    --section-gap: clamp(56px, 15vw, 100px);
 
     --page-edge: 2rem;
     --header-height: 52px;
 
     --main-top: 0;
-    --main-gap: var(--gap-lg);
-    --hello-y: var(--gap-xl);
+    --main-gap: var(--section-gap);
+    --hello-y: var(--section-gap);
     --hello-rule-gap: var(--gap-lg);
     --works-gap: var(--space-16);
 
