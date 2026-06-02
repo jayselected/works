@@ -50,6 +50,7 @@
 
     --font-size-sm: 0.875rem;
     --font-size-md: 1.0625rem;
+    --line-height-tight: 1.35;
     --line-height-base: 1.47059;
     --letter-spacing-tight: -0.022em;
 
@@ -69,12 +70,15 @@
     --main-gap: var(--space-8);
     --hello-y: var(--space-12);
     --works-gap: var(--space-16);
-    --project-rhythm: var(--space-6);
 
-    --detail-row-y: var(--space-2);
+    --project-rhythm: 1em;
+    --project-meta-gap: 0.35em;
+    --project-list-gap: 1em;
+
+    --detail-row-y: 0;
     --detail-gap: var(--space-1);
     --detail-ink: #6F7680;
-    --detail-line: #DBDFE4;
+    --quiet-ink: rgba(12, 16, 20, 0.5);
 
     --image-pair-gap: var(--space-4);
     --image-trio-gap: clamp(12px, 4vw, 32px);
@@ -343,13 +347,13 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--project-rhythm);
-    padding-bottom: var(--space-4);
+    padding-bottom: var(--project-list-gap);
 }
 
 .project-meta {
     display: flex;
     flex-direction: column;
-    gap: var(--project-rhythm);
+    gap: var(--project-meta-gap);
 }
 
 .project-title {
@@ -363,6 +367,8 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
+    gap: 0;
+    color: var(--detail-ink);
 }
 
 .detail-row {
@@ -370,18 +376,12 @@ body {
     align-items: baseline;
     gap: var(--detail-gap);
     padding: var(--detail-row-y) 0;
-    color: var(--detail-ink);
-    border-top: 0.5px solid var(--detail-line);
-}
-
-.detail-row:last-child {
-    border-bottom: 0.5px solid var(--detail-line);
 }
 
 .detail-label,
 .detail-value {
     font-weight: 400;
-    font-size: var(--font-size-md);
+    font-size: var(--font-size-sm);
     line-height: var(--line-height-base);
     letter-spacing: var(--letter-spacing-tight);
 }
@@ -389,6 +389,7 @@ body {
 .detail-label {
     width: 112px;
     flex-shrink: 0;
+    color: var(--quiet-ink);
 }
 
 .detail-label::after {
@@ -493,7 +494,7 @@ body {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-base);
     letter-spacing: var(--letter-spacing-tight);
-    color: #686F78;
+    color: var(--quiet-ink);
 }
 
 /* ============================================
@@ -506,8 +507,9 @@ body {
         --main-top: var(--space-6);
         --main-gap: var(--space-6);
         --hello-y: var(--space-6);
-        --project-rhythm: var(--space-6);
-        --detail-row-y: 9px;
+        --project-rhythm: 1em;
+        --project-meta-gap: 0.35em;
+        --detail-row-y: 0;
         --image-pair-gap: var(--space-6);
         --image-trio-gap: 14px;
         --dock-bottom: var(--space-5);
@@ -530,10 +532,6 @@ body {
         flex-direction: column;
         align-items: flex-end;
         gap: 3px;
-    }
-
-    .project {
-        padding-bottom: 0;
     }
 
     .detail-label {
