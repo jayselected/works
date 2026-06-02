@@ -52,14 +52,15 @@ function startHelloAnimation() {
 const CONFIG = {
     CACHE_DURATION: 3600000,
     WEATHER_API_KEY: 'd4fd2a9a46a63423027edc6d00dd9651',
+    IPWHOIS_URL: 'https://ipwho.is/',
     IPAPI_URL: 'https://ipapi.co/json/',
     WEATHER_API_URL: 'https://api.openweathermap.org/data/2.5/weather'
 };
 
 const CACHE_KEYS = {
-    LOCATION: 'geo_location_cache',
-    WEATHER: 'geo_weather_cache',
-    TIMESTAMP: 'geo_cache_timestamp'
+    LOCATION: 'geo_location_cache_v2',
+    WEATHER: 'geo_weather_cache_v2',
+    TIMESTAMP: 'geo_cache_timestamp_v2'
 };
 
 function isCacheValid() {
@@ -87,13 +88,72 @@ function setCachedData(key, data) {
     }
 }
 
+function hasValidCoordinates(data) {
+    return Number.isFinite(data?.latitude) && Number.isFinite(data?.longitude);
+}
+
+function normalizeIpwhoisData(data) {
+    if (!data || data.success === false) return null;
+
+    const locationData = {
+        city: data.city || '',
+        country_name: data.country || '',
+        latitude: Number(data.latitude),
+        longitude: Number(data.longitude),
+        source: 'ipwho.is'
+    };
+
+    return hasValidCoordinates(locationData) ? locationData : null;
+}
+
+function normalizeIpapiData(data) {
+    if (!data || data.error) return null;
+
+    const locationData = {
+        city: data.city || '',
+        country_name: data.country_name || '',
+        latitude: Number(data.latitude),
+        longitude: Number(data.longitude),
+        source: 'ipapi.co'
+    };
+
+    return hasValidCoordinates(locationData) ? locationData : null;
+}
+
+async function fetchJson(url) {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+}
+
 async function fetchLocationData() {
     try {
-        const response = await fetch(CONFIG.IPAPI_URL);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-        setCachedData(CACHE_KEYS.LOCATION, data);
-        return data;
+        const providers = [
+            {
+                url: CONFIG.IPWHOIS_URL,
+                normalize: normalizeIpwhoisData
+            },
+            {
+                url: CONFIG.IPAPI_URL,
+                normalize: normalizeIpapiData
+            }
+        ];
+
+        for (const provider of providers) {
+            try {
+                const data = await fetchJson(provider.url);
+                const locationData = provider.normalize(data);
+
+                if (locationData) {
+                    setCachedData(CACHE_KEYS.LOCATION, locationData);
+                    return locationData;
+                }
+            } catch (providerError) {
+                console.warn('Location provider error:', providerError);
+            }
+        }
+
+        throw new Error('No valid location provider response');
     } catch (error) {
         console.error('Location fetch error:', error);
         const cached = getCachedData(CACHE_KEYS.LOCATION);
