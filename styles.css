@@ -1,5 +1,5 @@
 /* ============================================
-   FONTS — SF Pro Text (Available)
+   FONTS
    ============================================ */
 
 @font-face {
@@ -35,81 +35,9 @@
 }
 
 /* ============================================
-   FONTS — SF Pro Display (Inactive)
+   FOUNDATION
    ============================================ */
 
-/*
-@font-face {
-    font-family: 'SF Pro Display';
-    src: url('fonts/SF Pro/SF Pro Display Regular.woff2') format('woff2'),
-         url('fonts/SF Pro/SF Pro Display Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Display';
-    src: url('fonts/SF Pro/SF Pro Display Medium.woff2') format('woff2'),
-         url('fonts/SF Pro/SF Pro Display Medium.woff') format('woff');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Display';
-    src: url('fonts/SF Pro/SF Pro Display Bold.woff2') format('woff2'),
-         url('fonts/SF Pro/SF Pro Display Bold.woff') format('woff');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Display';
-    src: url('fonts/SF Pro/SF Pro Display Heavy.woff2') format('woff2'),
-         url('fonts/SF Pro/SF Pro Display Heavy.woff') format('woff');
-    font-weight: 800;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Display';
-    src: url('fonts/SF Pro/SF Pro Display Black.woff2') format('woff2'),
-         url('fonts/SF Pro/SF Pro Display Black.woff') format('woff');
-    font-weight: 900;
-    font-style: normal;
-    font-display: swap;
-}
-*/
-
-/* ============================================
-   FONTS — Helvetica Now Display (Inactive)
-   ============================================ */
-
-/*
-@font-face {
-    font-family: 'Helvetica Now Display Regular';
-    src: url('fonts/Helvetica_Now_Display.ttf') format('truetype');
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Helvetica Now Display Medium';
-    src: url('fonts/Helvetica_Now_Display_Medium.ttf') format('truetype');
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Helvetica Now Display Bold';
-    src: url('fonts/Helvetica_Now_Display_Bold.ttf') format('truetype');
-    font-style: normal;
-}
-*/
-
-/* Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
@@ -118,23 +46,15 @@
 
 :root {
     --viewport-floor: 390px;
-    --page-max: 1440px;
-    --main-width: 648px;
+    --main-width: 600px;
 
-    --font-size-xs: 0.75rem;
     --font-size-sm: 0.875rem;
     --font-size-md: 1.0625rem;
-    --font-size-lg: 1.25rem;
-    --font-size-xl: 1.5rem;
-    --line-height-tight: 1.3;
     --line-height-base: 1.47059;
-    --line-height-loose: 1.65;
-    --letter-spacing-normal: 0em;
     --letter-spacing-tight: -0.022em;
 
     --space-1: 4px;
     --space-2: 8px;
-    --space-3: 12px;
     --space-4: 16px;
     --space-5: 20px;
     --space-6: 24px;
@@ -142,7 +62,7 @@
     --space-12: 48px;
     --space-16: 64px;
 
-    --page-edge: clamp(20px, calc(-68.571px + 13.095vw), 120px);
+    --page-edge: 2rem;
     --header-height: 52px;
 
     --main-top: var(--space-8);
@@ -150,18 +70,20 @@
     --hello-y: var(--space-12);
     --works-gap: var(--space-16);
     --project-rhythm: var(--space-6);
+
     --detail-row-y: var(--space-2);
     --detail-gap: var(--space-1);
     --detail-ink: #6F7680;
     --detail-line: #DBDFE4;
+
     --image-pair-gap: var(--space-4);
-    --image-trio-gap: clamp(8px, calc(-10.286px + 2.976vw), 32px);
+    --image-trio-gap: clamp(12px, 4vw, 32px);
 
     --dock-height: 52px;
     --dock-bottom: var(--space-6);
+    --dock-edge: clamp(20px, 5vw, 32px);
+    --dock-gap: clamp(10px, 2.8vw, 20px);
     --dock-clearance: calc(var(--dock-height) + var(--dock-bottom) + var(--space-6));
-    --dock-edge: clamp(20px, 6.25vw, 48px);
-    --dock-gap: var(--space-5);
 }
 
 html {
@@ -194,7 +116,7 @@ body {
 }
 
 /* ============================================
-   HEADER SECTION (sticky top bar)
+   LIVE HEADER
    ============================================ */
 
 .header-section {
@@ -205,10 +127,9 @@ body {
     min-width: var(--viewport-floor);
     height: var(--header-height);
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 20px var(--page-edge);
+    padding: 0 var(--page-edge);
     color: #0C1014;
     background-color: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(20px) saturate(180%);
@@ -218,7 +139,6 @@ body {
 .header-left,
 .header-right {
     display: flex;
-    flex-direction: row;
     align-items: center;
     gap: var(--space-1);
 }
@@ -244,7 +164,7 @@ body {
 }
 
 /* ============================================
-   BOTTOM DOCK NAVIGATION
+   DOCK
    ============================================ */
 
 .dock {
@@ -261,7 +181,6 @@ body {
     max-width: min(560px, calc(100% - (var(--dock-edge) * 2)));
     height: var(--dock-height);
     padding: 0 var(--space-4) 0 var(--space-2);
-
     background: linear-gradient(
         135deg,
         rgba(255, 255, 255, 0.18) 0%,
@@ -269,10 +188,8 @@ body {
     );
     backdrop-filter: blur(14px) saturate(200%) brightness(1.08);
     -webkit-backdrop-filter: blur(14px) saturate(200%) brightness(1.08);
-
     border: 1px solid rgba(34, 34, 34, 0.08);
     border-radius: var(--space-4);
-
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.6),
         inset 0 -1px 0 rgba(34, 34, 34, 0.04),
@@ -289,7 +206,7 @@ body {
     background: linear-gradient(
         145deg,
         rgba(255, 255, 255, 0.35) 0%,
-        rgba(255, 255, 255, 0.0) 50%,
+        rgba(255, 255, 255, 0) 50%,
         rgba(34, 34, 34, 0.03) 100%
     );
     pointer-events: none;
@@ -338,12 +255,11 @@ body {
 }
 
 /* ============================================
-   CONTAINER
+   PAGE
    ============================================ */
 
 .container {
     width: 100%;
-    max-width: var(--page-max);
     padding: 0 var(--page-edge);
     display: flex;
     justify-content: center;
@@ -358,14 +274,13 @@ body {
 }
 
 /* ============================================
-   HELLO SECTION
+   INTRO
    ============================================ */
 
 .hello {
     width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     align-items: flex-start;
     gap: 0;
     padding: var(--hello-y) 0;
@@ -413,7 +328,7 @@ body {
 }
 
 /* ============================================
-   WORKS SECTION
+   WORK
    ============================================ */
 
 .works {
@@ -422,10 +337,6 @@ body {
     flex-direction: column;
     gap: var(--works-gap);
 }
-
-/* ============================================
-   PROJECT ARTICLE
-   ============================================ */
 
 .project {
     width: 100%;
@@ -448,10 +359,6 @@ body {
     letter-spacing: var(--letter-spacing-tight);
 }
 
-/* ============================================
-   PROJECT DETAILS
-   ============================================ */
-
 .project-details {
     width: 100%;
     display: flex;
@@ -460,7 +367,6 @@ body {
 
 .detail-row {
     display: flex;
-    flex-direction: row;
     align-items: baseline;
     gap: var(--detail-gap);
     padding: var(--detail-row-y) 0;
@@ -493,10 +399,6 @@ body {
     flex: 1;
 }
 
-/* ============================================
-   PROJECT DESCRIPTION
-   ============================================ */
-
 .project-description {
     width: 100%;
 }
@@ -509,7 +411,7 @@ body {
 }
 
 /* ============================================
-   PROJECT IMAGES
+   IMAGES
    ============================================ */
 
 .project-images {
@@ -534,7 +436,6 @@ body {
 .image-2 {
     width: 100%;
     display: flex;
-    flex-direction: row;
     gap: var(--image-pair-gap);
 }
 
@@ -559,7 +460,6 @@ body {
 .image-3 {
     width: 100%;
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: var(--image-trio-gap);
@@ -567,7 +467,6 @@ body {
     padding: var(--space-6) 0;
 }
 
-/* Fluid trio sizing: preserves the 160/330 mockup ratio while scaling smoothly between desktop, tablet, and mobile widths. */
 .image-3 img {
     width: min(
         clamp(96px, 20vw, 160px),
@@ -579,7 +478,7 @@ body {
 }
 
 /* ============================================
-   SITE FOOTER
+   FOOTER
    ============================================ */
 
 .site-footer {
@@ -594,15 +493,16 @@ body {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-base);
     letter-spacing: var(--letter-spacing-tight);
-    color: #686f78;
+    color: #686F78;
 }
 
 /* ============================================
-   MOBILE RESPONSIVE — 768px
+   RESPONSIVE
    ============================================ */
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 700px) {
     :root {
+        --page-edge: 1.4rem;
         --main-top: var(--space-6);
         --main-gap: var(--space-6);
         --hello-y: var(--space-6);
@@ -610,12 +510,14 @@ body {
         --detail-row-y: 9px;
         --image-pair-gap: var(--space-6);
         --image-trio-gap: 14px;
-        --dock-gap: 14px;
+        --dock-bottom: var(--space-5);
     }
 
     .header-section {
         height: auto;
         align-items: flex-start;
+        padding-top: 14px;
+        padding-bottom: 14px;
     }
 
     .header-left {
@@ -634,15 +536,8 @@ body {
         padding-bottom: 0;
     }
 
-    .detail-row {
-        flex-direction: row;
-        align-items: baseline;
-        gap: var(--detail-gap);
-    }
-
     .detail-label {
         width: auto;
-        flex-shrink: 0;
     }
 
     .image-2 {
@@ -666,23 +561,6 @@ body {
         padding: var(--space-6) var(--space-5);
     }
 }
-
-/* ============================================
-   MOBILE RESPONSIVE — 480px
-   ============================================ */
-
-@media screen and (max-width: 480px) {
-    :root {
-        --main-top: var(--space-5);
-        --main-gap: var(--space-5);
-        --hello-y: var(--space-5);
-        --detail-row-y: var(--space-2);
-    }
-}
-
-/* ============================================
-   MOBILE RESPONSIVE — 390px
-   ============================================ */
 
 @media screen and (max-width: 390px) {
     :root {
