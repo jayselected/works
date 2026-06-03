@@ -49,25 +49,39 @@
     --content-width: 600px;
     --page-edge: 2rem;
 
-    --font-size-sm: 0.8125rem;
+    --font-size-xs: 0.8125rem;
+    --font-size-sm: 0.875rem;
     --font-size-md: 1.0625rem;
-    --line-height-base: 1.47059;
-    --line-height-compact: 16px;
+
+    --line-height-xs: 1rem;
+    --line-height-sm: 1.3125rem;
+    --line-height-md: 1.5625rem;
+    --line-height-title: 1.25rem;
+
     --letter-spacing-tight: -0.022em;
 
     --color-ink: #0C1014;
     --color-muted: #AEB4BC;
     --color-panel: rgba(243, 244, 246, 0.6);
 
-    --space-inline: 4px;
-    --space-sm: 12px;
-    --space-md: clamp(18px, 3vw, 24px);
+    --space-0: 0;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+
+    --space-fluid-md: clamp(18px, 3vw, 24px);
     --space-section: clamp(56px, 15vw, 100px);
 
     --header-height: 52px;
 
     --project-icon-size: 40px;
-    --project-meta-gap: 20px;
+    --project-icon-radius: 10px;
+    --project-meta-gap: var(--space-5);
+    --project-details-gap: var(--space-3);
+    --project-details-list-gap: var(--space-0);
 
     --image-trio-gap: clamp(12px, 4vw, 32px);
 
@@ -75,7 +89,7 @@
     --dock-bottom: 24px;
     --dock-edge: clamp(20px, 5vw, 32px);
     --dock-gap: clamp(10px, 2.8vw, 20px);
-    --dock-clearance: calc(var(--dock-height) + var(--dock-bottom) + 24px);
+    --dock-clearance: calc(var(--dock-height) + var(--dock-bottom) + var(--space-6));
 }
 
 html {
@@ -91,7 +105,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 400;
     font-size: var(--font-size-md);
-    line-height: var(--line-height-base);
+    line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-ink);
     background-color: #FFFFFF;
@@ -121,7 +135,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 var(--page-edge);
+    padding: var(--space-0) var(--page-edge);
     color: var(--color-ink);
     background-color: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(20px) saturate(180%);
@@ -132,7 +146,7 @@ body {
 .header-right {
     display: flex;
     align-items: center;
-    gap: var(--space-inline);
+    gap: var(--space-1);
 }
 
 .location-greeting,
@@ -140,7 +154,7 @@ body {
 .location-city,
 .location-weather {
     font-size: var(--font-size-sm);
-    line-height: var(--line-height-base);
+    line-height: var(--line-height-sm);
     letter-spacing: var(--letter-spacing-tight);
     white-space: nowrap;
 }
@@ -172,7 +186,7 @@ body {
     width: fit-content;
     max-width: min(560px, calc(100% - (var(--dock-edge) * 2)));
     height: var(--dock-height);
-    padding: 0 16px 0 8px;
+    padding: var(--space-0) var(--space-4) var(--space-0) var(--space-2);
     background: linear-gradient(
         135deg,
         rgba(255, 255, 255, 0.18) 0%,
@@ -231,7 +245,7 @@ body {
 .dock-contact {
     font-weight: 400;
     font-size: var(--font-size-sm);
-    line-height: var(--line-height-base);
+    line-height: var(--line-height-sm);
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-ink);
     white-space: nowrap;
@@ -252,7 +266,7 @@ body {
 
 .container {
     width: 100%;
-    padding: 0 var(--page-edge);
+    padding: var(--space-0) var(--page-edge);
     display: flex;
     justify-content: center;
 }
@@ -261,7 +275,7 @@ body {
     width: min(100%, var(--content-width));
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: var(--space-0);
 }
 
 /* ============================================
@@ -273,7 +287,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0;
+    gap: var(--space-0);
     padding-top: var(--space-section);
     margin-bottom: var(--space-section);
     color: var(--color-ink);
@@ -282,10 +296,10 @@ body {
 .hello-text {
     font-weight: 500;
     font-size: var(--font-size-md);
-    line-height: var(--line-height-base);
+    line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
-    margin: 0;
-    padding: 0;
+    margin: var(--space-0);
+    padding: var(--space-0);
     white-space: nowrap;
     opacity: 0;
     transition: opacity 0.8s ease;
@@ -297,14 +311,14 @@ body {
 
 .hello-intro {
     display: flex;
-    gap: var(--space-inline);
+    gap: var(--space-1);
     white-space: nowrap;
 }
 
 .hello-name {
     font-weight: 500;
     font-size: var(--font-size-md);
-    line-height: var(--line-height-base);
+    line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-ink);
     white-space: nowrap;
@@ -313,7 +327,7 @@ body {
 .hello-subtext {
     font-weight: 400;
     font-size: var(--font-size-md);
-    line-height: var(--line-height-base);
+    line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-ink);
 }
@@ -327,14 +341,14 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--space-section);
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-fluid-md);
 }
 
 .project {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: var(--space-fluid-md);
 }
 
 .project-meta {
@@ -351,11 +365,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
+    border-radius: var(--project-icon-radius);
     background-color: var(--icon-bg, var(--color-panel));
     color: var(--icon-color, var(--color-ink));
     font-weight: 500;
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
     line-height: 1;
     letter-spacing: var(--letter-spacing-tight);
 }
@@ -365,26 +379,26 @@ body {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
-}
-
-.project-details-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+    gap: var(--project-details-gap);
 }
 
 .project-title {
     font-weight: 500;
     font-size: var(--font-size-md);
-    line-height: 20px;
+    line-height: var(--line-height-title);
     letter-spacing: var(--letter-spacing-tight);
+}
+
+.project-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--project-details-list-gap);
 }
 
 .project-details-text {
     font-weight: 400;
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-compact);
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-xs);
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-muted);
 }
@@ -396,7 +410,7 @@ body {
 .project-description-text {
     font-weight: 400;
     font-size: var(--font-size-sm);
-    line-height: var(--line-height-base);
+    line-height: var(--line-height-sm);
     letter-spacing: var(--letter-spacing-tight);
 }
 
@@ -408,7 +422,7 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: var(--space-fluid-md);
 }
 
 .image-1 {
@@ -426,12 +440,12 @@ body {
 .image-2 {
     width: 100%;
     display: flex;
-    gap: var(--space-md);
+    gap: var(--space-fluid-md);
 }
 
 .image-box-a,
 .image-box-b {
-    width: calc((100% - var(--space-md)) / 2);
+    width: calc((100% - var(--space-fluid-md)) / 2);
     aspect-ratio: 316 / 398;
     background-color: var(--color-panel);
     display: flex;
@@ -454,7 +468,7 @@ body {
     justify-content: center;
     gap: var(--image-trio-gap);
     background-color: var(--color-panel);
-    padding: 24px 0;
+    padding: var(--space-6) var(--space-0);
 }
 
 .image-3 img {
@@ -475,13 +489,13 @@ body {
     width: 100%;
     display: flex;
     align-items: center;
-    padding: 16px 0;
+    padding: var(--space-4) var(--space-0);
 }
 
 .footer-text {
     font-weight: 400;
     font-size: var(--font-size-sm);
-    line-height: var(--line-height-base);
+    line-height: var(--line-height-sm);
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-muted);
 }
@@ -533,7 +547,7 @@ body {
     }
 
     .image-3 {
-        padding: 24px 20px;
+        padding: var(--space-6) var(--space-5);
     }
 }
 
@@ -543,7 +557,7 @@ body {
     }
 
     .image-3 {
-        padding: 24px 18px;
+        padding: var(--space-6) 18px;
     }
 
     .dock {
