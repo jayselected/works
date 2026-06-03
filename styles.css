@@ -52,7 +52,7 @@
     --font-size-sm: 0.8125rem;
     --font-size-md: 1.0625rem;
     --line-height-base: 1.47059;
-    --line-height-compact: 1.25;
+    --line-height-compact: 16px;
     --letter-spacing-tight: -0.022em;
 
     --color-ink: #0C1014;
@@ -67,6 +67,7 @@
     --header-height: 52px;
 
     --project-icon-size: 40px;
+    --project-meta-gap: 10px;
 
     --image-trio-gap: clamp(12px, 4vw, 32px);
 
@@ -339,7 +340,7 @@ body {
 .project-meta {
     display: flex;
     align-items: flex-start;
-    gap: var(--space-sm);
+    gap: var(--project-meta-gap);
 }
 
 .project-icon {
@@ -349,7 +350,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
+    border-radius: 10px;
     background-color: var(--icon-bg, var(--color-panel));
     color: var(--icon-color, var(--color-ink));
     font-weight: 500;
@@ -363,13 +364,13 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    gap: 2px;
+    gap: 1px;
 }
 
 .project-title {
     font-weight: 500;
     font-size: var(--font-size-md);
-    line-height: 1.2;
+    line-height: 20px;
     letter-spacing: var(--letter-spacing-tight);
 }
 
