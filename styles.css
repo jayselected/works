@@ -77,7 +77,7 @@
 
     --header-height: 52px;
 
-    --project-icon-size: 40px;
+    --project-icon-size: 48px;
     --project-icon-radius: 10px;
     --project-meta-gap: var(--space-5);
     --project-details-gap: var(--space-3);
@@ -369,7 +369,7 @@ body {
     background-color: var(--icon-bg, var(--color-panel));
     color: var(--icon-color, var(--color-ink));
     font-weight: 500;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
     line-height: 1;
     letter-spacing: var(--letter-spacing-tight);
 }
