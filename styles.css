@@ -49,7 +49,7 @@
     --content-width: 600px;
     --page-edge: 2rem;
 
-    --font-size-xs: 0.8125rem;
+    --font-size-xs: 12.5px;
     --font-size-sm: 0.875rem;
     --font-size-md: 1.0625rem;
 
@@ -82,6 +82,7 @@
     --project-meta-gap: var(--space-5);
     --project-details-gap: var(--space-3);
     --project-details-list-gap: var(--space-0);
+    --project-details-divider: rgba(174, 180, 188, 0.24);
 
     --image-trio-gap: clamp(12px, 4vw, 32px);
 
@@ -390,12 +391,56 @@ body {
 }
 
 .project-details-list {
+    width: 100%;
+    display: block;
+    color: var(--color-muted);
+}
+
+.project-details-summary {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--project-details-divider);
+    list-style: none;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-xs);
+    letter-spacing: var(--letter-spacing-tight);
+    color: var(--color-muted);
+}
+
+.project-details-summary::-webkit-details-marker {
+    display: none;
+}
+
+.project-details-toggle {
+    flex: 0 0 auto;
+    min-width: 1ch;
+    text-align: right;
+}
+
+.project-details-toggle::before {
+    content: '+';
+}
+
+.project-details-list[open] .project-details-toggle::before {
+    content: '-';
+}
+
+.project-details-content {
     display: flex;
     flex-direction: column;
     gap: var(--project-details-list-gap);
 }
 
 .project-details-text {
+    width: 100%;
+    padding: var(--space-2) var(--space-0);
+    border-bottom: 1px solid var(--project-details-divider);
     font-weight: 400;
     font-size: var(--font-size-xs);
     line-height: var(--line-height-xs);
