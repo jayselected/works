@@ -95,7 +95,7 @@
     --dock-height: 52px;
     --dock-bottom: 24px;
     --dock-edge: clamp(20px, 5vw, 32px);
-    --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
+    --dock-width: calc(100% - (var(--page-edge) * 2));
     --dock-action-size: 36px;
     --dock-icon-size: 20px;
     --dock-clearance: calc(var(--dock-height) + var(--dock-bottom) + var(--space-6));
@@ -347,18 +347,6 @@ body {
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
-}
-
-.theme-icon {
-    display: none;
-}
-
-[data-theme="light"] .theme-icon-moon {
-    display: block;
-}
-
-[data-theme="dark"] .theme-icon-sun {
-    display: block;
 }
 
 /* ============================================
@@ -683,6 +671,7 @@ body {
     :root {
         --page-edge: 1.4rem;
         --dock-bottom: 20px;
+        --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
     }
 
     .header-section {
