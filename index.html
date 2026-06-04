@@ -126,6 +126,92 @@
             <img src="face.svg" alt="" aria-hidden="true" width="22" height="22">
         </a>
 
-        <div class="dock-actions">
+        <div class="dock-actions" aria-label="Quick actions">
             <a class="dock-action" href="mailto:jayarchiveone@gmail.com" aria-label="Email Jay Patel">
-                <svg viewBox="0 0 24 24"
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4.75 6.75h14.5v10.5H4.75V6.75Z"></path>
+                    <path d="m5.25 7.25 6.75 5 6.75-5"></path>
+                </svg>
+            </a>
+
+            <button class="dock-action" type="button" id="theme-toggle" aria-label="Switch to dark mode">
+                <svg class="theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M18.25 15.75A7.25 7.25 0 0 1 8.25 5.75 7.5 7.5 0 1 0 18.25 15.75Z"></path>
+                </svg>
+                <svg class="theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5Z"></path>
+                    <path d="M12 3.75v1.5"></path>
+                    <path d="M12 18.75v1.5"></path>
+                    <path d="M4.75 12h1.5"></path>
+                    <path d="M17.75 12h1.5"></path>
+                    <path d="m6.7 6.7 1.05 1.05"></path>
+                    <path d="m16.25 16.25 1.05 1.05"></path>
+                    <path d="m17.3 6.7-1.05 1.05"></path>
+                    <path d="m7.75 16.25-1.05 1.05"></path>
+                </svg>
+            </button>
+
+            <button class="dock-action" type="button" id="scroll-top" aria-label="Back to top">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m7.25 13.25 4.75-4.5 4.75 4.5"></path>
+                    <path d="m7.25 18.25 4.75-4.5 4.75 4.5"></path>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <script src="siteapp.js"></script>
+    <script>
+        const headerSection = document.getElementById('header-section');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 0) {
+                headerSection.classList.add('scrolled');
+            } else {
+                headerSection.classList.remove('scrolled');
+            }
+        }, { passive: true });
+    </script>
+    <script>
+        (() => {
+            const root = document.documentElement;
+            const themeToggle = document.getElementById('theme-toggle');
+            const scrollTop = document.getElementById('scroll-top');
+
+            function setTheme(theme) {
+                root.dataset.theme = theme;
+
+                if (themeToggle) {
+                    themeToggle.setAttribute(
+                        'aria-label',
+                        theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+                    );
+                }
+
+                try {
+                    localStorage.setItem('portfolio-theme', theme);
+                } catch (error) {
+                    return;
+                }
+            }
+
+            if (themeToggle) {
+                setTheme(root.dataset.theme === 'dark' ? 'dark' : 'light');
+
+                themeToggle.addEventListener('click', () => {
+                    setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+                });
+            }
+
+            if (scrollTop) {
+                scrollTop.addEventListener('click', () => {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+        })();
+    </script>
+
+</body>
+</html>
