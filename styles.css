@@ -97,6 +97,7 @@
     --dock-edge: clamp(20px, 5vw, 32px);
     --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
     --dock-action-size: 36px;
+    --dock-icon-size: 20px;
     --dock-clearance: calc(var(--dock-height) + var(--dock-bottom) + var(--space-6));
 
     --glass-bg-start: rgba(255, 255, 255, 0.18);
@@ -338,12 +339,12 @@ body {
 }
 
 .dock-action svg {
-    width: 17px;
-    height: 17px;
+    width: var(--dock-icon-size);
+    height: var(--dock-icon-size);
     display: block;
     fill: none;
     stroke: currentColor;
-    stroke-width: 1.65;
+    stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
 }
