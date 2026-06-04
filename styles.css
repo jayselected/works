@@ -203,6 +203,7 @@ body {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-sm);
     letter-spacing: var(--letter-spacing-tight);
+    color: var(--color-ink);
     white-space: nowrap;
 }
 
@@ -231,12 +232,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    pointer-events: none;
 }
 
 .dock-face,
 .dock-actions {
-    pointer-events: auto;
+    position: relative;
+    isolation: isolate;
     background: linear-gradient(
         135deg,
         var(--glass-bg-start) 0%,
@@ -265,6 +266,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
+    z-index: -1;
     border-radius: inherit;
     background: linear-gradient(
         145deg,
@@ -276,13 +278,11 @@ body {
 }
 
 .dock-face {
-    position: relative;
     width: var(--dock-height);
     height: var(--dock-height);
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--glass-logo-bg);
     border-radius: 50%;
     text-decoration: none;
 }
@@ -293,6 +293,8 @@ body {
 }
 
 .dock-face img {
+    position: relative;
+    z-index: 1;
     width: 26px;
     height: 26px;
     display: block;
@@ -304,10 +306,12 @@ body {
 }
 
 .dock-actions {
-    position: relative;
+    width: max-content;
+    min-width: calc((var(--dock-action-size) * 3) + (var(--space-1) * 2) + (var(--space-2) * 2));
     height: var(--dock-height);
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: var(--space-1);
     padding: var(--space-0) var(--space-2);
     border-radius: 999px;
@@ -315,8 +319,10 @@ body {
 
 .dock-action {
     position: relative;
+    z-index: 1;
     width: var(--dock-action-size);
     height: var(--dock-action-size);
+    flex: 0 0 var(--dock-action-size);
     display: flex;
     align-items: center;
     justify-content: center;
