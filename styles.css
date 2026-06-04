@@ -437,6 +437,30 @@ body {
     gap: var(--project-details-list-gap);
 }
 
+.project-details-pills {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-0);
+    border-bottom: 1px solid var(--project-details-divider);
+}
+
+.project-details-pill {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 2px var(--space-1);
+    border-radius: var(--space-1);
+    background-color: var(--project-details-divider);
+    font-weight: 400;
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-xs);
+    letter-spacing: var(--letter-spacing-tight);
+    color: var(--color-muted);
+    white-space: nowrap;
+}
+
 .project-details-text {
     width: 100%;
     padding: var(--space-2) var(--space-0);
