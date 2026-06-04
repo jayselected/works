@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +19,19 @@
     <meta name="twitter:title" content="Jay Patel">
     <meta name="twitter:description" content="Select Design Works by Jay Patel.">
     <meta name="twitter:image" content="https://jayselected.vercel.app/og-image.png">
+
+    <script>
+        (() => {
+            try {
+                const savedTheme = localStorage.getItem('portfolio-theme');
+                if (savedTheme === 'dark' || savedTheme === 'light') {
+                    document.documentElement.dataset.theme = savedTheme;
+                }
+            } catch (error) {
+                document.documentElement.dataset.theme = 'light';
+            }
+        })();
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -109,25 +122,10 @@
 
     <!-- Bottom dock navigation -->
     <nav class="dock" aria-label="Site navigation">
-        <a class="dock-logo" href="/" aria-label="Homepage">
+        <a class="dock-face" href="/" aria-label="Homepage">
             <img src="face.svg" alt="" aria-hidden="true" width="22" height="22">
         </a>
-        <p class="dock-label">Jay Patel</p>
-        <p class="dock-sublabel">Select Design Works</p>
-        <a href="mailto:jayarchiveone@gmail.com" class="dock-contact">Get In Touch →</a>
-    </nav>
 
-    <script src="siteapp.js"></script>
-    <script>
-        const headerSection = document.getElementById('header-section');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 0) {
-                headerSection.classList.add('scrolled');
-            } else {
-                headerSection.classList.remove('scrolled');
-            }
-        }, { passive: true });
-    </script>
-
-</body>
-</html>
+        <div class="dock-actions">
+            <a class="dock-action" href="mailto:jayarchiveone@gmail.com" aria-label="Email Jay Patel">
+                <svg viewBox="0 0 24 24"
