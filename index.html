@@ -75,17 +75,14 @@
                                     <span>Information</span>
                                     <span class="project-details-toggle" aria-hidden="true"></span>
                                 </summary>
-                                <div class="project-details-content">
-                                    <!-- Details sit on two lines: Stage, Sector and Program share the first line
-                                         (the --inline modifier lays them side by side, wrapping on narrow screens),
-                                         Applications sits on the second. Each detail keeps its bold <strong> prefix. -->
-                                    <p class="project-details-text project-details-text--inline">
-                                        <span class="project-details-item"><strong>Stage:</strong> Concept</span>
-                                        <span class="project-details-item"><strong>Sector:</strong> Entertainment</span>
-                                        <span class="project-details-item"><strong>Program:</strong> Brand Identity · Product Design</span>
-                                    </p>
-                                    <p class="project-details-text"><strong>Applications:</strong> Adobe Photoshop · Adobe Illustrator · Figma</p>
-                                </div>
+                                <dl class="project-details-content">
+                                    <!-- Metadata is a key-value grid: labels in the left column, values in the
+                                         right. To add a detail, duplicate a <dt>/<dd> pair on one line. -->
+                                    <dt>Stage</dt><dd>Concept</dd>
+                                    <dt>Sector</dt><dd>Entertainment</dd>
+                                    <dt>Program</dt><dd>Brand Identity · Product Design</dd>
+                                    <dt>Applications</dt><dd>Adobe Photoshop · Adobe Illustrator · Figma</dd>
+                                </dl>
                             </details>
                         </div>
                     </div>
