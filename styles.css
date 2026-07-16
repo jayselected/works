@@ -54,8 +54,8 @@
     /* --- Type scale ---------------------------------
        display : the multilingual hello (the headline)
        lg      : intro name/subtext and project titles
-       md      : body copy and the Information summary
-       sm      : detail rows, header, footer
+       md      : body copy
+       sm      : Information summary, detail rows, header, footer
        xs      : the project icon initials
     -------------------------------------------------- */
     --font-size-display: clamp(2.375rem, 4vw + 1.25rem, 3.25rem);
@@ -130,8 +130,8 @@
 
     --color-bg: #0E0E0E;
     --color-ink: #F2F2F2;
-    --color-body: #B4B4B4;
-    --color-muted: #9C9C9C;
+    --color-body: #D6D6D6;
+    --color-muted: #FFFFFF;
     --color-hairline: rgba(242, 242, 242, 0.1);
     --color-panel: #171717;
 
@@ -523,11 +523,10 @@ body {
     justify-content: space-between;
     gap: var(--space-3);
     padding-bottom: var(--space-2);
-    border-bottom: 1px solid var(--color-hairline);
     list-style: none;
     cursor: pointer;
     font-weight: 500;
-    font-size: var(--font-size-md);
+    font-size: var(--font-size-sm);
     line-height: var(--line-height-sm);
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-muted);
@@ -560,20 +559,31 @@ body {
 .project-details-content {
     display: flex;
     flex-direction: column;
-    gap: var(--space-0);
+    gap: var(--space-1);
 }
 
-/* Each detail is one row: a bold prefix (<strong>) followed by its value.
-   Rows share the same hairline divider as the summary above them. */
+/* Details sit on two tight lines. The base class is a plain text line;
+   add the --inline modifier to lay several details side by side with a
+   shared gap (wrapping naturally on narrow screens). Each detail keeps
+   its bold <strong> prefix. */
 .project-details-text {
     width: 100%;
-    padding: var(--space-3) var(--space-0);
-    border-bottom: 1px solid var(--color-hairline);
     font-weight: 400;
     font-size: var(--font-size-sm);
     line-height: var(--line-height-sm);
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-muted);
+}
+
+.project-details-text--inline {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--space-4);
+    row-gap: var(--space-1);
+}
+
+.project-details-item {
+    white-space: nowrap;
 }
 
 .project-details-text strong {
@@ -671,7 +681,6 @@ body {
     display: flex;
     align-items: center;
     padding: var(--space-6) var(--space-0);
-    border-top: 1px solid var(--color-hairline);
 }
 
 .footer-text {
