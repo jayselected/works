@@ -548,12 +548,17 @@ body {
     font-weight: 400;
 }
 
+/* One glyph for both states: the up arrowhead (U+2303) rotates 180° when the
+   list is open. Using a single character guarantees the two states always
+   match visually, since fonts often lack a true down-arrowhead glyph. */
 .project-details-toggle::before {
-    content: '\2303'; /* up arrowhead — list closed */
+    content: '\2303';
+    display: inline-block;
+    transition: transform 0.2s ease;
 }
 
 .project-details-list[open] .project-details-toggle::before {
-    content: '\2304'; /* down arrowhead — list open */
+    transform: rotate(180deg);
 }
 
 /* Metadata is a two-column key-value grid, in the style of a spec sheet:
