@@ -544,22 +544,64 @@ body {
 
 .project-details-toggle {
     flex: 0 0 auto;
-    min-width: 1ch;
-    text-align: right;
-    font-weight: 400;
+    display: flex;
+    align-items: center;
 }
 
-/* One glyph for both states: the up arrowhead (U+2303) rotates 180° when the
-   list is open. Using a single character guarantees the two states always
-   match visually, since fonts often lack a true down-arrowhead glyph. */
-.project-details-toggle::before {
-    content: '\2303';
-    display: inline-block;
-    transition: transform 0.2s ease;
+/* The chevron is the SF Symbols chevron.up glyph, inlined in the HTML and
+   filled with the current text colour. The open state rotates the same
+   path 180° — geometrically identical to chevron.down, but as one shape
+   both states always match and the pivot animates smoothly. */
+.project-details-toggle svg {
+    width: 12px;
+    height: auto;
+    display: block;
+    fill: currentColor;
+    transition: transform 0.3s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
-.project-details-list[open] .project-details-toggle::before {
+.project-details-list[open] .project-details-toggle svg {
     transform: rotate(180deg);
+}
+
+/* Opening reveals the metadata with a soft fade and settle. This works in
+   every browser; closing is instant where the enhancement below isn't
+   supported, since closed <details> content is removed from the layout. */
+.project-details-list[open] .project-details-content {
+    animation: details-reveal 0.3s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+@keyframes details-reveal {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Progressive enhancement: where supported, the panel's height also
+   glides open and closed instead of snapping. Browsers without support
+   simply keep the fade above — nothing breaks. */
+@supports (interpolate-size: allow-keywords) {
+    :root {
+        interpolate-size: allow-keywords;
+    }
+
+    .project-details-list::details-content {
+        block-size: 0;
+        overflow-y: clip;
+        transition:
+            block-size 0.3s cubic-bezier(0.33, 0, 0.2, 1),
+            content-visibility 0.3s allow-discrete;
+    }
+
+    .project-details-list[open]::details-content {
+        block-size: auto;
+    }
 }
 
 /* Metadata is a two-column key-value grid, in the style of a spec sheet:
@@ -608,7 +650,6 @@ body {
     line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-body);
-    max-width: 56ch;
 }
 
 /* ============================================
