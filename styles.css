@@ -1,770 +1,228 @@
-/* ============================================
-   Fonts
-   ============================================ */
-
-@font-face {
-    font-family: 'SF Pro Text';
-    src: url('fonts/SF Pro Text/SF Pro Text Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Text';
-    src: url('fonts/SF Pro Text/SF Pro Text Medium.woff') format('woff');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Text';
-    src: url('fonts/SF Pro Text/SF Pro Text Bold.woff') format('woff');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Text';
-    src: url('fonts/SF Pro Text/SF Pro Text Light.woff') format('woff');
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap;
-}
-
-/* ============================================
-   Foundation
-   ============================================ */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-    color-scheme: light;
-
-    --viewport-floor: 390px;
-    --content-width: 600px;
-    --page-edge: 2rem;
-
-    /* --- Type scale ---------------------------------
-       display : the multilingual hello (the headline)
-       lg      : intro name/subtext and project titles
-       md      : body copy
-       sm      : Information summary, detail rows, header, footer
-       xs      : the project icon initials
-    -------------------------------------------------- */
-    --font-size-display: clamp(2.375rem, 4vw + 1.25rem, 3.25rem);
-    --font-size-lg: 1.25rem;
-    --font-size-md: 0.9375rem;
-    --font-size-sm: 0.8125rem;
-    --font-size-xs: 0.75rem;
-
-    --line-height-display: 1.05;
-    --line-height-lg: 1.3;
-    --line-height-md: 1.6;
-    --line-height-sm: 1.45;
-
-    --letter-spacing-display: -0.035em;
-    --letter-spacing-tight: -0.014em;
-
-    /* --- Monotone palette ---------------------------
-       ink       : headlines, names, titles
-       body      : reading copy
-       muted     : meta, labels, detail rows
-       hairline  : all borders and dividers
-       panel     : image wells and icon chips
-    -------------------------------------------------- */
-    --color-bg: #FFFFFF;
-    --color-ink: #141414;
-    --color-body: #4B4B4B;
-    --color-muted: #8A8A8A;
-    --color-hairline: rgba(20, 20, 20, 0.09);
-    --color-panel: #F6F6F6;
-
-    --radius-md: 8px; /* used by the project icon chip */
-
-    --space-0: 0;
-    --space-1: 4px;
-    --space-2: 8px;
-    --space-3: 12px;
-    --space-4: 16px;
-    --space-5: 20px;
-    --space-6: 24px;
-
-    --space-fluid-md: clamp(18px, 3vw, 24px);
-    --space-section: clamp(64px, 15vw, 120px);
-
-    --header-height: 52px;
-    --header-bg: rgba(255, 255, 255, 0.78);
-
-    --project-icon-size: 40px;
-
-    --image-trio-gap: clamp(12px, 4vw, 32px);
-
-    --dock-height: 52px;
-    --dock-bottom: 24px;
-    --dock-edge: clamp(20px, 5vw, 32px);
-    --dock-width: calc(100% - (var(--page-edge) * 2));
-    --dock-action-size: 36px;
-    --dock-icon-size: 20px;
-    --dock-clearance: calc(var(--dock-height) + var(--dock-bottom) + var(--space-6));
-
-    --glass-bg-start: rgba(255, 255, 255, 0.18);
-    --glass-bg-end: rgba(255, 255, 255, 0.09);
-    --glass-border: rgba(20, 20, 20, 0.08);
-    --glass-highlight: rgba(255, 255, 255, 0.35);
-    --glass-lowlight: rgba(20, 20, 20, 0.03);
-    --glass-shadow-large: rgba(20, 20, 20, 0.08);
-    --glass-shadow-small: rgba(20, 20, 20, 0.06);
-    --glass-inset-light: rgba(255, 255, 255, 0.6);
-    --glass-inset-dark: rgba(20, 20, 20, 0.04);
-}
-
-[data-theme="dark"] {
-    color-scheme: dark;
-
-    --color-bg: #0E0E0E;
-    --color-ink: #F2F2F2;
-    --color-body: #D6D6D6;
-    --color-muted: #FFFFFF;
-    --color-hairline: rgba(242, 242, 242, 0.1);
-    --color-panel: #171717;
-
-    --header-bg: rgba(14, 14, 14, 0.78);
-
-    --glass-bg-start: rgba(255, 255, 255, 0.1);
-    --glass-bg-end: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --glass-highlight: rgba(255, 255, 255, 0.14);
-    --glass-lowlight: rgba(0, 0, 0, 0.18);
-    --glass-shadow-large: rgba(0, 0, 0, 0.32);
-    --glass-shadow-small: rgba(0, 0, 0, 0.18);
-    --glass-inset-light: rgba(255, 255, 255, 0.14);
-    --glass-inset-dark: rgba(0, 0, 0, 0.2);
-}
-
-html {
-    font-size: 100%;
-}
-
-html,
-body {
-    min-width: var(--viewport-floor);
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-weight: 400;
-    font-size: var(--font-size-md);
-    line-height: var(--line-height-md);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
-    background-color: var(--color-bg);
-    font-style: normal;
-    font-synthesis: none;
-    -webkit-font-smoothing: antialiased;
-    direction: ltr;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    padding-bottom: var(--dock-clearance);
-    transition: color 0.2s ease, background-color 0.2s ease;
-}
-
-::selection {
-    background-color: var(--color-ink);
-    color: var(--color-bg);
-}
-
-:focus-visible {
-    outline: 2px solid var(--color-ink);
-    outline-offset: 2px;
-    border-radius: 4px;
-}
-
-/* ============================================
-   Live header
-   ============================================ */
-
-.header-section {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    width: 100%;
-    min-width: var(--viewport-floor);
-    height: var(--header-height);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-0) var(--page-edge);
-    color: var(--color-ink);
-    background-color: var(--header-bg);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    transition: color 0.2s ease, background-color 0.2s ease;
-}
-
-/* Note: index.html toggles a .scrolled class on this header via JS.
-   It currently has no visual effect, but the hook remains available
-   if a scroll treatment is wanted in future. */
-
-.header-left,
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-}
-
-.location-greeting,
-.header-datetime,
-.location-city,
-.location-weather {
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
-    letter-spacing: var(--letter-spacing-tight);
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-}
-
-.location-greeting {
-    font-weight: 500;
-    color: var(--color-ink);
-}
-
-.header-datetime,
-.location-city,
-.location-weather {
-    font-weight: 400;
-    color: var(--color-muted);
-}
-
-/* ============================================
-   Dock
-   ============================================ */
-
-.dock {
-    position: fixed;
-    bottom: var(--dock-bottom);
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 200;
-    width: var(--dock-width);
-    height: var(--dock-height);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.dock-face,
-.dock-actions {
-    position: relative;
-    isolation: isolate;
-    background: linear-gradient(
-        135deg,
-        var(--glass-bg-start) 0%,
-        var(--glass-bg-end) 100%
-    );
-    backdrop-filter: blur(14px) saturate(200%) brightness(1.08);
-    -webkit-backdrop-filter: blur(14px) saturate(200%) brightness(1.08);
-    border: 1px solid var(--glass-border);
-    box-shadow:
-        inset 0 1px 0 var(--glass-inset-light),
-        inset 0 -1px 0 var(--glass-inset-dark),
-        inset 1px 0 0 rgba(255, 255, 255, 0.12),
-        0 8px 32px var(--glass-shadow-large),
-        0 2px 8px var(--glass-shadow-small);
-    color: var(--color-ink);
-    transition:
-        color 0.2s ease,
-        background 0.2s ease,
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        opacity 0.2s ease;
-}
-
-.dock-face::before,
-.dock-actions::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    border-radius: inherit;
-    background: linear-gradient(
-        145deg,
-        var(--glass-highlight) 0%,
-        rgba(255, 255, 255, 0) 50%,
-        var(--glass-lowlight) 100%
-    );
-    pointer-events: none;
-}
-
-.dock-face {
-    width: var(--dock-height);
-    height: var(--dock-height);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    text-decoration: none;
-}
-
-.dock-face:hover,
-.dock-action:hover {
-    opacity: 0.62;
-}
-
-.dock-face img {
-    position: relative;
-    z-index: 1;
-    width: 26px;
-    height: 26px;
-    display: block;
-    transition: filter 0.2s ease;
-}
-
-[data-theme="dark"] .dock-face img {
-    filter: invert(1);
-}
-
-.dock-actions {
-    width: max-content;
-    min-width: calc((var(--dock-action-size) * 3) + (var(--space-1) * 2) + (var(--space-2) * 2));
-    height: var(--dock-height);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-1);
-    padding: var(--space-0) var(--space-2);
-    border-radius: 999px;
-}
-
-.dock-action {
-    position: relative;
-    z-index: 1;
-    width: var(--dock-action-size);
-    height: var(--dock-action-size);
-    flex: 0 0 var(--dock-action-size);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    border-radius: 50%;
-    appearance: none;
-    -webkit-appearance: none;
-    background: transparent;
-    color: var(--color-ink);
-    text-decoration: none;
-    cursor: pointer;
-    transition: color 0.2s ease, opacity 0.2s ease;
-}
-
-.dock-action svg {
-    width: var(--dock-icon-size);
-    height: var(--dock-icon-size);
-    display: block;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-/* ============================================
-   Page
-   ============================================ */
-
-.container {
-    width: 100%;
-    padding: var(--space-0) var(--page-edge);
-    display: flex;
-    justify-content: center;
-}
-
-.main {
-    width: min(100%, var(--content-width));
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-0);
-}
-
-/* ============================================
-   Intro
-   ============================================ */
-
-.hello {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-4);
-    padding-top: var(--space-section);
-    margin-bottom: var(--space-section);
-    color: var(--color-ink);
-}
-
-.hello-text {
-    font-weight: 600;
-    font-size: var(--font-size-display);
-    line-height: var(--line-height-display);
-    letter-spacing: var(--letter-spacing-display);
-    color: var(--color-ink);
-    margin: var(--space-0);
-    padding: var(--space-0);
-    white-space: nowrap;
-    min-height: 1.05em;
-    opacity: 0;
-    transition: opacity 0.8s ease;
-}
-
-.hello-text.visible {
-    opacity: 1;
-}
-
-.hello-intro {
-    display: flex;
-    gap: var(--space-1);
-    white-space: nowrap;
-}
-
-.hello-name {
-    font-weight: 500;
-    font-size: var(--font-size-lg);
-    line-height: var(--line-height-lg);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
-    white-space: nowrap;
-}
-
-.hello-subtext {
-    font-weight: 400;
-    font-size: var(--font-size-lg);
-    line-height: var(--line-height-lg);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-muted);
-}
-
-/* ============================================
-   Work
-   ============================================ */
-
-.works {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-section);
-    margin-bottom: var(--space-fluid-md);
-}
-
-.project {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-fluid-md);
-}
-
-.project-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-5);
-}
-
-.project-icon {
-    width: var(--project-icon-size);
-    height: var(--project-icon-size);
-    flex: 0 0 var(--project-icon-size);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-hairline);
-    background-color: var(--color-panel);
-    color: var(--color-ink);
-    font-weight: 500;
-    font-size: var(--font-size-xs);
-    line-height: 1;
-    letter-spacing: var(--letter-spacing-tight);
-    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.project-details {
-    width: 100%;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-}
-
-.project-title {
-    font-weight: 600;
-    font-size: var(--font-size-lg);
-    line-height: var(--line-height-lg);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
-}
-
-.project-details-list {
-    width: 100%;
-    display: block;
-    color: var(--color-muted);
-}
-
-.project-details-summary {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
-    padding-bottom: var(--space-2);
-    list-style: none;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-muted);
-    transition: color 0.2s ease;
-}
-
-.project-details-summary:hover {
-    color: var(--color-ink);
-}
-
-.project-details-summary::-webkit-details-marker {
-    display: none;
-}
-
-.project-details-toggle {
-    flex: 0 0 auto;
-    min-width: 1ch;
-    text-align: right;
-    font-weight: 400;
-}
-
-.project-details-toggle::before {
-    content: '+';
-}
-
-.project-details-list[open] .project-details-toggle::before {
-    content: '\2212'; /* minus sign, same width as the plus */
-}
-
-/* Metadata is a two-column key-value grid, in the style of a spec sheet:
-   labels (dt) anchor to the left rail, values (dd) anchor to the right rail
-   — echoing the Information / + row above. A muted hairline runs under every
-   row except the last, with equal breathing room above and below each line.
-   The label carries the column spacing as padding (rather than a grid
-   column-gap) so the hairlines run unbroken across the full row. */
-.project-details-content {
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    row-gap: var(--space-3);
-    padding-top: var(--space-2);
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
-    letter-spacing: var(--letter-spacing-tight);
-}
-
-.project-details-content dt {
-    font-weight: 500;
-    color: var(--color-body);
-    padding-right: var(--space-6);
-}
-
-.project-details-content dd {
-    color: var(--color-muted);
-    text-align: right;
-}
-
-.project-details-content dt:not(:last-of-type),
-.project-details-content dd:not(:last-of-type) {
-    padding-bottom: var(--space-3);
-    border-bottom: 1px solid var(--color-hairline);
-}
-
-.project-description {
-    width: 100%;
-}
-
-.project-description-text {
-    font-weight: 400;
-    font-size: var(--font-size-md);
-    line-height: var(--line-height-md);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-body);
-    max-width: 56ch;
-}
-
-/* ============================================
-   Images
-   ============================================ */
-
-.project-images {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-fluid-md);
-}
-
-.image-1 {
-    width: 100%;
-    aspect-ratio: 648 / 398;
-    overflow: hidden;
-}
-
-.image-1 img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.image-2 {
-    width: 100%;
-    display: flex;
-    gap: var(--space-fluid-md);
-}
-
-.image-box-a,
-.image-box-b {
-    width: calc((100% - var(--space-fluid-md)) / 2);
-    aspect-ratio: 316 / 398;
-    background-color: var(--color-panel);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-.image-box-a img,
-.image-box-b img {
-    width: 160px;
-    height: 330px;
-    object-fit: cover;
-}
-
-.image-3 {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--image-trio-gap);
-    background-color: var(--color-panel);
-    padding: var(--space-6) var(--space-0);
-}
-
-.image-3 img {
-    width: min(
-        clamp(96px, 20vw, 160px),
-        calc((100% - (var(--image-trio-gap) * 2)) / 3)
-    );
-    height: auto;
-    aspect-ratio: 160 / 330;
-    object-fit: cover;
-}
-
-/* ============================================
-   Footer
-   ============================================ */
-
-.site-footer {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: var(--space-6) var(--space-0);
-}
-
-.footer-text {
-    font-weight: 400;
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-muted);
-}
-
-/* ============================================
-   Motion preferences
-   ============================================ */
-
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        transition-duration: 0.01ms !important;
-        animation-duration: 0.01ms !important;
-    }
-}
-
-/* ============================================
-   Responsive
-   ============================================ */
-
-@media screen and (max-width: 700px) {
-    :root {
-        --page-edge: 1.4rem;
-        --dock-bottom: 20px;
-        --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
-    }
-
-    .header-section {
-        height: auto;
-        align-items: flex-start;
-        padding-top: 14px;
-        padding-bottom: 14px;
-    }
-
-    .header-left {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 3px;
-    }
-
-    .header-right {
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 3px;
-    }
-
-    .image-2 {
-        flex-direction: column;
-    }
-
-    .image-box-a,
-    .image-box-b {
-        width: 100%;
-    }
-
-    .image-box-a img,
-    .image-box-b img {
-        width: auto;
-        height: auto;
-        max-width: 44%;
-        max-height: 84%;
-    }
-
-    .image-3 {
-        padding: var(--space-6) var(--space-5);
-    }
-}
-
-@media screen and (max-width: 390px) {
-    :root {
-        --image-trio-gap: 12px;
-    }
-
-    .image-3 {
-        padding: var(--space-6) 18px;
-    }
-
-    .dock {
-        left: calc(var(--viewport-floor) / 2);
-        width: calc(var(--viewport-floor) - 40px);
-    }
-}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jay Patel</title>
+    <meta name="description" content="Select Design Works by Jay Patel.">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jayselected.vercel.app">
+    <meta property="og:title" content="Jay Patel">
+    <meta property="og:description" content="Select Design Works by Jay Patel.">
+    <meta property="og:image" content="https://jayselected.vercel.app/og-image.png">
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://jayselected.vercel.app">
+    <meta name="twitter:title" content="Jay Patel">
+    <meta name="twitter:description" content="Select Design Works by Jay Patel.">
+    <meta name="twitter:image" content="https://jayselected.vercel.app/og-image.png">
+
+    <script>
+        (() => {
+            try {
+                const savedTheme = localStorage.getItem('portfolio-theme');
+                if (savedTheme === 'dark' || savedTheme === 'light') {
+                    document.documentElement.dataset.theme = savedTheme;
+                }
+            } catch (error) {
+                document.documentElement.dataset.theme = 'light';
+            }
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Sticky top bar -->
+    <div class="header-section" id="header-section">
+        <div class="header-left">
+            <p class="location-greeting" id="greeting-display"></p>
+            <p class="header-datetime" id="datetime-display"></p>
+        </div>
+        <div class="header-right">
+            <p class="location-city" id="location-city-display"></p>
+            <p class="location-weather" id="location-weather-display"></p>
+        </div>
+    </div>
+
+    <div class="container">
+        <main class="main">
+
+            <section class="hello">
+                <h1 class="hello-text" id="hello-text"></h1>
+                <div class="hello-intro">
+                    <p class="hello-name">Jay Patel,</p>
+                    <p class="hello-subtext">Select Design Works</p>
+                </div>
+            </section>
+
+            <section class="works">
+
+                <article class="project">
+                    <div class="project-meta">
+                        <!-- Icons are monotone by default; just change the initials when duplicating a project. -->
+                        <div class="project-icon" aria-hidden="true">CA</div>
+                        <div class="project-details">
+                            <p class="project-title">Cine Asia</p>
+                            <details class="project-details-list" open>
+                                <summary class="project-details-summary">
+                                    <span>Information</span>
+                                    <span class="project-details-toggle" aria-hidden="true"></span>
+                                </summary>
+                                <dl class="project-details-content">
+                                    <!-- Metadata is a key-value grid: labels in the left column, values in the
+                                         right. To add a detail, duplicate a <dt>/<dd> pair on one line. -->
+                                    <dt>Stage</dt><dd>Concept</dd>
+                                    <dt>Sector</dt><dd>Entertainment</dd>
+                                    <dt>Services</dt><dd>Brand Identity · Product Design</dd>
+                                    <dt>Applications</dt><dd>Adobe Photoshop · Adobe Illustrator · Figma</dd>
+                                </dl>
+                            </details>
+                        </div>
+                    </div>
+
+                    <div class="project-description">
+                        <p class="project-description-text">Cine Asia is a concept app celebrating Asian cinema through a curated streaming experience and editorial film coverage from across the continent. Designed with a clean, intuitive interface, it keeps discovery simple, focused, and enjoyable.</p>
+                    </div>
+
+                    <div class="project-images">
+                        <div class="image-1">
+                            <img src="https://framerusercontent.com/images/HyNx4h88GowWDEBafQKrWsFKOdA.png" alt="Cine Asia Banner Image">
+                        </div>
+                        <div class="image-2">
+                            <div class="image-box-a">
+                                <img src="images/cineasia/cineasia-1.png" alt="Cine Asia Home">
+                            </div>
+                            <div class="image-box-b">
+                                <img src="images/cineasia/cineasia-2.png" alt="Cine Asia, browsing films">
+                            </div>
+                        </div>
+                        <div class="image-3">
+                            <img src="images/cineasia/cineasia-3.png" alt="Cine Asia, browsing articles">
+                            <img src="images/cineasia/cineasia-4.png" alt="Cine Asia, read article page">
+                            <img src="images/cineasia/cineasia-5.png" alt="Cine Asia, Spirited Away film screen">
+                        </div>
+                    </div>
+                </article>
+
+            </section>
+
+            <footer class="site-footer">
+                <p class="footer-text">© 2026 · Jay Patel</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Bottom dock navigation -->
+    <nav class="dock" aria-label="Site navigation">
+        <a class="dock-face" href="/" aria-label="Homepage">
+            <img src="face.svg" alt="" aria-hidden="true" width="22" height="22">
+        </a>
+
+        <div class="dock-actions" aria-label="Quick actions">
+            <a class="dock-action" href="mailto:jayarchiveone@gmail.com" aria-label="Email Jay Patel">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path>
+                </svg>
+            </a>
+
+            <button class="dock-action" type="button" id="theme-toggle" aria-label="Switch to dark mode">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+
+            <button class="dock-action" type="button" id="scroll-top" aria-label="Back to top">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                    <line x1="12" y1="19" x2="12" y2="5"></line>
+                    <polyline points="5 12 12 5 19 12"></polyline>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <script src="siteapp.js"></script>
+    <script>
+        const headerSection = document.getElementById('header-section');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 0) {
+                headerSection.classList.add('scrolled');
+            } else {
+                headerSection.classList.remove('scrolled');
+            }
+        }, { passive: true });
+    </script>
+    <script>
+        (() => {
+            const root = document.documentElement;
+            const themeToggle = document.getElementById('theme-toggle');
+            const scrollTop = document.getElementById('scroll-top');
+
+            const themeIcons = {
+                light: `
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                `,
+                dark: `
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                `
+            };
+
+            function setTheme(theme) {
+                root.dataset.theme = theme;
+
+                if (themeToggle) {
+                    themeToggle.innerHTML = themeIcons[theme];
+                    themeToggle.setAttribute(
+                        'aria-label',
+                        theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+                    );
+                }
+
+                try {
+                    localStorage.setItem('portfolio-theme', theme);
+                } catch (error) {
+                    return;
+                }
+            }
+
+            if (themeToggle) {
+                setTheme(root.dataset.theme === 'dark' ? 'dark' : 'light');
+
+                themeToggle.addEventListener('click', () => {
+                    setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+                });
+            }
+
+            if (scrollTop) {
+                scrollTop.addEventListener('click', () => {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+        })();
+    </script>
+
+</body>
+</html>
