@@ -86,6 +86,26 @@
     --color-hairline: rgba(20, 20, 20, 0.09);
     --color-panel: #F6F6F6;
 
+    /* --- Hero gradient (light mode only) ------------
+       A sky-blue wash that starts at the top of the page and fades to
+       white before the first project. It is painted on the page
+       background at a fixed height, so it scrolls away with the content.
+       - Tune where the fade lands by adjusting --hero-height.
+       - Text sitting on the blue uses --hero-ink / --hero-ink-soft.
+       Dark mode disables it by setting --hero-gradient to none.
+    -------------------------------------------------- */
+    --hero-gradient: linear-gradient(
+        180deg,
+        #44709F 0%,
+        #5583B9 40%,
+        #6C97C8 70%,
+        #E9F1FA 93%,
+        #FFFFFF 100%
+    );
+    --hero-height: clamp(300px, 24vw + 210px, 400px);
+    --hero-ink: #FFFFFF;
+    --hero-ink-soft: rgba(255, 255, 255, 0.78);
+
     --radius-md: 8px; /* used by the project icon chip */
 
     --space-0: 0;
@@ -137,6 +157,9 @@
 
     --header-bg: rgba(14, 14, 14, 0.78);
 
+    /* Dark mode has no hero gradient; the page is a single flat surface. */
+    --hero-gradient: none;
+
     --glass-bg-start: rgba(255, 255, 255, 0.1);
     --glass-bg-end: rgba(255, 255, 255, 0.05);
     --glass-border: rgba(255, 255, 255, 0.1);
@@ -165,6 +188,12 @@ body {
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-ink);
     background-color: var(--color-bg);
+    /* The hero gradient sits at the top of the document (not the viewport),
+       so it scrolls up and away with the page; everything below it rests
+       on the plain background colour. */
+    background-image: var(--hero-gradient);
+    background-repeat: no-repeat;
+    background-size: 100% var(--hero-height);
     font-style: normal;
     font-synthesis: none;
     -webkit-font-smoothing: antialiased;
@@ -211,9 +240,26 @@ body {
     transition: color 0.2s ease, background-color 0.2s ease;
 }
 
-/* Note: index.html toggles a .scrolled class on this header via JS.
-   It currently has no visual effect, but the hook remains available
-   if a scroll treatment is wanted in future. */
+/* Over the hero gradient (light mode, top of page) the header floats
+   transparent with white text, like a lock screen. index.html toggles
+   the .scrolled class via JS as soon as the page scrolls, restoring the
+   frosted background and ink text so the header stays readable over the
+   white project area. Dark mode keeps the frosted header throughout. */
+[data-theme="light"] .header-section:not(.scrolled) {
+    background-color: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+[data-theme="light"] .header-section:not(.scrolled) .location-greeting {
+    color: var(--hero-ink);
+}
+
+[data-theme="light"] .header-section:not(.scrolled) .header-datetime,
+[data-theme="light"] .header-section:not(.scrolled) .location-city,
+[data-theme="light"] .header-section:not(.scrolled) .location-weather {
+    color: var(--hero-ink-soft);
+}
 
 .header-left,
 .header-right {
@@ -231,6 +277,7 @@ body {
     letter-spacing: var(--letter-spacing-tight);
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
+    transition: color 0.2s ease;
 }
 
 .location-greeting {
@@ -448,6 +495,17 @@ body {
     line-height: var(--line-height-lg);
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-muted);
+}
+
+/* Over the hero gradient (light mode) the intro reads in white; the
+   subtext uses a soft white to keep the name/subtext hierarchy. */
+[data-theme="light"] .hello-text,
+[data-theme="light"] .hello-name {
+    color: var(--hero-ink);
+}
+
+[data-theme="light"] .hello-subtext {
+    color: var(--hero-ink-soft);
 }
 
 /* ============================================
