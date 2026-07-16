@@ -73,15 +73,15 @@
     --letter-spacing-tight: -0.014em;
 
     /* --- Monotone palette ---------------------------
-       ink       : headlines, names, titles
-       body      : reading copy
-       muted     : meta, labels, detail rows
-       hairline  : all borders and dividers
+       Two text colours only:
+       ink       : headlines, names, titles, body copy
+       muted     : every piece of secondary text (one grey, #8A8A8A)
+       Plus two surfaces:
+       hairline  : borders and dividers (kept soft so strokes never bite)
        panel     : image wells and icon chips
     -------------------------------------------------- */
     --color-bg: #FFFFFF;
     --color-ink: #141414;
-    --color-body: #4B4B4B;
     --color-muted: #8A8A8A;
     --color-hairline: rgba(20, 20, 20, 0.09);
     --color-panel: #F6F6F6;
@@ -130,8 +130,7 @@
 
     --color-bg: #0E0E0E;
     --color-ink: #F2F2F2;
-    --color-body: #D6D6D6;
-    --color-muted: #FFFFFF;
+    --color-muted: #8A8A8A;
     --color-hairline: rgba(242, 242, 242, 0.1);
     --color-panel: #171717;
 
@@ -625,7 +624,7 @@ body {
 
 .project-details-content dt {
     font-weight: 500;
-    color: var(--color-body);
+    color: var(--color-muted);
     padding-right: var(--space-6);
 }
 
@@ -649,7 +648,7 @@ body {
     font-size: var(--font-size-md);
     line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-body);
+    color: var(--color-ink);
 }
 
 /* ============================================
