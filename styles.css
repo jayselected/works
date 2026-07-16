@@ -58,8 +58,8 @@
        sm      : Information summary, detail rows, header, footer
        xs      : the project icon initials
     -------------------------------------------------- */
-    --font-size-display: clamp(2.375rem, 4vw + 1.25rem, 3.25rem);
-    --font-size-lg: 1.25rem;
+    --font-size-display: 3.125rem; /* 50px */
+    --font-size-lg: 1.875rem;      /* 30px */
     --font-size-md: 0.9375rem;
     --font-size-sm: 0.8125rem;
     --font-size-xs: 0.75rem;
@@ -77,7 +77,7 @@
        ink       : headlines, names, titles, body copy
        muted     : every piece of secondary text (one grey, #8A8A8A)
        Plus two surfaces:
-       hairline  : borders and dividers (kept soft so strokes never bite)
+       hairline  : soft stroke, currently only the project icon chip
        panel     : image wells and icon chips
     -------------------------------------------------- */
     --color-bg: #FFFFFF;
@@ -130,7 +130,7 @@
 
     --color-bg: #0E0E0E;
     --color-ink: #F2F2F2;
-    --color-muted: #8A8A8A;
+    --color-muted: #FFFFFF80; /* 50% white — the dark-mode twin of light mode's #8A8A8A */
     --color-hairline: rgba(242, 242, 242, 0.1);
     --color-panel: #171717;
 
@@ -213,6 +213,14 @@ body {
 /* Note: index.html toggles a .scrolled class on this header via JS.
    It currently has no visual effect, but the hook remains available
    if a scroll treatment is wanted in future. */
+
+/* In dark mode every string in the sticky header reads in full white. */
+[data-theme="dark"] .location-greeting,
+[data-theme="dark"] .header-datetime,
+[data-theme="dark"] .location-city,
+[data-theme="dark"] .location-weather {
+    color: #FFFFFF;
+}
 
 .header-left,
 .header-right {
@@ -429,8 +437,8 @@ body {
 
 .hello-intro {
     display: flex;
-    gap: var(--space-1);
-    white-space: nowrap;
+    flex-wrap: wrap; /* at 30px the subtext drops below the name on narrow screens */
+    gap: var(--space-0) var(--space-2);
 }
 
 .hello-name {
@@ -604,12 +612,10 @@ body {
 }
 
 /* Metadata is a two-column key-value grid, in the style of a spec sheet:
-   labels (dt) anchor to the left rail, values (dd) anchor to the right rail
-   — echoing the Information / + row above. A muted hairline runs under every
-   row except the last, with equal breathing room above and below each line.
-   --details-row-space controls that breathing room on both sides at once,
-   keeping the stroke centred. The label carries the column spacing as padding
-   (rather than a grid column-gap) so the hairlines run unbroken. */
+   labels (dt) anchor to the left rail, values (dd) anchor to the right rail.
+   Rows are open (no strokes); --details-row-space sets the breathing room
+   between them on both sides at once. The label carries the column spacing
+   as padding rather than a grid column-gap. */
 .project-details-content {
     --details-row-space: 10px;
 
@@ -636,7 +642,6 @@ body {
 .project-details-content dt:not(:last-of-type),
 .project-details-content dd:not(:last-of-type) {
     padding-bottom: var(--details-row-space);
-    border-bottom: 1px solid var(--color-hairline);
 }
 
 .project-description {
