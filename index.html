@@ -81,13 +81,26 @@
                                     </span>
                                 </summary>
                                 <dl class="project-details-content">
-                                    <!-- Metadata is a spec-sheet grid: labels align left, values align right,
-                                         with a hairline under every row except the last (handled automatically).
-                                         To add a detail, duplicate a <dt>/<dd> pair on one line. -->
-                                    <dt>Stage</dt><dd>Concept</dd>
-                                    <dt>Sector</dt><dd>Entertainment</dd>
-                                    <dt>Services</dt><dd>Brand Identity · Product Design</dd>
-                                    <dt>Applications</dt><dd>Adobe Photoshop · Adobe Illustrator · Figma</dd>
+                                    <!-- Metadata items sit side by side, each with its label above its value
+                                         (wrapping onto new lines on narrow screens). To add a detail,
+                                         duplicate one whole item div. The colon after each label is added
+                                         by the CSS, so labels stay clean here. -->
+                                    <div class="project-details-item">
+                                        <dt>Stage</dt>
+                                        <dd>Concept</dd>
+                                    </div>
+                                    <div class="project-details-item">
+                                        <dt>Sector</dt>
+                                        <dd>Entertainment</dd>
+                                    </div>
+                                    <div class="project-details-item">
+                                        <dt>Services</dt>
+                                        <dd>Brand Identity · Product Design</dd>
+                                    </div>
+                                    <div class="project-details-item">
+                                        <dt>Applications</dt>
+                                        <dd>Adobe Photoshop · Adobe Illustrator · Figma</dd>
+                                    </div>
                                 </dl>
                             </details>
                         </div>
