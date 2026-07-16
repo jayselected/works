@@ -55,8 +55,8 @@
        display : the multilingual hello (the headline)
        lg      : intro name/subtext and project titles
        md      : body copy
-       sm      : Information summary, detail rows, header, footer
-       xs      : the project icon initials
+       sm      : Information summary, header, footer
+       xs      : meta list and the project icon initials
     -------------------------------------------------- */
     --font-size-display: 3.125rem; /* 50px */
     --font-size-lg: 1.875rem;      /* 30px */
@@ -611,37 +611,37 @@ body {
     }
 }
 
-/* Metadata is a two-column key-value grid, in the style of a spec sheet:
-   labels (dt) anchor to the left rail, values (dd) anchor to the right rail.
-   Rows are open (no strokes); --details-row-space sets the breathing room
-   between them on both sides at once. The label carries the column spacing
-   as padding rather than a grid column-gap. */
+/* Metadata items sit side by side in a row, each one a small label-over-value
+   stack. Items wrap onto new lines when the row runs out of width, so narrow
+   screens get two-per-line or stacked layouts for free. The colon after each
+   label is generated here rather than typed in the HTML. */
 .project-details-content {
-    --details-row-space: 10px;
-
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    row-gap: var(--details-row-space);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-6);
     padding-top: var(--space-2);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
     line-height: var(--line-height-sm);
     letter-spacing: var(--letter-spacing-tight);
 }
 
-.project-details-content dt {
+.project-details-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.project-details-item dt {
     font-weight: 500;
     color: var(--color-muted);
-    padding-right: var(--space-6);
 }
 
-.project-details-content dd {
+.project-details-item dt::after {
+    content: ':';
+}
+
+.project-details-item dd {
     color: var(--color-muted);
-    text-align: right;
-}
-
-.project-details-content dt:not(:last-of-type),
-.project-details-content dd:not(:last-of-type) {
-    padding-bottom: var(--details-row-space);
 }
 
 .project-description {
