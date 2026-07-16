@@ -90,6 +90,11 @@
        A sky-blue wash that starts at the top of the page and fades to
        white before the first project. It is painted on the page
        background at a fixed height, so it scrolls away with the content.
+       The easing spans the full height (slow, faster, slow) rather than
+       being confined to a band, so there is no visible line where the
+       fade "begins" — the blue is always gently becoming white. If
+       editing, keep the colour steps small at both ends and larger
+       through the middle.
        - Tune where the fade lands by adjusting --hero-height.
        - Text sitting on the blue uses --hero-ink / --hero-ink-soft.
        Dark mode disables it by setting --hero-gradient to none.
@@ -97,12 +102,19 @@
     --hero-gradient: linear-gradient(
         180deg,
         #44709F 0%,
-        #5583B9 40%,
-        #6C97C8 70%,
-        #E9F1FA 93%,
+        #4A76A7 18%,
+        #5280B0 34%,
+        #5E8BBA 47%,
+        #6E99C5 58%,
+        #82A9D1 67%,
+        #99BBDD 75%,
+        #B3CDE8 82%,
+        #CCDEF1 88%,
+        #E3EDF8 93%,
+        #F4F9FD 97%,
         #FFFFFF 100%
     );
-    --hero-height: clamp(300px, 24vw + 210px, 400px);
+    --hero-height: clamp(320px, 24vw + 220px, 420px);
     --hero-ink: #FFFFFF;
     --hero-ink-soft: rgba(255, 255, 255, 0.78);
 
