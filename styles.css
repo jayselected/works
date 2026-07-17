@@ -77,7 +77,7 @@
        ink       : headlines, names, titles, body copy
        muted     : every piece of secondary text (one grey, #8A8A8A)
        Plus two surfaces:
-       hairline  : soft stroke, currently only the project icon chip
+       hairline  : soft strokes — icon chip, metadata divider, toolkit box
        panel     : image wells and icon chips
     -------------------------------------------------- */
     --color-bg: #FFFFFF;
@@ -86,7 +86,9 @@
     --color-hairline: rgba(20, 20, 20, 0.09);
     --color-panel: #F6F6F6;
 
-    --radius-md: 8px; /* used by the project icon chip */
+    --radius-md: 8px; /* used by the project icon chip and the toolkit box */
+
+    --font-family-mono: ui-monospace, 'SF Mono', Menlo, monospace;
 
     --space-0: 0;
     --space-1: 4px;
@@ -610,38 +612,71 @@ body {
     }
 }
 
-/* Metadata is a row of "Label: Value" pairs. Labels sit in muted grey,
-   values in ink — the colour step is what separates the pairs, so the row
-   needs no strokes or separators. Items wrap onto new lines as whole units
-   when the row runs out of width; a long value wraps within its own item,
-   which naturally becomes label-over-value on the narrowest screens. */
+/* Metadata reads like a table: icon + label headers across the first row,
+   a single hairline divider spanning all columns, then each value directly
+   beneath its label. The item divs use display: contents so labels and
+   values place themselves into shared grid columns; the divider is drawn
+   by the container's ::before, so no extra markup is needed. */
 .project-details-content {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--space-2) var(--space-5);
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    column-gap: var(--space-6);
+    row-gap: var(--space-2);
     padding-top: var(--space-2);
     font-size: var(--font-size-xs);
     line-height: var(--line-height-sm);
     letter-spacing: var(--letter-spacing-tight);
 }
 
-.project-details-item dt,
-.project-details-item dd {
-    display: inline;
+.project-details-content::before {
+    content: '';
+    grid-row: 2;
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--color-hairline);
+}
+
+.project-details-item {
+    display: contents;
 }
 
 .project-details-item dt {
+    grid-row: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
     font-weight: 500;
     color: var(--color-muted);
 }
 
-.project-details-item dt::after {
-    content: ':';
+.project-details-item dt svg {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 auto;
 }
 
 .project-details-item dd {
+    grid-row: 3;
     color: var(--color-ink);
+}
+
+/* The toolkit sits under the table, styled like a terminal command:
+   hairline box, monospace type, grey label, ink value. */
+.project-toolkit {
+    width: 100%;
+    margin-top: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-sm);
+    letter-spacing: normal; /* monospace shouldn't inherit the tight tracking */
+    color: var(--color-ink);
+}
+
+.project-toolkit-label {
+    font-weight: 500;
+    color: var(--color-muted);
 }
 
 .project-description {
@@ -788,6 +823,13 @@ body {
 
     .image-2 {
         flex-direction: column;
+    }
+
+    /* On narrow screens the metadata table's last column flexes so its
+       value wraps within the column instead of overflowing the page. */
+    .project-details-content {
+        grid-template-columns: max-content max-content minmax(0, 1fr);
+        column-gap: var(--space-4);
     }
 
     .image-box-a,
