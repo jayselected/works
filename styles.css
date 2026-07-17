@@ -77,7 +77,7 @@
        ink       : headlines, names, titles, body copy
        muted     : every piece of secondary text (one grey, #8A8A8A)
        Plus two surfaces:
-       hairline  : soft strokes — icon chip, metadata divider, toolkit box
+       hairline  : soft strokes — icon chip, metadata divider, toolkit pills
        panel     : image wells and icon chips
     -------------------------------------------------- */
     --color-bg: #FFFFFF;
@@ -613,13 +613,15 @@ body {
 }
 
 /* Metadata reads like a table: icon + label headers across the first row,
-   a single hairline divider spanning all columns, then each value directly
-   beneath its label. The item divs use display: contents so labels and
-   values place themselves into shared grid columns; the divider is drawn
-   by the container's ::before, so no extra markup is needed. */
+   a single hairline divider spanning the full column width, then each value
+   directly beneath its label. The last grid column flexes to fill the row
+   (which is what carries the divider to full width) and lets a long value
+   wrap rather than overflow. The item divs use display: contents so labels
+   and values place themselves into shared grid columns; the divider is
+   drawn by the container's ::before, so no extra markup is needed. */
 .project-details-content {
     display: grid;
-    grid-template-columns: repeat(3, max-content);
+    grid-template-columns: max-content max-content minmax(0, 1fr);
     column-gap: var(--space-6);
     row-gap: var(--space-2);
     padding-top: var(--space-2);
@@ -659,14 +661,14 @@ body {
     color: var(--color-ink);
 }
 
-/* The toolkit sits under the table, styled like a terminal command:
-   hairline box, monospace type, grey label, ink value. */
+/* The toolkit is a row of pills, one per application — compact, packed
+   left, spaced with the same 8px used between the table's rows. */
 .project-toolkit {
-    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
     margin-top: var(--space-3);
-    padding: var(--space-3) var(--space-4);
-    border: 1px solid var(--color-hairline);
-    border-radius: var(--radius-md);
+    list-style: none;
     font-family: var(--font-family-mono);
     font-size: var(--font-size-xs);
     line-height: var(--line-height-sm);
@@ -674,9 +676,17 @@ body {
     color: var(--color-ink);
 }
 
-.project-toolkit-label {
-    font-weight: 500;
-    color: var(--color-muted);
+.project-toolkit li {
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--color-hairline);
+    border-radius: 999px;
+}
+
+/* Dark mode's single accent: the metadata headers (icon + label) read in
+   pink. The icons inherit it automatically via currentColor. Everything
+   else — divider, values, toolkit — stays as it is in both themes. */
+[data-theme="dark"] .project-details-item dt {
+    color: #EC4D9F;
 }
 
 .project-description {
@@ -825,10 +835,10 @@ body {
         flex-direction: column;
     }
 
-    /* On narrow screens the metadata table's last column flexes so its
-       value wraps within the column instead of overflowing the page. */
+    /* On narrow screens the metadata table just tightens its column gap;
+       the flexible last column (see the base rule) already handles value
+       wrapping at any width. */
     .project-details-content {
-        grid-template-columns: max-content max-content minmax(0, 1fr);
         column-gap: var(--space-4);
     }
 
