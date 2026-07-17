@@ -610,29 +610,20 @@ body {
     }
 }
 
-/* Metadata items sit side by side in a row, bottom-aligned so items without
-   an icon (currently Applications) share a baseline with those that have one.
-   Each item is two lines: a small icon, then "Label: Value" together beneath
-   it. Items wrap onto new lines as whole units when the row runs out of
-   width. The colon after each label is generated here rather than typed in
-   the HTML. */
+/* Metadata is a row of "Label: Value" pairs. Labels sit in muted grey,
+   values in ink — the colour step is what separates the pairs, so the row
+   needs no strokes or separators. Items wrap onto new lines as whole units
+   when the row runs out of width; a long value wraps within its own item,
+   which naturally becomes label-over-value on the narrowest screens. */
 .project-details-content {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-end;
-    gap: var(--space-3) var(--space-6);
+    align-items: baseline;
+    gap: var(--space-2) var(--space-5);
     padding-top: var(--space-2);
     font-size: var(--font-size-xs);
     line-height: var(--line-height-sm);
     letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-muted);
-}
-
-.project-details-item svg {
-    display: block;
-    width: 14px;
-    height: 14px;
-    margin-bottom: var(--space-2);
 }
 
 .project-details-item dt,
@@ -642,10 +633,15 @@ body {
 
 .project-details-item dt {
     font-weight: 500;
+    color: var(--color-muted);
 }
 
 .project-details-item dt::after {
     content: ':';
+}
+
+.project-details-item dd {
+    color: var(--color-ink);
 }
 
 .project-description {
