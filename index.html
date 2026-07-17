@@ -108,8 +108,13 @@
                                     <dd>Brand Identity · Product Design</dd>
                                 </div>
                             </dl>
-                            <!-- The toolkit reads like a terminal command; & must be written as &amp; here. -->
-                            <p class="project-toolkit"><span class="project-toolkit-label">Toolkit:</span> Adobe Photoshop, Adobe Illustrator &amp; Figma</p>
+                            <!-- The toolkit is one pill per application; the list keeps the
+                                 "Toolkit" name for screen readers via its aria-label. -->
+                            <ul class="project-toolkit" aria-label="Toolkit">
+                                <li>Adobe Photoshop</li>
+                                <li>Adobe Illustrator</li>
+                                <li>Figma</li>
+                            </ul>
                         </details>
                     </div>
 
