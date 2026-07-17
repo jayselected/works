@@ -66,44 +66,47 @@
 
                 <article class="project">
                     <div class="project-meta">
-                        <!-- Icons are monotone by default; just change the initials when duplicating a project. -->
-                        <div class="project-icon" aria-hidden="true">CA</div>
-                        <div class="project-details">
+                        <div class="project-heading">
+                            <!-- Icons are monotone by default; just change the initials when duplicating a project. -->
+                            <div class="project-icon" aria-hidden="true">CA</div>
                             <p class="project-title">Cine Asia</p>
-                            <details class="project-details-list" open>
-                                <summary class="project-details-summary">
-                                    <span>Information</span>
-                                    <span class="project-details-toggle" aria-hidden="true">
-                                        <!-- SF Symbols chevron.up (Regular); CSS rotates it 180° when open. -->
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="1428.8 648.4 42 25">
-                                            <path d="M1448.7882,649.22156c-0.45505,0.1556 -1.77322,1.42386 -9.66756,9.29765c-5.2169,5.20516 -9.27416,9.34169 -9.45325,9.64407c-0.26716,0.44624 -0.31413,0.66349 -0.31413,1.40918c0,0.7545 0.04697,0.96 0.33174,1.44441c0.38165,0.65175 1.08331,1.20074 1.77028,1.38863c0.59303,0.15853 1.55597,0.07046 2.08148,-0.19376c0.21725,-0.10862 3.978,-3.77249 8.35233,-8.14095l7.95599,-7.94131l7.95599,7.94131c4.37433,4.36846 8.13508,8.03232 8.35233,8.14095c1.33578,0.6723 3.07084,0.13211 3.85176,-1.19487c0.28477,-0.48441 0.33174,-0.68991 0.33174,-1.44441c0,-0.74569 -0.04697,-0.96294 -0.31413,-1.40918c-0.17908,-0.30239 -4.23341,-4.43892 -9.45325,-9.64407c-8.3259,-8.30242 -9.19196,-9.13031 -9.71747,-9.30646c-0.70753,-0.23193 -1.36514,-0.23193 -2.06386,0.00881"/>
-                                        </svg>
-                                    </span>
-                                </summary>
-                                <dl class="project-details-content">
-                                    <!-- Metadata items sit side by side, each with its label above its value
-                                         (wrapping onto new lines on narrow screens). To add a detail,
-                                         duplicate one whole item div. The colon after each label is added
-                                         by the CSS, so labels stay clean here. -->
-                                    <div class="project-details-item">
-                                        <dt>Stage</dt>
-                                        <dd>Concept</dd>
-                                    </div>
-                                    <div class="project-details-item">
-                                        <dt>Sector</dt>
-                                        <dd>Entertainment</dd>
-                                    </div>
-                                    <div class="project-details-item">
-                                        <dt>Services</dt>
-                                        <dd>Brand Identity · Product Design</dd>
-                                    </div>
-                                    <div class="project-details-item">
-                                        <dt>Applications</dt>
-                                        <dd>Adobe Photoshop · Adobe Illustrator · Figma</dd>
-                                    </div>
-                                </dl>
-                            </details>
                         </div>
+                        <details class="project-details-list" open>
+                            <summary class="project-details-summary">
+                                <span>Information</span>
+                                <span class="project-details-toggle" aria-hidden="true">
+                                    <!-- SF Symbols chevron.up (Regular); CSS rotates it 180° when open. -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="1428.8 648.4 42 25">
+                                        <path d="M1448.7882,649.22156c-0.45505,0.1556 -1.77322,1.42386 -9.66756,9.29765c-5.2169,5.20516 -9.27416,9.34169 -9.45325,9.64407c-0.26716,0.44624 -0.31413,0.66349 -0.31413,1.40918c0,0.7545 0.04697,0.96 0.33174,1.44441c0.38165,0.65175 1.08331,1.20074 1.77028,1.38863c0.59303,0.15853 1.55597,0.07046 2.08148,-0.19376c0.21725,-0.10862 3.978,-3.77249 8.35233,-8.14095l7.95599,-7.94131l7.95599,7.94131c4.37433,4.36846 8.13508,8.03232 8.35233,8.14095c1.33578,0.6723 3.07084,0.13211 3.85176,-1.19487c0.28477,-0.48441 0.33174,-0.68991 0.33174,-1.44441c0,-0.74569 -0.04697,-0.96294 -0.31413,-1.40918c-0.17908,-0.30239 -4.23341,-4.43892 -9.45325,-9.64407c-8.3259,-8.30242 -9.19196,-9.13031 -9.71747,-9.30646c-0.70753,-0.23193 -1.36514,-0.23193 -2.06386,0.00881"/>
+                                    </svg>
+                                </span>
+                            </summary>
+                            <dl class="project-details-content">
+                                <!-- Metadata items sit in a row. Each item is two lines: an optional
+                                     icon, then "Label: Value" beneath it. To add a detail, duplicate
+                                     one whole item div (the icon can be omitted — see Applications).
+                                     The colon after each label is added by the CSS. -->
+                                <div class="project-details-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 3-3 3 3"/><path d="M7 17V3"/><path d="m14 6 3-3 3 3"/><path d="M17 17V3"/><path d="M4 21h16"/></svg>
+                                    <dt>Stage</dt>
+                                    <dd>Concept</dd>
+                                </div>
+                                <div class="project-details-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                                    <dt>Sector</dt>
+                                    <dd>Entertainment</dd>
+                                </div>
+                                <div class="project-details-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>
+                                    <dt>Services</dt>
+                                    <dd>Brand Identity · Product Design</dd>
+                                </div>
+                                <div class="project-details-item">
+                                    <dt>Applications</dt>
+                                    <dd>Adobe Photoshop · Adobe Illustrator · Figma</dd>
+                                </div>
+                            </dl>
+                        </details>
                     </div>
 
                     <div class="project-description">
