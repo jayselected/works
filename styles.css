@@ -93,14 +93,14 @@
        Every step is fluid between its phone and desktop size, so the
        hierarchy keeps its proportions at any width with no breakpoint
        jumps:
-       display : keynote lockup — hello, name, subtext (44px -> 88px)
-       lg      : project titles                        (24px -> 32px)
-       md      : body copy                             (16px -> 18px)
+       display : keynote lockup — hello, name, subtext (28px -> 36px)
+       lg      : project titles                      (18px -> 20.625px)
+       md      : body copy                             (14px -> 15px)
        sm      : header and footer                     (13px -> 14px)
     -------------------------------------------------- */
-    --font-size-display: clamp(2.75rem, 5vw + 1.5rem, 5.5rem);
-    --font-size-lg: clamp(1.5rem, 1.25rem + 1vw, 2rem);
-    --font-size-md: clamp(1rem, 0.9375rem + 0.25vw, 1.125rem);
+    --font-size-display: clamp(1.75rem, 1.25rem + 1.5vw, 2.25rem);
+    --font-size-lg: clamp(1.125rem, 1rem + 0.4vw, 1.2890625rem);
+    --font-size-md: clamp(0.875rem, 0.85rem + 0.15vw, 0.9375rem);
     --font-size-sm: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
 
     --line-height-display: 1.1;
@@ -439,14 +439,14 @@ body {
 
 /* The intro is a keynote-style lockup at the fluid display scale. The
    animated hello stands apart from the name/subtext pair — the fluid gap
-   (20px on phones, ~44px on wide screens) gives the greeting its own beat
-   before the introduction, rather than reading as one chunk of text. */
+   (12px on phones, ~20px on wide screens, in proportion to the hero size)
+   gives the greeting its own beat before the introduction. */
 .hello {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: clamp(20px, 3vw, 44px);
+    gap: clamp(12px, 1.5vw, 20px);
     padding-top: var(--space-section);
     margin-bottom: var(--space-section);
     color: var(--color-ink);
@@ -522,11 +522,11 @@ body {
     width: 100%;
 }
 
-/* Project briefs read like blog copy: constrained to a 70% measure on
+/* Project briefs read like blog copy: constrained to an 80% measure on
    desktop rather than running the full column (the 700px media query
    returns them to full width on phones). */
 .project-description-text {
-    max-width: 70%;
+    max-width: 80%;
     font-size: var(--font-size-md);
     line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
