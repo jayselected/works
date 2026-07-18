@@ -83,10 +83,10 @@
     color-scheme: light;
 
     --viewport-floor: 390px;
-    /* The content column fills 60% of wide screens; on screens where 60vw
+    /* The content column fills 50% of wide screens; on screens where 50vw
        would be narrower than 600px it holds at 600px, which in practice
        means full width inside the page padding on phones. */
-    --content-width: max(600px, 60vw);
+    --content-width: max(600px, 50vw);
     --page-edge: 2rem;
 
     /* --- Type scale ---------------------------------
@@ -97,7 +97,7 @@
     -------------------------------------------------- */
     --font-size-display: clamp(2.75rem, 5vw + 1.5rem, 5.5rem); /* 44px on phones up to 88px on wide screens */
     --font-size-lg: 1.875rem;      /* 30px */
-    --font-size-md: 0.9375rem;
+    --font-size-md: clamp(0.9375rem, 0.875rem + 0.25vw, 1.0625rem); /* 15px on phones up to 17px on wide screens */
     --font-size-sm: 0.8125rem;
 
     --line-height-display: 1.1;
@@ -449,6 +449,9 @@ body {
 }
 
 .hello-text {
+    /* Explicit 400: this is an <h1>, and browsers default headings to bold
+       via the UA stylesheet — body inheritance alone doesn't undo that. */
+    font-weight: 400;
     font-size: var(--font-size-display);
     line-height: var(--line-height-display);
     letter-spacing: var(--letter-spacing-display);
@@ -515,7 +518,11 @@ body {
     width: 100%;
 }
 
+/* Project briefs read like blog copy: constrained to a 70% measure on
+   desktop rather than running the full column (the 700px media query
+   returns them to full width on phones). */
 .project-description-text {
+    max-width: 70%;
     font-size: var(--font-size-md);
     line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
@@ -652,6 +659,12 @@ body {
 
     .image-2 {
         flex-direction: column;
+    }
+
+    /* On phones the brief takes the full column; a 70% measure of a
+       narrow screen is too cramped to read. */
+    .project-description-text {
+        max-width: 100%;
     }
 
     .image-box-a,
