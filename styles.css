@@ -140,23 +140,35 @@
 
     --image-trio-gap: clamp(12px, 4vw, 32px);
 
-    --dock-height: 52px;
+    /* --- Dock metrics -------------------------------
+       Measured from the iOS 26 Safari bottom bar on an iPhone 12 Pro Max:
+       48pt circle/capsule height, 44pt tap targets with an 8pt gap and a
+       5pt capsule inset (giving the wide-set icon rhythm), 22pt glyphs.
+       CSS px map 1:1 to iOS pt, and the same metrics are kept on desktop —
+       iOS controls don't grow with the screen.
+    -------------------------------------------------- */
+    --dock-height: 48px;
     --dock-bottom: 24px;
-    --dock-edge: clamp(20px, 5vw, 32px);
+    --dock-edge: clamp(24px, 6vw, 28px);
     --dock-width: calc(100% - (var(--page-edge) * 2));
-    --dock-action-size: 36px;
-    --dock-icon-size: 20px;
+    --dock-action-size: 44px;
+    --dock-action-gap: 8px;
+    --dock-actions-inset: 5px;
+    --dock-icon-size: 22px;
     --dock-clearance: calc(var(--dock-height) + var(--dock-bottom) + var(--space-6));
 
-    --glass-bg-start: rgba(255, 255, 255, 0.18);
-    --glass-bg-end: rgba(255, 255, 255, 0.09);
-    --glass-border: rgba(20, 20, 20, 0.08);
-    --glass-highlight: rgba(255, 255, 255, 0.35);
-    --glass-lowlight: rgba(20, 20, 20, 0.03);
-    --glass-shadow-large: rgba(20, 20, 20, 0.08);
-    --glass-shadow-small: rgba(20, 20, 20, 0.06);
-    --glass-inset-light: rgba(255, 255, 255, 0.6);
-    --glass-inset-dark: rgba(20, 20, 20, 0.04);
+    /* Liquid-glass recipe: a milky translucent body over a strong
+       backdrop blur, a bright specular inset along the top edge, a faint
+       dark inset along the bottom, and soft layered drop shadows. */
+    --glass-bg-start: rgba(255, 255, 255, 0.55);
+    --glass-bg-end: rgba(255, 255, 255, 0.35);
+    --glass-border: rgba(255, 255, 255, 0.55);
+    --glass-highlight: rgba(255, 255, 255, 0.65);
+    --glass-lowlight: rgba(20, 20, 20, 0.04);
+    --glass-shadow-large: rgba(20, 20, 20, 0.14);
+    --glass-shadow-small: rgba(20, 20, 20, 0.07);
+    --glass-inset-light: rgba(255, 255, 255, 0.85);
+    --glass-inset-dark: rgba(20, 20, 20, 0.06);
 }
 
 [data-theme="dark"] {
@@ -169,15 +181,15 @@
 
     --header-bg: rgba(14, 14, 14, 0.78);
 
-    --glass-bg-start: rgba(255, 255, 255, 0.1);
-    --glass-bg-end: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --glass-highlight: rgba(255, 255, 255, 0.14);
-    --glass-lowlight: rgba(0, 0, 0, 0.18);
-    --glass-shadow-large: rgba(0, 0, 0, 0.32);
-    --glass-shadow-small: rgba(0, 0, 0, 0.18);
-    --glass-inset-light: rgba(255, 255, 255, 0.14);
-    --glass-inset-dark: rgba(0, 0, 0, 0.2);
+    --glass-bg-start: rgba(48, 48, 52, 0.55);
+    --glass-bg-end: rgba(28, 28, 32, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.14);
+    --glass-highlight: rgba(255, 255, 255, 0.18);
+    --glass-lowlight: rgba(0, 0, 0, 0.28);
+    --glass-shadow-large: rgba(0, 0, 0, 0.45);
+    --glass-shadow-small: rgba(0, 0, 0, 0.22);
+    --glass-inset-light: rgba(255, 255, 255, 0.22);
+    --glass-inset-dark: rgba(0, 0, 0, 0.35);
 }
 
 html {
@@ -310,8 +322,8 @@ body {
         var(--glass-bg-start) 0%,
         var(--glass-bg-end) 100%
     );
-    backdrop-filter: blur(14px) saturate(200%) brightness(1.08);
-    -webkit-backdrop-filter: blur(14px) saturate(200%) brightness(1.08);
+    backdrop-filter: blur(24px) saturate(190%);
+    -webkit-backdrop-filter: blur(24px) saturate(190%);
     border: 1px solid var(--glass-border);
     box-shadow:
         inset 0 1px 0 var(--glass-inset-light),
@@ -359,11 +371,26 @@ body {
     opacity: 0.62;
 }
 
+/* iOS-style press feedback: the control compresses under the finger and
+   springs back on release. Respects prefers-reduced-motion via the global
+   rule. */
+.dock-face:active,
+.dock-action:active {
+    transform: scale(0.9);
+}
+
+.dock-face,
+.dock-action {
+    transition-property: color, background, border-color, box-shadow, opacity, transform;
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
+}
+
 .dock-face img {
     position: relative;
     z-index: 1;
-    width: 26px;
-    height: 26px;
+    width: 22px; /* matches the glyph-to-circle ratio of the reference's back chevron */
+    height: 22px;
     display: block;
     transition: filter 0.2s ease;
 }
@@ -374,13 +401,17 @@ body {
 
 .dock-actions {
     width: max-content;
-    min-width: calc((var(--dock-action-size) * 3) + (var(--space-1) * 2) + (var(--space-2) * 2));
+    min-width: calc(
+        (var(--dock-action-size) * 3) +
+        (var(--dock-action-gap) * 2) +
+        (var(--dock-actions-inset) * 2)
+    );
     height: var(--dock-height);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--space-1);
-    padding: var(--space-0) var(--space-2);
+    gap: var(--dock-action-gap);
+    padding: var(--space-0) var(--dock-actions-inset);
     border-radius: 999px;
 }
 
@@ -410,7 +441,7 @@ body {
     display: block;
     fill: none;
     stroke: currentColor;
-    stroke-width: 2;
+    stroke-width: 1.8; /* SF-regular weight at 22px glyphs */
     stroke-linecap: round;
     stroke-linejoin: round;
 }
