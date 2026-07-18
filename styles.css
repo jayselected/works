@@ -83,24 +83,22 @@
     color-scheme: light;
 
     --viewport-floor: 390px;
-    /* The content column fills ~75% of wide screens; on screens where 75vw
+    /* The content column fills 60% of wide screens; on screens where 60vw
        would be narrower than 600px it holds at 600px, which in practice
        means full width inside the page padding on phones. */
-    --content-width: max(600px, 75vw);
+    --content-width: max(600px, 60vw);
     --page-edge: 2rem;
 
     /* --- Type scale ---------------------------------
        display : the keynote lockup — hello, name, subtext (fluid)
        lg      : project titles
        md      : body copy
-       sm      : Information summary, header, footer
-       xs      : meta list, toolkit, and the project icon initials
+       sm      : header and footer
     -------------------------------------------------- */
     --font-size-display: clamp(2.75rem, 5vw + 1.5rem, 5.5rem); /* 44px on phones up to 88px on wide screens */
     --font-size-lg: 1.875rem;      /* 30px */
     --font-size-md: 0.9375rem;
     --font-size-sm: 0.8125rem;
-    --font-size-xs: 0.75rem;
 
     --line-height-display: 1.1;
     --line-height-lg: 1.3;
@@ -116,16 +114,12 @@
        the same value — hierarchy comes from size and weight). The tokens
        are kept separate so a two-tone system can return by changing the
        muted value.
-       hairline  : soft strokes — icon chip and metadata divider
-       panel     : image wells and icon chips
+       panel     : image wells
     -------------------------------------------------- */
     --color-bg: #FFFFFF;
     --color-ink: #000000;
     --color-muted: #000000;
-    --color-hairline: rgba(20, 20, 20, 0.09);
     --color-panel: #F6F6F6;
-
-    --radius-md: 8px; /* used by the project icon chip */
 
     --space-0: 0;
     --space-1: 4px;
@@ -140,8 +134,6 @@
 
     --header-height: 52px;
     --header-bg: rgba(255, 255, 255, 0.78);
-
-    --project-icon-size: 40px;
 
     --image-trio-gap: clamp(12px, 4vw, 32px);
 
@@ -170,7 +162,6 @@
     --color-bg: #0E0E0E;
     --color-ink: #FFFFFF;
     --color-muted: #FFFFFF;
-    --color-hairline: rgba(242, 242, 242, 0.1);
     --color-panel: #171717;
 
     --header-bg: rgba(14, 14, 14, 0.78);
@@ -196,8 +187,8 @@ body {
 }
 
 body {
-    font-family: 'CursorGothic', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 400;
+    font-family: 'CursorGothic', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: var(--font-size-md);
     line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
@@ -281,14 +272,12 @@ body {
 }
 
 .location-greeting {
-    font-weight: 500;
     color: var(--color-ink);
 }
 
 .header-datetime,
 .location-city,
 .location-weather {
-    font-weight: 400;
     color: var(--color-muted);
 }
 
@@ -447,9 +436,7 @@ body {
 
 /* The intro is a keynote-style lockup: three stacked lines, all at the
    fluid display scale (44px on phones, 88px on wide screens), left-aligned
-   with tight leading. The animated hello sits dimmed — like a slide line
-   already spoken — while the name and subtext beneath read at full
-   strength. The dim level is the opacity on .hello-text.visible. */
+   with tight leading. */
 .hello {
     width: 100%;
     display: flex;
@@ -462,7 +449,6 @@ body {
 }
 
 .hello-text {
-    font-weight: 600;
     font-size: var(--font-size-display);
     line-height: var(--line-height-display);
     letter-spacing: var(--letter-spacing-display);
@@ -476,7 +462,7 @@ body {
 }
 
 .hello-text.visible {
-    opacity: 0.45;
+    opacity: 1;
 }
 
 .hello-intro {
@@ -486,7 +472,6 @@ body {
 
 .hello-name,
 .hello-subtext {
-    font-weight: 600;
     font-size: var(--font-size-display);
     line-height: var(--line-height-display);
     letter-spacing: var(--letter-spacing-display);
@@ -519,206 +504,11 @@ body {
     gap: var(--space-5);
 }
 
-.project-icon {
-    width: var(--project-icon-size);
-    height: var(--project-icon-size);
-    flex: 0 0 var(--project-icon-size);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-hairline);
-    background-color: var(--color-panel);
-    color: var(--color-ink);
-    font-weight: 500;
-    font-size: var(--font-size-xs);
-    line-height: 1;
-    letter-spacing: var(--letter-spacing-tight);
-    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-}
-
-/* The project heading is one row: icon chip first, title beside it. */
-.project-heading {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-}
-
 .project-title {
-    font-weight: 600;
     font-size: var(--font-size-lg);
     line-height: var(--line-height-lg);
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-ink);
-}
-
-.project-details-list {
-    width: 100%;
-    display: block;
-    color: var(--color-muted);
-}
-
-.project-details-summary {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
-    padding-bottom: var(--space-2);
-    list-style: none;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-muted);
-    transition: color 0.2s ease;
-}
-
-.project-details-summary:hover {
-    color: var(--color-ink);
-}
-
-.project-details-summary::-webkit-details-marker {
-    display: none;
-}
-
-.project-details-toggle {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-}
-
-/* The chevron is the SF Symbols chevron.up glyph, inlined in the HTML and
-   filled with the current text colour. The open state rotates the same
-   path 180° — geometrically identical to chevron.down, but as one shape
-   both states always match and the pivot animates smoothly. */
-.project-details-toggle svg {
-    width: 12px;
-    height: auto;
-    display: block;
-    fill: currentColor;
-    transition: transform 0.3s cubic-bezier(0.33, 0, 0.2, 1);
-}
-
-.project-details-list[open] .project-details-toggle svg {
-    transform: rotate(180deg);
-}
-
-/* Opening reveals the metadata with a soft fade and settle. This works in
-   every browser; closing is instant where the enhancement below isn't
-   supported, since closed <details> content is removed from the layout. */
-.project-details-list[open] .project-details-content {
-    animation: details-reveal 0.3s cubic-bezier(0.33, 0, 0.2, 1);
-}
-
-@keyframes details-reveal {
-    from {
-        opacity: 0;
-        transform: translateY(-4px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Progressive enhancement: where supported, the panel's height also
-   glides open and closed instead of snapping. Browsers without support
-   simply keep the fade above — nothing breaks. */
-@supports (interpolate-size: allow-keywords) {
-    :root {
-        interpolate-size: allow-keywords;
-    }
-
-    .project-details-list::details-content {
-        block-size: 0;
-        overflow-y: clip;
-        transition:
-            block-size 0.3s cubic-bezier(0.33, 0, 0.2, 1),
-            content-visibility 0.3s allow-discrete;
-    }
-
-    .project-details-list[open]::details-content {
-        block-size: auto;
-    }
-}
-
-/* Metadata reads like a table: icon + label headers across the first row,
-   a single hairline divider spanning the full column width, then each value
-   directly beneath its label. The last grid column flexes to fill the row
-   (which is what carries the divider to full width) and lets a long value
-   wrap rather than overflow. The item divs use display: contents so labels
-   and values place themselves into shared grid columns; the divider is
-   drawn by the container's ::before, so no extra markup is needed. */
-.project-details-content {
-    display: grid;
-    grid-template-columns: max-content max-content minmax(0, 1fr);
-    column-gap: var(--space-6);
-    row-gap: var(--space-2);
-    padding-top: var(--space-2);
-    font-size: var(--font-size-xs);
-    line-height: var(--line-height-sm);
-    letter-spacing: var(--letter-spacing-tight);
-}
-
-.project-details-content::before {
-    content: '';
-    grid-row: 2;
-    grid-column: 1 / -1;
-    border-top: 1px solid var(--color-hairline);
-}
-
-.project-details-item {
-    display: contents;
-}
-
-.project-details-item dt {
-    grid-row: 1;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-    font-weight: 500;
-    color: var(--color-muted);
-}
-
-.project-details-item dt svg {
-    width: 14px;
-    height: 14px;
-    flex: 0 0 auto;
-}
-
-.project-details-item dd {
-    grid-row: 3;
-    color: var(--color-ink);
-}
-
-/* The toolkit is a row of application names set exactly like the table's
-   values (same size, tracking, and ink), each carrying a soft dotted
-   underline in the muted grey. */
-.project-toolkit {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2) var(--space-3);
-    margin-top: var(--space-3);
-    list-style: none;
-    font-size: var(--font-size-xs);
-    line-height: var(--line-height-sm);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
-}
-
-.project-toolkit li {
-    text-decoration: underline dotted var(--color-muted);
-    text-underline-offset: 3px;
-}
-
-/* Dark mode's single accent: the metadata headers (icon + label) read in
-   pink. The icons inherit it automatically via currentColor. Everything
-   else — divider, values, toolkit — stays as it is in both themes. */
-[data-theme="dark"] .project-details-item dt {
-    color: #EC4D9F;
 }
 
 .project-description {
@@ -726,7 +516,6 @@ body {
 }
 
 .project-description-text {
-    font-weight: 400;
     font-size: var(--font-size-md);
     line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
@@ -812,7 +601,6 @@ body {
 }
 
 .footer-text {
-    font-weight: 400;
     font-size: var(--font-size-sm);
     line-height: var(--line-height-sm);
     letter-spacing: var(--letter-spacing-tight);
@@ -864,13 +652,6 @@ body {
 
     .image-2 {
         flex-direction: column;
-    }
-
-    /* On narrow screens the metadata table just tightens its column gap;
-       the flexible last column (see the base rule) already handles value
-       wrapping at any width. */
-    .project-details-content {
-        column-gap: var(--space-4);
     }
 
     .image-box-a,
