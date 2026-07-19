@@ -147,8 +147,8 @@
     -------------------------------------------------- */
     --island-top: calc(var(--dock-bottom) + env(safe-area-inset-top, 0px));
     --island-width: min(430px, calc(100% - (var(--dock-edge) * 2)));
-    --island-radius: 32px;
-    --island-clearance: 148px;
+    --island-radius: 36px;
+    --island-clearance: 152px;
 
     --image-trio-gap: clamp(12px, 4vw, 32px);
 
@@ -172,15 +172,18 @@
     /* Liquid-glass recipe: a milky translucent body over a strong
        backdrop blur, a bright specular inset along the top edge, a faint
        dark inset along the bottom, and soft layered drop shadows. */
-    --glass-bg-start: rgba(255, 255, 255, 0.55);
-    --glass-bg-end: rgba(255, 255, 255, 0.35);
-    --glass-border: rgba(255, 255, 255, 0.55);
-    --glass-highlight: rgba(255, 255, 255, 0.65);
-    --glass-lowlight: rgba(20, 20, 20, 0.04);
-    --glass-shadow-large: rgba(20, 20, 20, 0.14);
-    --glass-shadow-small: rgba(20, 20, 20, 0.07);
-    --glass-inset-light: rgba(255, 255, 255, 0.85);
-    --glass-inset-dark: rgba(20, 20, 20, 0.06);
+    /* Matte iOS material (per the Safari bottom-bar reference): a fairly
+       uniform milky body over strong blur, near-invisible edge, soft
+       diffuse shadow — separation by tone, not stroke or gloss. */
+    --glass-bg-start: rgba(248, 248, 250, 0.72);
+    --glass-bg-end: rgba(244, 244, 246, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    --glass-highlight: rgba(255, 255, 255, 0.4);
+    --glass-lowlight: rgba(20, 20, 20, 0.03);
+    --glass-shadow-large: rgba(20, 20, 20, 0.12);
+    --glass-shadow-small: rgba(20, 20, 20, 0.05);
+    --glass-inset-light: rgba(255, 255, 255, 0.65);
+    --glass-inset-dark: rgba(20, 20, 20, 0.04);
 }
 
 [data-theme="dark"] {
@@ -191,15 +194,15 @@
     --color-muted: #FFFFFF;
     --color-panel: #171717;
 
-    --glass-bg-start: rgba(48, 48, 52, 0.55);
-    --glass-bg-end: rgba(28, 28, 32, 0.45);
-    --glass-border: rgba(255, 255, 255, 0.14);
-    --glass-highlight: rgba(255, 255, 255, 0.18);
-    --glass-lowlight: rgba(0, 0, 0, 0.28);
-    --glass-shadow-large: rgba(0, 0, 0, 0.45);
-    --glass-shadow-small: rgba(0, 0, 0, 0.22);
-    --glass-inset-light: rgba(255, 255, 255, 0.22);
-    --glass-inset-dark: rgba(0, 0, 0, 0.35);
+    --glass-bg-start: rgba(50, 50, 54, 0.62);
+    --glass-bg-end: rgba(40, 40, 44, 0.55);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-highlight: rgba(255, 255, 255, 0.12);
+    --glass-lowlight: rgba(0, 0, 0, 0.22);
+    --glass-shadow-large: rgba(0, 0, 0, 0.4);
+    --glass-shadow-small: rgba(0, 0, 0, 0.18);
+    --glass-inset-light: rgba(255, 255, 255, 0.14);
+    --glass-inset-dark: rgba(0, 0, 0, 0.28);
 }
 
 html {
@@ -270,9 +273,9 @@ body {
     width: var(--island-width);
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    row-gap: var(--space-1);
+    row-gap: 6px;
     align-items: baseline;
-    padding: var(--space-4) var(--space-5);
+    padding: 18px var(--space-5);
     border-radius: var(--island-radius);
     color: var(--color-ink);
     isolation: isolate;
@@ -324,7 +327,7 @@ body {
     width: 50%;
     justify-self: center;
     height: 5px;
-    margin-bottom: var(--space-2);
+    margin-bottom: 10px;
     border-radius: 999px;
     background-color: rgba(0, 0, 0, 0.12);
     overflow: hidden;
@@ -365,10 +368,30 @@ body {
     line-height: var(--line-height-lg);
 }
 
-/* The small pair: place on the left rail, conditions on the right. */
-.location-city,
+/* The small pair: place on the left rail, conditions on the right. The
+   place is a group — the filled location arrow beside the city — sized at
+   11px so it optically balances the weather emoji across the island. */
+.location-place,
 .location-weather {
     grid-row: 3;
+}
+
+.location-place {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+}
+
+.location-place-icon {
+    width: 11px;
+    height: 11px;
+    flex: 0 0 auto;
+    color: var(--color-ink);
+}
+
+.location-city,
+.location-weather {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-sm);
 }
@@ -381,8 +404,18 @@ body {
 
 /* Long place names truncate rather than pushing the right rail. */
 .location-city {
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* The greeting crossfades when the wordmark cycle swaps its text. */
+.location-greeting {
+    transition: color 0.2s ease, opacity 0.6s ease;
+}
+
+.location-greeting.is-fading {
+    opacity: 0;
 }
 
 /* ============================================
