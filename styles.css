@@ -135,8 +135,17 @@
     --space-fluid-md: clamp(18px, 3vw, 24px);
     --space-section: clamp(64px, 15vw, 120px);
 
-    --header-height: 52px;
-    --header-bg: rgba(255, 255, 255, 0.78);
+    /* --- Island metrics -----------------------------
+       The header is an expanded Dynamic Island: a floating glass capsule,
+       fixed top-centre, sharing the dock's side margins and glass recipe.
+       --island-clearance pads the page content below it (adjust if the
+       island's height changes). One layout at every width — it never
+       stacks or reflows.
+    -------------------------------------------------- */
+    --island-top: 12px;
+    --island-width: min(430px, calc(100% - (var(--dock-edge) * 2)));
+    --island-radius: 32px;
+    --island-clearance: 136px;
 
     --image-trio-gap: clamp(12px, 4vw, 32px);
 
@@ -179,8 +188,6 @@
     --color-muted: #FFFFFF;
     --color-panel: #171717;
 
-    --header-bg: rgba(14, 14, 14, 0.78);
-
     --glass-bg-start: rgba(48, 48, 52, 0.55);
     --glass-bg-end: rgba(28, 28, 32, 0.45);
     --glass-border: rgba(255, 255, 255, 0.14);
@@ -218,6 +225,7 @@ body {
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
+    padding-top: var(--island-clearance);
     padding-bottom: var(--dock-clearance);
     transition: color 0.2s ease, background-color 0.2s ease;
 }
@@ -234,66 +242,92 @@ body {
 }
 
 /* ============================================
-   Live header
+   Dynamic Island header
    ============================================ */
 
+/* An expanded Dynamic Island: a floating glass capsule, fixed top-centre,
+   built from the same glass recipe as the dock so top and bottom read as
+   one material. The interior is a strict two-column grid — the layout
+   grammar is: left rail holds words, right rail holds data; the top row is
+   large, the bottom row small.
+
+       [ progress scrubber, full width       ]
+       Greeting (lg)              Time (lg)
+       City (sm)               Weather (sm)
+
+   The same layout holds at every width — it never stacks. index.html
+   toggles a .scrolled class here via JS; it currently has no visual
+   effect, but the hook remains available. */
 .header-section {
-    position: sticky;
-    top: 0;
+    position: fixed;
+    top: var(--island-top);
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 100;
-    width: 100%;
-    min-width: var(--viewport-floor);
-    height: var(--header-height);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-0) var(--page-edge);
+    width: var(--island-width);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: var(--space-1);
+    align-items: baseline;
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--island-radius);
     color: var(--color-ink);
-    background-color: var(--header-bg);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    transition: color 0.2s ease, background-color 0.2s ease;
+    isolation: isolate;
+    background: linear-gradient(
+        135deg,
+        var(--glass-bg-start) 0%,
+        var(--glass-bg-end) 100%
+    );
+    backdrop-filter: blur(24px) saturate(190%);
+    -webkit-backdrop-filter: blur(24px) saturate(190%);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+        inset 0 1px 0 var(--glass-inset-light),
+        inset 0 -1px 0 var(--glass-inset-dark),
+        inset 1px 0 0 rgba(255, 255, 255, 0.12),
+        0 8px 32px var(--glass-shadow-large),
+        0 2px 8px var(--glass-shadow-small);
+    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Note: index.html toggles a .scrolled class on this header via JS.
-   It currently has no visual effect, but the hook remains available
-   if a scroll treatment is wanted in future. */
-
-/* In dark mode every string in the sticky header reads in full white. */
-[data-theme="dark"] .location-greeting,
-[data-theme="dark"] .header-datetime,
-[data-theme="dark"] .location-city,
-[data-theme="dark"] .location-weather {
-    color: #FFFFFF;
+.header-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: linear-gradient(
+        145deg,
+        var(--glass-highlight) 0%,
+        rgba(255, 255, 255, 0) 50%,
+        var(--glass-lowlight) 100%
+    );
+    pointer-events: none;
 }
 
+/* The wrapper groups dissolve so each item places itself on the grid. */
 .header-left,
 .header-right {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
+    display: contents;
 }
 
-/* The scroll-progress pill sits dead-centre in the header, anchored
-   absolutely so the left and right groups never push it around. The blue
-   fill scales horizontally with reading progress (driven by JS via a
-   transform, which animates cheaply); a faint theme-aware stroke keeps the
-   empty pill visible on both backgrounds. The blue stays #007AFF in both
-   themes. */
+/* The scrubber: full-width across the island's top, a soft track with the
+   #007AFF fill scaling horizontally with reading progress (driven by JS
+   via a transform, which animates cheaply). The blue stays #007AFF in
+   both themes. */
 .header-progress {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 64px;
-    height: 8px;
+    grid-column: 1 / -1;
+    grid-row: 1;
+    width: 100%;
+    height: 5px;
+    margin-bottom: var(--space-2);
     border-radius: 999px;
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    background-color: rgba(0, 0, 0, 0.12);
     overflow: hidden;
 }
 
 [data-theme="dark"] .header-progress {
-    border-color: rgba(255, 255, 255, 0.22);
+    background-color: rgba(255, 255, 255, 0.22);
 }
 
 .header-progress-fill {
@@ -309,22 +343,39 @@ body {
 .header-datetime,
 .location-city,
 .location-weather {
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
+    color: var(--color-ink);
     letter-spacing: var(--letter-spacing-tight);
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
     transition: color 0.2s ease;
 }
 
-.location-greeting {
-    color: var(--color-ink);
+/* The large pair: greeting on the left rail, the clock on the right. */
+.location-greeting,
+.header-datetime {
+    grid-row: 2;
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-lg);
+}
+
+/* The small pair: place on the left rail, conditions on the right. */
+.location-city,
+.location-weather {
+    grid-row: 3;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-sm);
 }
 
 .header-datetime,
-.location-city,
 .location-weather {
-    color: var(--color-muted);
+    justify-self: end;
+    text-align: right;
+}
+
+/* Long place names truncate rather than pushing the right rail. */
+.location-city {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* ============================================
@@ -707,24 +758,8 @@ body.projects-collapsed .image-3 {
         --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
     }
 
-    .header-section {
-        height: auto;
-        align-items: flex-start;
-        padding-top: 14px;
-        padding-bottom: 14px;
-    }
-
-    .header-left {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 3px;
-    }
-
-    .header-right {
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 3px;
-    }
+    /* The Dynamic Island keeps its exact desktop layout on phones — no
+       stacking overrides here by design. */
 
     .image-2 {
         flex-direction: column;
