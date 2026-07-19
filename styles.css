@@ -274,6 +274,37 @@ body {
     gap: var(--space-2);
 }
 
+/* The scroll-progress pill sits dead-centre in the header, anchored
+   absolutely so the left and right groups never push it around. The blue
+   fill scales horizontally with reading progress (driven by JS via a
+   transform, which animates cheaply); a faint theme-aware stroke keeps the
+   empty pill visible on both backgrounds. The blue stays #007AFF in both
+   themes. */
+.header-progress {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px;
+    height: 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+[data-theme="dark"] .header-progress {
+    border-color: rgba(255, 255, 255, 0.22);
+}
+
+.header-progress-fill {
+    width: 100%;
+    height: 100%;
+    background-color: #007AFF;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.15s ease-out;
+}
+
 .location-greeting,
 .header-datetime,
 .location-city,
@@ -386,24 +417,30 @@ body {
     transition-timing-function: ease;
 }
 
-.dock-face img {
-    position: relative;
-    z-index: 1;
-    width: 22px; /* matches the glyph-to-circle ratio of the reference's back chevron */
-    height: 22px;
+/* One rule styles every dock glyph — the face and the actions — so size,
+   weight, colour, and caps can never drift apart. */
+.dock-face svg,
+.dock-action svg {
+    width: var(--dock-icon-size);
+    height: var(--dock-icon-size);
     display: block;
-    transition: filter 0.2s ease;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8; /* SF-regular weight at 22px glyphs */
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
-[data-theme="dark"] .dock-face img {
-    filter: invert(1);
+.dock-face svg {
+    position: relative;
+    z-index: 1; /* above the glass ::before layer */
 }
 
 .dock-actions {
     width: max-content;
     min-width: calc(
-        (var(--dock-action-size) * 3) +
-        (var(--dock-action-gap) * 2) +
+        (var(--dock-action-size) * 4) +
+        (var(--dock-action-gap) * 3) +
         (var(--dock-actions-inset) * 2)
     );
     height: var(--dock-height);
@@ -432,18 +469,6 @@ body {
     color: var(--color-ink);
     text-decoration: none;
     cursor: pointer;
-    transition: color 0.2s ease, opacity 0.2s ease;
-}
-
-.dock-action svg {
-    width: var(--dock-icon-size);
-    height: var(--dock-icon-size);
-    display: block;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.8; /* SF-regular weight at 22px glyphs */
-    stroke-linecap: round;
-    stroke-linejoin: round;
 }
 
 /* ============================================
@@ -551,6 +576,15 @@ body {
 
 .project-description {
     width: 100%;
+}
+
+/* Collapsed view (toggled from the dock): each project reduces to its
+   title and lead image. The dock button swaps between the minimise and
+   maximise icons to match. */
+body.projects-collapsed .project-description,
+body.projects-collapsed .image-2,
+body.projects-collapsed .image-3 {
+    display: none;
 }
 
 /* Project briefs read like blog copy: constrained to an 80% measure on
