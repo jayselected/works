@@ -51,7 +51,11 @@
             <div class="header-progress-fill" id="scroll-progress-fill"></div>
         </div>
         <div class="header-right">
-            <p class="location-city" id="location-city-display"></p>
+            <div class="location-place">
+                <!-- iOS location-services arrow (filled). -->
+                <svg class="location-place-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                <p class="location-city" id="location-city-display"></p>
+            </div>
             <p class="location-weather" id="location-weather-display"></p>
         </div>
     </div>
@@ -287,6 +291,45 @@
             collapseToggle.addEventListener('click', () => {
                 setCollapsed(!document.body.classList.contains('projects-collapsed'));
             });
+        })();
+    </script>
+    <script>
+        (() => {
+            // The island's greeting periodically idents as the site's wordmark,
+            // then returns — like a station ident. Dwell is asymmetric on
+            // purpose: the greeting is the primary state and holds longer; the
+            // wordmark appears briefly. While the wordmark is up, data-hold
+            // pauses siteapp.js's per-second greeting refresh.
+            const el = document.getElementById('greeting-display');
+            if (!el) return;
+
+            const WORDMARK = 'Jayselected.';
+            const GREETING_DWELL_MS = 14000;
+            const WORDMARK_DWELL_MS = 6000;
+            const FADE_MS = 600; // matches the CSS opacity transition
+
+            let showingWordmark = false;
+
+            function swap() {
+                el.classList.add('is-fading');
+
+                setTimeout(() => {
+                    showingWordmark = !showingWordmark;
+
+                    if (showingWordmark) {
+                        el.dataset.hold = 'true';
+                        el.textContent = WORDMARK;
+                    } else {
+                        delete el.dataset.hold;
+                        el.innerHTML = `${getGreeting()}.`; // restore instantly, no blank beat
+                    }
+
+                    el.classList.remove('is-fading');
+                    setTimeout(swap, showingWordmark ? WORDMARK_DWELL_MS : GREETING_DWELL_MS);
+                }, FADE_MS);
+            }
+
+            setTimeout(swap, GREETING_DWELL_MS);
         })();
     </script>
 
