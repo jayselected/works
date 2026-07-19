@@ -138,14 +138,17 @@
     /* --- Island metrics -----------------------------
        The header is an expanded Dynamic Island: a floating glass capsule,
        fixed top-centre, sharing the dock's side margins and glass recipe.
+       Its top offset mirrors the dock's bottom offset, so the two glass
+       objects frame the page at symmetric distances — and it respects the
+       device safe area, clearing the real notch/island on iPhones.
        --island-clearance pads the page content below it (adjust if the
        island's height changes). One layout at every width — it never
        stacks or reflows.
     -------------------------------------------------- */
-    --island-top: 12px;
+    --island-top: calc(var(--dock-bottom) + env(safe-area-inset-top, 0px));
     --island-width: min(430px, calc(100% - (var(--dock-edge) * 2)));
     --island-radius: 32px;
-    --island-clearance: 136px;
+    --island-clearance: 148px;
 
     --image-trio-gap: clamp(12px, 4vw, 32px);
 
@@ -318,7 +321,8 @@ body {
 .header-progress {
     grid-column: 1 / -1;
     grid-row: 1;
-    width: 100%;
+    width: 50%;
+    justify-self: center;
     height: 5px;
     margin-bottom: var(--space-2);
     border-radius: 999px;
@@ -350,11 +354,14 @@ body {
     transition: color 0.2s ease;
 }
 
-/* The large pair: greeting on the left rail, the clock on the right. */
+/* The large pair: greeting on the left rail, the clock on the right.
+   Sized between the title and meta steps (15px -> 17px fluid) so the
+   longest greetings — "Good Afternoon" — always clear the clock with
+   room to spare at every width. */
 .location-greeting,
 .header-datetime {
     grid-row: 2;
-    font-size: var(--font-size-lg);
+    font-size: clamp(0.9375rem, 0.875rem + 0.3vw, 1.0625rem);
     line-height: var(--line-height-lg);
 }
 
