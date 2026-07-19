@@ -234,7 +234,9 @@ function updateDateTime() {
 
 function updateGreeting() {
     const element = document.getElementById('greeting-display');
-    if (element) {
+    // data-hold is set by the wordmark cycle in index.html while
+    // "Jayselected." is on screen; the live greeting resumes when cleared.
+    if (element && element.dataset.hold !== 'true') {
         element.innerHTML = `${getGreeting()}.`;
     }
 }
