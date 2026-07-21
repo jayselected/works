@@ -178,13 +178,18 @@
        traced only by a hairline; over an image it blooms into visible
        frost as the backdrop filter diffuses what passes beneath. Same
        behaviour Safari's white address pill has on its white toolbar.
-       Two dials: the alpha on --glass-bg (presence at rest) and
-       --glass-backdrop (how strongly content behind is diffused).
+       The rim (--glass-rim) is a single lit line along the top inside
+       edge — the one specular cue real glass has. It is invisible over
+       plain page and catches the light as content passes beneath, which
+       is what makes the material feel alive rather than printed on.
+       Dials: --glass-bg alpha (presence at rest), --glass-backdrop (blur
+       and bloom), --glass-rim (edge light).
        Shared by the island and the dock, so both are one material.
     -------------------------------------------------- */
     --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-backdrop: blur(30px) saturate(180%) brightness(1.04);
-    --glass-border: rgba(20, 20, 20, 0.06);
+    --glass-backdrop: blur(18px) saturate(180%) brightness(1.04);
+    --glass-border: rgba(20, 20, 20, 0.05);
+    --glass-rim: rgba(255, 255, 255, 0.65);
     --glass-shadow-ambient: rgba(20, 20, 20, 0.04);
     --glass-shadow-contact: rgba(20, 20, 20, 0.03);
 }
@@ -197,12 +202,14 @@
     --color-muted: #FFFFFF;
     --color-panel: #171717;
 
-    /* Dark chrome: the same bleed logic inverted — a neutral fill close to
-       the page value (no blue or warm cast), lifted by the backdrop's
-       brightness so content behind frosts rather than muddies. */
-    --glass-bg: rgba(22, 22, 22, 0.6);
-    --glass-backdrop: blur(30px) saturate(180%) brightness(1.35);
-    --glass-border: rgba(255, 255, 255, 0.09);
+    /* Dark chrome: identical bleed logic — the fill is rgb(14,14,14),
+       exactly --color-bg, so over empty page it disappears just as the
+       white fill does in light mode. The brightness lift stays gentle;
+       pushed hard it re-reveals the capsule against the near-black page. */
+    --glass-bg: rgba(14, 14, 14, 0.6);
+    --glass-backdrop: blur(18px) saturate(180%) brightness(1.08);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-rim: rgba(255, 255, 255, 0.12);
     --glass-shadow-ambient: rgba(0, 0, 0, 0.28);
     --glass-shadow-contact: rgba(0, 0, 0, 0.18);
 }
@@ -285,6 +292,7 @@ body {
     -webkit-backdrop-filter: var(--glass-backdrop);
     border: 1px solid var(--glass-border);
     box-shadow:
+        inset 0 1px 0 var(--glass-rim),
         0 1px 2px var(--glass-shadow-contact),
         0 6px 20px var(--glass-shadow-ambient);
     transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
@@ -422,6 +430,7 @@ body {
     -webkit-backdrop-filter: var(--glass-backdrop);
     border: 1px solid var(--glass-border);
     box-shadow:
+        inset 0 1px 0 var(--glass-rim),
         0 1px 2px var(--glass-shadow-contact),
         0 6px 20px var(--glass-shadow-ambient);
     color: var(--color-ink);
