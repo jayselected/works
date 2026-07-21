@@ -173,17 +173,20 @@
        backdrop blur, a bright specular inset along the top edge, a faint
        dark inset along the bottom, and soft layered drop shadows. */
     /* --- Chrome material ----------------------------
-       Modelled on the macOS Safari toolbar: a flat, near-opaque fill one
-       small tone-step from the page, a hairline edge, and a whisper of
-       shadow. Separation comes from TONE, not from gloss, gradients, or
-       drop shadows — which is what makes system chrome read as part of the
-       window rather than an object placed on top of it. Shared by the
-       island and the dock, so both are literally one material.
+       The fill IS the page colour, held at partial opacity. Over empty
+       page the control all but disappears — it bleeds into the viewport,
+       traced only by a hairline; over an image it blooms into visible
+       frost as the backdrop filter diffuses what passes beneath. Same
+       behaviour Safari's white address pill has on its white toolbar.
+       Two dials: the alpha on --glass-bg (presence at rest) and
+       --glass-backdrop (how strongly content behind is diffused).
+       Shared by the island and the dock, so both are one material.
     -------------------------------------------------- */
-    --glass-bg: rgba(246, 246, 248, 0.82);
-    --glass-border: rgba(20, 20, 20, 0.07);
-    --glass-shadow-ambient: rgba(20, 20, 20, 0.05);
-    --glass-shadow-contact: rgba(20, 20, 20, 0.04);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-backdrop: blur(30px) saturate(180%) brightness(1.04);
+    --glass-border: rgba(20, 20, 20, 0.06);
+    --glass-shadow-ambient: rgba(20, 20, 20, 0.04);
+    --glass-shadow-contact: rgba(20, 20, 20, 0.03);
 }
 
 [data-theme="dark"] {
@@ -194,13 +197,14 @@
     --color-muted: #FFFFFF;
     --color-panel: #171717;
 
-    /* Dark chrome: lifted off the page the way Safari's dark address pill
-       lifts off its black toolbar — one step up in value, faint light
-       hairline, almost no shadow. */
-    --glass-bg: rgba(30, 30, 32, 0.82);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-shadow-ambient: rgba(0, 0, 0, 0.32);
-    --glass-shadow-contact: rgba(0, 0, 0, 0.22);
+    /* Dark chrome: the same bleed logic inverted — a neutral fill close to
+       the page value (no blue or warm cast), lifted by the backdrop's
+       brightness so content behind frosts rather than muddies. */
+    --glass-bg: rgba(22, 22, 22, 0.6);
+    --glass-backdrop: blur(30px) saturate(180%) brightness(1.35);
+    --glass-border: rgba(255, 255, 255, 0.09);
+    --glass-shadow-ambient: rgba(0, 0, 0, 0.28);
+    --glass-shadow-contact: rgba(0, 0, 0, 0.18);
 }
 
 html {
@@ -277,8 +281,8 @@ body {
     border-radius: var(--island-radius);
     color: var(--color-ink);
     background-color: var(--glass-bg);
-    backdrop-filter: blur(20px) saturate(140%);
-    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    backdrop-filter: var(--glass-backdrop);
+    -webkit-backdrop-filter: var(--glass-backdrop);
     border: 1px solid var(--glass-border);
     box-shadow:
         0 1px 2px var(--glass-shadow-contact),
@@ -414,8 +418,8 @@ body {
 .dock-actions {
     position: relative;
     background-color: var(--glass-bg);
-    backdrop-filter: blur(20px) saturate(140%);
-    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    backdrop-filter: var(--glass-backdrop);
+    -webkit-backdrop-filter: var(--glass-backdrop);
     border: 1px solid var(--glass-border);
     box-shadow:
         0 1px 2px var(--glass-shadow-contact),
