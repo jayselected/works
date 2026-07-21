@@ -82,12 +82,14 @@
 :root {
     color-scheme: light;
 
-    --viewport-floor: 390px;
     /* The content column fills 50% of wide screens; on screens where 50vw
        would be narrower than 600px it holds at 600px, which in practice
        means full width inside the page padding on phones. */
     --content-width: max(600px, 50vw);
     --page-edge: 2rem;
+
+    /* Distance from the screen edge for both floating glass objects. */
+    --edge-gap: 24px;
 
     /* --- Type scale ---------------------------------
        Every step is fluid between its phone and desktop size, so the
@@ -124,11 +126,10 @@
     --color-muted: #000000;
     --color-panel: #F6F6F6;
 
+    /* Layout rhythm. Only the steps actually in use are declared; one-off
+       optical values live as component-scoped properties on their own rule
+       (see .header-section) rather than polluting this scale. */
     --space-0: 0;
-    --space-1: 4px;
-    --space-2: 8px;
-    --space-3: 12px;
-    --space-4: 16px;
     --space-5: 20px;
     --space-6: 24px;
 
@@ -138,17 +139,21 @@
     /* --- Island metrics -----------------------------
        The header is an expanded Dynamic Island: a floating glass capsule,
        fixed top-centre, sharing the dock's side margins and glass recipe.
-       Its top offset mirrors the dock's bottom offset, so the two glass
-       objects frame the page at symmetric distances — and it respects the
-       device safe area, clearing the real notch/island on iPhones.
-       --island-clearance pads the page content below it (adjust if the
-       island's height changes). One layout at every width — it never
-       stacks or reflows.
+       Island and dock both sit --edge-gap from their screen edge, so they
+       frame the page symmetrically, and each adds the device safe-area
+       inset on its own side (clearing the notch above and the home
+       indicator below).
+
+       --island-height is measured and published by siteapp.js; the value
+       here is only a fallback for the first paint. --island-clearance is
+       derived from it, so changing the island's padding or type never
+       needs a matching constant updated by hand.
     -------------------------------------------------- */
-    --island-top: calc(var(--dock-bottom) + env(safe-area-inset-top, 0px));
+    --island-top: calc(var(--edge-gap) + env(safe-area-inset-top, 0px));
     --island-width: min(430px, calc(100% - (var(--dock-edge) * 2)));
     --island-radius: 36px;
-    --island-clearance: 152px;
+    --island-height: 100px;
+    --island-clearance: calc(var(--island-top) + var(--island-height) + var(--space-6));
 
     --image-trio-gap: clamp(12px, 4vw, 32px);
 
@@ -160,7 +165,7 @@
        iOS controls don't grow with the screen.
     -------------------------------------------------- */
     --dock-height: 48px;
-    --dock-bottom: 24px;
+    --dock-bottom: calc(var(--edge-gap) + env(safe-area-inset-bottom, 0px));
     --dock-edge: clamp(24px, 6vw, 28px);
     --dock-width: calc(100% - (var(--page-edge) * 2));
     --dock-action-size: 44px;
@@ -218,11 +223,6 @@ html {
     font-size: 100%;
 }
 
-html,
-body {
-    min-width: var(--viewport-floor);
-}
-
 body {
     font-weight: 400;
     font-family: 'CursorGothic', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -270,10 +270,15 @@ body {
        Greeting (lg)              Time (lg)
        City (sm)               Weather (sm)
 
-   The same layout holds at every width — it never stacks. index.html
-   toggles a .scrolled class here via JS; it currently has no visual
-   effect, but the hook remains available. */
+   The same layout holds at every width — it never stacks. */
 .header-section {
+    /* Optical values specific to this component: they sit between steps of
+       the global spacing scale, so they are declared here where they are
+       used rather than widening that scale. */
+    --island-padding-y: 18px;
+    --island-row-gap: 6px;
+    --island-scrubber-gap: 10px;
+
     position: fixed;
     top: var(--island-top);
     left: 50%;
@@ -282,9 +287,9 @@ body {
     width: var(--island-width);
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    row-gap: 6px;
+    row-gap: var(--island-row-gap);
     align-items: baseline;
-    padding: 18px var(--space-5);
+    padding: var(--island-padding-y) var(--space-5);
     border-radius: var(--island-radius);
     color: var(--color-ink);
     background-color: var(--glass-bg);
@@ -314,7 +319,7 @@ body {
     width: 50%;
     justify-self: center;
     height: 5px;
-    margin-bottom: 10px;
+    margin-bottom: var(--island-scrubber-gap);
     border-radius: 999px;
     background-color: rgba(0, 0, 0, 0.12);
     overflow: hidden;
@@ -330,6 +335,7 @@ body {
     background-color: #007AFF;
     transform: scaleX(0);
     transform-origin: left;
+    will-change: transform;
     transition: transform 0.15s ease-out;
 }
 
@@ -389,7 +395,12 @@ body {
     text-align: right;
 }
 
-/* Long place names truncate rather than pushing the right rail. */
+/* Safety nets for the two left-rail strings: both sit in a minmax(0, 1fr)
+   column, so on a very narrow screen (≈320px, where "Good Afternoon." plus
+   the full date and clock exceed the island's inner width) they truncate
+   instead of spilling past the capsule. Neither ever triggers at normal
+   phone widths. */
+.location-greeting,
 .location-city {
     min-width: 0;
     overflow: hidden;
@@ -745,6 +756,24 @@ body.projects-collapsed .image-3 {
     }
 }
 
+/* Some people find translucency over moving content hard to read; the OS
+   exposes that preference, so the glass becomes a solid surface and the
+   backdrop filter is dropped entirely. Declared per theme (not on :root)
+   so it overrides both palettes at equal specificity. */
+@media (prefers-reduced-transparency: reduce) {
+    [data-theme="light"] {
+        --glass-bg: #F4F4F6;
+        --glass-backdrop: none;
+        --glass-rim: rgba(255, 255, 255, 0.9);
+    }
+
+    [data-theme="dark"] {
+        --glass-bg: #1A1A1C;
+        --glass-backdrop: none;
+        --glass-rim: rgba(255, 255, 255, 0.1);
+    }
+}
+
 /* ============================================
    Responsive
    ============================================ */
@@ -752,7 +781,7 @@ body.projects-collapsed .image-3 {
 @media screen and (max-width: 700px) {
     :root {
         --page-edge: 1.4rem;
-        --dock-bottom: 20px;
+        --edge-gap: 20px;
         --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
     }
 
@@ -794,10 +823,5 @@ body.projects-collapsed .image-3 {
 
     .image-3 {
         padding: var(--space-6) 18px;
-    }
-
-    .dock {
-        left: calc(var(--viewport-floor) / 2);
-        width: calc(var(--viewport-floor) - 40px);
     }
 }
