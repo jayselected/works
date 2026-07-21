@@ -20,6 +20,13 @@
     <meta name="twitter:description" content="Select Design Works by Jay Patel.">
     <meta name="twitter:image" content="https://jayselected.vercel.app/og-image.png">
 
+    <!-- Tints the browser's own chrome to match the page; siteapp.js keeps
+         it in sync when the theme is toggled. -->
+    <meta name="theme-color" content="#FFFFFF" id="theme-color">
+
+    <!-- Inline and blocking by design: the theme must be resolved before the
+         first paint, or the page flashes light before switching to dark.
+         This is the only script that cannot live in siteapp.js. -->
     <script>
         (() => {
             try {
@@ -33,8 +40,6 @@
         })();
     </script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -157,181 +162,7 @@
         </div>
     </nav>
 
-    <script src="siteapp.js"></script>
-    <script>
-        const headerSection = document.getElementById('header-section');
-        const scrollProgress = document.getElementById('scroll-progress');
-        const scrollProgressFill = document.getElementById('scroll-progress-fill');
-
-        function updateScrollState() {
-            if (window.scrollY > 0) {
-                headerSection.classList.add('scrolled');
-            } else {
-                headerSection.classList.remove('scrolled');
-            }
-
-            if (scrollProgress && scrollProgressFill) {
-                const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-                const progress = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
-                scrollProgressFill.style.transform = `scaleX(${progress})`;
-                scrollProgress.setAttribute('aria-valuenow', Math.round(progress * 100).toString());
-            }
-        }
-
-        window.addEventListener('scroll', updateScrollState, { passive: true });
-        window.addEventListener('resize', updateScrollState, { passive: true });
-
-        // Page height changes without a scroll event (images loading,
-        // projects collapsing), so watch the body's size as well.
-        if ('ResizeObserver' in window) {
-            new ResizeObserver(updateScrollState).observe(document.body);
-        }
-
-        updateScrollState();
-    </script>
-    <script>
-        (() => {
-            const root = document.documentElement;
-            const themeToggle = document.getElementById('theme-toggle');
-            const scrollTop = document.getElementById('scroll-top');
-
-            const themeIcons = {
-                light: `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                `,
-                dark: `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                `
-            };
-
-            function setTheme(theme) {
-                root.dataset.theme = theme;
-
-                if (themeToggle) {
-                    themeToggle.innerHTML = themeIcons[theme];
-                    themeToggle.setAttribute(
-                        'aria-label',
-                        theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
-                    );
-                }
-
-                try {
-                    localStorage.setItem('portfolio-theme', theme);
-                } catch (error) {
-                    return;
-                }
-            }
-
-            if (themeToggle) {
-                setTheme(root.dataset.theme === 'dark' ? 'dark' : 'light');
-
-                themeToggle.addEventListener('click', () => {
-                    setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
-                });
-            }
-
-            if (scrollTop) {
-                scrollTop.addEventListener('click', () => {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                });
-            }
-        })();
-    </script>
-    <script>
-        (() => {
-            const collapseToggle = document.getElementById('project-collapse');
-            if (!collapseToggle) return;
-
-            // Same pattern as the theme toggle: two icon states swapped on click.
-            // Attributes like stroke and fill come from the shared .dock-action
-            // svg CSS, so the markup stays minimal.
-            const collapseIcons = {
-                collapse: `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="m14 10 7-7"></path>
-                        <path d="M20 10h-6V4"></path>
-                        <path d="m3 21 7-7"></path>
-                        <path d="M4 14h6v6"></path>
-                    </svg>
-                `,
-                expand: `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M15 3h6v6"></path>
-                        <path d="m21 3-7 7"></path>
-                        <path d="m3 21 7-7"></path>
-                        <path d="M9 21H3v-6"></path>
-                    </svg>
-                `
-            };
-
-            function setCollapsed(collapsed) {
-                document.body.classList.toggle('projects-collapsed', collapsed);
-                collapseToggle.innerHTML = collapsed ? collapseIcons.expand : collapseIcons.collapse;
-                collapseToggle.setAttribute('aria-label', collapsed ? 'Expand projects' : 'Collapse projects');
-                collapseToggle.setAttribute('aria-pressed', String(collapsed));
-            }
-
-            setCollapsed(false);
-
-            collapseToggle.addEventListener('click', () => {
-                setCollapsed(!document.body.classList.contains('projects-collapsed'));
-            });
-        })();
-    </script>
-    <script>
-        (() => {
-            // The island's greeting periodically idents as the site's wordmark,
-            // then returns — like a station ident. Dwell is asymmetric on
-            // purpose: the greeting is the primary state and holds longer; the
-            // wordmark appears briefly. While the wordmark is up, data-hold
-            // pauses siteapp.js's per-second greeting refresh.
-            const el = document.getElementById('greeting-display');
-            if (!el) return;
-
-            const WORDMARK = 'Jayselected.';
-            const GREETING_DWELL_MS = 14000;
-            const WORDMARK_DWELL_MS = 6000;
-            const FADE_MS = 600; // matches the CSS opacity transition
-
-            let showingWordmark = false;
-
-            function swap() {
-                el.classList.add('is-fading');
-
-                setTimeout(() => {
-                    showingWordmark = !showingWordmark;
-
-                    if (showingWordmark) {
-                        el.dataset.hold = 'true';
-                        el.textContent = WORDMARK;
-                    } else {
-                        delete el.dataset.hold;
-                        el.innerHTML = `${getGreeting()}.`; // restore instantly, no blank beat
-                    }
-
-                    el.classList.remove('is-fading');
-                    setTimeout(swap, showingWordmark ? WORDMARK_DWELL_MS : GREETING_DWELL_MS);
-                }, FADE_MS);
-            }
-
-            setTimeout(swap, GREETING_DWELL_MS);
-        })();
-    </script>
+    <script src="siteapp.js" defer></script>
 
 </body>
 </html>
