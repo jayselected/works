@@ -130,30 +130,12 @@
        optical values live as component-scoped properties on their own rule
        (see .header-section) rather than polluting this scale. */
     --space-0: 0;
+    --space-2: 8px;
     --space-5: 20px;
     --space-6: 24px;
 
     --space-fluid-md: clamp(18px, 3vw, 24px);
     --space-section: clamp(64px, 15vw, 120px);
-
-    /* --- Island metrics -----------------------------
-       The header is an expanded Dynamic Island: a floating glass capsule,
-       fixed top-centre, sharing the dock's side margins and glass recipe.
-       Island and dock both sit --edge-gap from their screen edge, so they
-       frame the page symmetrically, and each adds the device safe-area
-       inset on its own side (clearing the notch above and the home
-       indicator below).
-
-       --island-height is measured and published by siteapp.js; the value
-       here is only a fallback for the first paint. --island-clearance is
-       derived from it, so changing the island's padding or type never
-       needs a matching constant updated by hand.
-    -------------------------------------------------- */
-    --island-top: calc(var(--edge-gap) + env(safe-area-inset-top, 0px));
-    --island-width: min(430px, calc(100% - (var(--dock-edge) * 2)));
-    --island-radius: 36px;
-    --island-height: 100px;
-    --island-clearance: calc(var(--island-top) + var(--island-height) + var(--space-6));
 
     --image-trio-gap: clamp(12px, 4vw, 32px);
 
@@ -189,7 +171,7 @@
        is what makes the material feel alive rather than printed on.
        Dials: --glass-bg alpha (presence at rest), --glass-backdrop (blur
        and bloom), --glass-rim (edge light).
-       Shared by the island and the dock, so both are one material.
+       Shared by the header bar and the dock, so both are one material.
     -------------------------------------------------- */
     --glass-bg: rgba(255, 255, 255, 0.7);
     --glass-backdrop: blur(18px) saturate(180%) brightness(1.04);
@@ -240,7 +222,6 @@ body {
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    padding-top: var(--island-clearance);
     padding-bottom: var(--dock-clearance);
     transition: color 0.2s ease, background-color 0.2s ease;
 }
@@ -257,69 +238,51 @@ body {
 }
 
 /* ============================================
-   Dynamic Island header
+   Live header
    ============================================ */
 
-/* An expanded Dynamic Island: a floating glass capsule, fixed top-centre,
-   built from the same glass recipe as the dock so top and bottom read as
-   one material. The interior is a strict two-column grid — the layout
-   grammar is: left rail holds words, right rail holds data; the top row is
-   large, the bottom row small.
-
-       [ progress scrubber, full width       ]
-       Greeting (lg)              Time (lg)
-       City (sm)               Weather (sm)
-
-   The same layout holds at every width — it never stacks. */
+/* A full-width sticky bar in the page's own material: greeting and clock
+   on the left, place and weather on the right, with the reading-progress
+   pill centred between them. Over empty page it bleeds into the
+   background; content scrolling beneath frosts through it. On narrow
+   screens (see the 700px media query) each side stacks into a column. */
 .header-section {
-    /* Optical values specific to this component: they sit between steps of
-       the global spacing scale, so they are declared here where they are
-       used rather than widening that scale. */
-    --island-padding-y: 18px;
-    --island-row-gap: 6px;
-    --island-scrubber-gap: 10px;
-
-    position: fixed;
-    top: var(--island-top);
-    left: 50%;
-    transform: translateX(-50%);
+    position: sticky;
+    top: 0;
     z-index: 100;
-    width: var(--island-width);
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    row-gap: var(--island-row-gap);
-    align-items: baseline;
-    padding: var(--island-padding-y) var(--space-5);
-    border-radius: var(--island-radius);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Safe-area aware: clears the notch when the page runs edge to edge. */
+    padding: calc(14px + env(safe-area-inset-top, 0px)) var(--page-edge) 14px;
     color: var(--color-ink);
     background-color: var(--glass-bg);
     backdrop-filter: var(--glass-backdrop);
     -webkit-backdrop-filter: var(--glass-backdrop);
-    border: 1px solid var(--glass-border);
-    box-shadow:
-        inset 0 1px 0 var(--glass-rim),
-        0 1px 2px var(--glass-shadow-contact),
-        0 6px 20px var(--glass-shadow-ambient);
-    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: color 0.2s ease, background 0.2s ease;
 }
 
-/* The wrapper groups dissolve so each item places itself on the grid. */
 .header-left,
 .header-right {
-    display: contents;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
 }
 
-/* The scrubber: full-width across the island's top, a soft track with the
-   #007AFF fill scaling horizontally with reading progress (driven by JS
-   via a transform, which animates cheaply). The blue stays #007AFF in
-   both themes. */
+/* The progress pill sits dead-centre, anchored absolutely so the text
+   groups never push it around. Width is 25% down from its widest island
+   incarnation (215px -> 160px), shrinking on narrow screens to stay clear
+   of the stacked text columns. The #007AFF fill scales horizontally with
+   reading progress (driven by JS via a transform, which animates cheaply)
+   and stays #007AFF in both themes. */
 .header-progress {
-    grid-column: 1 / -1;
-    grid-row: 1;
-    width: 50%;
-    justify-self: center;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(96px, 12vw, 160px);
     height: 5px;
-    margin-bottom: var(--island-scrubber-gap);
     border-radius: 999px;
     background-color: rgba(0, 0, 0, 0.12);
     overflow: hidden;
@@ -343,6 +306,8 @@ body {
 .header-datetime,
 .location-city,
 .location-weather {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-sm);
     color: var(--color-ink);
     letter-spacing: var(--letter-spacing-tight);
     white-space: nowrap;
@@ -350,30 +315,12 @@ body {
     transition: color 0.2s ease;
 }
 
-/* The large pair: greeting on the left rail, the clock on the right.
-   Sized between the title and meta steps (15px -> 17px fluid) so the
-   longest greetings — "Good Afternoon" — always clear the clock with
-   room to spare at every width. */
-.location-greeting,
-.header-datetime {
-    grid-row: 2;
-    font-size: clamp(0.9375rem, 0.875rem + 0.3vw, 1.0625rem);
-    line-height: var(--line-height-lg);
-}
-
-/* The small pair: place on the left rail, conditions on the right. The
-   place is a group — the filled location arrow beside the city — sized at
-   11px so it optically balances the weather emoji across the island. */
-.location-place,
-.location-weather {
-    grid-row: 3;
-}
-
+/* The place group: the filled location arrow beside the city, sized at
+   11px so it optically balances the weather emoji at the other end. */
 .location-place {
     display: flex;
     align-items: center;
     gap: 5px;
-    min-width: 0;
 }
 
 .location-place-icon {
@@ -381,30 +328,6 @@ body {
     height: 11px;
     flex: 0 0 auto;
     color: var(--color-ink);
-}
-
-.location-city,
-.location-weather {
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
-}
-
-.header-datetime,
-.location-weather {
-    justify-self: end;
-    text-align: right;
-}
-
-/* Safety nets for the two left-rail strings: both sit in a minmax(0, 1fr)
-   column, so on a very narrow screen (≈320px, where "Good Afternoon." plus
-   the full date and clock exceed the island's inner width) they truncate
-   instead of spilling past the capsule. Neither ever triggers at normal
-   phone widths. */
-.location-greeting,
-.location-city {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 /* The greeting crossfades when the wordmark cycle swaps its text. */
@@ -785,8 +708,21 @@ body.projects-collapsed .image-3 {
         --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
     }
 
-    /* The Dynamic Island keeps its exact desktop layout on phones — no
-       stacking overrides here by design. */
+    .header-section {
+        align-items: flex-start;
+    }
+
+    .header-left {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 3px;
+    }
+
+    .header-right {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 3px;
+    }
 
     .image-2 {
         flex-direction: column;
