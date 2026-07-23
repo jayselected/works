@@ -258,14 +258,6 @@ function formatCurrentDate() {
     return `${day} ${now.getDate()} ${month}`;
 }
 
-function getGreeting() {
-    const hour = new Date().getHours();
-    if (hour >= 5  && hour < 12) return 'Good Morning';
-    if (hour >= 12 && hour < 17) return 'Good Afternoon';
-    if (hour >= 17 && hour < 22) return 'Good Evening';
-    return 'Good Night';
-}
-
 function formatCurrentTime() {
     const now = new Date();
     return [now.getHours(), now.getMinutes(), now.getSeconds()]
@@ -277,13 +269,6 @@ function updateDateTime() {
     const element = document.getElementById('datetime-display');
     if (element) {
         element.textContent = `${formatCurrentDate()} ${formatCurrentTime()}`;
-    }
-}
-
-function updateGreeting() {
-    const element = document.getElementById('greeting-display');
-    if (element) {
-        element.textContent = `${getGreeting()}.`;
     }
 }
 
@@ -303,13 +288,9 @@ async function initializeGeoDisplay() {
     try {
         startHelloAnimation();
         updateDateTime();
-        updateGreeting();
         showLoading();
 
-        setInterval(() => {
-            updateDateTime();
-            updateGreeting();
-        }, 1000);
+        setInterval(updateDateTime, 1000);
 
         let locationData = isCacheValid() ? getCachedData(CACHE_KEYS.LOCATION) : null;
         if (!locationData) locationData = await fetchLocationData();
