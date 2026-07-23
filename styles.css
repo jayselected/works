@@ -253,8 +253,13 @@ body {
 
 /* A full-width sticky bar in the page's own material: the clock on the
    left, place and weather on the right. Over empty page it bleeds into the
-   background; content scrolling beneath frosts through it. On narrow
-   screens (see the 700px media query) the location pair stacks. */
+   background; content scrolling beneath frosts through it.
+
+   The three strings sit on one line at every width — there is no stacked
+   variant. If space ever runs short (a long city name on a 320px screen,
+   or "Weather Unavailable" in place of the conditions), the city is the
+   only element permitted to shrink, and it ellipsises; the clock and the
+   conditions always render whole. */
 .header-section {
     position: sticky;
     top: 0;
@@ -276,6 +281,7 @@ body {
     display: flex;
     align-items: center;
     gap: var(--space-2);
+    min-width: 0; /* lets the city inside it shrink rather than overflow */
 }
 
 .header-datetime,
@@ -288,6 +294,18 @@ body {
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
     transition: color 0.2s ease;
+}
+
+/* The clock and the conditions hold their full width; the city yields. */
+.header-datetime,
+.location-weather {
+    flex: 0 0 auto;
+}
+
+.location-city {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* ============================================
@@ -405,13 +423,10 @@ body {
     stroke-linejoin: round;
 }
 
+/* Sized by its contents, so adding or removing an action needs no change
+   here — and the progress bar above inherits the new width automatically. */
 .dock-actions {
     width: max-content;
-    min-width: calc(
-        (var(--dock-action-size) * 4) +
-        (var(--dock-action-gap) * 3) +
-        (var(--dock-actions-inset) * 2)
-    );
     height: var(--dock-height);
     display: flex;
     align-items: center;
@@ -540,6 +555,11 @@ body {
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-ink);
     margin-bottom: var(--space-2);
+}
+
+/* A project with no subtitle lines carries no trailing gap. */
+.project-title:last-child {
+    margin-bottom: var(--space-0);
 }
 
 /* Subtitle lines under the title: services first, tools beneath. The
@@ -703,16 +723,6 @@ body.projects-collapsed .image-3 {
         --page-edge: 1.4rem;
         --edge-gap: 20px;
         --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
-    }
-
-    .header-section {
-        align-items: flex-start;
-    }
-
-    .header-location {
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 3px;
     }
 
     .image-2 {
