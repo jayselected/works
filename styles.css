@@ -251,11 +251,10 @@ body {
    Live header
    ============================================ */
 
-/* A full-width sticky bar in the page's own material: greeting and clock
-   on the left, place and weather on the right, with the reading-progress
-   pill centred between them. Over empty page it bleeds into the
+/* A full-width sticky bar in the page's own material: the clock on the
+   left, place and weather on the right. Over empty page it bleeds into the
    background; content scrolling beneath frosts through it. On narrow
-   screens (see the 700px media query) each side stacks into a column. */
+   screens (see the 700px media query) the location pair stacks. */
 .header-section {
     position: sticky;
     top: 0;
@@ -273,24 +272,12 @@ body {
     transition: color 0.2s ease, background 0.2s ease;
 }
 
-.header-left,
-.header-right {
+.header-location {
     display: flex;
     align-items: center;
     gap: var(--space-2);
 }
 
-/* The greeting is anchored to the header's true centre, so the time on the
-   left and the place/weather on the right can change length without ever
-   shifting it. */
-.location-greeting {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.location-greeting,
 .header-datetime,
 .location-city,
 .location-weather {
@@ -301,21 +288,6 @@ body {
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
     transition: color 0.2s ease;
-}
-
-/* The place group: the filled location arrow beside the city, sized at
-   11px so it optically balances the weather emoji at the other end. */
-.location-place {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.location-place-icon {
-    width: 11px;
-    height: 11px;
-    flex: 0 0 auto;
-    color: var(--color-ink);
 }
 
 /* ============================================
@@ -737,13 +709,7 @@ body.projects-collapsed .image-3 {
         align-items: flex-start;
     }
 
-    .header-left {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 3px;
-    }
-
-    .header-right {
+    .header-location {
         flex-direction: column;
         align-items: flex-end;
         gap: 3px;
