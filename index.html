@@ -44,18 +44,11 @@
 </head>
 <body>
 
-    <!-- Sticky top bar: time left, greeting centred, place and weather right -->
+    <!-- Sticky top bar: time on the left, place and weather on the right -->
     <div class="header-section" id="header-section">
-        <div class="header-left">
-            <p class="header-datetime" id="datetime-display"></p>
-        </div>
-        <p class="location-greeting" id="greeting-display"></p>
-        <div class="header-right">
-            <div class="location-place">
-                <!-- iOS location-services arrow (filled). -->
-                <svg class="location-place-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-                <p class="location-city" id="location-city-display"></p>
-            </div>
+        <p class="header-datetime" id="datetime-display"></p>
+        <div class="header-location">
+            <p class="location-city" id="location-city-display"></p>
             <p class="location-weather" id="location-weather-display"></p>
         </div>
     </div>
