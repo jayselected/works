@@ -44,17 +44,12 @@
 </head>
 <body>
 
-    <!-- Sticky top bar -->
+    <!-- Sticky top bar: time left, greeting centred, place and weather right -->
     <div class="header-section" id="header-section">
         <div class="header-left">
-            <p class="location-greeting" id="greeting-display"></p>
             <p class="header-datetime" id="datetime-display"></p>
         </div>
-        <!-- Scroll progress: the pill fills with blue as the page is read. -->
-        <div class="header-progress" role="progressbar" aria-label="Scroll progress"
-             aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="scroll-progress">
-            <div class="header-progress-fill" id="scroll-progress-fill"></div>
-        </div>
+        <p class="location-greeting" id="greeting-display"></p>
         <div class="header-right">
             <div class="location-place">
                 <!-- iOS location-services arrow (filled). -->
@@ -132,36 +127,46 @@
             </svg>
         </a>
 
-        <div class="dock-actions" aria-label="Quick actions">
-            <a class="dock-action" href="mailto:jayarchiveone@gmail.com" aria-label="Email Jay Patel">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="12" cy="12" r="4"></circle>
-                    <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path>
-                </svg>
-            </a>
+        <div class="dock-cluster">
+            <!-- Scroll progress: fills with blue as the page is read. Sits
+                 above the actions and inherits their exact width. -->
+            <div class="dock-progress" role="progressbar" aria-label="Scroll progress"
+                 aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="scroll-progress">
+                <div class="dock-progress-fill" id="scroll-progress-fill"></div>
+            </div>
 
-            <button class="dock-action" type="button" id="project-collapse" aria-label="Collapse projects" aria-pressed="false">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="m14 10 7-7"></path>
-                    <path d="M20 10h-6V4"></path>
-                    <path d="m3 21 7-7"></path>
-                    <path d="M4 14h6v6"></path>
-                </svg>
-            </button>
+            <div class="dock-actions" aria-label="Quick actions">
+                <a class="dock-action" href="mailto:jayarchiveone@gmail.com" aria-label="Email Jay Patel">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path>
+                    </svg>
+                </a>
 
-            <button class="dock-action" type="button" id="theme-toggle" aria-label="Switch to dark mode">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                </svg>
-            </button>
+                <button class="dock-action" type="button" id="project-collapse" aria-label="Collapse projects" aria-pressed="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m14 10 7-7"></path>
+                        <path d="M20 10h-6V4"></path>
+                        <path d="m3 21 7-7"></path>
+                        <path d="M4 14h6v6"></path>
+                    </svg>
+                </button>
 
-            <button class="dock-action" type="button" id="scroll-top" aria-label="Back to top">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-                    <line x1="12" y1="19" x2="12" y2="5"></line>
-                    <polyline points="5 12 12 5 19 12"></polyline>
-                </svg>
-            </button>
+                <button class="dock-action" type="button" id="theme-toggle" aria-label="Switch to dark mode">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+
+                <button class="dock-action" type="button" id="scroll-top" aria-label="Back to top">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <line x1="12" y1="19" x2="12" y2="5"></line>
+                        <polyline points="5 12 12 5 19 12"></polyline>
+                    </svg>
+                </button>
+            </div>
         </div>
+
     </nav>
 
     <script src="siteapp.js" defer></script>
