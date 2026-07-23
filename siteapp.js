@@ -22,9 +22,6 @@ const HELLO_LANGUAGES = [
 
 let currentLanguageIndex = 0;
 
-/* Set by the greeting cycle; updateGreeting() defers while it is true. */
-let wordmarkVisible = false;
-
 function runFadeSequence() {
     const el = document.getElementById('hello-text');
     if (!el) return;
@@ -101,6 +98,7 @@ function normalizeIpwhoisData(data) {
     const locationData = {
         city: data.city || '',
         country_name: data.country || '',
+        country_code: data.country_code || '',
         latitude: Number(data.latitude),
         longitude: Number(data.longitude),
         source: 'ipwho.is'
@@ -115,6 +113,7 @@ function normalizeIpapiData(data) {
     const locationData = {
         city: data.city || '',
         country_name: data.country_name || '',
+        country_code: data.country_code || '',
         latitude: Number(data.latitude),
         longitude: Number(data.longitude),
         source: 'ipapi.co'
@@ -202,15 +201,61 @@ async function fetchWeatherData(lat, lon) {
     }
 }
 
+/* One definition of "narrow" for every abbreviation decision, so the date
+   and the location always shorten together. */
+function isNarrowViewport() {
+    return window.innerWidth < 768;
+}
+
+/* On narrow screens the country shows as a short code instead of its full
+   name. The code comes from the geo provider (ISO 3166 alpha-2), so every
+   country is covered automatically; this map only overrides the few whose
+   everyday abbreviation differs from the ISO one. */
+const COUNTRY_ABBREVIATIONS = {
+    GB: 'UK',
+    AE: 'UAE',
+    KR: 'S. Korea',
+    NL: 'Netherlands'
+};
+
+function formatCountry(location) {
+    const fullName = location?.country_name || '';
+    if (!isNarrowViewport()) return fullName;
+
+    const code = (location?.country_code || '').toUpperCase();
+    if (!code) return fullName;
+
+    return COUNTRY_ABBREVIATIONS[code] || code;
+}
+
+/* The last resolved location, kept so the city line can be re-rendered when
+   the viewport crosses the abbreviation breakpoint. */
+let activeLocation = null;
+
+function renderLocationText() {
+    const cityEl = document.getElementById('location-city-display');
+    if (cityEl && activeLocation) {
+        cityEl.textContent = formatLocationText(activeLocation);
+    }
+}
+
+function formatLocationText(location) {
+    return [location?.city, formatCountry(location)]
+        .filter(Boolean)
+        .join(', ') || 'Unknown Location';
+}
+
 function formatCurrentDate() {
     const now = new Date();
     const daysFull  = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const daysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const months    = ['January', 'February', 'March', 'April', 'May', 'June',
-                       'July', 'August', 'September', 'October', 'November', 'December'];
-    const isMobile  = window.innerWidth < 768;
-    const day       = isMobile ? daysShort[now.getDay()] : daysFull[now.getDay()];
-    return `${day} ${now.getDate()} ${months[now.getMonth()]}`;
+    const monthsFull  = ['January', 'February', 'March', 'April', 'May', 'June',
+                         'July', 'August', 'September', 'October', 'November', 'December'];
+    const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const day   = isNarrowViewport() ? daysShort[now.getDay()] : daysFull[now.getDay()];
+    const month = isNarrowViewport() ? monthsShort[now.getMonth()] : monthsFull[now.getMonth()];
+    return `${day} ${now.getDate()} ${month}`;
 }
 
 function getGreeting() {
@@ -237,9 +282,7 @@ function updateDateTime() {
 
 function updateGreeting() {
     const element = document.getElementById('greeting-display');
-    // The wordmark cycle owns this element while the wordmark is showing;
-    // the live greeting resumes the moment it hands back.
-    if (element && !wordmarkVisible) {
+    if (element) {
         element.textContent = `${getGreeting()}.`;
     }
 }
@@ -279,23 +322,18 @@ async function initializeGeoDisplay() {
                 const temp = Math.round(weatherData.main.temp * 10) / 10;
                 const { label, emoji } = getWeatherDisplay(weatherData.weather[0].main);
 
-                const locationText = [locationData.city, locationData.country_name]
-                    .filter(Boolean)
-                    .join(', ') || 'Unknown Location';
+                activeLocation = locationData;
 
-                const cityEl    = document.getElementById('location-city-display');
                 const weatherEl = document.getElementById('location-weather-display');
-                if (cityEl)    cityEl.textContent    = locationText;
+                renderLocationText();
                 if (weatherEl) weatherEl.textContent = `${temp}° ${label} ${emoji}`;
 
             } catch (weatherError) {
                 console.error('Weather error:', weatherError);
-                const locationText = [locationData.city, locationData.country_name]
-                    .filter(Boolean)
-                    .join(', ') || 'Unknown Location';
-                const cityEl    = document.getElementById('location-city-display');
+                activeLocation = locationData;
+
                 const weatherEl = document.getElementById('location-weather-display');
-                if (cityEl)    cityEl.textContent    = locationText;
+                renderLocationText();
                 if (weatherEl) weatherEl.textContent = 'Weather Unavailable';
             }
         } else {
@@ -313,7 +351,7 @@ async function initializeGeoDisplay() {
 /* ============================================
    Interface
    --------------------------------------------
-   Everything below drives the chrome: theme, scroll progress, the project collapse, the greeting/wordmark cycle, and
+   Everything below drives the chrome: theme, scroll progress, the project collapse, and
    back-to-top. All of it lives here rather than in index.html so behaviour
    has one home. The only exception is the theme bootstrap in the document
    head, which must run before first paint to avoid a flash.
@@ -424,7 +462,12 @@ function initializeScroll() {
     }
 
     window.addEventListener('scroll', queueRender, { passive: true });
-    window.addEventListener('resize', queueRender, { passive: true });
+    window.addEventListener('resize', () => {
+        queueRender();
+        // Crossing the abbreviation breakpoint changes the location string;
+        // the clock rewrites itself every second, the city does not.
+        renderLocationText();
+    }, { passive: true });
 
     if ('ResizeObserver' in window) {
         // The page changes height when images load or projects collapse;
@@ -477,52 +520,6 @@ function initializeProjectCollapse() {
 }
 
 /* --------------------------------------------
-   Greeting / wordmark cycle
-   -------------------------------------------- */
-
-const WORDMARK = 'Jayselected.';
-const GREETING_DWELL_MS = 14000;
-const WORDMARK_DWELL_MS = 6000;
-const GREETING_FADE_MS = 600; // keep in step with .location-greeting's CSS transition
-
-function initializeGreetingCycle() {
-    const element = document.getElementById('greeting-display');
-    if (!element) return;
-
-    let timer = null;
-
-    function swap() {
-        element.classList.add('is-fading');
-
-        // With reduced motion the CSS transition is disabled, so waiting
-        // would leave the greeting blank; swap immediately instead.
-        window.setTimeout(() => {
-            wordmarkVisible = !wordmarkVisible;
-            element.textContent = wordmarkVisible ? WORDMARK : `${getGreeting()}.`;
-            element.classList.remove('is-fading');
-            schedule();
-        }, prefersReducedMotion() ? 0 : GREETING_FADE_MS);
-    }
-
-    function schedule() {
-        window.clearTimeout(timer);
-        timer = window.setTimeout(swap, wordmarkVisible ? WORDMARK_DWELL_MS : GREETING_DWELL_MS);
-    }
-
-    // No point cycling in a hidden tab; it also stops the timer resuming
-    // mid-fade when the visitor returns.
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-            window.clearTimeout(timer);
-        } else {
-            schedule();
-        }
-    });
-
-    schedule();
-}
-
-/* --------------------------------------------
    Back to top
    -------------------------------------------- */
 
@@ -546,7 +543,6 @@ function start() {
     initializeTheme();
     initializeScroll();
     initializeProjectCollapse();
-    initializeGreetingCycle();
     initializeScrollTop();
     initializeGeoDisplay();
 }
