@@ -154,7 +154,17 @@
     --dock-action-gap: 8px;
     --dock-actions-inset: 5px;
     --dock-icon-size: 22px;
-    --dock-clearance: calc(var(--dock-height) + var(--dock-bottom) + var(--space-6));
+    --dock-progress-height: 5px;
+    --dock-progress-gap: 10px;
+    /* Page padding below the dock, including the progress bar stacked above
+       the actions capsule. */
+    --dock-clearance: calc(
+        var(--dock-height) +
+        var(--dock-progress-height) +
+        var(--dock-progress-gap) +
+        var(--dock-bottom) +
+        var(--space-6)
+    );
 
     /* Liquid-glass recipe: a milky translucent body over a strong
        backdrop blur, a bright specular inset along the top edge, a faint
@@ -270,36 +280,14 @@ body {
     gap: var(--space-2);
 }
 
-/* The progress pill sits dead-centre, anchored absolutely so the text
-   groups never push it around. Width is 25% down from its widest island
-   incarnation (215px -> 160px), shrinking on narrow screens to stay clear
-   of the stacked text columns. The #007AFF fill scales horizontally with
-   reading progress (driven by JS via a transform, which animates cheaply)
-   and stays #007AFF in both themes. */
-.header-progress {
+/* The greeting is anchored to the header's true centre, so the time on the
+   left and the place/weather on the right can change length without ever
+   shifting it. */
+.location-greeting {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: clamp(96px, 12vw, 160px);
-    height: 5px;
-    border-radius: 999px;
-    background-color: rgba(0, 0, 0, 0.12);
-    overflow: hidden;
-}
-
-[data-theme="dark"] .header-progress {
-    background-color: rgba(255, 255, 255, 0.22);
-}
-
-.header-progress-fill {
-    width: 100%;
-    height: 100%;
-    background-color: #007AFF;
-    transform: scaleX(0);
-    transform-origin: left;
-    will-change: transform;
-    transition: transform 0.15s ease-out;
 }
 
 .location-greeting,
@@ -330,27 +318,6 @@ body {
     color: var(--color-ink);
 }
 
-/* The greeting's box is sized by an invisible render of its longest
-   possible string, so cycling between "Jayselected." and the greetings
-   never changes its width — the clock beside it stays fixed while the
-   text crossfades. If a longer greeting is ever added to getGreeting()
-   or the wordmark changes, update this sizer string to match. */
-.location-greeting::after {
-    content: 'Good Afternoon.';
-    display: block;
-    height: 0;
-    visibility: hidden;
-}
-
-/* The greeting crossfades when the wordmark cycle swaps its text. */
-.location-greeting {
-    transition: color 0.2s ease, opacity 0.6s ease;
-}
-
-.location-greeting.is-fading {
-    opacity: 0;
-}
-
 /* ============================================
    Dock
    ============================================ */
@@ -362,10 +329,44 @@ body {
     transform: translateX(-50%);
     z-index: 200;
     width: var(--dock-width);
-    height: var(--dock-height);
     display: flex;
-    align-items: center;
+    /* Bottom-aligned: the face circle sits level with the actions capsule
+       while the progress bar stacks above the actions. */
+    align-items: flex-end;
     justify-content: space-between;
+}
+
+/* Progress bar and actions capsule share a column, so the bar inherits the
+   capsule's exact width automatically — however many actions it holds. */
+.dock-cluster {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dock-progress-gap);
+}
+
+.dock-progress {
+    width: 100%;
+    height: var(--dock-progress-height);
+    border-radius: 999px;
+    background-color: rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+}
+
+[data-theme="dark"] .dock-progress {
+    background-color: rgba(255, 255, 255, 0.22);
+}
+
+/* The #007AFF fill scales horizontally with reading progress (driven by JS
+   via a transform, which animates cheaply) and stays #007AFF in both
+   themes. */
+.dock-progress-fill {
+    width: 100%;
+    height: 100%;
+    background-color: #007AFF;
+    transform: scaleX(0);
+    transform-origin: left;
+    will-change: transform;
+    transition: transform 0.15s ease-out;
 }
 
 .dock-face,
