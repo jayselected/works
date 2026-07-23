@@ -547,7 +547,6 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-2);
 }
 
 .project-title {
@@ -555,9 +554,13 @@ body {
     line-height: var(--line-height-lg);
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-ink);
+    margin-bottom: var(--space-2);
 }
 
-/* Subtitle lines under the title: services first, tools beneath. */
+/* Subtitle lines under the title: services first, tools beneath. The
+   stack itself has no gap, so consecutive subtitles sit at natural
+   line-height and read as one continuous block of text; only the title
+   carries separation above them. */
 .project-subtitle {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-sm);
