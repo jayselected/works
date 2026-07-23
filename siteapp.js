@@ -1,6 +1,11 @@
 /**
- * Portfolio Geo Data Display
- * Vanilla JavaScript implementation with multi-language Hello FADE animation
+ * Portfolio behaviour
+ * -------------------
+ * Two things live here: the multi-language "Hello" fade in the hero, and
+ * the chrome (theme, scroll progress, project collapse, back to top).
+ * The only script outside this file is the theme bootstrap in the document
+ * head, which must run before first paint to avoid a flash of the wrong
+ * theme.
  */
 
 const HELLO_LANGUAGES = [
@@ -47,286 +52,6 @@ function startHelloAnimation() {
         el.classList.add('visible');
         setTimeout(runFadeSequence, 2400);
     }, 300);
-}
-
-const CONFIG = {
-    CACHE_DURATION: 3600000,
-    WEATHER_API_KEY: 'd4fd2a9a46a63423027edc6d00dd9651',
-    IPWHOIS_URL: 'https://ipwho.is/',
-    IPAPI_URL: 'https://ipapi.co/json/',
-    WEATHER_API_URL: 'https://api.openweathermap.org/data/2.5/weather'
-};
-
-const CACHE_KEYS = {
-    LOCATION: 'geo_location_cache_v2',
-    WEATHER: 'geo_weather_cache_v2',
-    TIMESTAMP: 'geo_cache_timestamp_v2'
-};
-
-function isCacheValid() {
-    const timestamp = sessionStorage.getItem(CACHE_KEYS.TIMESTAMP);
-    if (!timestamp) return false;
-    return Date.now() - parseInt(timestamp, 10) < CONFIG.CACHE_DURATION;
-}
-
-function getCachedData(key) {
-    try {
-        const data = sessionStorage.getItem(key);
-        return data ? JSON.parse(data) : null;
-    } catch (e) {
-        console.warn('Cache read error:', e);
-        return null;
-    }
-}
-
-function setCachedData(key, data) {
-    try {
-        sessionStorage.setItem(key, JSON.stringify(data));
-        sessionStorage.setItem(CACHE_KEYS.TIMESTAMP, Date.now().toString());
-    } catch (e) {
-        console.warn('Cache write error:', e);
-    }
-}
-
-function hasValidCoordinates(data) {
-    return Number.isFinite(data?.latitude) && Number.isFinite(data?.longitude);
-}
-
-function normalizeIpwhoisData(data) {
-    if (!data || data.success === false) return null;
-
-    const locationData = {
-        city: data.city || '',
-        country_name: data.country || '',
-        country_code: data.country_code || '',
-        latitude: Number(data.latitude),
-        longitude: Number(data.longitude),
-        source: 'ipwho.is'
-    };
-
-    return hasValidCoordinates(locationData) ? locationData : null;
-}
-
-function normalizeIpapiData(data) {
-    if (!data || data.error) return null;
-
-    const locationData = {
-        city: data.city || '',
-        country_name: data.country_name || '',
-        country_code: data.country_code || '',
-        latitude: Number(data.latitude),
-        longitude: Number(data.longitude),
-        source: 'ipapi.co'
-    };
-
-    return hasValidCoordinates(locationData) ? locationData : null;
-}
-
-async function fetchJson(url) {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return response.json();
-}
-
-async function fetchLocationData() {
-    try {
-        const providers = [
-            {
-                url: CONFIG.IPWHOIS_URL,
-                normalize: normalizeIpwhoisData
-            },
-            {
-                url: CONFIG.IPAPI_URL,
-                normalize: normalizeIpapiData
-            }
-        ];
-
-        for (const provider of providers) {
-            try {
-                const data = await fetchJson(provider.url);
-                const locationData = provider.normalize(data);
-
-                if (locationData) {
-                    setCachedData(CACHE_KEYS.LOCATION, locationData);
-                    return locationData;
-                }
-            } catch (providerError) {
-                console.warn('Location provider error:', providerError);
-            }
-        }
-
-        throw new Error('No valid location provider response');
-    } catch (error) {
-        console.error('Location fetch error:', error);
-        const cached = getCachedData(CACHE_KEYS.LOCATION);
-        if (cached) return cached;
-        throw error;
-    }
-}
-
-function getWeatherDisplay(apiCondition) {
-    const conditionMap = {
-        'Clear':        { label: 'Sunny',        emoji: '☀️' },
-        'Clouds':       { label: 'Cloudy',        emoji: '☁️' },
-        'Rain':         { label: 'Rain',          emoji: '🌧️' },
-        'Drizzle':      { label: 'Drizzle',       emoji: '🌦️' },
-        'Thunderstorm': { label: 'Thunderstorm',  emoji: '⛈️' },
-        'Snow':         { label: 'Snow',          emoji: '🌨️' },
-        'Mist':         { label: 'Mist',          emoji: '🌫️' },
-        'Fog':          { label: 'Fog',           emoji: '🌫️' },
-        'Haze':         { label: 'Hazy',          emoji: '🌫️' },
-        'Smoke':        { label: 'Smoke',         emoji: '🌫️' },
-        'Dust':         { label: 'Dusty',         emoji: '🌫️' },
-        'Sand':         { label: 'Sandstorm',     emoji: '🌫️' },
-        'Ash':          { label: 'Volcanic Ash',  emoji: '🌫️' },
-        'Squall':       { label: 'Windy',         emoji: '💨' },
-        'Tornado':      { label: 'Tornado',       emoji: '🌪️' }
-    };
-    return conditionMap[apiCondition] || { label: apiCondition, emoji: '🌡️' };
-}
-
-async function fetchWeatherData(lat, lon) {
-    try {
-        const url = `${CONFIG.WEATHER_API_URL}?lat=${lat}&lon=${lon}&appid=${CONFIG.WEATHER_API_KEY}&units=metric`;
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-        setCachedData(CACHE_KEYS.WEATHER, data);
-        return data;
-    } catch (error) {
-        console.error('Weather fetch error:', error);
-        const cached = getCachedData(CACHE_KEYS.WEATHER);
-        if (cached) return cached;
-        throw error;
-    }
-}
-
-/* One definition of "narrow" for every abbreviation decision, so the date
-   and the location always shorten together. */
-function isNarrowViewport() {
-    return window.innerWidth < 768;
-}
-
-/* On narrow screens the country shows as a short code instead of its full
-   name. The code comes from the geo provider (ISO 3166 alpha-2), so every
-   country is covered automatically; this map only overrides the few whose
-   everyday abbreviation differs from the ISO one. */
-const COUNTRY_ABBREVIATIONS = {
-    GB: 'UK',
-    AE: 'UAE',
-    KR: 'S. Korea',
-    NL: 'Netherlands'
-};
-
-function formatCountry(location) {
-    const fullName = location?.country_name || '';
-    if (!isNarrowViewport()) return fullName;
-
-    const code = (location?.country_code || '').toUpperCase();
-    if (!code) return fullName;
-
-    return COUNTRY_ABBREVIATIONS[code] || code;
-}
-
-/* The last resolved location, kept so the city line can be re-rendered when
-   the viewport crosses the abbreviation breakpoint. */
-let activeLocation = null;
-
-function renderLocationText() {
-    const cityEl = document.getElementById('location-city-display');
-    if (cityEl && activeLocation) {
-        cityEl.textContent = formatLocationText(activeLocation);
-    }
-}
-
-function formatLocationText(location) {
-    return [location?.city, formatCountry(location)]
-        .filter(Boolean)
-        .join(', ') || 'Unknown Location';
-}
-
-function formatCurrentDate() {
-    const now = new Date();
-    const daysFull  = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const daysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const monthsFull  = ['January', 'February', 'March', 'April', 'May', 'June',
-                         'July', 'August', 'September', 'October', 'November', 'December'];
-    const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const day   = isNarrowViewport() ? daysShort[now.getDay()] : daysFull[now.getDay()];
-    const month = isNarrowViewport() ? monthsShort[now.getMonth()] : monthsFull[now.getMonth()];
-    return `${day} ${now.getDate()} ${month}`;
-}
-
-function formatCurrentTime() {
-    const now = new Date();
-    return [now.getHours(), now.getMinutes(), now.getSeconds()]
-        .map(n => String(n).padStart(2, '0'))
-        .join(':');
-}
-
-function updateDateTime() {
-    const element = document.getElementById('datetime-display');
-    if (element) {
-        element.textContent = `${formatCurrentDate()} ${formatCurrentTime()}`;
-    }
-}
-
-function showLoading() {
-    const cityEl    = document.getElementById('location-city-display');
-    const weatherEl = document.getElementById('location-weather-display');
-    if (cityEl)    cityEl.textContent    = 'Loading...';
-    if (weatherEl) weatherEl.textContent = '';
-}
-
-function showError(elementId, message) {
-    const element = document.getElementById(elementId);
-    if (element) element.textContent = message;
-}
-
-async function initializeGeoDisplay() {
-    try {
-        startHelloAnimation();
-        updateDateTime();
-        showLoading();
-
-        setInterval(updateDateTime, 1000);
-
-        let locationData = isCacheValid() ? getCachedData(CACHE_KEYS.LOCATION) : null;
-        if (!locationData) locationData = await fetchLocationData();
-
-        if (locationData?.latitude && locationData?.longitude) {
-            try {
-                let weatherData = isCacheValid() ? getCachedData(CACHE_KEYS.WEATHER) : null;
-                if (!weatherData) weatherData = await fetchWeatherData(locationData.latitude, locationData.longitude);
-
-                const temp = Math.round(weatherData.main.temp * 10) / 10;
-                const { label, emoji } = getWeatherDisplay(weatherData.weather[0].main);
-
-                activeLocation = locationData;
-
-                const weatherEl = document.getElementById('location-weather-display');
-                renderLocationText();
-                if (weatherEl) weatherEl.textContent = `${temp}° ${label} ${emoji}`;
-
-            } catch (weatherError) {
-                console.error('Weather error:', weatherError);
-                activeLocation = locationData;
-
-                const weatherEl = document.getElementById('location-weather-display');
-                renderLocationText();
-                if (weatherEl) weatherEl.textContent = 'Weather Unavailable';
-            }
-        } else {
-            showError('location-city-display',    'Location Unavailable');
-            showError('location-weather-display', '');
-        }
-
-    } catch (error) {
-        console.error('Initialization error:', error);
-        showError('location-city-display',    'Location data unavailable');
-        showError('location-weather-display', '');
-    }
 }
 
 /* ============================================
@@ -443,12 +168,7 @@ function initializeScroll() {
     }
 
     window.addEventListener('scroll', queueRender, { passive: true });
-    window.addEventListener('resize', () => {
-        queueRender();
-        // Crossing the abbreviation breakpoint changes the location string;
-        // the clock rewrites itself every second, the city does not.
-        renderLocationText();
-    }, { passive: true });
+    window.addEventListener('resize', queueRender, { passive: true });
 
     if ('ResizeObserver' in window) {
         // The page changes height when images load or projects collapse;
@@ -521,11 +241,11 @@ function initializeScrollTop() {
    ============================================ */
 
 function start() {
+    startHelloAnimation();
     initializeTheme();
     initializeScroll();
     initializeProjectCollapse();
     initializeScrollTop();
-    initializeGeoDisplay();
 }
 
 if (document.readyState === 'loading') {
