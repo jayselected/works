@@ -313,8 +313,7 @@ async function initializeGeoDisplay() {
 /* ============================================
    Interface
    --------------------------------------------
-   Everything below drives the chrome: theme, scroll progress, the island's
-   measured height, the project collapse, the greeting/wordmark cycle, and
+   Everything below drives the chrome: theme, scroll progress, the project collapse, the greeting/wordmark cycle, and
    back-to-top. All of it lives here rather than in index.html so behaviour
    has one home. The only exception is the theme bootstrap in the document
    head, which must run before first paint to avoid a flash.
@@ -394,27 +393,13 @@ function initializeTheme() {
 }
 
 /* --------------------------------------------
-   Scroll progress and island measurement
+   Scroll progress
    -------------------------------------------- */
 
 function initializeScroll() {
-    const island   = document.getElementById('header-section');
     const progress = document.getElementById('scroll-progress');
     const fill     = document.getElementById('scroll-progress-fill');
     let queued = false;
-    let lastIslandHeight = 0;
-
-    /* Publishes the island's real height so the page can pad itself below
-       it. This replaces a hand-tuned constant: change the island's padding
-       or type and the clearance follows automatically. */
-    function measureIsland() {
-        if (!island) return;
-        const height = Math.round(island.getBoundingClientRect().height);
-        if (height && height !== lastIslandHeight) {
-            lastIslandHeight = height;
-            document.documentElement.style.setProperty('--island-height', `${height}px`);
-        }
-    }
 
     function render() {
         queued = false;
@@ -439,19 +424,14 @@ function initializeScroll() {
     }
 
     window.addEventListener('scroll', queueRender, { passive: true });
-    window.addEventListener('resize', () => {
-        measureIsland();
-        queueRender();
-    }, { passive: true });
+    window.addEventListener('resize', queueRender, { passive: true });
 
     if ('ResizeObserver' in window) {
-        // The island changes height when its text wraps; the page changes
-        // height when images load or projects collapse.
-        new ResizeObserver(measureIsland).observe(island || document.body);
+        // The page changes height when images load or projects collapse;
+        // the progress ratio must follow.
         new ResizeObserver(queueRender).observe(document.body);
     }
 
-    measureIsland();
     render();
 }
 
