@@ -330,6 +330,18 @@ body {
     color: var(--color-ink);
 }
 
+/* The greeting's box is sized by an invisible render of its longest
+   possible string, so cycling between "Jayselected." and the greetings
+   never changes its width — the clock beside it stays fixed while the
+   text crossfades. If a longer greeting is ever added to getGreeting()
+   or the wordmark changes, update this sizer string to match. */
+.location-greeting::after {
+    content: 'Good Afternoon.';
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+
 /* The greeting crossfades when the wordmark cycle swaps its text. */
 .location-greeting {
     transition: color 0.2s ease, opacity 0.6s ease;
