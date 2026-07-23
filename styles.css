@@ -98,7 +98,7 @@
        display : keynote lockup — hello, name, subtext (28px -> 36px)
        lg      : project titles                      (18px -> 20.625px)
        md      : body copy                             (14px -> 15px)
-       sm      : header and footer                     (13px -> 14px)
+       sm      : project subtitles and footer          (13px -> 14px)
     -------------------------------------------------- */
     --font-size-display: clamp(1.75rem, 1.25rem + 1.5vw, 2.25rem);
     --font-size-lg: clamp(1.125rem, 1rem + 0.4vw, 1.2890625rem);
@@ -124,7 +124,7 @@
     --color-bg: #FFFFFF;
     --color-ink: #000000;
     /* Micro detail: metadata about content, rather than content itself —
-       project subtitles, the header strip, the footer. Black at 65%
+       project subtitles and the footer. Black at 65%
        renders as #5A5A5A on the page: 6.9:1 in light mode and 8.3:1 in
        dark, so it clears WCAG AA everywhere and AAA in dark mode, while
        still reading clearly quieter than ink. This is the lightest value
@@ -134,8 +134,8 @@
     --color-panel: #F6F6F6;
 
     /* Layout rhythm. Only the steps actually in use are declared; one-off
-       optical values live as component-scoped properties on their own rule
-       (see .header-section) rather than polluting this scale. */
+       optical values live on the rule that needs them rather than
+       widening this scale. */
     --space-0: 0;
     --space-2: 8px;
     --space-5: 20px;
@@ -143,6 +143,10 @@
 
     --space-fluid-md: clamp(18px, 3vw, 24px);
     --space-section: clamp(64px, 15vw, 120px);
+    /* Space above the hero. Tuned separately from --space-section: with no
+       header above it, this is the first thing on the page, and it wants
+       less room than the gaps between sections. */
+    --space-page-top: clamp(44px, 7vw, 80px);
 
     --image-trio-gap: clamp(12px, 4vw, 32px);
 
@@ -188,7 +192,7 @@
        is what makes the material feel alive rather than printed on.
        Dials: --glass-bg alpha (presence at rest), --glass-backdrop (blur
        and bloom), --glass-rim (edge light).
-       Shared by the header bar and the dock, so both are one material.
+       Used by the dock, the one piece of chrome that floats over content.
     -------------------------------------------------- */
     --glass-bg: rgba(255, 255, 255, 0.7);
     --glass-backdrop: blur(18px) saturate(180%) brightness(1.04);
@@ -252,62 +256,6 @@ body {
     outline: 2px solid var(--color-ink);
     outline-offset: 2px;
     border-radius: 4px;
-}
-
-/* ============================================
-   Live header
-   ============================================ */
-
-/* A full-width strip at the top of the page: the clock on the left, place
-   and weather on the right. It scrolls away with the content rather than
-   sticking, so it carries no background or backdrop filter — nothing ever
-   passes beneath it.
-
-   The three strings sit on one line at every width — there is no stacked
-   variant. If space ever runs short (a long city name on a 320px screen,
-   or "Weather Unavailable" in place of the conditions), the city is the
-   only element permitted to shrink, and it ellipsises; the clock and the
-   conditions always render whole. */
-.header-section {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    /* Safe-area aware: clears the notch if the page ever runs edge to edge. */
-    padding: calc(14px + env(safe-area-inset-top, 0px)) var(--page-edge) 14px;
-    color: var(--color-ink);
-    transition: color 0.2s ease;
-}
-
-.header-location {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    min-width: 0; /* lets the city inside it shrink rather than overflow */
-}
-
-.header-datetime,
-.location-city,
-.location-weather {
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
-    color: var(--color-ink);
-    letter-spacing: var(--letter-spacing-tight);
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-    transition: color 0.2s ease;
-}
-
-/* The clock and the conditions hold their full width; the city yields. */
-.header-datetime,
-.location-weather {
-    flex: 0 0 auto;
-}
-
-.location-city {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 /* ============================================
@@ -488,7 +436,7 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: clamp(12px, 1.5vw, 20px);
-    padding-top: var(--space-section);
+    padding-top: var(--space-page-top);
     margin-bottom: var(--space-section);
     color: var(--color-ink);
 }
