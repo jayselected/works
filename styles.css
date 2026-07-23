@@ -123,7 +123,14 @@
     -------------------------------------------------- */
     --color-bg: #FFFFFF;
     --color-ink: #000000;
-    --color-muted: #000000;
+    /* Micro detail: metadata about content, rather than content itself —
+       project subtitles, the header strip, the footer. Black at 65%
+       renders as #5A5A5A on the page: 6.9:1 in light mode and 8.3:1 in
+       dark, so it clears WCAG AA everywhere and AAA in dark mode, while
+       still reading clearly quieter than ink. This is the lightest value
+       that stays comfortably legible at 13px. Mirrored in dark mode,
+       since a black tint would be invisible there. */
+    --color-muted: #000000A6;
     --color-panel: #F6F6F6;
 
     /* Layout rhythm. Only the steps actually in use are declared; one-off
@@ -196,7 +203,7 @@
 
     --color-bg: #0E0E0E;
     --color-ink: #FFFFFF;
-    --color-muted: #FFFFFF;
+    --color-muted: #FFFFFFA6;
     --color-panel: #171717;
 
     /* Dark chrome: identical bleed logic — the fill is rgb(14,14,14),
@@ -251,9 +258,10 @@ body {
    Live header
    ============================================ */
 
-/* A full-width sticky bar in the page's own material: the clock on the
-   left, place and weather on the right. Over empty page it bleeds into the
-   background; content scrolling beneath frosts through it.
+/* A full-width strip at the top of the page: the clock on the left, place
+   and weather on the right. It scrolls away with the content rather than
+   sticking, so it carries no background or backdrop filter — nothing ever
+   passes beneath it.
 
    The three strings sit on one line at every width — there is no stacked
    variant. If space ever runs short (a long city name on a 320px screen,
@@ -261,20 +269,14 @@ body {
    only element permitted to shrink, and it ellipsises; the clock and the
    conditions always render whole. */
 .header-section {
-    position: sticky;
-    top: 0;
-    z-index: 100;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* Safe-area aware: clears the notch when the page runs edge to edge. */
+    /* Safe-area aware: clears the notch if the page ever runs edge to edge. */
     padding: calc(14px + env(safe-area-inset-top, 0px)) var(--page-edge) 14px;
     color: var(--color-ink);
-    background-color: var(--glass-bg);
-    backdrop-filter: var(--glass-backdrop);
-    -webkit-backdrop-filter: var(--glass-backdrop);
-    transition: color 0.2s ease, background 0.2s ease;
+    transition: color 0.2s ease;
 }
 
 .header-location {
@@ -570,7 +572,7 @@ body {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-sm);
     letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
+    color: var(--color-muted);
 }
 
 .project-description {
