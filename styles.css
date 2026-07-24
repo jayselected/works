@@ -181,6 +181,23 @@
        less room than the gaps between sections. */
     --space-page-top: clamp(72px, 12vw, 148px);
 
+    /* --- Motion -------------------------------------
+       Content elements rise and fade as they enter the viewport; the dock
+       and widget settle in on load once the content has begun. Distances
+       are short and easing is soft on purpose — restraint is what keeps
+       motion reading as delicate rather than busy. All of it collapses to
+       nothing under prefers-reduced-motion (see that media query).
+       Parallax strength is held at 50%: image drift tips into gimmick
+       faster than any other effect, so it stays subtle.
+    -------------------------------------------------- */
+    --enter-rise: 24px;
+    --enter-ms: 900ms;
+    --enter-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --chrome-ms: 800ms;
+    /* The 90ms stagger between elements is applied per-element as an inline
+       transition-delay in siteapp.js (ENTER_STAGGER_MS), since it depends on
+       DOM order — it has no standalone token here. */
+
     --image-trio-gap: clamp(12px, 4vw, 32px);
 
     /* --- Widget metrics -----------------------------
@@ -941,6 +958,23 @@ body.projects-collapsed .image-3 {
         animation: none;
         opacity: 0.55;
     }
+
+    /* All entrance and chrome motion collapses to nothing, fully visible. */
+    [data-enter] {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+
+    .parallax-on .image-1 img {
+        height: 100% !important;
+        transform: none !important;
+    }
+
+    .dock,
+    .widget {
+        animation: none !important;
+    }
 }
 
 /* Some people find translucency over moving content hard to read; the OS
@@ -959,6 +993,61 @@ body.projects-collapsed .image-3 {
         --glass-backdrop: none;
         --glass-rim: rgba(255, 255, 255, 0.1);
     }
+}
+
+/* ============================================
+   Motion
+   ============================================ */
+
+/* Content elements start lowered and transparent; JS adds .is-in when they
+   scroll into view, and a per-element transition-delay (also set in JS)
+   staggers them within each section. */
+[data-enter] {
+    opacity: 0;
+    transform: translateY(var(--enter-rise));
+    transition:
+        opacity var(--enter-ms) var(--enter-ease),
+        transform var(--enter-ms) var(--enter-ease);
+    will-change: opacity, transform;
+}
+
+[data-enter].is-in {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+}
+
+/* Parallax images carry a little vertical headroom so they can drift within
+   their frame without ever revealing an edge. The headroom only applies
+   once JS confirms parallax is running (body.parallax-on); without JS, or
+   under reduced motion, images fill their frame exactly. */
+.parallax-on .image-1 img {
+    height: 112%;
+    will-change: transform;
+}
+
+/* The dock and widget settle in once, on load — chrome arrives after the
+   content it frames. The .chrome-in class is added by JS a beat after the
+   first paint; without JS they are simply visible. */
+.dock,
+.widget {
+    animation: chrome-enter var(--chrome-ms) var(--enter-ease) both;
+}
+
+@keyframes chrome-enter {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* The dock is horizontally centred by a transform, so its keyframe must
+   carry that translation through or it would jump to the left mid-animation. */
+.dock {
+    animation-name: dock-enter;
+}
+
+@keyframes dock-enter {
+    from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
 /* ============================================
