@@ -58,7 +58,7 @@ function startHelloAnimation() {
    Interface
    --------------------------------------------
    Everything below drives the chrome: theme, scroll progress, the project collapse,
-   back-to-top, and the flip-clock widget. All of it lives here rather than in index.html so behaviour
+   back-to-top, the flip-clock widget, and the entrance/parallax motion. All of it lives here rather than in index.html so behaviour
    has one home. The only exception is the theme bootstrap in the document
    head, which must run before first paint to avoid a flash.
    ============================================ */
@@ -574,6 +574,89 @@ function initializeProjectCollapse() {
 }
 
 /* --------------------------------------------
+   Motion — entrance choreography + image parallax
+
+   Content marked [data-enter] rises and fades as it scrolls into view,
+   staggered within each section. Banner images marked [data-parallax]
+   drift within their frame as they pass through the viewport. Both are
+   inert under prefers-reduced-motion — the CSS neutralises them and this
+   module skips its work.
+   -------------------------------------------- */
+
+const ENTER_STAGGER_MS = 90;   /* keep in step with --enter-stagger in the CSS */
+const PARALLAX_STRENGTH = 0.5; /* half — image drift tips into gimmick fastest */
+
+function prefersReducedMotionNow() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function initializeEntrance() {
+    const items = [...document.querySelectorAll('[data-enter]')];
+    if (!items.length) return;
+
+    // Reduced motion: reveal everything immediately, run nothing.
+    if (prefersReducedMotionNow() || !('IntersectionObserver' in window)) {
+        items.forEach(el => el.classList.add('is-in'));
+        return;
+    }
+
+    // Stagger within each section by DOM order, so a heading leads and its
+    // supporting lines follow.
+    document.querySelectorAll('.project, .hello, .works').forEach(section => {
+        section.querySelectorAll('[data-enter]').forEach((el, i) => {
+            el.style.transitionDelay = (i * ENTER_STAGGER_MS) + 'ms';
+        });
+    });
+
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-in');
+                io.unobserve(entry.target);   // reveal once, then stop watching
+            }
+        });
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+    items.forEach(el => io.observe(el));
+}
+
+function initializeParallax() {
+    if (prefersReducedMotionNow()) return;
+
+    const images = [...document.querySelectorAll('[data-parallax] img')];
+    if (!images.length) return;
+
+    document.body.classList.add('parallax-on');   // unlocks the CSS headroom
+    let ticking = false;
+
+    function drift() {
+        ticking = false;
+        const vh = window.innerHeight;
+
+        images.forEach(img => {
+            const frame = img.parentElement.getBoundingClientRect();
+            if (frame.bottom < 0 || frame.top > vh) return;   // off-screen: skip
+
+            // -1 with the frame low in the viewport, +1 with it high.
+            const progress = 1 - (frame.top + frame.height / 2) / (vh + frame.height) * 2;
+            const shift = progress * -4.5 * PARALLAX_STRENGTH; // percent of image height
+            img.style.transform = 'translateY(' + shift.toFixed(2) + '%)';
+        });
+    }
+
+    function queue() {
+        if (!ticking) {
+            ticking = true;
+            window.requestAnimationFrame(drift);
+        }
+    }
+
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', queue, { passive: true });
+    drift();
+}
+
+/* --------------------------------------------
    Back to top
    -------------------------------------------- */
 
@@ -601,6 +684,8 @@ function start() {
     initializeProjectCollapse();
     initializeScrollTop();
     initializeWidget();
+    initializeEntrance();
+    initializeParallax();
 }
 
 if (document.readyState === 'loading') {
