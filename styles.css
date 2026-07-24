@@ -751,14 +751,14 @@ body.projects-collapsed .image-3 {
     padding: var(--space-6) var(--space-0);
 }
 
+/* Trio screenshots show in full — never cropped. They share a height so the
+   row stays even, keep their own natural widths, and use contain so whatever
+   is placed here always appears exactly as designed. */
 .image-3 img {
-    width: min(
-        clamp(96px, 18%, 220px),
-        calc((100% - (var(--image-trio-gap) * 2)) / 3)
-    );
-    height: auto;
-    aspect-ratio: 160 / 330;
-    object-fit: cover;
+    width: auto;
+    height: clamp(180px, 42vw, 320px);
+    max-width: calc((100% - (var(--image-trio-gap) * 2)) / 3);
+    object-fit: contain;
     border-radius: var(--radius-sm);
 }
 
@@ -1026,14 +1026,13 @@ body.projects-collapsed .image-3 {
    their frame without ever revealing an edge. The headroom only applies
    once JS confirms parallax is running (body.parallax-on); without JS, or
    under reduced motion, images fill their frame exactly. */
-/* Parallax gives the image a little vertical headroom to slide through. The
-   image is 112% tall and centred (the -6% offset), so drift of a couple of
-   percent in either direction never reveals an edge. With the container
-   matched to the image ratio, width stays 100% — no horizontal crop. The JS
-   composes its translate on top of this centring offset via a CSS variable. */
+/* Parallax slack comes from a small uniform scale-up, not from extra height:
+   scaling keeps object-fit: cover filling exactly 100% width (no side crop),
+   while giving a few percent of vertical room for the image to drift within
+   the container's overflow. The JS writes --parallax-shift; the scale and the
+   drift compose in one transform. */
 .parallax-on .image-1 img {
-    height: 112%;
-    transform: translateY(calc(-6% + var(--parallax-shift, 0%)));
+    transform: scale(1.08) translateY(var(--parallax-shift, 0%));
     will-change: transform;
 }
 
