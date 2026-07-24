@@ -171,11 +171,9 @@
     --space-5: 20px;
     --space-6: 24px;
 
-    /* Corner radii. The large step is for image containers; the small step
-       is for screenshots nested inside them, so a phone sitting in a panel
-       keeps its own device-like corner rather than echoing the panel's. */
+    /* Corner radius for image containers. The device screenshot PNGs carry
+       their own corners, so no separate nested radius is needed. */
     --radius-lg: 32px;
-    --radius-sm: 14px;
 
     --space-fluid-md: clamp(18px, 3vw, 24px);
     --space-section: clamp(88px, 18vw, 168px);
@@ -722,8 +720,8 @@ body.projects-collapsed .image-3 {
 .image-box-a,
 .image-box-b {
     width: calc((100% - var(--space-fluid-md)) / 2);
-    /* Tall enough to seat a 1280 x 2642 phone screenshot with even margin. */
-    aspect-ratio: 290 / 470;
+    /* Portrait panel proportioned to seat a tall device with even margin. */
+    aspect-ratio: 3 / 4;
     background-color: var(--color-panel);
     display: flex;
     align-items: center;
@@ -734,25 +732,24 @@ body.projects-collapsed .image-3 {
 
 .image-box-a img,
 .image-box-b img {
-    /* The phone shows in full at its true 1280 x 2642 ratio, sized by width
-       so it keeps even side margins within the panel. */
-    width: 78%;
-    height: auto;
-    aspect-ratio: 1280 / 2642;
-    object-fit: contain;
-    border-radius: var(--radius-sm);
+    /* The screenshot is a transparent PNG of the device itself, so it needs
+       no ratio box, no object-fit and no radius — it simply sits on the
+       panel at a share of the panel height, keeping its own proportions. */
+    height: 86%;
+    width: auto;
+    max-width: 100%;
 }
 
 .image-3 {
     width: 100%;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     gap: var(--image-trio-gap);
     background-color: var(--color-panel);
     border-radius: var(--radius-lg);
-    /* Vertical padding seats the phones; horizontal padding holds them off
-       the panel edges. */
+    /* The tall device PNGs set the height; padding gives them room to breathe
+       and sits them off the panel edges. */
     padding: var(--space-6) var(--space-5);
 }
 
@@ -760,13 +757,11 @@ body.projects-collapsed .image-3 {
    row stays even, keep their own natural widths, and use contain so whatever
    is placed here always appears exactly as designed. */
 .image-3 img {
-    /* Three tall phones across the wide panel, each shown in full at its true
-       1280 x 2642 ratio and sharing one width so the row stays even. */
-    width: calc((100% - (var(--image-trio-gap) * 2)) / 3);
-    height: auto;
-    aspect-ratio: 1280 / 2642;
-    object-fit: contain;
-    border-radius: var(--radius-sm);
+    /* Transparent device PNGs sized by a shared height so the row of three
+       stays even; each keeps its own natural width. */
+    height: clamp(260px, 48vw, 380px);
+    width: auto;
+    max-width: calc((100% - (var(--image-trio-gap) * 2)) / 3);
 }
 
 /* ============================================
@@ -1085,18 +1080,21 @@ body.projects-collapsed .image-3 {
 
     .image-box-a img,
     .image-box-b img {
-        width: 82%;
+        height: 88%;
     }
 
     .image-3 {
         flex-direction: column;
+        align-items: center;
         padding: var(--space-6) var(--space-5);
     }
 
-    /* Three phones across a narrow screen would be too small to read, so
-       they stack, each at a comfortable share of the column width. */
+    /* Stacked on a narrow screen, the devices are sized by width and their
+       height clamp is lifted so they can grow to a comfortable size. */
     .image-3 img {
-        width: 62%;
+        width: 66%;
+        height: auto;
+        max-width: 66%;
     }
 }
 
