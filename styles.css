@@ -82,10 +82,12 @@
 :root {
     color-scheme: light;
 
-    /* The content column fills 50% of wide screens; on screens where 50vw
-       would be narrower than 600px it holds at 600px, which in practice
-       means full width inside the page padding on phones. */
-    --content-width: max(600px, 50vw);
+    /* A fixed editorial measure rather than a proportion of the screen: the
+       column stops growing once it has enough room, which is what keeps
+       line length comfortable on a large display. At 17px body copy this
+       runs to roughly 70 characters — the top of the readable range.
+       Phones fall back to full width inside the page padding. */
+    --content-width: 600px;
     --page-edge: 2rem;
 
     /* Distance from the screen edge for both floating glass objects. */
@@ -179,7 +181,10 @@
     --dock-height: 48px;
     --dock-bottom: calc(var(--edge-gap) + env(safe-area-inset-bottom, 0px));
     --dock-edge: clamp(24px, 6vw, 28px);
-    --dock-width: calc(100% - (var(--page-edge) * 2));
+    /* The dock tracks the content column, so the page reads as one
+       composition rather than narrow content beneath full-width chrome.
+       It falls back to the screen width, less its margins, on phones. */
+    --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
     --dock-action-size: 44px;
     --dock-action-gap: 8px;
     --dock-actions-inset: 5px;
@@ -563,11 +568,9 @@ body.projects-collapsed .image-3 {
     display: none;
 }
 
-/* Project briefs read like blog copy: constrained to an 80% measure on
-   desktop rather than running the full column (the 700px media query
-   returns them to full width on phones). */
+/* Briefs run the full column. The column itself is now the measure —
+   about 70 characters at 17px — so no extra cap is needed. */
 .project-description-text {
-    max-width: 80%;
     font-size: var(--font-size-md);
     line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
@@ -724,17 +727,10 @@ body.projects-collapsed .image-3 {
     :root {
         --page-edge: 1.4rem;
         --edge-gap: 20px;
-        --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
     }
 
     .image-2 {
         flex-direction: column;
-    }
-
-    /* On phones the brief takes the full column; a 70% measure of a
-       narrow screen is too cramped to read. */
-    .project-description-text {
-        max-width: 100%;
     }
 
     .image-box-a,
