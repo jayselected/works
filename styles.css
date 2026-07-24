@@ -121,44 +121,38 @@
     --letter-spacing-tight: -0.008em;
 
     /* --- Palette ------------------------------------
-       Two tones per theme, both derived from one ink:
+       Strict system. Two base colours per theme — ink and ground — and
+       every other surface is ink at a fixed alpha on one ladder, shared by
+       both themes so the two feel like one design:
 
-       ink    : content you read — hero, titles, briefs
-       muted  : information *about* content — subtitles, footer.
-                65% of the ink rather than a separate grey, so secondary
-                text stays in the same family. Clears WCAG AA in both
-                themes (5.3:1 light, 7.7:1 dark) at 13px.
-       panel  : image wells
-       bg     : the ground
+         0.02  faint fill      (stack/well backgrounds)
+         0.08  hairline        (borders, flap edges, rim)
+         0.14  divider         (the flap seam)
+         0.50  secondary text  (dark theme)
+         0.62  secondary text  (light theme — a light ground needs more)
+         full  primary text    (ink)
 
-       Neither theme uses absolute values. Pure #000 on #FFF is the
-       harshest pairing available; stepping back from both, and warming
-       each by a shade, is what separates delicate from stark. The warmth
-       is well under the threshold anyone would call cream.
+       The single accent, #007AFF, appears only on the progress bar. No
+       other hues, no one-off greys. Every text pairing clears WCAG AA.
     -------------------------------------------------- */
     --color-bg: #FCFBF9;
     --color-ink: #1C1A17;
-    /* One grey for all secondary text — subtitles, footer, meta. Mirrors the
-       dark theme's white-at-50% as black-at-62%: the extra weight is needed
-       because a light ground is less forgiving, and 62% clears WCAG AA
-       (6.2:1) where a straight 50% would fail. */
-    --color-muted: rgba(0, 0, 0, 0.62);
+    --color-ink-rgb: 28, 26, 23;   /* ink as channels, for alpha steps below */
+
+    --color-muted: rgba(var(--color-ink-rgb), 0.62);   /* secondary text */
     --color-subtitle: var(--color-muted);
-    /* Stack/well background — black at 1%, a barely-there lift off the
-       ground, matching the dark theme's white-at-1%. */
-    --color-panel: rgba(0, 0, 0, 0.02);
+    --color-panel: rgba(var(--color-ink-rgb), 0.02);   /* stack / well fill */
+    --color-line: rgba(var(--color-ink-rgb), 0.08);    /* hairline */
+    --color-divider: rgba(var(--color-ink-rgb), 0.14); /* stronger divider */
 
-    /* The flap face sits a shade proud of the glass body, the way a real
-       split-flap card catches light against its case. */
+    --color-accent: #007AFF;
+
+    /* Flap surfaces derive from the same ladder. The face is a hair lighter
+       than the glass body, the way a real split-flap card catches light. */
     --flap-face: rgba(255, 255, 255, 0.55);
-    --flap-seam: rgba(28, 26, 23, 0.14);
-    --flap-edge: rgba(28, 26, 23, 0.06);
+    --flap-seam: var(--color-divider);
+    --flap-edge: var(--color-line);
 
-    /* A whisper of depth under image wells — two layers, both under 5%.
-       Paired with a 2px lift on hover so the page answers the cursor. */
-    --image-shadow:
-        0 1px 2px rgba(28, 26, 23, 0.03),
-        0 12px 32px rgba(28, 26, 23, 0.05);
     --ease-soft: 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
 
     /* Layout rhythm. Only the steps actually in use are declared; one-off
@@ -253,46 +247,44 @@
        and bloom), --glass-rim (edge light).
        Used by the dock, the one piece of chrome that floats over content.
     -------------------------------------------------- */
-    --glass-bg: rgba(252, 251, 249, 0.7);
+    --glass-bg: rgba(252, 251, 249, 0.7);   /* = ground, so the dock bleeds */
     --glass-backdrop: blur(18px) saturate(180%) brightness(1.04);
-    --glass-border: rgba(28, 26, 23, 0.05);
+    --glass-border: var(--color-line);
     --glass-rim: rgba(255, 255, 255, 0.65);
-    --glass-shadow-ambient: rgba(28, 26, 23, 0.04);
-    --glass-shadow-contact: rgba(28, 26, 23, 0.03);
+    --glass-shadow: rgba(var(--color-ink-rgb), 0.05);
 }
 
 [data-theme="dark"] {
     color-scheme: dark;
 
-    /* Dark mode is a true neutral: pure black ground, near-white ink. The
-       warm cast used in light mode is dropped here — on a dark screen it
-       read as brown rather than warm. */
+    /* Same ladder as light, inverted: ink is near-white, ground is the one
+       fixed value you set (#0D1114). Secondary text sits at 0.50 here — a
+       dark ground carries a lighter tint better than a light ground carries
+       a dark one, which is why light uses 0.62 and dark uses 0.50. */
     --color-bg: #0D1114;
     --color-ink: #F7F7F7;
-    /* One grey for all secondary text — white at 50% (5.3:1 on this ground). */
-    --color-muted: rgba(255, 255, 255, 0.50);
+    --color-ink-rgb: 247, 247, 247;
+
+    --color-muted: rgba(var(--color-ink-rgb), 0.50);
     --color-subtitle: var(--color-muted);
-    /* Stack/well background — white at 1%, a barely-there lift. */
-    --color-panel: rgba(255, 255, 255, 0.02);
+    --color-panel: rgba(var(--color-ink-rgb), 0.02);
+    --color-line: rgba(var(--color-ink-rgb), 0.08);
+    --color-divider: rgba(var(--color-ink-rgb), 0.14);
 
-    --flap-face: rgba(255, 255, 255, 0.06);
-    --flap-seam: rgba(0, 0, 0, 0.45);
-    --flap-edge: rgba(255, 255, 255, 0.06);
+    /* Accent holds across themes — it is the one fixed hue. */
+    --color-accent: #007AFF;
 
-    /* Shadows barely register on a dark ground, so depth comes from the
-       panel's lift in value instead; what remains is a contact shadow to
-       seat the image rather than float it. */
-    --image-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --flap-face: rgba(var(--color-ink-rgb), 0.06);
+    --flap-seam: var(--color-divider);
+    --flap-edge: var(--color-line);
 
-    /* Dark chrome: identical bleed logic — the fill is rgb(20,18,16),
-       exactly --color-bg, so over empty page it disappears
-       just as the light fill does. The brightness lift stays gentle. */
-    --glass-bg: rgba(13, 17, 20, 0.6);
+    /* Dark chrome: the fill equals --color-bg, so over empty page the dock
+       disappears into the ground and only frosts what scrolls beneath. */
+    --glass-bg: rgba(13, 17, 20, 0.6);      /* = ground, so the dock bleeds */
     --glass-backdrop: blur(18px) saturate(180%) brightness(1.08);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-border: var(--color-line);
     --glass-rim: rgba(255, 255, 255, 0.12);
-    --glass-shadow-ambient: rgba(0, 0, 0, 0.28);
-    --glass-shadow-contact: rgba(0, 0, 0, 0.18);
+    --glass-shadow: rgba(0, 0, 0, 0.28);
 }
 
 html {
@@ -376,8 +368,7 @@ body {
     border: 1px solid var(--glass-border);
     box-shadow:
         inset 0 1px 0 var(--glass-rim),
-        0 1px 2px var(--glass-shadow-contact),
-        0 6px 20px var(--glass-shadow-ambient);
+        0 6px 20px var(--glass-shadow);
     opacity: 0;
     transform: translate(-50%, 4px);
     pointer-events: none;
@@ -401,21 +392,20 @@ body {
     width: 100%;
     height: var(--dock-progress-height);
     border-radius: 999px;
-    background-color: rgba(0, 0, 0, 0.12);
+    background-color: var(--color-divider);
     overflow: hidden;
 }
 
 [data-theme="dark"] .dock-progress {
-    background-color: rgba(255, 255, 255, 0.22);
+    background-color: var(--color-divider);
 }
 
-/* The #007AFF fill scales horizontally with reading progress (driven by JS
-   via a transform, which animates cheaply) and stays #007AFF in both
-   themes. */
+/* The accent fill scales horizontally with reading progress (driven by JS
+   via a transform, which animates cheaply); the one hue on the site. */
 .dock-progress-fill {
     width: 100%;
     height: 100%;
-    background-color: #007AFF;
+    background-color: var(--color-accent);
     transform: scaleX(0);
     transform-origin: left;
     will-change: transform;
@@ -431,8 +421,7 @@ body {
     border: 1px solid var(--glass-border);
     box-shadow:
         inset 0 1px 0 var(--glass-rim),
-        0 1px 2px var(--glass-shadow-contact),
-        0 6px 20px var(--glass-shadow-ambient);
+        0 6px 20px var(--glass-shadow);
     color: var(--color-ink);
     transition:
         color 0.2s ease,
@@ -689,10 +678,8 @@ body.projects-collapsed .stack-trio {
 .stack {
     width: 100%;
     background-color: var(--color-panel);
-    box-shadow: var(--image-shadow);
     transition:
         transform var(--ease-soft),
-        box-shadow var(--ease-soft),
         background-color 0.2s ease;
 }
 
@@ -798,8 +785,7 @@ body.projects-collapsed .stack-trio {
     border: 1px solid var(--glass-border);
     box-shadow:
         inset 0 1px 0 var(--glass-rim),
-        0 1px 2px var(--glass-shadow-contact),
-        0 6px 20px var(--glass-shadow-ambient);
+        0 6px 20px var(--glass-shadow);
     user-select: none;
     -webkit-user-select: none;
     transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
@@ -980,15 +966,13 @@ body.projects-collapsed .stack-trio {
    so it overrides both palettes at equal specificity. */
 @media (prefers-reduced-transparency: reduce) {
     [data-theme="light"] {
-        --glass-bg: #F4F4F6;
+        --glass-bg: #F1F0EE;   /* opaque near-ground for a solid chrome */
         --glass-backdrop: none;
-        --glass-rim: rgba(255, 255, 255, 0.9);
     }
 
     [data-theme="dark"] {
-        --glass-bg: #1A1A1C;
+        --glass-bg: #16191C;   /* opaque near-ground */
         --glass-backdrop: none;
-        --glass-rim: rgba(255, 255, 255, 0.1);
     }
 }
 
