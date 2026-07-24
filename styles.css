@@ -153,7 +153,7 @@
     /* The flap face sits a shade proud of the glass body, the way a real
        split-flap card catches light against its case. */
     --flap-face: rgba(255, 255, 255, 0.55);
-    --flap-seam: #D60017;
+    --flap-seam: rgba(28, 26, 23, 0.14);
     --flap-edge: rgba(28, 26, 23, 0.06);
 
     /* A whisper of depth under image wells — two layers, both under 5%.
@@ -284,7 +284,7 @@
     --color-panel: rgba(156, 163, 175, 0.12);
 
     --flap-face: rgba(255, 255, 255, 0.06);
-    --flap-seam: #D60017;
+    --flap-seam: rgba(0, 0, 0, 0.45);
     --flap-edge: rgba(255, 255, 255, 0.06);
 
     /* Shadows barely register on a dark ground, so depth comes from the
@@ -701,7 +701,9 @@ body.projects-collapsed .image-3 {
 
 .image-1 {
     width: 100%;
-    aspect-ratio: 648 / 398;
+    /* Matches the source image's ratio (1200 x 700) so object-fit: cover has
+       nothing to crop horizontally. Change this if the banner image changes. */
+    aspect-ratio: 1200 / 700;
     border-radius: var(--radius-lg);
     overflow: hidden;
 }
@@ -971,7 +973,6 @@ body.projects-collapsed .image-3 {
 
     .parallax-on .image-1 img {
         height: 100% !important;
-        top: 0 !important;
         transform: none !important;
     }
 
@@ -1025,17 +1026,14 @@ body.projects-collapsed .image-3 {
    their frame without ever revealing an edge. The headroom only applies
    once JS confirms parallax is running (body.parallax-on); without JS, or
    under reduced motion, images fill their frame exactly. */
-.parallax-on .image-1 {
-    /* Parallax needs vertical slack to slide the image through. The image
-       keeps its natural cover fit; the extra height lives here as headroom,
-       and the image is nudged up to centre it, so no side-cropping occurs. */
-    --parallax-headroom: 12%;
-}
-
+/* Parallax gives the image a little vertical headroom to slide through. The
+   image is 112% tall and centred (the -6% offset), so drift of a couple of
+   percent in either direction never reveals an edge. With the container
+   matched to the image ratio, width stays 100% — no horizontal crop. The JS
+   composes its translate on top of this centring offset via a CSS variable. */
 .parallax-on .image-1 img {
-    height: calc(100% + var(--parallax-headroom));
-    top: calc(var(--parallax-headroom) / -2);
-    position: relative;
+    height: 112%;
+    transform: translateY(calc(-6% + var(--parallax-shift, 0%)));
     will-change: transform;
 }
 
