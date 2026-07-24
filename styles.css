@@ -145,12 +145,15 @@
        would fail WCAG AA, while #6B7280 clears it at 4.67:1 and reads as
        the same colour idea. */
     --color-subtitle: #6B7280;
-    --color-panel: #F4F2ED;
+    /* Image wells: a neutral grey at low opacity so they sit quietly on the
+       ground rather than reading as a dirty off-white. Derived from the
+       same #9CA3AF the subtitles use, kept faint. */
+    --color-panel: rgba(156, 163, 175, 0.14);
 
     /* The flap face sits a shade proud of the glass body, the way a real
        split-flap card catches light against its case. */
     --flap-face: rgba(255, 255, 255, 0.55);
-    --flap-seam: rgba(28, 26, 23, 0.14);
+    --flap-seam: #D60017;
     --flap-edge: rgba(28, 26, 23, 0.06);
 
     /* A whisper of depth under image wells — two layers, both under 5%.
@@ -271,16 +274,17 @@
 [data-theme="dark"] {
     color-scheme: dark;
 
-    /* The same two-tone logic inverted, and warmed by the same shade so
-       the themes read as one family rather than as opposites. */
-    --color-bg: #141210;
-    --color-ink: #F7F5F1;
-    --color-muted: #F7F5F1A6;
+    /* Dark mode is a true neutral: pure black ground, near-white ink. The
+       warm cast used in light mode is dropped here — on a dark screen it
+       read as brown rather than warm. */
+    --color-bg: #000000;
+    --color-ink: #F7F7F7;
+    --color-muted: #F7F7F7A6;
     --color-subtitle: #9CA3AF; /* 7.36:1 on this ground */
-    --color-panel: #1E1B18;
+    --color-panel: rgba(156, 163, 175, 0.12);
 
     --flap-face: rgba(255, 255, 255, 0.06);
-    --flap-seam: rgba(0, 0, 0, 0.45);
+    --flap-seam: #D60017;
     --flap-edge: rgba(255, 255, 255, 0.06);
 
     /* Shadows barely register on a dark ground, so depth comes from the
@@ -289,10 +293,9 @@
     --image-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 
     /* Dark chrome: identical bleed logic — the fill is rgb(20,18,16),
-       exactly --color-bg, so over empty page it disappears just as the
-       light fill does. The brightness lift stays gentle; pushed hard it
-       re-reveals the capsule against the near-black page. */
-    --glass-bg: rgba(20, 18, 16, 0.6);
+       exactly --color-bg (pure black), so over empty page it disappears
+       just as the light fill does. The brightness lift stays gentle. */
+    --glass-bg: rgba(0, 0, 0, 0.6);
     --glass-backdrop: blur(18px) saturate(180%) brightness(1.08);
     --glass-border: rgba(255, 255, 255, 0.08);
     --glass-rim: rgba(255, 255, 255, 0.12);
@@ -968,6 +971,7 @@ body.projects-collapsed .image-3 {
 
     .parallax-on .image-1 img {
         height: 100% !important;
+        top: 0 !important;
         transform: none !important;
     }
 
@@ -1021,8 +1025,17 @@ body.projects-collapsed .image-3 {
    their frame without ever revealing an edge. The headroom only applies
    once JS confirms parallax is running (body.parallax-on); without JS, or
    under reduced motion, images fill their frame exactly. */
+.parallax-on .image-1 {
+    /* Parallax needs vertical slack to slide the image through. The image
+       keeps its natural cover fit; the extra height lives here as headroom,
+       and the image is nudged up to centre it, so no side-cropping occurs. */
+    --parallax-headroom: 12%;
+}
+
 .parallax-on .image-1 img {
-    height: 112%;
+    height: calc(100% + var(--parallax-headroom));
+    top: calc(var(--parallax-headroom) / -2);
+    position: relative;
     will-change: transform;
 }
 
