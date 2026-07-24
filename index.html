@@ -89,38 +89,28 @@
                     </div>
 
                     <div class="project-images">
-                        <!-- Full-width banner: a single landscape image that
-                             fills the column edge to edge. -->
-                        <div class="media media-banner" data-enter>
-                            <img class="media-fill" loading="lazy" decoding="async" src="https://framerusercontent.com/images/HyNx4h88GowWDEBafQKrWsFKOdA.png" alt="Cine Asia banner">
+                        <!-- Banner: single image filling the column. -->
+                        <div class="stack stack-banner" data-enter>
+                            <img loading="lazy" decoding="async" src="https://framerusercontent.com/images/HyNx4h88GowWDEBafQKrWsFKOdA.png" alt="Cine Asia banner">
                         </div>
 
-                        <!-- Two square containers side by side, one device each. -->
-                        <div class="media-split" data-enter>
-                            <div class="media media-square">
-                                <div class="media-cell media-cell-phone">
-                                    <img class="media-fill" loading="lazy" decoding="async" src="images/cineasia/cineasia-1.png" alt="Cine Asia home screen">
-                                </div>
+                        <!-- Child Stack 1: two square containers side by side,
+                             one phone in each at 40% of the square's width. -->
+                        <div class="stack-row" data-enter>
+                            <div class="stack stack-square">
+                                <img class="phone" loading="lazy" decoding="async" src="images/cineasia/cineasia-1.png" alt="Cine Asia home screen">
                             </div>
-                            <div class="media media-square">
-                                <div class="media-cell media-cell-phone">
-                                    <img class="media-fill" loading="lazy" decoding="async" src="images/cineasia/cineasia-2.png" alt="Cine Asia browsing films">
-                                </div>
+                            <div class="stack stack-square">
+                                <img class="phone" loading="lazy" decoding="async" src="images/cineasia/cineasia-2.png" alt="Cine Asia browsing films">
                             </div>
                         </div>
 
-                        <!-- One full-width container holding three devices that
-                             spread evenly across it. -->
-                        <div class="media" data-enter>
-                            <div class="media-cell media-cell-phone">
-                                <img class="media-fill" loading="lazy" decoding="async" src="images/cineasia/cineasia-3.png" alt="Cine Asia browsing articles">
-                            </div>
-                            <div class="media-cell media-cell-phone">
-                                <img class="media-fill" loading="lazy" decoding="async" src="images/cineasia/cineasia-4.png" alt="Cine Asia article page">
-                            </div>
-                            <div class="media-cell media-cell-phone">
-                                <img class="media-fill" loading="lazy" decoding="async" src="images/cineasia/cineasia-5.png" alt="Cine Asia film screen">
-                            </div>
+                        <!-- Child Stack 2: one full-width container, three phones
+                             at 20% width each. -->
+                        <div class="stack stack-trio" data-enter>
+                            <img class="phone" loading="lazy" decoding="async" src="images/cineasia/cineasia-3.png" alt="Cine Asia browsing articles">
+                            <img class="phone" loading="lazy" decoding="async" src="images/cineasia/cineasia-4.png" alt="Cine Asia article page">
+                            <img class="phone" loading="lazy" decoding="async" src="images/cineasia/cineasia-5.png" alt="Cine Asia film screen">
                         </div>
                     </div>
                 </article>
