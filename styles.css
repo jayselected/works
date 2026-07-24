@@ -138,17 +138,15 @@
     -------------------------------------------------- */
     --color-bg: #FCFBF9;
     --color-ink: #1C1A17;
-    --color-muted: #1C1A17A6;
-    /* Project subtitles sit on their own cool grey, a step apart from the
-       warm muted tone used elsewhere. Light mode uses the darker step of
-       the same family: #9CA3AF measures only 2.45:1 on this ground and
-       would fail WCAG AA, while #6B7280 clears it at 4.67:1 and reads as
-       the same colour idea. */
-    --color-subtitle: #6B7280;
-    /* Image wells: a neutral grey at low opacity so they sit quietly on the
-       ground rather than reading as a dirty off-white. Derived from the
-       same #9CA3AF the subtitles use, kept faint. */
-    --color-panel: rgba(156, 163, 175, 0.14);
+    /* One grey for all secondary text — subtitles, footer, meta. Mirrors the
+       dark theme's white-at-50% as black-at-62%: the extra weight is needed
+       because a light ground is less forgiving, and 62% clears WCAG AA
+       (6.2:1) where a straight 50% would fail. */
+    --color-muted: rgba(0, 0, 0, 0.62);
+    --color-subtitle: var(--color-muted);
+    /* Stack/well background — black at 1%, a barely-there lift off the
+       ground, matching the dark theme's white-at-1%. */
+    --color-panel: rgba(0, 0, 0, 0.02);
 
     /* The flap face sits a shade proud of the glass body, the way a real
        split-flap card catches light against its case. */
@@ -170,9 +168,6 @@
     --space-2: 8px;
     --space-6: 24px;
 
-    /* Corner radius for image containers. The device screenshot PNGs carry
-       their own corners, so no separate nested radius is needed. */
-    --radius-lg: 32px;
 
     --space-fluid-md: clamp(18px, 3vw, 24px);
     --space-section: clamp(88px, 18vw, 168px);
@@ -272,11 +267,13 @@
     /* Dark mode is a true neutral: pure black ground, near-white ink. The
        warm cast used in light mode is dropped here — on a dark screen it
        read as brown rather than warm. */
-    --color-bg: #000000;
+    --color-bg: #0D1114;
     --color-ink: #F7F7F7;
-    --color-muted: #F7F7F7A6;
-    --color-subtitle: #9CA3AF; /* 7.36:1 on this ground */
-    --color-panel: rgba(156, 163, 175, 0.12);
+    /* One grey for all secondary text — white at 50% (5.3:1 on this ground). */
+    --color-muted: rgba(255, 255, 255, 0.50);
+    --color-subtitle: var(--color-muted);
+    /* Stack/well background — white at 1%, a barely-there lift. */
+    --color-panel: rgba(255, 255, 255, 0.02);
 
     --flap-face: rgba(255, 255, 255, 0.06);
     --flap-seam: rgba(0, 0, 0, 0.45);
@@ -288,9 +285,9 @@
     --image-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 
     /* Dark chrome: identical bleed logic — the fill is rgb(20,18,16),
-       exactly --color-bg (pure black), so over empty page it disappears
+       exactly --color-bg, so over empty page it disappears
        just as the light fill does. The brightness lift stays gentle. */
-    --glass-bg: rgba(0, 0, 0, 0.6);
+    --glass-bg: rgba(13, 17, 20, 0.6);
     --glass-backdrop: blur(18px) saturate(180%) brightness(1.08);
     --glass-border: rgba(255, 255, 255, 0.08);
     --glass-rim: rgba(255, 255, 255, 0.12);
@@ -692,7 +689,6 @@ body.projects-collapsed .stack-trio {
 .stack {
     width: 100%;
     background-color: var(--color-panel);
-    border-radius: var(--radius-lg);
     box-shadow: var(--image-shadow);
     transition:
         transform var(--ease-soft),
@@ -709,7 +705,6 @@ body.projects-collapsed .stack-trio {
 .phone {
     height: auto;
     display: block;
-    border-radius: inherit;
 }
 
 /* ---- Banner: a single image filling the column, no padding ---- */
