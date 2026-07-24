@@ -44,6 +44,26 @@
 </head>
 <body>
 
+    <!-- Widget: flip clock, date and local conditions. Fixed top-left,
+         mirroring the dock's edge gap at the opposite corner. -->
+    <div class="widget" role="group" aria-label="Local time and weather">
+        <p class="widget-date" id="widget-date"></p>
+
+        <div class="widget-clock" aria-hidden="true">
+            <div class="widget-pair" id="widget-hours"></div>
+            <div class="widget-colon"><i></i><i></i></div>
+            <div class="widget-pair" id="widget-minutes"></div>
+        </div>
+        <!-- The flaps are decorative duplicates of this line, which is what
+             screen readers announce. -->
+        <p class="visually-hidden" id="widget-time"></p>
+
+        <p class="widget-conditions">
+            <span id="widget-place"></span>
+            <span class="widget-temp" id="widget-temp"></span>
+        </p>
+    </div>
+
     <div class="container">
         <main class="main">
 
