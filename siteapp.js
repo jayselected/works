@@ -617,13 +617,15 @@ function initializeEntrance() {
         });
     }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
 
-    // Anything already in view on load (the hero and first project) fades in
-    // straight away, keeping its stagger; anything still below the fold waits
-    // for the observer, so each later project reveals as it is scrolled to.
+    // Anything on screen at load (hero and first project, including its
+    // description) fades in straight away, keeping its stagger; anything
+    // fully below the fold waits for the observer, so each later project
+    // reveals as it is scrolled to. The threshold is the full viewport
+    // height, so nothing sitting near the fold slips through both checks.
     const viewportBottom = window.innerHeight;
     items.forEach(el => {
         const box = el.getBoundingClientRect();
-        const inViewOnLoad = box.top < viewportBottom * 0.92 && box.bottom > 0;
+        const inViewOnLoad = box.top < viewportBottom && box.bottom > 0;
         if (inViewOnLoad) {
             el.classList.add('is-in');
         } else {
@@ -652,7 +654,9 @@ function initializeParallax() {
             // -1 with the frame low in the viewport, +1 with it high.
             const progress = 1 - (frame.top + frame.height / 2) / (vh + frame.height) * 2;
             const shift = progress * -4.5 * PARALLAX_STRENGTH; // percent of image height
-            img.style.transform = 'translateY(' + shift.toFixed(2) + '%)';
+            // Written as a variable so it composes with the CSS centring
+            // offset rather than replacing the whole transform.
+            img.style.setProperty('--parallax-shift', shift.toFixed(2) + '%');
         });
     }
 
