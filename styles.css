@@ -141,6 +141,12 @@
     --space-5: 20px;
     --space-6: 24px;
 
+    /* Corner radii. The large step is for image containers; the small step
+       is for screenshots nested inside them, so a phone sitting in a panel
+       keeps its own device-like corner rather than echoing the panel's. */
+    --radius-lg: 32px;
+    --radius-sm: 14px;
+
     --space-fluid-md: clamp(18px, 3vw, 24px);
     --space-section: clamp(64px, 15vw, 120px);
     /* Space above the hero. Tuned separately from --space-section: with no
@@ -562,6 +568,7 @@ body.projects-collapsed .image-3 {
 .image-1 {
     width: 100%;
     aspect-ratio: 648 / 398;
+    border-radius: var(--radius-lg);
     overflow: hidden;
 }
 
@@ -586,6 +593,7 @@ body.projects-collapsed .image-3 {
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: var(--radius-lg);
     overflow: hidden;
 }
 
@@ -593,6 +601,7 @@ body.projects-collapsed .image-3 {
 .image-box-b img {
     height: 83%; /* scales with the panel at any column width */
     width: auto;
+    border-radius: var(--radius-sm);
 }
 
 .image-3 {
@@ -602,6 +611,7 @@ body.projects-collapsed .image-3 {
     justify-content: center;
     gap: var(--image-trio-gap);
     background-color: var(--color-panel);
+    border-radius: var(--radius-lg);
     padding: var(--space-6) var(--space-0);
 }
 
@@ -613,6 +623,7 @@ body.projects-collapsed .image-3 {
     height: auto;
     aspect-ratio: 160 / 330;
     object-fit: cover;
+    border-radius: var(--radius-sm);
 }
 
 /* ============================================
