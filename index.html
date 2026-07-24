@@ -1,1114 +1,184 @@
-/* ============================================
-   Fonts
-   ============================================ */
-
-/* CursorGothic is the primary face (400 + 700, with italics). Glyphs it
-   doesn't cover — the non-Latin scripts in the Hello animation — fall
-   through per-character to the SF Pro / system stack declared below. */
-@font-face {
-    font-family: 'CursorGothic';
-    src: url('fonts/CursorGothic/CursorGothic-Regular.woff2') format('woff2');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'CursorGothic';
-    src: url('fonts/CursorGothic/CursorGothic-Italic.woff2') format('woff2');
-    font-weight: 400;
-    font-style: italic;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'CursorGothic';
-    src: url('fonts/CursorGothic/CursorGothic-Bold.woff2') format('woff2');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'CursorGothic';
-    src: url('fonts/CursorGothic/CursorGothic-BoldItalic.woff2') format('woff2');
-    font-weight: 700;
-    font-style: italic;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Text';
-    src: url('fonts/SF Pro Text/SF Pro Text Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Text';
-    src: url('fonts/SF Pro Text/SF Pro Text Medium.woff') format('woff');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Text';
-    src: url('fonts/SF Pro Text/SF Pro Text Bold.woff') format('woff');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Text';
-    src: url('fonts/SF Pro Text/SF Pro Text Light.woff') format('woff');
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap;
-}
-
-/* ============================================
-   Foundation
-   ============================================ */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-    color-scheme: light;
-
-    /* A fixed editorial measure rather than a proportion of the screen: the
-       column stops growing once it has enough room, which is what keeps
-       line length comfortable on a large display. At 17px body copy this
-       runs to roughly 70 characters — the top of the readable range.
-       Phones fall back to full width inside the page padding. */
-    --content-width: 600px;
-    --page-edge: 2rem;
-
-    /* Distance from the screen edge for both floating glass objects. */
-    --edge-gap: 24px;
-
-    /* --- Type scale ---------------------------------
-       Every step is fluid between its phone and desktop size, so the
-       hierarchy keeps its proportions at any width with no breakpoint
-       jumps:
-       display : keynote lockup — hello, name, subtext (36px -> 56px)
-       lg      : project titles                                 (20px)
-       md      : body copy                                      (16px)
-       sm      : project subtitles and footer          (12px -> 13px)
-
-       The display step is deliberately large while staying at weight 400:
-       large and light reads delicate, small and light reads timid.
-    -------------------------------------------------- */
-    --font-size-display: clamp(2.25rem, 1.5rem + 3vw, 3.5rem);
-    --font-size-lg: 1.25rem;
-    --font-size-md: 1rem;
-    --font-size-sm: clamp(0.75rem, 0.7rem + 0.2vw, 0.8125rem);
-
-    --line-height-display: 1.08;
-    --line-height-lg: 1.3;
-    /* Air between lines is the strongest calm signal in typography. */
-    --line-height-md: 1.75;
-    --line-height-sm: 1.5;
-
-    /* Tracking is eased off: delicate is not cramped. */
-    --letter-spacing-display: -0.03em;
-    --letter-spacing-tight: -0.008em;
-
-    /* --- Palette ------------------------------------
-       Two tones per theme, both derived from one ink:
-
-       ink    : content you read — hero, titles, briefs
-       muted  : information *about* content — subtitles, footer.
-                65% of the ink rather than a separate grey, so secondary
-                text stays in the same family. Clears WCAG AA in both
-                themes (5.3:1 light, 7.7:1 dark) at 13px.
-       panel  : image wells
-       bg     : the ground
-
-       Neither theme uses absolute values. Pure #000 on #FFF is the
-       harshest pairing available; stepping back from both, and warming
-       each by a shade, is what separates delicate from stark. The warmth
-       is well under the threshold anyone would call cream.
-    -------------------------------------------------- */
-    --color-bg: #FCFBF9;
-    --color-ink: #1C1A17;
-    --color-muted: #1C1A17A6;
-    /* Project subtitles sit on their own cool grey, a step apart from the
-       warm muted tone used elsewhere. Light mode uses the darker step of
-       the same family: #9CA3AF measures only 2.45:1 on this ground and
-       would fail WCAG AA, while #6B7280 clears it at 4.67:1 and reads as
-       the same colour idea. */
-    --color-subtitle: #6B7280;
-    --color-panel: #F4F2ED;
-
-    /* The flap face sits a shade proud of the glass body, the way a real
-       split-flap card catches light against its case. */
-    --flap-face: rgba(255, 255, 255, 0.55);
-    --flap-seam: rgba(28, 26, 23, 0.14);
-    --flap-edge: rgba(28, 26, 23, 0.06);
-
-    /* A whisper of depth under image wells — two layers, both under 5%.
-       Paired with a 2px lift on hover so the page answers the cursor. */
-    --image-shadow:
-        0 1px 2px rgba(28, 26, 23, 0.03),
-        0 12px 32px rgba(28, 26, 23, 0.05);
-    --ease-soft: 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
-
-    /* Layout rhythm. Only the steps actually in use are declared; one-off
-       optical values live on the rule that needs them rather than
-       widening this scale. */
-    --space-0: 0;
-    --space-2: 8px;
-    --space-5: 20px;
-    --space-6: 24px;
-
-    /* Corner radii. The large step is for image containers; the small step
-       is for screenshots nested inside them, so a phone sitting in a panel
-       keeps its own device-like corner rather than echoing the panel's. */
-    --radius-lg: 32px;
-    --radius-sm: 14px;
-
-    --space-fluid-md: clamp(18px, 3vw, 24px);
-    --space-section: clamp(88px, 18vw, 168px);
-    /* Space above the hero. Tuned separately from --space-section: with no
-       header above it, this is the first thing on the page, and it wants
-       less room than the gaps between sections. */
-    --space-page-top: clamp(72px, 12vw, 148px);
-
-    /* --- Motion -------------------------------------
-       Content elements rise and fade as they enter the viewport; the dock
-       and widget settle in on load once the content has begun. Distances
-       are short and easing is soft on purpose — restraint is what keeps
-       motion reading as delicate rather than busy. All of it collapses to
-       nothing under prefers-reduced-motion (see that media query).
-       Parallax strength is held at 50%: image drift tips into gimmick
-       faster than any other effect, so it stays subtle.
-    -------------------------------------------------- */
-    --enter-rise: 24px;
-    --enter-ms: 900ms;
-    --enter-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-    --chrome-ms: 800ms;
-    /* The 90ms stagger between elements is applied per-element as an inline
-       transition-delay in siteapp.js (ENTER_STAGGER_MS), since it depends on
-       DOM order — it has no standalone token here. */
-
-    --image-trio-gap: clamp(12px, 4vw, 32px);
-
-    /* --- Widget metrics -----------------------------
-       A Twemco-style flip clock, fixed at the top-left and sharing the
-       dock's edge gap so the two bracket the page at opposite corners.
-       --widget-height is measured and published by siteapp.js; the value
-       here is only a fallback for the first paint. The clearance it feeds
-       applies below 1000px, where the content column grows wide enough to
-       run underneath the widget; above that the widget sits clear in the
-       left margin and the page needs no extra room.
-    -------------------------------------------------- */
-    --widget-height: 118px;
-    --widget-clearance: calc(var(--edge-gap) + var(--widget-height) + var(--space-6));
-    --flap-width: 30px;
-    --flap-height: 42px;
-    --flap-size: 27px;
-    --flip-ms: 320ms;
-
-    /* --- Dock metrics -------------------------------
-       Measured from the iOS 26 Safari bottom bar on an iPhone 12 Pro Max:
-       48pt circle/capsule height, 44pt tap targets with an 8pt gap and a
-       5pt capsule inset (giving the wide-set icon rhythm), 22pt glyphs.
-       CSS px map 1:1 to iOS pt, and the same metrics are kept on desktop —
-       iOS controls don't grow with the screen.
-    -------------------------------------------------- */
-    --dock-height: 48px;
-    --dock-bottom: calc(var(--edge-gap) + env(safe-area-inset-bottom, 0px));
-    --dock-edge: clamp(24px, 6vw, 28px);
-    --dock-width: calc(100% - (var(--page-edge) * 2));
-    --dock-action-size: 44px;
-    --dock-action-gap: 8px;
-    --dock-actions-inset: 5px;
-    --dock-icon-size: 22px;
-    --dock-progress-height: 5px;
-    --dock-progress-gap: 10px;
-    /* Page padding below the dock, including the progress bar stacked above
-       the actions capsule. */
-    --dock-clearance: calc(
-        var(--dock-height) +
-        var(--dock-progress-height) +
-        var(--dock-progress-gap) +
-        var(--dock-bottom) +
-        var(--space-6)
-    );
-
-    /* Liquid-glass recipe: a milky translucent body over a strong
-       backdrop blur, a bright specular inset along the top edge, a faint
-       dark inset along the bottom, and soft layered drop shadows. */
-    /* --- Chrome material ----------------------------
-       The fill IS the page colour, held at partial opacity. Over empty
-       page the control all but disappears — it bleeds into the viewport,
-       traced only by a hairline; over an image it blooms into visible
-       frost as the backdrop filter diffuses what passes beneath. Same
-       behaviour Safari's white address pill has on its white toolbar.
-       The rim (--glass-rim) is a single lit line along the top inside
-       edge — the one specular cue real glass has. It is invisible over
-       plain page and catches the light as content passes beneath, which
-       is what makes the material feel alive rather than printed on.
-       Dials: --glass-bg alpha (presence at rest), --glass-backdrop (blur
-       and bloom), --glass-rim (edge light).
-       Used by the dock, the one piece of chrome that floats over content.
-    -------------------------------------------------- */
-    --glass-bg: rgba(252, 251, 249, 0.7);
-    --glass-backdrop: blur(18px) saturate(180%) brightness(1.04);
-    --glass-border: rgba(28, 26, 23, 0.05);
-    --glass-rim: rgba(255, 255, 255, 0.65);
-    --glass-shadow-ambient: rgba(28, 26, 23, 0.04);
-    --glass-shadow-contact: rgba(28, 26, 23, 0.03);
-}
-
-[data-theme="dark"] {
-    color-scheme: dark;
-
-    /* The same two-tone logic inverted, and warmed by the same shade so
-       the themes read as one family rather than as opposites. */
-    --color-bg: #141210;
-    --color-ink: #F7F5F1;
-    --color-muted: #F7F5F1A6;
-    --color-subtitle: #9CA3AF; /* 7.36:1 on this ground */
-    --color-panel: #1E1B18;
-
-    --flap-face: rgba(255, 255, 255, 0.06);
-    --flap-seam: rgba(0, 0, 0, 0.45);
-    --flap-edge: rgba(255, 255, 255, 0.06);
-
-    /* Shadows barely register on a dark ground, so depth comes from the
-       panel's lift in value instead; what remains is a contact shadow to
-       seat the image rather than float it. */
-    --image-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-
-    /* Dark chrome: identical bleed logic — the fill is rgb(20,18,16),
-       exactly --color-bg, so over empty page it disappears just as the
-       light fill does. The brightness lift stays gentle; pushed hard it
-       re-reveals the capsule against the near-black page. */
-    --glass-bg: rgba(20, 18, 16, 0.6);
-    --glass-backdrop: blur(18px) saturate(180%) brightness(1.08);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-rim: rgba(255, 255, 255, 0.12);
-    --glass-shadow-ambient: rgba(0, 0, 0, 0.28);
-    --glass-shadow-contact: rgba(0, 0, 0, 0.18);
-}
-
-html {
-    font-size: 100%;
-}
-
-body {
-    font-weight: 400;
-    font-family: 'CursorGothic', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: var(--font-size-md);
-    line-height: var(--line-height-md);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
-    background-color: var(--color-bg);
-    font-style: normal;
-    font-synthesis: none;
-    -webkit-font-smoothing: antialiased;
-    direction: ltr;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    padding-bottom: var(--dock-clearance);
-    transition: color 0.2s ease, background-color 0.2s ease;
-}
-
-::selection {
-    background-color: var(--color-ink);
-    color: var(--color-bg);
-}
-
-:focus-visible {
-    outline: 2px solid var(--color-ink);
-    outline-offset: 2px;
-    border-radius: 4px;
-}
-
-/* ============================================
-   Dock
-   ============================================ */
-
-.dock {
-    /* A long press on a dock control shows its label; without this iOS
-       raises its own callout menu and selects text instead. */
-    -webkit-touch-callout: none;
-    user-select: none;
-    -webkit-user-select: none;
-
-    position: fixed;
-    bottom: var(--dock-bottom);
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 200;
-    width: var(--dock-width);
-    display: flex;
-    /* Bottom-aligned: the face circle sits level with the actions capsule
-       while the progress bar stacks above the actions. */
-    align-items: flex-end;
-    justify-content: space-between;
-}
-
-/* The label that names whichever control is under the pointer, in the manner
-   of the macOS dock. It is positioned absolutely so it never affects layout,
-   and JS centres it over the active control. Same glass as the dock itself. */
-.dock-label {
-    position: absolute;
-    bottom: calc(100% + 10px);
-    left: 0;
-    z-index: 1;
-    padding: 5px 12px;
-    border-radius: 999px;
-    white-space: nowrap;
-    font-size: 12px;
-    line-height: 1.4;
-    letter-spacing: -0.006em;
-    color: var(--color-ink);
-    background-color: var(--glass-bg);
-    backdrop-filter: var(--glass-backdrop);
-    -webkit-backdrop-filter: var(--glass-backdrop);
-    border: 1px solid var(--glass-border);
-    box-shadow:
-        inset 0 1px 0 var(--glass-rim),
-        0 1px 2px var(--glass-shadow-contact),
-        0 6px 20px var(--glass-shadow-ambient);
-    opacity: 0;
-    transform: translate(-50%, 4px);
-    pointer-events: none;
-    transition: opacity 0.18s ease, transform 0.18s ease;
-}
-
-.dock-label.is-visible {
-    opacity: 1;
-    transform: translate(-50%, 0);
-}
-
-/* Progress bar and actions capsule share a column, so the bar inherits the
-   capsule's exact width automatically — however many actions it holds. */
-.dock-cluster {
-    display: flex;
-    flex-direction: column;
-    gap: var(--dock-progress-gap);
-}
-
-.dock-progress {
-    width: 100%;
-    height: var(--dock-progress-height);
-    border-radius: 999px;
-    background-color: rgba(0, 0, 0, 0.12);
-    overflow: hidden;
-}
-
-[data-theme="dark"] .dock-progress {
-    background-color: rgba(255, 255, 255, 0.22);
-}
-
-/* The #007AFF fill scales horizontally with reading progress (driven by JS
-   via a transform, which animates cheaply) and stays #007AFF in both
-   themes. */
-.dock-progress-fill {
-    width: 100%;
-    height: 100%;
-    background-color: #007AFF;
-    transform: scaleX(0);
-    transform-origin: left;
-    will-change: transform;
-    transition: transform 0.15s ease-out;
-}
-
-.dock-face,
-.dock-actions {
-    position: relative;
-    background-color: var(--glass-bg);
-    backdrop-filter: var(--glass-backdrop);
-    -webkit-backdrop-filter: var(--glass-backdrop);
-    border: 1px solid var(--glass-border);
-    box-shadow:
-        inset 0 1px 0 var(--glass-rim),
-        0 1px 2px var(--glass-shadow-contact),
-        0 6px 20px var(--glass-shadow-ambient);
-    color: var(--color-ink);
-    transition:
-        color 0.2s ease,
-        background 0.2s ease,
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        opacity 0.2s ease;
-}
-
-.dock-face {
-    width: var(--dock-height);
-    height: var(--dock-height);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    text-decoration: none;
-}
-
-/* macOS-dock magnification: the control swells slightly under the pointer,
-   then compresses on press and springs back on release. Both are suppressed
-   under prefers-reduced-motion by the global rule. */
-.dock-face:hover,
-.dock-action:hover {
-    transform: scale(1.12);
-}
-
-.dock-face:active,
-.dock-action:active {
-    transform: scale(0.94);
-}
-
-.dock-face,
-.dock-action {
-    transition-property: color, background, border-color, box-shadow, opacity, transform;
-    transition-duration: 0.2s;
-    transition-timing-function: ease;
-}
-
-/* One rule styles every dock glyph — the face and the actions — so size,
-   weight, colour, and caps can never drift apart. */
-.dock-face svg,
-.dock-action svg {
-    width: var(--dock-icon-size);
-    height: var(--dock-icon-size);
-    display: block;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.8; /* SF-regular weight at 22px glyphs */
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-/* Sized by its contents, so adding or removing an action needs no change
-   here — and the progress bar above inherits the new width automatically. */
-.dock-actions {
-    width: max-content;
-    height: var(--dock-height);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--dock-action-gap);
-    padding: var(--space-0) var(--dock-actions-inset);
-    border-radius: 999px;
-}
-
-.dock-action {
-    position: relative;
-    width: var(--dock-action-size);
-    height: var(--dock-action-size);
-    flex: 0 0 var(--dock-action-size);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    border-radius: 50%;
-    appearance: none;
-    -webkit-appearance: none;
-    background: transparent;
-    color: var(--color-ink);
-    text-decoration: none;
-    cursor: pointer;
-}
-
-/* ============================================
-   Page
-   ============================================ */
-
-.container {
-    width: 100%;
-    padding: var(--space-0) var(--page-edge);
-    display: flex;
-    justify-content: center;
-}
-
-.main {
-    width: min(100%, var(--content-width));
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-0);
-}
-
-/* ============================================
-   Intro
-   ============================================ */
-
-/* The intro is a keynote-style lockup at the fluid display scale. The
-   animated hello stands apart from the name/subtext pair — the fluid gap
-   (12px on phones, ~20px on wide screens, in proportion to the hero size)
-   gives the greeting its own beat before the introduction. */
-.hello {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: clamp(20px, 3vw, 36px);
-    padding-top: var(--space-page-top);
-    margin-bottom: var(--space-section);
-    color: var(--color-ink);
-}
-
-.hello-text {
-    /* Explicit 400: this is an <h1>, and browsers default headings to bold
-       via the UA stylesheet — body inheritance alone doesn't undo that. */
-    font-weight: 400;
-    font-size: var(--font-size-display);
-    line-height: var(--line-height-display);
-    letter-spacing: var(--letter-spacing-display);
-    color: var(--color-ink);
-    margin: var(--space-0);
-    padding: var(--space-0);
-    white-space: nowrap;
-    min-height: 1.1em;
-    opacity: 0;
-    transition: opacity 0.8s ease;
-}
-
-.hello-text.visible {
-    opacity: 1;
-}
-
-.hello-intro {
-    display: flex;
-    flex-direction: column;
-}
-
-.hello-name,
-.hello-subtext {
-    font-size: var(--font-size-display);
-    line-height: var(--line-height-display);
-    letter-spacing: var(--letter-spacing-display);
-    color: var(--color-ink);
-}
-
-/* ============================================
-   Work
-   ============================================ */
-
-.works {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-section);
-    margin-bottom: var(--space-fluid-md);
-}
-
-.project {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-fluid-md);
-}
-
-.project-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.project-title {
-    font-size: var(--font-size-lg);
-    line-height: var(--line-height-lg);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
-    margin-bottom: var(--space-2);
-}
-
-/* A project with no subtitle lines carries no trailing gap. */
-.project-title:last-child {
-    margin-bottom: var(--space-0);
-}
-
-/* Subtitle lines under the title: services first, tools beneath. The
-   stack itself has no gap, so consecutive subtitles sit at natural
-   line-height and read as one continuous block of text; only the title
-   carries separation above them. */
-.project-subtitle {
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-subtitle);
-}
-
-.project-description {
-    width: 100%;
-}
-
-/* Collapsed view (toggled from the dock): each project reduces to its
-   title and lead image. The dock button swaps between the minimise and
-   maximise icons to match. */
-body.projects-collapsed .project-subtitle,
-body.projects-collapsed .project-description,
-body.projects-collapsed .image-2,
-body.projects-collapsed .image-3 {
-    display: none;
-}
-
-/* Briefs run the full column. The column itself is now the measure —
-   about 70 characters at 17px — so no extra cap is needed. */
-.project-description-text {
-    font-size: var(--font-size-md);
-    line-height: var(--line-height-md);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
-}
-
-/* ============================================
-   Images
-   ============================================ */
-
-.project-images {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-fluid-md);
-}
-
-/* Every image well shares one treatment: soft depth at rest, a small
-   lift on hover so the page answers the cursor. The lift is suppressed
-   automatically under prefers-reduced-motion by the global rule. */
-.image-1,
-.image-box-a,
-.image-box-b,
-.image-3 {
-    box-shadow: var(--image-shadow);
-    transition:
-        transform var(--ease-soft),
-        box-shadow var(--ease-soft),
-        background-color 0.2s ease;
-}
-
-.image-1:hover,
-.image-box-a:hover,
-.image-box-b:hover,
-.image-3:hover {
-    transform: translateY(-2px);
-}
-
-.image-1 {
-    width: 100%;
-    aspect-ratio: 648 / 398;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-}
-
-.image-1 img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.image-2 {
-    width: 100%;
-    display: flex;
-    gap: var(--space-fluid-md);
-}
-
-.image-box-a,
-.image-box-b {
-    width: calc((100% - var(--space-fluid-md)) / 2);
-    aspect-ratio: 316 / 398;
-    background-color: var(--color-panel);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-}
-
-.image-box-a img,
-.image-box-b img {
-    height: 83%; /* scales with the panel at any column width */
-    width: auto;
-    border-radius: var(--radius-sm);
-}
-
-.image-3 {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--image-trio-gap);
-    background-color: var(--color-panel);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6) var(--space-0);
-}
-
-.image-3 img {
-    width: min(
-        clamp(96px, 18%, 220px),
-        calc((100% - (var(--image-trio-gap) * 2)) / 3)
-    );
-    height: auto;
-    aspect-ratio: 160 / 330;
-    object-fit: cover;
-    border-radius: var(--radius-sm);
-}
-
-/* ============================================
-   Footer
-   ============================================ */
-
-.site-footer {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: var(--space-6) var(--space-0);
-}
-
-.footer-text {
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-muted);
-}
-
-/* ============================================
-   Widget — flip clock, date, conditions
-   ============================================ */
-
-.widget {
-    position: fixed;
-    top: var(--edge-gap);
-    left: var(--edge-gap);
-    z-index: 200;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    padding: 14px;
-    border-radius: 22px;
-    color: var(--color-ink);
-    background-color: var(--glass-bg);
-    backdrop-filter: var(--glass-backdrop);
-    -webkit-backdrop-filter: var(--glass-backdrop);
-    border: 1px solid var(--glass-border);
-    box-shadow:
-        inset 0 1px 0 var(--glass-rim),
-        0 1px 2px var(--glass-shadow-contact),
-        0 6px 20px var(--glass-shadow-ambient);
-    user-select: none;
-    -webkit-user-select: none;
-    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.widget-date,
-.widget-conditions {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-    padding: 0 2px;
-    font-size: 11px;
-    line-height: 1.4;
-    letter-spacing: -0.004em;
-    color: var(--color-muted);
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-}
-
-.widget-temp { color: var(--color-ink); }
-
-/* ---- Clock ---- */
-
-.widget-clock {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.widget-pair {
-    display: flex;
-    gap: 3px;
-}
-
-.widget-colon {
-    width: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-}
-
-.widget-colon i {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background-color: var(--color-ink);
-    opacity: 0.55;
-    animation: widget-blink 2s steps(1, end) infinite;
-}
-
-@keyframes widget-blink {
-    0%, 50%      { opacity: 0.55; }
-    50.01%, 100% { opacity: 0.14; }
-}
-
-/* ---- One flap ----
-   Each digit is two half-height windows onto the same full-height glyph,
-   so it is cut cleanly along the seam rather than drawn twice. A change
-   drops a card carrying the old digit's top half while a second card
-   carrying the new digit's bottom half rises to meet it — the four beats
-   that read as a physical split-flap rather than a fade. */
-
-.flap {
-    position: relative;
-    width: var(--flap-width);
-    height: var(--flap-height);
-    perspective: 220px;
-    border-radius: 5px;
-    background-color: var(--flap-face);
-    border: 1px solid var(--flap-edge);
-    overflow: hidden;
-    font-size: var(--flap-size);
-    line-height: var(--flap-height);
-    letter-spacing: 0;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-}
-
-.flap-half {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 50%;
-    overflow: hidden;
-    background-color: var(--flap-face);
-}
-
-.flap-half span {
-    display: block;
-    height: var(--flap-height);
-    line-height: var(--flap-height);
-}
-
-.flap-upper { top: 0; border-bottom: 1px solid var(--flap-seam); }
-.flap-lower { bottom: 0; }
-.flap-lower span { transform: translateY(calc(var(--flap-height) / -2)); }
-
-.flap-fold-upper,
-.flap-fold-lower {
-    z-index: 2;
-    backface-visibility: hidden;
-}
-
-.flap-fold-upper {
-    top: 0;
-    transform-origin: bottom;
-    border-bottom: 1px solid var(--flap-seam);
-}
-
-.flap-fold-lower {
-    bottom: 0;
-    transform-origin: top;
-    transform: rotateX(90deg);
-}
-
-.flap-fold-lower span { transform: translateY(calc(var(--flap-height) / -2)); }
-
-/* The folding cards exist only mid-flip. */
-.flap:not(.is-flipping) .flap-fold-upper,
-.flap:not(.is-flipping) .flap-fold-lower { display: none; }
-
-.flap.is-flipping .flap-fold-upper { animation: flap-away var(--flip-ms) ease-in forwards; }
-.flap.is-flipping .flap-fold-lower { animation: flap-in var(--flip-ms) ease-out forwards; }
-
-@keyframes flap-away { to   { transform: rotateX(-90deg); } }
-@keyframes flap-in   { from { transform: rotateX(90deg); } to { transform: rotateX(0deg); } }
-
-/* Announced to screen readers, never shown. */
-.visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-    border: 0;
-}
-
-/* ============================================
-   Motion preferences
-   ============================================ */
-
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        transition-duration: 0.01ms !important;
-        animation-duration: 0.01ms !important;
-    }
-
-    /* The blinking colon is ambient rather than informative, so it stops
-       entirely rather than blinking imperceptibly fast. */
-    .widget-colon i {
-        animation: none;
-        opacity: 0.55;
-    }
-
-    /* All entrance and chrome motion collapses to nothing, fully visible. */
-    [data-enter] {
-        opacity: 1 !important;
-        transform: none !important;
-        transition: none !important;
-    }
-
-    .parallax-on .image-1 img {
-        height: 100% !important;
-        transform: none !important;
-    }
-
-    .dock,
-    .widget {
-        animation: none !important;
-    }
-}
-
-/* Some people find translucency over moving content hard to read; the OS
-   exposes that preference, so the glass becomes a solid surface and the
-   backdrop filter is dropped entirely. Declared per theme (not on :root)
-   so it overrides both palettes at equal specificity. */
-@media (prefers-reduced-transparency: reduce) {
-    [data-theme="light"] {
-        --glass-bg: #F4F4F6;
-        --glass-backdrop: none;
-        --glass-rim: rgba(255, 255, 255, 0.9);
-    }
-
-    [data-theme="dark"] {
-        --glass-bg: #1A1A1C;
-        --glass-backdrop: none;
-        --glass-rim: rgba(255, 255, 255, 0.1);
-    }
-}
-
-/* ============================================
-   Motion
-   ============================================ */
-
-/* Content elements start lowered and transparent; JS adds .is-in when they
-   scroll into view, and a per-element transition-delay (also set in JS)
-   staggers them within each section. */
-[data-enter] {
-    opacity: 0;
-    transform: translateY(var(--enter-rise));
-    transition:
-        opacity var(--enter-ms) var(--enter-ease),
-        transform var(--enter-ms) var(--enter-ease);
-    will-change: opacity, transform;
-}
-
-[data-enter].is-in {
-    opacity: 1;
-    transform: none;
-    will-change: auto;
-}
-
-/* Parallax images carry a little vertical headroom so they can drift within
-   their frame without ever revealing an edge. The headroom only applies
-   once JS confirms parallax is running (body.parallax-on); without JS, or
-   under reduced motion, images fill their frame exactly. */
-.parallax-on .image-1 img {
-    height: 112%;
-    will-change: transform;
-}
-
-/* The dock and widget settle in once, on load — chrome arrives after the
-   content it frames. The .chrome-in class is added by JS a beat after the
-   first paint; without JS they are simply visible. */
-.dock,
-.widget {
-    animation: chrome-enter var(--chrome-ms) var(--enter-ease) both;
-}
-
-@keyframes chrome-enter {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-/* The dock is horizontally centred by a transform, so its keyframe must
-   carry that translation through or it would jump to the left mid-animation. */
-.dock {
-    animation-name: dock-enter;
-}
-
-@keyframes dock-enter {
-    from { opacity: 0; transform: translateX(-50%) translateY(12px); }
-    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-/* ============================================
-   Responsive
-   ============================================ */
-
-/* The widget floats clear in the left margin on wide screens. Below this
-   the content column reaches it, so the page opens below the widget
-   instead of behind it. */
-@media screen and (max-width: 1000px) {
-    body {
-        padding-top: var(--widget-clearance);
-    }
-}
-
-@media screen and (max-width: 700px) {
-    :root {
-        --page-edge: 1.4rem;
-        --edge-gap: 20px;
-        --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
-    }
-
-    :root {
-        --flap-width: 25px;
-        --flap-height: 35px;
-        --flap-size: 22px;
-    }
-
-    .widget {
-        padding: 11px;
-        border-radius: 18px;
-    }
-
-    .image-2 {
-        flex-direction: column;
-    }
-
-    .image-box-a,
-    .image-box-b {
-        width: 100%;
-    }
-
-    .image-box-a img,
-    .image-box-b img {
-        width: auto;
-        height: auto;
-        max-width: 44%;
-        max-height: 84%;
-    }
-
-    .image-3 {
-        padding: var(--space-6) var(--space-5);
-    }
-}
-
-@media screen and (max-width: 390px) {
-    :root {
-        --image-trio-gap: 12px;
-    }
-
-    .image-3 {
-        padding: var(--space-6) 18px;
-    }
-}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jay Patel</title>
+    <meta name="description" content="Select Design Works by Jay Patel.">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jayselected.vercel.app">
+    <meta property="og:title" content="Jay Patel">
+    <meta property="og:description" content="Select Design Works by Jay Patel.">
+    <meta property="og:image" content="https://jayselected.vercel.app/og-image.png">
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://jayselected.vercel.app">
+    <meta name="twitter:title" content="Jay Patel">
+    <meta name="twitter:description" content="Select Design Works by Jay Patel.">
+    <meta name="twitter:image" content="https://jayselected.vercel.app/og-image.png">
+
+    <!-- Tints the browser's own chrome to match the page; siteapp.js keeps
+         it in sync when the theme is toggled. -->
+    <meta name="theme-color" content="#FCFBF9" id="theme-color">
+
+    <!-- Inline and blocking by design: the theme must be resolved before the
+         first paint, or the page flashes light before switching to dark.
+         This is the only script that cannot live in siteapp.js. -->
+    <script>
+        (() => {
+            try {
+                const savedTheme = localStorage.getItem('portfolio-theme');
+                if (savedTheme === 'dark' || savedTheme === 'light') {
+                    document.documentElement.dataset.theme = savedTheme;
+                }
+            } catch (error) {
+                document.documentElement.dataset.theme = 'light';
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Widget: flip clock, date and local conditions. Fixed top-left,
+         mirroring the dock's edge gap at the opposite corner. -->
+    <div class="widget" role="group" aria-label="Local time and weather">
+        <p class="widget-date" id="widget-date"></p>
+
+        <div class="widget-clock" aria-hidden="true">
+            <div class="widget-pair" id="widget-hours"></div>
+            <div class="widget-colon"><i></i><i></i></div>
+            <div class="widget-pair" id="widget-minutes"></div>
+        </div>
+        <!-- The flaps are decorative duplicates of this line, which is what
+             screen readers announce. -->
+        <p class="visually-hidden" id="widget-time"></p>
+
+        <p class="widget-conditions">
+            <span id="widget-place"></span>
+            <span class="widget-temp" id="widget-temp"></span>
+        </p>
+    </div>
+
+    <div class="container">
+        <main class="main">
+
+            <section class="hello">
+                <h1 class="hello-text" id="hello-text"></h1>
+                <div class="hello-intro">
+                    <p class="hello-name">Jay Patel,</p>
+                    <p class="hello-subtext">Select Design Works</p>
+                </div>
+            </section>
+
+            <section class="works">
+
+                <article class="project">
+                    <div class="project-meta">
+                        <p class="project-title" data-enter>Cine Asia</p>
+                        <p class="project-subtitle" data-enter>Brand Identity &amp; Product Design</p>
+                        <p class="project-subtitle" data-enter>Adobe Photoshop, Adobe Illustrator &amp; Figma</p>
+                    </div>
+
+                    <div class="project-description">
+                        <p class="project-description-text" data-enter>Cine Asia is a concept app celebrating Asian cinema through a curated streaming experience and editorial film coverage from across the continent. Designed with a clean, intuitive interface, it keeps discovery simple, focused, and enjoyable.</p>
+                    </div>
+
+                    <div class="project-images">
+                        <div class="image-1" data-enter data-parallax>
+                            <img loading="lazy" decoding="async" src="https://framerusercontent.com/images/HyNx4h88GowWDEBafQKrWsFKOdA.png" alt="Cine Asia Banner Image">
+                        </div>
+                        <div class="image-2" data-enter>
+                            <div class="image-box-a">
+                                <img loading="lazy" decoding="async" src="images/cineasia/cineasia-1.png" alt="Cine Asia Home">
+                            </div>
+                            <div class="image-box-b">
+                                <img loading="lazy" decoding="async" src="images/cineasia/cineasia-2.png" alt="Cine Asia, browsing films">
+                            </div>
+                        </div>
+                        <div class="image-3" data-enter>
+                            <img loading="lazy" decoding="async" src="images/cineasia/cineasia-3.png" alt="Cine Asia, browsing articles">
+                            <img loading="lazy" decoding="async" src="images/cineasia/cineasia-4.png" alt="Cine Asia, read article page">
+                            <img loading="lazy" decoding="async" src="images/cineasia/cineasia-5.png" alt="Cine Asia, Spirited Away film screen">
+                        </div>
+                    </div>
+                </article>
+
+            </section>
+
+            <footer class="site-footer">
+                <p class="footer-text">© 2026 · Jay Patel</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Bottom dock navigation -->
+    <nav class="dock" aria-label="Site navigation">
+        <!-- Names whichever control is under the pointer; JS fills and
+             positions it. aria-hidden because each control already carries
+             its own accessible label. -->
+        <div class="dock-label" id="dock-label" aria-hidden="true"></div>
+
+        <a class="dock-face" href="/" data-label="Home" aria-label="Homepage">
+            <!-- Face ID glyph redrawn as stroke paths (from face.svg's filled
+                 original) so it shares the exact stroke weight, size, and
+                 colour system of the other dock icons. -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6.4 8.4v2"></path>
+                <path d="M17.6 8.4v2"></path>
+                <path d="M12 8.4v4.8a1.6 1.6 0 0 1-1.6 1.6h-.4"></path>
+                <path d="M7.4 18.2a6.5 6.5 0 0 0 9.2 0"></path>
+            </svg>
+        </a>
+
+        <div class="dock-cluster">
+            <!-- Scroll progress: fills with blue as the page is read. Sits
+                 above the actions and inherits their exact width. -->
+            <div class="dock-progress" role="progressbar" aria-label="Scroll progress"
+                 aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="scroll-progress">
+                <div class="dock-progress-fill" id="scroll-progress-fill"></div>
+            </div>
+
+            <div class="dock-actions" role="group" aria-label="Quick actions">
+                <a class="dock-action" href="mailto:jayarchiveone@gmail.com" data-label="Email" aria-label="Email Jay Patel">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path>
+                    </svg>
+                </a>
+
+                <button class="dock-action" type="button" id="project-collapse" data-label="Collapse Projects" aria-label="Collapse projects" aria-pressed="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m14 10 7-7"></path>
+                        <path d="M20 10h-6V4"></path>
+                        <path d="m3 21 7-7"></path>
+                        <path d="M4 14h6v6"></path>
+                    </svg>
+                </button>
+
+                <button class="dock-action" type="button" id="theme-toggle" data-label="Dark Mode" aria-label="Switch to dark mode">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+
+                <button class="dock-action" type="button" id="scroll-top" data-label="Back to Top" aria-label="Back to top">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <line x1="12" y1="19" x2="12" y2="5"></line>
+                        <polyline points="5 12 12 5 19 12"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+    </nav>
+
+    <script src="siteapp.js" defer></script>
+
+</body>
+</html>
