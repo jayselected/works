@@ -110,6 +110,8 @@ function applyTheme(theme) {
     if (toggle) {
         toggle.innerHTML = THEME_ICONS[theme];
         toggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+        toggle.dataset.label = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+        dockLabel.refresh(toggle);
     }
 
     const themeColor = document.getElementById('theme-color');
@@ -180,6 +182,143 @@ function initializeScroll() {
 }
 
 /* --------------------------------------------
+   Dock labels
+
+   Names whichever control is under the pointer, like the macOS dock.
+   Three ways in: mouse hover, keyboard focus, and — on touch — a long
+   press that can be dragged across the dock to read each control in
+   turn, the way iOS keyboard key previews work.
+   -------------------------------------------- */
+
+const LONG_PRESS_MS = 400;
+
+const dockLabel = (() => {
+    let dock = null;
+    let label = null;
+    let active = null;          // the control currently being named
+    let pressTimer = null;
+    let longPressed = false;    // suppresses the click that would follow
+
+    function controlFrom(node) {
+        return node && node.closest ? node.closest('[data-label]') : null;
+    }
+
+    function place(control) {
+        const dockBox = dock.getBoundingClientRect();
+        const box = control.getBoundingClientRect();
+        const half = label.offsetWidth / 2;
+
+        // Centre on the control, then keep the whole label inside the dock
+        // so it never runs off screen at the far left or right.
+        const centre = box.left + box.width / 2 - dockBox.left;
+        const clamped = Math.max(half, Math.min(dockBox.width - half, centre));
+
+        label.style.left = clamped + 'px';
+    }
+
+    function show(control) {
+        if (!control || !control.dataset.label) return;
+        active = control;
+        label.textContent = control.dataset.label;
+        place(control);                       // measure and position first
+        label.classList.add('is-visible');    // then reveal, so it never slides in from the wrong place
+    }
+
+    function hide() {
+        active = null;
+        label.classList.remove('is-visible');
+    }
+
+    /* Called when a control's label changes while it may be on screen. */
+    function refresh(control) {
+        if (label && active === control && control.dataset.label) {
+            label.textContent = control.dataset.label;
+            place(control);
+        }
+    }
+
+    function init() {
+        dock = document.querySelector('.dock');
+        label = document.getElementById('dock-label');
+        if (!dock || !label) return;
+
+        /* ---- Pointer: mouse only. Touch is handled below, and letting
+                both run would flash the label on every tap. ---- */
+        dock.addEventListener('pointerover', event => {
+            if (event.pointerType !== 'mouse') return;
+            const control = controlFrom(event.target);
+            if (control) show(control);
+        });
+
+        dock.addEventListener('pointerout', event => {
+            if (event.pointerType !== 'mouse') return;
+            const control = controlFrom(event.target);
+            // Ignore moves between a control and its own child SVG.
+            if (control && !control.contains(event.relatedTarget)) hide();
+        });
+
+        /* ---- Keyboard ---- */
+        dock.addEventListener('focusin', event => show(controlFrom(event.target)));
+        dock.addEventListener('focusout', hide);
+
+        /* ---- Touch: long press, then slide between controls ---- */
+        dock.addEventListener('touchstart', event => {
+            const control = controlFrom(event.target);
+            if (!control) return;
+
+            longPressed = false;
+            window.clearTimeout(pressTimer);
+            pressTimer = window.setTimeout(() => {
+                longPressed = true;
+                show(control);
+            }, LONG_PRESS_MS);
+        }, { passive: true });
+
+        dock.addEventListener('touchmove', event => {
+            if (!longPressed) {
+                // Moving before the press registers means a scroll, not a hold.
+                window.clearTimeout(pressTimer);
+                return;
+            }
+
+            // Hold the page still while the finger reads along the dock.
+            event.preventDefault();
+
+            const touch = event.touches[0];
+            const under = document.elementFromPoint(touch.clientX, touch.clientY);
+            const control = controlFrom(under);
+
+            if (control && control !== active) show(control);
+            else if (!control) hide();
+        }, { passive: false });
+
+        function endTouch() {
+            window.clearTimeout(pressTimer);
+            if (longPressed) hide();
+        }
+
+        dock.addEventListener('touchend', endTouch);
+        dock.addEventListener('touchcancel', endTouch);
+
+        /* A long press is a read, not a tap — swallow the click it would
+           otherwise produce, so holding the email button doesn't open mail. */
+        dock.addEventListener('click', event => {
+            if (longPressed) {
+                event.preventDefault();
+                event.stopPropagation();
+                longPressed = false;
+            }
+        }, true);
+
+        // Anything that moves the dock invalidates the label's position.
+        window.addEventListener('resize', () => { if (active) place(active); }, { passive: true });
+        window.addEventListener('scroll', () => { if (active) place(active); }, { passive: true });
+    }
+
+    return { init, refresh };
+})();
+
+/* --------------------------------------------
    Project collapse
    -------------------------------------------- */
 
@@ -211,6 +350,8 @@ function initializeProjectCollapse() {
         toggle.innerHTML = collapsed ? COLLAPSE_ICONS.expand : COLLAPSE_ICONS.collapse;
         toggle.setAttribute('aria-label', collapsed ? 'Expand projects' : 'Collapse projects');
         toggle.setAttribute('aria-pressed', String(collapsed));
+        toggle.dataset.label = collapsed ? 'Expand Projects' : 'Collapse Projects';
+        dockLabel.refresh(toggle);
     }
 
     setCollapsed(false);
@@ -242,6 +383,7 @@ function initializeScrollTop() {
 
 function start() {
     startHelloAnimation();
+    dockLabel.init();
     initializeTheme();
     initializeScroll();
     initializeProjectCollapse();
