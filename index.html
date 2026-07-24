@@ -99,7 +99,12 @@
 
     <!-- Bottom dock navigation -->
     <nav class="dock" aria-label="Site navigation">
-        <a class="dock-face" href="/" aria-label="Homepage">
+        <!-- Names whichever control is under the pointer; JS fills and
+             positions it. aria-hidden because each control already carries
+             its own accessible label. -->
+        <div class="dock-label" id="dock-label" aria-hidden="true"></div>
+
+        <a class="dock-face" href="/" data-label="Home" aria-label="Homepage">
             <!-- Face ID glyph redrawn as stroke paths (from face.svg's filled
                  original) so it shares the exact stroke weight, size, and
                  colour system of the other dock icons. -->
@@ -120,14 +125,14 @@
             </div>
 
             <div class="dock-actions" role="group" aria-label="Quick actions">
-                <a class="dock-action" href="mailto:jayarchiveone@gmail.com" aria-label="Email Jay Patel">
+                <a class="dock-action" href="mailto:jayarchiveone@gmail.com" data-label="Email" aria-label="Email Jay Patel">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
                         <circle cx="12" cy="12" r="4"></circle>
                         <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path>
                     </svg>
                 </a>
 
-                <button class="dock-action" type="button" id="project-collapse" aria-label="Collapse projects" aria-pressed="false">
+                <button class="dock-action" type="button" id="project-collapse" data-label="Collapse Projects" aria-label="Collapse projects" aria-pressed="false">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="m14 10 7-7"></path>
                         <path d="M20 10h-6V4"></path>
@@ -136,13 +141,13 @@
                     </svg>
                 </button>
 
-                <button class="dock-action" type="button" id="theme-toggle" aria-label="Switch to dark mode">
+                <button class="dock-action" type="button" id="theme-toggle" data-label="Dark Mode" aria-label="Switch to dark mode">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                     </svg>
                 </button>
 
-                <button class="dock-action" type="button" id="scroll-top" aria-label="Back to top">
+                <button class="dock-action" type="button" id="scroll-top" data-label="Back to Top" aria-label="Back to top">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
                         <line x1="12" y1="19" x2="12" y2="5"></line>
                         <polyline points="5 12 12 5 19 12"></polyline>
