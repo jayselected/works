@@ -58,7 +58,7 @@ function startHelloAnimation() {
    Interface
    --------------------------------------------
    Everything below drives the chrome: theme, scroll progress, the project collapse,
-   back-to-top, the flip-clock widget, and the entrance/parallax motion. All of it lives here rather than in index.html so behaviour
+   back-to-top, the flip-clock widget, and the entrance motion. All of it lives here rather than in index.html so behaviour
    has one home. The only exception is the theme bootstrap in the document
    head, which must run before first paint to avoid a flash.
    ============================================ */
@@ -574,17 +574,14 @@ function initializeProjectCollapse() {
 }
 
 /* --------------------------------------------
-   Motion — entrance choreography + image parallax
+   Motion — entrance choreography
 
    Content marked [data-enter] rises and fades as it scrolls into view,
-   staggered within each section. Banner images marked [data-parallax]
-   drift within their frame as they pass through the viewport. Both are
-   inert under prefers-reduced-motion — the CSS neutralises them and this
-   module skips its work.
+   staggered within each section. Inert under prefers-reduced-motion — the
+   CSS neutralises it and this module skips its work.
    -------------------------------------------- */
 
 const ENTER_STAGGER_MS = 90;   /* keep in step with --enter-stagger in the CSS */
-const PARALLAX_STRENGTH = 0.5; /* half — image drift tips into gimmick fastest */
 
 function prefersReducedMotionNow() {
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -634,44 +631,6 @@ function initializeEntrance() {
     });
 }
 
-function initializeParallax() {
-    if (prefersReducedMotionNow()) return;
-
-    const images = [...document.querySelectorAll('[data-parallax] img')];
-    if (!images.length) return;
-
-    document.body.classList.add('parallax-on');   // unlocks the CSS headroom
-    let ticking = false;
-
-    function drift() {
-        ticking = false;
-        const vh = window.innerHeight;
-
-        images.forEach(img => {
-            const frame = img.parentElement.getBoundingClientRect();
-            if (frame.bottom < 0 || frame.top > vh) return;   // off-screen: skip
-
-            // -1 with the frame low in the viewport, +1 with it high.
-            const progress = 1 - (frame.top + frame.height / 2) / (vh + frame.height) * 2;
-            const shift = progress * -4.5 * PARALLAX_STRENGTH; // percent of image height
-            // Written as a variable so it composes with the CSS centring
-            // offset rather than replacing the whole transform.
-            img.style.setProperty('--parallax-shift', shift.toFixed(2) + '%');
-        });
-    }
-
-    function queue() {
-        if (!ticking) {
-            ticking = true;
-            window.requestAnimationFrame(drift);
-        }
-    }
-
-    window.addEventListener('scroll', queue, { passive: true });
-    window.addEventListener('resize', queue, { passive: true });
-    drift();
-}
-
 /* --------------------------------------------
    Back to top
    -------------------------------------------- */
@@ -701,7 +660,6 @@ function start() {
     initializeScrollTop();
     initializeWidget();
     initializeEntrance();
-    initializeParallax();
 }
 
 if (document.readyState === 'loading') {
