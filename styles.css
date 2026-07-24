@@ -196,10 +196,7 @@
        transition-delay in siteapp.js (ENTER_STAGGER_MS), since it depends on
        DOM order — it has no standalone token here. */
 
-    /* Media containers: the gap between cells or side-by-side containers,
-       and the inner padding of a full-width container. */
-    --media-gap: clamp(12px, 3vw, 24px);
-    --media-pad: clamp(16px, 4vw, 32px);
+
 
     /* --- Widget metrics -----------------------------
        A Twemco-style flip clock, fixed at the top-left and sharing the
@@ -651,8 +648,8 @@ body {
    maximise icons to match. */
 body.projects-collapsed .project-subtitle,
 body.projects-collapsed .project-description,
-body.projects-collapsed .media-split,
-body.projects-collapsed .project-images > .media:not(.media-banner) {
+body.projects-collapsed .stack-row,
+body.projects-collapsed .stack-trio {
     display: none;
 }
 
@@ -677,33 +674,23 @@ body.projects-collapsed .project-images > .media:not(.media-banner) {
 }
 
 /* ============================================
-   Media — reusable image containers
+   Stacks — image containers
    ============================================
 
-   Two container types compose every project's imagery:
+   Mirrors the Framer layout directly. A .stack is a padded container with
+   the panel background. Everything inside is sized as a PERCENTAGE of the
+   container, so the whole system scales with the column and matches
+   Framer's proportions at any width.
 
-   .media          A container. On its own it is full-column width with
-                   inner padding. It holds either one image (via
-                   .media-fill) or several cells (.media-cell) that spread
-                   evenly across it.
-
-   .media-split    A row of containers side by side. Each .media inside it
-                   becomes a square (.media-square). Used for two-up
-                   layouts.
-
-   The rule that stops images stretching: an image never drives the
-   layout. A .media-cell sets the shape; the image inside fills it with
-   object-fit: cover. So a phone (.media-cell-phone) always shows at the
-   phone aspect ratio no matter how the container resizes.
+   .stack-banner   full-bleed single image (the landscape banner)
+   .stack-row      two square containers side by side (Child Stack 1)
+   .stack-square   a 1:1 container holding one phone at 40% width
+   .stack-trio     one container holding three phones at 20% width each
+   .phone          a device screenshot, sized by % width, natural height
 */
 
-.media {
+.stack {
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--media-gap);
-    padding: var(--media-pad);
     background-color: var(--color-panel);
     border-radius: var(--radius-lg);
     box-shadow: var(--image-shadow);
@@ -713,66 +700,68 @@ body.projects-collapsed .project-images > .media:not(.media-banner) {
         background-color 0.2s ease;
 }
 
-.media:hover {
+.stack:hover {
     transform: translateY(-2px);
 }
 
-/* A single image filling its container edge to edge (the banner). No inner
-   padding, no background — the image is the surface. */
-.media-banner {
-    padding: 0;
-    overflow: hidden;
-    aspect-ratio: 1200 / 700;   /* the banner image's own ratio; no side crop */
-    background-color: transparent;
-}
-
-/* An image that completely fills whatever box contains it. */
-.media-fill {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+/* A phone screenshot. Width is a share of its container; height follows the
+   image's own proportions, so it never distorts. */
+.phone {
+    height: auto;
     display: block;
     border-radius: inherit;
 }
 
-/* One cell within a container. Cells share the row and each holds the shape
-   its content needs; the image fills the cell. */
-.media-cell {
-    flex: 1 1 0;
-    min-width: 0;
+/* ---- Banner: a single image filling the column, no padding ---- */
+.stack-banner {
     overflow: hidden;
-    border-radius: var(--radius-lg);
+    aspect-ratio: 1200 / 700;   /* the banner's own ratio — no crop */
+    background-color: transparent;
 }
 
-/* A cell shaped for a portrait phone screenshot. The cell carries the phone
-   aspect ratio, so the image never stretches — it fills and, if ever
-   mismatched, crops rather than distorts. */
-.media-cell-phone {
-    aspect-ratio: 1280 / 2642;
+.stack-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
-/* Two (or more) containers side by side; each becomes a square. */
-.media-split {
+/* ---- Child Stack 1: two squares side by side ---- */
+.stack-row {
     width: 100%;
     display: flex;
-    gap: var(--media-gap);
+    gap: 20px;                  /* Framer: 20px between the two squares */
 }
 
-.media-split .media {
+.stack-square {
     flex: 1 1 0;
     min-width: 0;
+    aspect-ratio: 1 / 1;        /* Framer: 590 x 590 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Framer: 52px top/bottom on a 590 square = 8.8%. As percentage padding
+       it scales with the square. */
+    padding: 8.8% 0;
 }
 
-.media-square {
-    aspect-ratio: 1 / 1;
+.stack-square .phone {
+    width: 40%;                 /* Framer: phone 236 of 590 square = 40% */
 }
 
-/* A square container holds its phone cell at full height, centred, so the
-   device sits comfortably within the square with even margin. */
-.media-square .media-cell-phone {
-    height: 100%;
-    aspect-ratio: 1280 / 2642;
-    flex: 0 1 auto;
+/* ---- Child Stack 2: three phones in one container ---- */
+.stack-trio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Framer: 52px vertical padding; the 92px inter-phone gap becomes a
+       proportional gap so it holds at any width. */
+    padding: 7.5% 0;
+    gap: 7.5%;
+}
+
+.stack-trio .phone {
+    width: 20%;                 /* Framer: each phone 20% of the container */
 }
 
 /* ============================================
@@ -1089,23 +1078,12 @@ body.projects-collapsed .project-images > .media:not(.media-banner) {
         border-radius: 18px;
     }
 
-    /* A full-width container of phones would shrink each too far across a
-       narrow screen, so its cells stack into a single column. Side-by-side
-       square containers (.media-split) stay as they are — two phones at
-       phone width still read well. */
-    .project-images > .media:not(.media-banner) {
+    /* Child Stack 1 stacks its two squares vertically on a narrow screen;
+       Child Stack 2 (the trio) stays horizontal, as in Framer. */
+    .stack-row {
         flex-direction: column;
     }
-
-    .project-images > .media:not(.media-banner) .media-cell-phone {
-        width: min(66%, 240px);
-        aspect-ratio: 1280 / 2642;
-    }
 }
 
-@media screen and (max-width: 390px) {
-    :root {
-        --media-gap: 12px;
-        --media-pad: 18px;
-    }
-}
+/* Nothing width-specific needed below 390px — the percentage-based stacks
+   scale down cleanly on their own. */
