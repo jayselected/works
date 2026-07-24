@@ -95,43 +95,56 @@
        Every step is fluid between its phone and desktop size, so the
        hierarchy keeps its proportions at any width with no breakpoint
        jumps:
-       display : keynote lockup — hello, name, subtext (28px -> 36px)
-       lg      : project titles                      (18px -> 20.625px)
-       md      : body copy                             (14px -> 15px)
+       display : keynote lockup — hello, name, subtext (36px -> 56px)
+       lg      : project titles                        (20px -> 24px)
+       md      : body copy                             (15px -> 17px)
        sm      : project subtitles and footer          (13px -> 14px)
+
+       The display step is deliberately large while staying at weight 400:
+       large and light reads delicate, small and light reads timid.
     -------------------------------------------------- */
-    --font-size-display: clamp(1.75rem, 1.25rem + 1.5vw, 2.25rem);
-    --font-size-lg: clamp(1.125rem, 1rem + 0.4vw, 1.2890625rem);
-    --font-size-md: clamp(0.875rem, 0.85rem + 0.15vw, 0.9375rem);
+    --font-size-display: clamp(2.25rem, 1.5rem + 3vw, 3.5rem);
+    --font-size-lg: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+    --font-size-md: clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem);
     --font-size-sm: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
 
-    --line-height-display: 1.1;
+    --line-height-display: 1.08;
     --line-height-lg: 1.3;
-    --line-height-md: 1.6;
-    --line-height-sm: 1.45;
+    /* Air between lines is the strongest calm signal in typography. */
+    --line-height-md: 1.75;
+    --line-height-sm: 1.5;
 
-    --letter-spacing-display: -0.035em;
-    --letter-spacing-tight: -0.014em;
+    /* Tracking is eased off: delicate is not cramped. */
+    --letter-spacing-display: -0.03em;
+    --letter-spacing-tight: -0.008em;
 
     /* --- Palette ------------------------------------
-       Text is currently single-tone per theme: strictly black in light
-       mode, strictly white in dark mode (ink and muted deliberately hold
-       the same value — hierarchy comes from size and weight). The tokens
-       are kept separate so a two-tone system can return by changing the
-       muted value.
-       panel     : image wells
+       Two tones per theme, both derived from one ink:
+
+       ink    : content you read — hero, titles, briefs
+       muted  : information *about* content — subtitles, footer.
+                65% of the ink rather than a separate grey, so secondary
+                text stays in the same family. Clears WCAG AA in both
+                themes (5.3:1 light, 7.7:1 dark) at 13px.
+       panel  : image wells
+       bg     : the ground
+
+       Neither theme uses absolute values. Pure #000 on #FFF is the
+       harshest pairing available; stepping back from both, and warming
+       each by a shade, is what separates delicate from stark. The warmth
+       is well under the threshold anyone would call cream.
     -------------------------------------------------- */
-    --color-bg: #FFFFFF;
-    --color-ink: #000000;
-    /* Micro detail: metadata about content, rather than content itself —
-       project subtitles and the footer. Black at 65%
-       renders as #5A5A5A on the page: 6.9:1 in light mode and 8.3:1 in
-       dark, so it clears WCAG AA everywhere and AAA in dark mode, while
-       still reading clearly quieter than ink. This is the lightest value
-       that stays comfortably legible at 13px. Mirrored in dark mode,
-       since a black tint would be invisible there. */
-    --color-muted: #000000A6;
-    --color-panel: #F6F6F6;
+    --color-bg: #FCFBF9;
+    --color-ink: #1C1A17;
+    --color-muted: #1C1A17A6;
+    --color-panel: #F4F2ED;
+
+    /* A whisper of depth under image wells — two layers, both under 5%.
+       Paired with a 2px lift on hover so the page answers the cursor. */
+    --image-shadow:
+        0 1px 2px rgba(28, 26, 23, 0.03),
+        0 12px 32px rgba(28, 26, 23, 0.05);
+    --ease-soft: 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
 
     /* Layout rhythm. Only the steps actually in use are declared; one-off
        optical values live on the rule that needs them rather than
@@ -148,11 +161,11 @@
     --radius-sm: 14px;
 
     --space-fluid-md: clamp(18px, 3vw, 24px);
-    --space-section: clamp(64px, 15vw, 120px);
+    --space-section: clamp(88px, 18vw, 168px);
     /* Space above the hero. Tuned separately from --space-section: with no
        header above it, this is the first thing on the page, and it wants
        less room than the gaps between sections. */
-    --space-page-top: clamp(44px, 7vw, 80px);
+    --space-page-top: clamp(72px, 12vw, 148px);
 
     --image-trio-gap: clamp(12px, 4vw, 32px);
 
@@ -200,27 +213,34 @@
        and bloom), --glass-rim (edge light).
        Used by the dock, the one piece of chrome that floats over content.
     -------------------------------------------------- */
-    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-bg: rgba(252, 251, 249, 0.7);
     --glass-backdrop: blur(18px) saturate(180%) brightness(1.04);
-    --glass-border: rgba(20, 20, 20, 0.05);
+    --glass-border: rgba(28, 26, 23, 0.05);
     --glass-rim: rgba(255, 255, 255, 0.65);
-    --glass-shadow-ambient: rgba(20, 20, 20, 0.04);
-    --glass-shadow-contact: rgba(20, 20, 20, 0.03);
+    --glass-shadow-ambient: rgba(28, 26, 23, 0.04);
+    --glass-shadow-contact: rgba(28, 26, 23, 0.03);
 }
 
 [data-theme="dark"] {
     color-scheme: dark;
 
-    --color-bg: #0E0E0E;
-    --color-ink: #FFFFFF;
-    --color-muted: #FFFFFFA6;
-    --color-panel: #171717;
+    /* The same two-tone logic inverted, and warmed by the same shade so
+       the themes read as one family rather than as opposites. */
+    --color-bg: #141210;
+    --color-ink: #F7F5F1;
+    --color-muted: #F7F5F1A6;
+    --color-panel: #1E1B18;
 
-    /* Dark chrome: identical bleed logic — the fill is rgb(14,14,14),
+    /* Shadows barely register on a dark ground, so depth comes from the
+       panel's lift in value instead; what remains is a contact shadow to
+       seat the image rather than float it. */
+    --image-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+
+    /* Dark chrome: identical bleed logic — the fill is rgb(20,18,16),
        exactly --color-bg, so over empty page it disappears just as the
-       white fill does in light mode. The brightness lift stays gentle;
-       pushed hard it re-reveals the capsule against the near-black page. */
-    --glass-bg: rgba(14, 14, 14, 0.6);
+       light fill does. The brightness lift stays gentle; pushed hard it
+       re-reveals the capsule against the near-black page. */
+    --glass-bg: rgba(20, 18, 16, 0.6);
     --glass-backdrop: blur(18px) saturate(180%) brightness(1.08);
     --glass-border: rgba(255, 255, 255, 0.08);
     --glass-rim: rgba(255, 255, 255, 0.12);
@@ -441,7 +461,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: clamp(12px, 1.5vw, 20px);
+    gap: clamp(20px, 3vw, 36px);
     padding-top: var(--space-page-top);
     margin-bottom: var(--space-section);
     color: var(--color-ink);
@@ -563,6 +583,27 @@ body.projects-collapsed .image-3 {
     display: flex;
     flex-direction: column;
     gap: var(--space-fluid-md);
+}
+
+/* Every image well shares one treatment: soft depth at rest, a small
+   lift on hover so the page answers the cursor. The lift is suppressed
+   automatically under prefers-reduced-motion by the global rule. */
+.image-1,
+.image-box-a,
+.image-box-b,
+.image-3 {
+    box-shadow: var(--image-shadow);
+    transition:
+        transform var(--ease-soft),
+        box-shadow var(--ease-soft),
+        background-color 0.2s ease;
+}
+
+.image-1:hover,
+.image-box-a:hover,
+.image-box-b:hover,
+.image-3:hover {
+    transform: translateY(-2px);
 }
 
 .image-1 {
