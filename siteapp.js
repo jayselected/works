@@ -57,8 +57,8 @@ function startHelloAnimation() {
 /* ============================================
    Interface
    --------------------------------------------
-   Everything below drives the chrome: theme, scroll progress, the project collapse, and
-   back-to-top. All of it lives here rather than in index.html so behaviour
+   Everything below drives the chrome: theme, scroll progress, the project collapse,
+   back-to-top, and the flip-clock widget. All of it lives here rather than in index.html so behaviour
    has one home. The only exception is the theme bootstrap in the document
    head, which must run before first paint to avoid a flash.
    ============================================ */
@@ -182,6 +182,218 @@ function initializeScroll() {
 }
 
 /* --------------------------------------------
+   Widget — flip clock, date, conditions
+
+   The clock is a real split-flap: each digit is two half-height windows
+   onto one glyph, and a change drops a card carrying the old digit while
+   a second card carrying the new one rises to meet it.
+
+   Weather comes from Open-Meteo, which needs no API key — so nothing
+   secret lives in this file.
+   -------------------------------------------- */
+
+const FLIP_MS = 320;              /* keep in step with --flip-ms in the CSS */
+const WEATHER_CACHE_KEY = 'widget_conditions_v1';
+const WEATHER_CACHE_MS = 30 * 60 * 1000;
+
+const DAYS   = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/* WMO weather codes, grouped the way a person would describe them. */
+const CONDITIONS = {
+    0:  ['Clear', '\u2600\ufe0f'],        1:  ['Mainly Clear', '\ud83c\udf24\ufe0f'],
+    2:  ['Partly Cloudy', '\u26c5'],       3:  ['Overcast', '\u2601\ufe0f'],
+    45: ['Fog', '\ud83c\udf2b\ufe0f'],   48: ['Rime Fog', '\ud83c\udf2b\ufe0f'],
+    51: ['Light Drizzle', '\ud83c\udf26\ufe0f'], 53: ['Drizzle', '\ud83c\udf26\ufe0f'],
+    55: ['Heavy Drizzle', '\ud83c\udf26\ufe0f'], 56: ['Freezing Drizzle', '\ud83c\udf27\ufe0f'],
+    57: ['Freezing Drizzle', '\ud83c\udf27\ufe0f'], 61: ['Light Rain', '\ud83c\udf26\ufe0f'],
+    63: ['Rain', '\ud83c\udf27\ufe0f'],  65: ['Heavy Rain', '\ud83c\udf27\ufe0f'],
+    66: ['Freezing Rain', '\ud83c\udf27\ufe0f'], 67: ['Freezing Rain', '\ud83c\udf27\ufe0f'],
+    71: ['Light Snow', '\ud83c\udf28\ufe0f'], 73: ['Snow', '\ud83c\udf28\ufe0f'],
+    75: ['Heavy Snow', '\u2744\ufe0f'],   77: ['Snow Grains', '\ud83c\udf28\ufe0f'],
+    80: ['Showers', '\ud83c\udf26\ufe0f'], 81: ['Showers', '\ud83c\udf27\ufe0f'],
+    82: ['Heavy Showers', '\ud83c\udf27\ufe0f'], 85: ['Snow Showers', '\ud83c\udf28\ufe0f'],
+    86: ['Snow Showers', '\ud83c\udf28\ufe0f'], 95: ['Thunderstorm', '\u26c8\ufe0f'],
+    96: ['Thunderstorm', '\u26c8\ufe0f'], 99: ['Thunderstorm', '\u26c8\ufe0f']
+};
+
+function pad(value) {
+    return String(value).padStart(2, '0');
+}
+
+/* ---- Flaps ---- */
+
+function buildFlap(digit) {
+    const flap = document.createElement('div');
+    flap.className = 'flap';
+    flap.dataset.value = digit;
+    flap.innerHTML =
+        '<div class="flap-half flap-upper"><span>' + digit + '</span></div>' +
+        '<div class="flap-half flap-lower"><span>' + digit + '</span></div>' +
+        '<div class="flap-half flap-fold-upper"><span></span></div>' +
+        '<div class="flap-half flap-fold-lower"><span></span></div>';
+    return flap;
+}
+
+function buildPair(container, value) {
+    container.textContent = '';
+    [...value].forEach(digit => container.appendChild(buildFlap(digit)));
+}
+
+function setFlap(flap, next) {
+    const current = flap.dataset.value;
+    if (current === next) return;
+
+    flap.dataset.value = next;
+    flap.querySelector('.flap-upper span').textContent = next;
+    flap.querySelector('.flap-fold-upper span').textContent = current;
+    flap.querySelector('.flap-fold-lower span').textContent = next;
+
+    flap.classList.remove('is-flipping');
+    void flap.offsetWidth;                  /* forces the animation to restart */
+    flap.classList.add('is-flipping');
+
+    window.setTimeout(() => {
+        flap.querySelector('.flap-lower span').textContent = next;
+        flap.classList.remove('is-flipping');
+    }, FLIP_MS);
+}
+
+function setPair(container, value) {
+    const flaps = container.children;
+    [...value].forEach((digit, i) => {
+        if (flaps[i]) setFlap(flaps[i], digit);
+    });
+}
+
+/* ---- Weather ---- */
+
+function readCachedWeather() {
+    try {
+        const raw = sessionStorage.getItem(WEATHER_CACHE_KEY);
+        if (!raw) return null;
+        const cached = JSON.parse(raw);
+        return Date.now() - cached.at < WEATHER_CACHE_MS ? cached : null;
+    } catch (error) {
+        return null;
+    }
+}
+
+function writeCachedWeather(payload) {
+    try {
+        sessionStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify(payload));
+    } catch (error) {
+        /* Private browsing: the widget still works, it just refetches. */
+    }
+}
+
+async function fetchJson(url) {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    return response.json();
+}
+
+async function resolveLocation() {
+    try {
+        const data = await fetchJson('https://ipwho.is/');
+        if (data && data.success !== false && Number.isFinite(data.latitude)) {
+            return { city: data.city || '', latitude: data.latitude, longitude: data.longitude };
+        }
+    } catch (error) {
+        /* fall through to the second provider */
+    }
+
+    const data = await fetchJson('https://ipapi.co/json/');
+    if (!data || data.error || !Number.isFinite(data.latitude)) throw new Error('no location');
+    return { city: data.city || '', latitude: data.latitude, longitude: data.longitude };
+}
+
+async function loadConditions() {
+    const placeEl = document.getElementById('widget-place');
+    const tempEl = document.getElementById('widget-temp');
+    if (!placeEl || !tempEl) return;
+
+    const cached = readCachedWeather();
+    if (cached) {
+        placeEl.textContent = cached.city;
+        tempEl.textContent = cached.summary;
+        return;
+    }
+
+    try {
+        const place = await resolveLocation();
+        placeEl.textContent = place.city;
+
+        const weather = await fetchJson(
+            'https://api.open-meteo.com/v1/forecast'
+            + '?latitude=' + place.latitude
+            + '&longitude=' + place.longitude
+            + '&current=temperature_2m,weather_code'
+        );
+
+        const temperature = Math.round(weather.current.temperature_2m);
+        const [label, emoji] = CONDITIONS[weather.current.weather_code] || ['', ''];
+        const summary = temperature + '\u00b0 ' + emoji + ' ' + label;
+
+        tempEl.textContent = summary;
+        writeCachedWeather({ city: place.city, summary, at: Date.now() });
+    } catch (error) {
+        placeEl.textContent = 'Conditions unavailable';
+        tempEl.textContent = '';
+    }
+}
+
+/* ---- Assembly ---- */
+
+function initializeWidget() {
+    const widget = document.querySelector('.widget');
+    const hours = document.getElementById('widget-hours');
+    const minutes = document.getElementById('widget-minutes');
+    const dateEl = document.getElementById('widget-date');
+    const timeEl = document.getElementById('widget-time');
+    if (!widget || !hours || !minutes) return;
+
+    function render(first) {
+        const now = new Date();
+        const hh = pad(now.getHours());
+        const mm = pad(now.getMinutes());
+
+        if (first) {
+            buildPair(hours, hh);
+            buildPair(minutes, mm);
+        } else {
+            setPair(hours, hh);
+            setPair(minutes, mm);
+        }
+
+        const date = DAYS[now.getDay()] + ' ' + now.getDate() + ' ' + MONTHS[now.getMonth()];
+        if (dateEl) dateEl.textContent = date;
+        if (timeEl) timeEl.textContent = date + ', ' + hh + ':' + mm;
+    }
+
+    render(true);
+    window.setInterval(() => render(false), 1000);
+
+    /* Publishes the widget's real height so the page can clear it below
+       1000px. Measured rather than assumed, so changing its padding or
+       type never needs a matching constant updated by hand. */
+    function measure() {
+        const height = Math.round(widget.getBoundingClientRect().height);
+        if (height) {
+            document.documentElement.style.setProperty('--widget-height', height + 'px');
+        }
+    }
+
+    measure();
+    if ('ResizeObserver' in window) {
+        new ResizeObserver(measure).observe(widget);
+    }
+
+    loadConditions();
+}
+
+/* --------------------------------------------
    Dock labels
 
    Names whichever control is under the pointer, like the macOS dock.
@@ -190,7 +402,7 @@ function initializeScroll() {
    turn, the way iOS keyboard key previews work.
    -------------------------------------------- */
 
-const LONG_PRESS_MS = 400;
+const LONG_PRESS_MS = 250;
 
 const dockLabel = (() => {
     let dock = null;
@@ -388,6 +600,7 @@ function start() {
     initializeScroll();
     initializeProjectCollapse();
     initializeScrollTop();
+    initializeWidget();
 }
 
 if (document.readyState === 'loading') {
