@@ -79,7 +79,7 @@ const THEME_STORAGE_KEY = 'portfolio-theme';
    the page. */
 const THEME_BACKGROUNDS = {
     light: '#FCFBF9',
-    dark:  '#141210'
+    dark:  '#000000'
 };
 
 const THEME_ICONS = {
@@ -617,7 +617,19 @@ function initializeEntrance() {
         });
     }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
 
-    items.forEach(el => io.observe(el));
+    // Anything already in view on load (the hero and first project) fades in
+    // straight away, keeping its stagger; anything still below the fold waits
+    // for the observer, so each later project reveals as it is scrolled to.
+    const viewportBottom = window.innerHeight;
+    items.forEach(el => {
+        const box = el.getBoundingClientRect();
+        const inViewOnLoad = box.top < viewportBottom * 0.92 && box.bottom > 0;
+        if (inViewOnLoad) {
+            el.classList.add('is-in');
+        } else {
+            io.observe(el);
+        }
+    });
 }
 
 function initializeParallax() {
