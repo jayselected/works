@@ -100,7 +100,7 @@
        display : keynote lockup — hello, name, subtext (36px -> 56px)
        lg      : project titles                                 (20px)
        md      : body copy                                      (16px)
-       sm      : project subtitles and footer          (13px -> 14px)
+       sm      : project subtitles and footer          (12px -> 13px)
 
        The display step is deliberately large while staying at weight 400:
        large and light reads delicate, small and light reads timid.
@@ -108,7 +108,7 @@
     --font-size-display: clamp(2.25rem, 1.5rem + 3vw, 3.5rem);
     --font-size-lg: 1.25rem;
     --font-size-md: 1rem;
-    --font-size-sm: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+    --font-size-sm: clamp(0.75rem, 0.7rem + 0.2vw, 0.8125rem);
 
     --line-height-display: 1.08;
     --line-height-lg: 1.3;
@@ -147,6 +147,12 @@
     --color-subtitle: #6B7280;
     --color-panel: #F4F2ED;
 
+    /* The flap face sits a shade proud of the glass body, the way a real
+       split-flap card catches light against its case. */
+    --flap-face: rgba(255, 255, 255, 0.55);
+    --flap-seam: rgba(28, 26, 23, 0.14);
+    --flap-edge: rgba(28, 26, 23, 0.06);
+
     /* A whisper of depth under image wells — two layers, both under 5%.
        Paired with a 2px lift on hover so the page answers the cursor. */
     --image-shadow:
@@ -176,6 +182,22 @@
     --space-page-top: clamp(72px, 12vw, 148px);
 
     --image-trio-gap: clamp(12px, 4vw, 32px);
+
+    /* --- Widget metrics -----------------------------
+       A Twemco-style flip clock, fixed at the top-left and sharing the
+       dock's edge gap so the two bracket the page at opposite corners.
+       --widget-height is measured and published by siteapp.js; the value
+       here is only a fallback for the first paint. The clearance it feeds
+       applies below 1000px, where the content column grows wide enough to
+       run underneath the widget; above that the widget sits clear in the
+       left margin and the page needs no extra room.
+    -------------------------------------------------- */
+    --widget-height: 118px;
+    --widget-clearance: calc(var(--edge-gap) + var(--widget-height) + var(--space-6));
+    --flap-width: 30px;
+    --flap-height: 42px;
+    --flap-size: 27px;
+    --flip-ms: 320ms;
 
     /* --- Dock metrics -------------------------------
        Measured from the iOS 26 Safari bottom bar on an iPhone 12 Pro Max:
@@ -239,6 +261,10 @@
     --color-muted: #F7F5F1A6;
     --color-subtitle: #9CA3AF; /* 7.36:1 on this ground */
     --color-panel: #1E1B18;
+
+    --flap-face: rgba(255, 255, 255, 0.06);
+    --flap-seam: rgba(0, 0, 0, 0.45);
+    --flap-edge: rgba(255, 255, 255, 0.06);
 
     /* Shadows barely register on a dark ground, so depth comes from the
        panel's lift in value instead; what remains is a contact shadow to
@@ -733,6 +759,171 @@ body.projects-collapsed .image-3 {
 }
 
 /* ============================================
+   Widget — flip clock, date, conditions
+   ============================================ */
+
+.widget {
+    position: fixed;
+    top: var(--edge-gap);
+    left: var(--edge-gap);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: 14px;
+    border-radius: 22px;
+    color: var(--color-ink);
+    background-color: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop);
+    -webkit-backdrop-filter: var(--glass-backdrop);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+        inset 0 1px 0 var(--glass-rim),
+        0 1px 2px var(--glass-shadow-contact),
+        0 6px 20px var(--glass-shadow-ambient);
+    user-select: none;
+    -webkit-user-select: none;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.widget-date,
+.widget-conditions {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 0 2px;
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: -0.004em;
+    color: var(--color-muted);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.widget-temp { color: var(--color-ink); }
+
+/* ---- Clock ---- */
+
+.widget-clock {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.widget-pair {
+    display: flex;
+    gap: 3px;
+}
+
+.widget-colon {
+    width: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+.widget-colon i {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background-color: var(--color-ink);
+    opacity: 0.55;
+    animation: widget-blink 2s steps(1, end) infinite;
+}
+
+@keyframes widget-blink {
+    0%, 50%      { opacity: 0.55; }
+    50.01%, 100% { opacity: 0.14; }
+}
+
+/* ---- One flap ----
+   Each digit is two half-height windows onto the same full-height glyph,
+   so it is cut cleanly along the seam rather than drawn twice. A change
+   drops a card carrying the old digit's top half while a second card
+   carrying the new digit's bottom half rises to meet it — the four beats
+   that read as a physical split-flap rather than a fade. */
+
+.flap {
+    position: relative;
+    width: var(--flap-width);
+    height: var(--flap-height);
+    perspective: 220px;
+    border-radius: 5px;
+    background-color: var(--flap-face);
+    border: 1px solid var(--flap-edge);
+    overflow: hidden;
+    font-size: var(--flap-size);
+    line-height: var(--flap-height);
+    letter-spacing: 0;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.flap-half {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 50%;
+    overflow: hidden;
+    background-color: var(--flap-face);
+}
+
+.flap-half span {
+    display: block;
+    height: var(--flap-height);
+    line-height: var(--flap-height);
+}
+
+.flap-upper { top: 0; border-bottom: 1px solid var(--flap-seam); }
+.flap-lower { bottom: 0; }
+.flap-lower span { transform: translateY(calc(var(--flap-height) / -2)); }
+
+.flap-fold-upper,
+.flap-fold-lower {
+    z-index: 2;
+    backface-visibility: hidden;
+}
+
+.flap-fold-upper {
+    top: 0;
+    transform-origin: bottom;
+    border-bottom: 1px solid var(--flap-seam);
+}
+
+.flap-fold-lower {
+    bottom: 0;
+    transform-origin: top;
+    transform: rotateX(90deg);
+}
+
+.flap-fold-lower span { transform: translateY(calc(var(--flap-height) / -2)); }
+
+/* The folding cards exist only mid-flip. */
+.flap:not(.is-flipping) .flap-fold-upper,
+.flap:not(.is-flipping) .flap-fold-lower { display: none; }
+
+.flap.is-flipping .flap-fold-upper { animation: flap-away var(--flip-ms) ease-in forwards; }
+.flap.is-flipping .flap-fold-lower { animation: flap-in var(--flip-ms) ease-out forwards; }
+
+@keyframes flap-away { to   { transform: rotateX(-90deg); } }
+@keyframes flap-in   { from { transform: rotateX(90deg); } to { transform: rotateX(0deg); } }
+
+/* Announced to screen readers, never shown. */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ============================================
    Motion preferences
    ============================================ */
 
@@ -742,6 +933,13 @@ body.projects-collapsed .image-3 {
     *::after {
         transition-duration: 0.01ms !important;
         animation-duration: 0.01ms !important;
+    }
+
+    /* The blinking colon is ambient rather than informative, so it stops
+       entirely rather than blinking imperceptibly fast. */
+    .widget-colon i {
+        animation: none;
+        opacity: 0.55;
     }
 }
 
@@ -767,11 +965,31 @@ body.projects-collapsed .image-3 {
    Responsive
    ============================================ */
 
+/* The widget floats clear in the left margin on wide screens. Below this
+   the content column reaches it, so the page opens below the widget
+   instead of behind it. */
+@media screen and (max-width: 1000px) {
+    body {
+        padding-top: var(--widget-clearance);
+    }
+}
+
 @media screen and (max-width: 700px) {
     :root {
         --page-edge: 1.4rem;
         --edge-gap: 20px;
         --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
+    }
+
+    :root {
+        --flap-width: 25px;
+        --flap-height: 35px;
+        --flap-size: 22px;
+    }
+
+    .widget {
+        padding: 11px;
+        border-radius: 18px;
     }
 
     .image-2 {
