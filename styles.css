@@ -168,7 +168,6 @@
        widening this scale. */
     --space-0: 0;
     --space-2: 8px;
-    --space-5: 20px;
     --space-6: 24px;
 
     /* Corner radius for image containers. The device screenshot PNGs carry
@@ -197,7 +196,10 @@
        transition-delay in siteapp.js (ENTER_STAGGER_MS), since it depends on
        DOM order — it has no standalone token here. */
 
-    --image-trio-gap: clamp(12px, 4vw, 32px);
+    /* Media containers: the gap between cells or side-by-side containers,
+       and the inner padding of a full-width container. */
+    --media-gap: clamp(12px, 3vw, 24px);
+    --media-pad: clamp(16px, 4vw, 32px);
 
     /* --- Widget metrics -----------------------------
        A Twemco-style flip clock, fixed at the top-left and sharing the
@@ -649,8 +651,8 @@ body {
    maximise icons to match. */
 body.projects-collapsed .project-subtitle,
 body.projects-collapsed .project-description,
-body.projects-collapsed .image-2,
-body.projects-collapsed .image-3 {
+body.projects-collapsed .media-split,
+body.projects-collapsed .project-images > .media:not(.media-banner) {
     display: none;
 }
 
@@ -674,13 +676,36 @@ body.projects-collapsed .image-3 {
     gap: var(--space-fluid-md);
 }
 
-/* Every image well shares one treatment: soft depth at rest, a small
-   lift on hover so the page answers the cursor. The lift is suppressed
-   automatically under prefers-reduced-motion by the global rule. */
-.image-1,
-.image-box-a,
-.image-box-b,
-.image-3 {
+/* ============================================
+   Media — reusable image containers
+   ============================================
+
+   Two container types compose every project's imagery:
+
+   .media          A container. On its own it is full-column width with
+                   inner padding. It holds either one image (via
+                   .media-fill) or several cells (.media-cell) that spread
+                   evenly across it.
+
+   .media-split    A row of containers side by side. Each .media inside it
+                   becomes a square (.media-square). Used for two-up
+                   layouts.
+
+   The rule that stops images stretching: an image never drives the
+   layout. A .media-cell sets the shape; the image inside fills it with
+   object-fit: cover. So a phone (.media-cell-phone) always shows at the
+   phone aspect ratio no matter how the container resizes.
+*/
+
+.media {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--media-gap);
+    padding: var(--media-pad);
+    background-color: var(--color-panel);
+    border-radius: var(--radius-lg);
     box-shadow: var(--image-shadow);
     transition:
         transform var(--ease-soft),
@@ -688,80 +713,66 @@ body.projects-collapsed .image-3 {
         background-color 0.2s ease;
 }
 
-.image-1:hover,
-.image-box-a:hover,
-.image-box-b:hover,
-.image-3:hover {
+.media:hover {
     transform: translateY(-2px);
 }
 
-.image-1 {
-    width: 100%;
-    /* Matches the source image's ratio (1200 x 700) so object-fit: cover has
-       nothing to crop horizontally. Change this if the banner image changes. */
-    aspect-ratio: 1200 / 700;
-    border-radius: var(--radius-lg);
+/* A single image filling its container edge to edge (the banner). No inner
+   padding, no background — the image is the surface. */
+.media-banner {
+    padding: 0;
     overflow: hidden;
+    aspect-ratio: 1200 / 700;   /* the banner image's own ratio; no side crop */
+    background-color: transparent;
 }
 
-.image-1 img {
+/* An image that completely fills whatever box contains it. */
+.media-fill {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
+    border-radius: inherit;
 }
 
-.image-2 {
-    width: 100%;
-    display: flex;
-    gap: var(--space-fluid-md);
-}
-
-.image-box-a,
-.image-box-b {
-    width: calc((100% - var(--space-fluid-md)) / 2);
-    /* Portrait panel proportioned to seat a tall device with even margin. */
-    aspect-ratio: 3 / 4;
-    background-color: var(--color-panel);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-lg);
+/* One cell within a container. Cells share the row and each holds the shape
+   its content needs; the image fills the cell. */
+.media-cell {
+    flex: 1 1 0;
+    min-width: 0;
     overflow: hidden;
+    border-radius: var(--radius-lg);
 }
 
-.image-box-a img,
-.image-box-b img {
-    /* The screenshot is a transparent PNG of the device itself, so it needs
-       no ratio box, no object-fit and no radius — it simply sits on the
-       panel at a share of the panel height, keeping its own proportions. */
-    height: 86%;
-    width: auto;
-    max-width: 100%;
+/* A cell shaped for a portrait phone screenshot. The cell carries the phone
+   aspect ratio, so the image never stretches — it fills and, if ever
+   mismatched, crops rather than distorts. */
+.media-cell-phone {
+    aspect-ratio: 1280 / 2642;
 }
 
-.image-3 {
+/* Two (or more) containers side by side; each becomes a square. */
+.media-split {
     width: 100%;
     display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    gap: var(--image-trio-gap);
-    background-color: var(--color-panel);
-    border-radius: var(--radius-lg);
-    /* The tall device PNGs set the height; padding gives them room to breathe
-       and sits them off the panel edges. */
-    padding: var(--space-6) var(--space-5);
+    gap: var(--media-gap);
 }
 
-/* Trio screenshots show in full — never cropped. They share a height so the
-   row stays even, keep their own natural widths, and use contain so whatever
-   is placed here always appears exactly as designed. */
-.image-3 img {
-    /* Transparent device PNGs sized by a shared height so the row of three
-       stays even; each keeps its own natural width. */
-    height: clamp(260px, 48vw, 380px);
-    width: auto;
-    max-width: calc((100% - (var(--image-trio-gap) * 2)) / 3);
+.media-split .media {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.media-square {
+    aspect-ratio: 1 / 1;
+}
+
+/* A square container holds its phone cell at full height, centred, so the
+   device sits comfortably within the square with even margin. */
+.media-square .media-cell-phone {
+    height: 100%;
+    aspect-ratio: 1280 / 2642;
+    flex: 0 1 auto;
 }
 
 /* ============================================
@@ -1078,32 +1089,23 @@ body.projects-collapsed .image-3 {
         border-radius: 18px;
     }
 
-    .image-box-a img,
-    .image-box-b img {
-        height: 88%;
-    }
-
-    .image-3 {
+    /* A full-width container of phones would shrink each too far across a
+       narrow screen, so its cells stack into a single column. Side-by-side
+       square containers (.media-split) stay as they are — two phones at
+       phone width still read well. */
+    .project-images > .media:not(.media-banner) {
         flex-direction: column;
-        align-items: center;
-        padding: var(--space-6) var(--space-5);
     }
 
-    /* Stacked on a narrow screen, the devices are sized by width and their
-       height clamp is lifted so they can grow to a comfortable size. */
-    .image-3 img {
-        width: 66%;
-        height: auto;
-        max-width: 66%;
+    .project-images > .media:not(.media-banner) .media-cell-phone {
+        width: min(66%, 240px);
+        aspect-ratio: 1280 / 2642;
     }
 }
 
 @media screen and (max-width: 390px) {
     :root {
-        --image-trio-gap: 12px;
-    }
-
-    .image-3 {
-        padding: var(--space-6) 18px;
+        --media-gap: 12px;
+        --media-pad: 18px;
     }
 }
