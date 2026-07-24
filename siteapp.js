@@ -1,1124 +1,711 @@
+/**
+ * Portfolio behaviour
+ * -------------------
+ * Two things live here: the multi-language "Hello" fade in the hero, and
+ * the chrome (theme, scroll progress, project collapse, back to top).
+ * The only script outside this file is the theme bootstrap in the document
+ * head, which must run before first paint to avoid a flash of the wrong
+ * theme.
+ */
+
+const HELLO_LANGUAGES = [
+    { text: 'Hello.' },
+    { text: 'Hola.' },
+    { text: 'Bonjour.' },
+    { text: 'Hallo.' },
+    { text: 'Ciao.' },
+    { text: 'Olá.' },
+    { text: 'Привет.' },
+    { text: '你好.' },
+    { text: 'こんにちは.' },
+    { text: '안녕하세요.' },
+    { text: 'नमस्ते.' },
+    { text: 'مرحبا.' },
+    { text: 'Hej.' },
+    { text: 'Merhaba.' }
+];
+
+let currentLanguageIndex = 0;
+
+function runFadeSequence() {
+    const el = document.getElementById('hello-text');
+    if (!el) return;
+
+    el.classList.remove('visible');
+
+    setTimeout(() => {
+        el.textContent = HELLO_LANGUAGES[currentLanguageIndex].text;
+        currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
+        el.classList.add('visible');
+        setTimeout(runFadeSequence, 2400);
+    }, 800);
+}
+
+function startHelloAnimation() {
+    const el = document.getElementById('hello-text');
+    if (!el) return;
+
+    el.textContent = HELLO_LANGUAGES[currentLanguageIndex].text;
+    currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
+
+    setTimeout(() => {
+        el.classList.add('visible');
+        setTimeout(runFadeSequence, 2400);
+    }, 300);
+}
+
 /* ============================================
-   Fonts
+   Interface
+   --------------------------------------------
+   Everything below drives the chrome: theme, scroll progress, the project collapse,
+   back-to-top, the flip-clock widget, and the entrance/parallax motion. All of it lives here rather than in index.html so behaviour
+   has one home. The only exception is the theme bootstrap in the document
+   head, which must run before first paint to avoid a flash.
    ============================================ */
 
-/* CursorGothic is the primary face (400 + 700, with italics). Glyphs it
-   doesn't cover — the non-Latin scripts in the Hello animation — fall
-   through per-character to the SF Pro / system stack declared below. */
-@font-face {
-    font-family: 'CursorGothic';
-    src: url('fonts/CursorGothic/CursorGothic-Regular.woff2') format('woff2');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
+/* Honours the OS "reduce motion" setting; read live so a change mid-session
+   is respected without a reload. */
+function prefersReducedMotion() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-@font-face {
-    font-family: 'CursorGothic';
-    src: url('fonts/CursorGothic/CursorGothic-Italic.woff2') format('woff2');
-    font-weight: 400;
-    font-style: italic;
-    font-display: swap;
+/* --------------------------------------------
+   Theme
+   -------------------------------------------- */
+
+const THEME_STORAGE_KEY = 'portfolio-theme';
+
+/* Must match --color-bg in styles.css so the browser's own chrome matches
+   the page. */
+const THEME_BACKGROUNDS = {
+    light: '#FCFBF9',
+    dark:  '#000000'
+};
+
+const THEME_ICONS = {
+    light: `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    `,
+    dark: `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+    `
+};
+
+function applyTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+
+    const toggle = document.getElementById('theme-toggle');
+    if (toggle) {
+        toggle.innerHTML = THEME_ICONS[theme];
+        toggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+        toggle.dataset.label = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+        dockLabel.refresh(toggle);
+    }
+
+    const themeColor = document.getElementById('theme-color');
+    if (themeColor) {
+        themeColor.setAttribute('content', THEME_BACKGROUNDS[theme]);
+    }
+
+    try {
+        localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch (error) {
+        // Private browsing or storage disabled: the theme still applies for
+        // this session, it just will not be remembered.
+    }
 }
 
-@font-face {
-    font-family: 'CursorGothic';
-    src: url('fonts/CursorGothic/CursorGothic-Bold.woff2') format('woff2');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
+function initializeTheme() {
+    const toggle = document.getElementById('theme-toggle');
+    applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+
+    if (toggle) {
+        toggle.addEventListener('click', () => {
+            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+    }
 }
 
-@font-face {
-    font-family: 'CursorGothic';
-    src: url('fonts/CursorGothic/CursorGothic-BoldItalic.woff2') format('woff2');
-    font-weight: 700;
-    font-style: italic;
-    font-display: swap;
+/* --------------------------------------------
+   Scroll progress
+   -------------------------------------------- */
+
+function initializeScroll() {
+    const progress = document.getElementById('scroll-progress');
+    const fill     = document.getElementById('scroll-progress-fill');
+    let queued = false;
+
+    function render() {
+        queued = false;
+        if (!progress || !fill) return;
+
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        const ratio = scrollable > 0
+            ? Math.min(1, Math.max(0, window.scrollY / scrollable))
+            : 0;
+
+        fill.style.transform = `scaleX(${ratio})`;
+        progress.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
+    }
+
+    /* Scroll events can fire far more often than the screen refreshes;
+       coalescing into one frame keeps this off the critical path. */
+    function queueRender() {
+        if (!queued) {
+            queued = true;
+            window.requestAnimationFrame(render);
+        }
+    }
+
+    window.addEventListener('scroll', queueRender, { passive: true });
+    window.addEventListener('resize', queueRender, { passive: true });
+
+    if ('ResizeObserver' in window) {
+        // The page changes height when images load or projects collapse;
+        // the progress ratio must follow.
+        new ResizeObserver(queueRender).observe(document.body);
+    }
+
+    render();
 }
 
-@font-face {
-    font-family: 'SF Pro Text';
-    src: url('fonts/SF Pro Text/SF Pro Text Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Text';
-    src: url('fonts/SF Pro Text/SF Pro Text Medium.woff') format('woff');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Text';
-    src: url('fonts/SF Pro Text/SF Pro Text Bold.woff') format('woff');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Text';
-    src: url('fonts/SF Pro Text/SF Pro Text Light.woff') format('woff');
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap;
-}
-
-/* ============================================
-   Foundation
-   ============================================ */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-    color-scheme: light;
-
-    /* A fixed editorial measure rather than a proportion of the screen: the
-       column stops growing once it has enough room, which is what keeps
-       line length comfortable on a large display. At 17px body copy this
-       runs to roughly 70 characters — the top of the readable range.
-       Phones fall back to full width inside the page padding. */
-    --content-width: 600px;
-    --page-edge: 2rem;
-
-    /* Distance from the screen edge for both floating glass objects. */
-    --edge-gap: 24px;
-
-    /* --- Type scale ---------------------------------
-       Every step is fluid between its phone and desktop size, so the
-       hierarchy keeps its proportions at any width with no breakpoint
-       jumps:
-       display : keynote lockup — hello, name, subtext (36px -> 56px)
-       lg      : project titles                                 (20px)
-       md      : body copy                                      (16px)
-       sm      : project subtitles and footer          (12px -> 13px)
-
-       The display step is deliberately large while staying at weight 400:
-       large and light reads delicate, small and light reads timid.
-    -------------------------------------------------- */
-    --font-size-display: clamp(2.25rem, 1.5rem + 3vw, 3.5rem);
-    --font-size-lg: 1.25rem;
-    --font-size-md: 1rem;
-    --font-size-sm: clamp(0.75rem, 0.7rem + 0.2vw, 0.8125rem);
-
-    --line-height-display: 1.08;
-    --line-height-lg: 1.3;
-    /* Air between lines is the strongest calm signal in typography. */
-    --line-height-md: 1.75;
-    --line-height-sm: 1.5;
-
-    /* Tracking is eased off: delicate is not cramped. */
-    --letter-spacing-display: -0.03em;
-    --letter-spacing-tight: -0.008em;
-
-    /* --- Palette ------------------------------------
-       Two tones per theme, both derived from one ink:
-
-       ink    : content you read — hero, titles, briefs
-       muted  : information *about* content — subtitles, footer.
-                65% of the ink rather than a separate grey, so secondary
-                text stays in the same family. Clears WCAG AA in both
-                themes (5.3:1 light, 7.7:1 dark) at 13px.
-       panel  : image wells
-       bg     : the ground
-
-       Neither theme uses absolute values. Pure #000 on #FFF is the
-       harshest pairing available; stepping back from both, and warming
-       each by a shade, is what separates delicate from stark. The warmth
-       is well under the threshold anyone would call cream.
-    -------------------------------------------------- */
-    --color-bg: #FCFBF9;
-    --color-ink: #1C1A17;
-    --color-muted: #1C1A17A6;
-    /* Project subtitles sit on their own cool grey, a step apart from the
-       warm muted tone used elsewhere. Light mode uses the darker step of
-       the same family: #9CA3AF measures only 2.45:1 on this ground and
-       would fail WCAG AA, while #6B7280 clears it at 4.67:1 and reads as
-       the same colour idea. */
-    --color-subtitle: #6B7280;
-    /* Image wells: a neutral grey at low opacity so they sit quietly on the
-       ground rather than reading as a dirty off-white. Derived from the
-       same #9CA3AF the subtitles use, kept faint. */
-    --color-panel: rgba(156, 163, 175, 0.14);
-
-    /* The flap face sits a shade proud of the glass body, the way a real
-       split-flap card catches light against its case. */
-    --flap-face: rgba(255, 255, 255, 0.55);
-    --flap-seam: rgba(28, 26, 23, 0.14);
-    --flap-edge: rgba(28, 26, 23, 0.06);
-
-    /* A whisper of depth under image wells — two layers, both under 5%.
-       Paired with a 2px lift on hover so the page answers the cursor. */
-    --image-shadow:
-        0 1px 2px rgba(28, 26, 23, 0.03),
-        0 12px 32px rgba(28, 26, 23, 0.05);
-    --ease-soft: 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
-
-    /* Layout rhythm. Only the steps actually in use are declared; one-off
-       optical values live on the rule that needs them rather than
-       widening this scale. */
-    --space-0: 0;
-    --space-2: 8px;
-    --space-5: 20px;
-    --space-6: 24px;
-
-    /* Corner radii. The large step is for image containers; the small step
-       is for screenshots nested inside them, so a phone sitting in a panel
-       keeps its own device-like corner rather than echoing the panel's. */
-    --radius-lg: 32px;
-    --radius-sm: 14px;
-
-    --space-fluid-md: clamp(18px, 3vw, 24px);
-    --space-section: clamp(88px, 18vw, 168px);
-    /* Space above the hero. Tuned separately from --space-section: with no
-       header above it, this is the first thing on the page, and it wants
-       less room than the gaps between sections. */
-    --space-page-top: clamp(72px, 12vw, 148px);
-
-    /* --- Motion -------------------------------------
-       Content elements rise and fade as they enter the viewport; the dock
-       and widget settle in on load once the content has begun. Distances
-       are short and easing is soft on purpose — restraint is what keeps
-       motion reading as delicate rather than busy. All of it collapses to
-       nothing under prefers-reduced-motion (see that media query).
-       Parallax strength is held at 50%: image drift tips into gimmick
-       faster than any other effect, so it stays subtle.
-    -------------------------------------------------- */
-    --enter-rise: 24px;
-    --enter-ms: 900ms;
-    --enter-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-    --chrome-ms: 800ms;
-    /* The 90ms stagger between elements is applied per-element as an inline
-       transition-delay in siteapp.js (ENTER_STAGGER_MS), since it depends on
-       DOM order — it has no standalone token here. */
-
-    --image-trio-gap: clamp(12px, 4vw, 32px);
-
-    /* --- Widget metrics -----------------------------
-       A Twemco-style flip clock, fixed at the top-left and sharing the
-       dock's edge gap so the two bracket the page at opposite corners.
-       --widget-height is measured and published by siteapp.js; the value
-       here is only a fallback for the first paint. The clearance it feeds
-       applies below 1000px, where the content column grows wide enough to
-       run underneath the widget; above that the widget sits clear in the
-       left margin and the page needs no extra room.
-    -------------------------------------------------- */
-    --widget-height: 118px;
-    --widget-clearance: calc(var(--edge-gap) + var(--widget-height) + var(--space-6));
-    --flap-width: 30px;
-    --flap-height: 42px;
-    --flap-size: 27px;
-    --flip-ms: 320ms;
-
-    /* --- Dock metrics -------------------------------
-       Measured from the iOS 26 Safari bottom bar on an iPhone 12 Pro Max:
-       48pt circle/capsule height, 44pt tap targets with an 8pt gap and a
-       5pt capsule inset (giving the wide-set icon rhythm), 22pt glyphs.
-       CSS px map 1:1 to iOS pt, and the same metrics are kept on desktop —
-       iOS controls don't grow with the screen.
-    -------------------------------------------------- */
-    --dock-height: 48px;
-    --dock-bottom: calc(var(--edge-gap) + env(safe-area-inset-bottom, 0px));
-    --dock-edge: clamp(24px, 6vw, 28px);
-    --dock-width: calc(100% - (var(--page-edge) * 2));
-    --dock-action-size: 44px;
-    --dock-action-gap: 8px;
-    --dock-actions-inset: 5px;
-    --dock-icon-size: 22px;
-    --dock-progress-height: 5px;
-    --dock-progress-gap: 10px;
-    /* Page padding below the dock, including the progress bar stacked above
-       the actions capsule. */
-    --dock-clearance: calc(
-        var(--dock-height) +
-        var(--dock-progress-height) +
-        var(--dock-progress-gap) +
-        var(--dock-bottom) +
-        var(--space-6)
-    );
-
-    /* Liquid-glass recipe: a milky translucent body over a strong
-       backdrop blur, a bright specular inset along the top edge, a faint
-       dark inset along the bottom, and soft layered drop shadows. */
-    /* --- Chrome material ----------------------------
-       The fill IS the page colour, held at partial opacity. Over empty
-       page the control all but disappears — it bleeds into the viewport,
-       traced only by a hairline; over an image it blooms into visible
-       frost as the backdrop filter diffuses what passes beneath. Same
-       behaviour Safari's white address pill has on its white toolbar.
-       The rim (--glass-rim) is a single lit line along the top inside
-       edge — the one specular cue real glass has. It is invisible over
-       plain page and catches the light as content passes beneath, which
-       is what makes the material feel alive rather than printed on.
-       Dials: --glass-bg alpha (presence at rest), --glass-backdrop (blur
-       and bloom), --glass-rim (edge light).
-       Used by the dock, the one piece of chrome that floats over content.
-    -------------------------------------------------- */
-    --glass-bg: rgba(252, 251, 249, 0.7);
-    --glass-backdrop: blur(18px) saturate(180%) brightness(1.04);
-    --glass-border: rgba(28, 26, 23, 0.05);
-    --glass-rim: rgba(255, 255, 255, 0.65);
-    --glass-shadow-ambient: rgba(28, 26, 23, 0.04);
-    --glass-shadow-contact: rgba(28, 26, 23, 0.03);
-}
-
-[data-theme="dark"] {
-    color-scheme: dark;
-
-    /* Dark mode is a true neutral: pure black ground, near-white ink. The
-       warm cast used in light mode is dropped here — on a dark screen it
-       read as brown rather than warm. */
-    --color-bg: #000000;
-    --color-ink: #F7F7F7;
-    --color-muted: #F7F7F7A6;
-    --color-subtitle: #9CA3AF; /* 7.36:1 on this ground */
-    --color-panel: rgba(156, 163, 175, 0.12);
-
-    --flap-face: rgba(255, 255, 255, 0.06);
-    --flap-seam: rgba(0, 0, 0, 0.45);
-    --flap-edge: rgba(255, 255, 255, 0.06);
-
-    /* Shadows barely register on a dark ground, so depth comes from the
-       panel's lift in value instead; what remains is a contact shadow to
-       seat the image rather than float it. */
-    --image-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-
-    /* Dark chrome: identical bleed logic — the fill is rgb(20,18,16),
-       exactly --color-bg (pure black), so over empty page it disappears
-       just as the light fill does. The brightness lift stays gentle. */
-    --glass-bg: rgba(0, 0, 0, 0.6);
-    --glass-backdrop: blur(18px) saturate(180%) brightness(1.08);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-rim: rgba(255, 255, 255, 0.12);
-    --glass-shadow-ambient: rgba(0, 0, 0, 0.28);
-    --glass-shadow-contact: rgba(0, 0, 0, 0.18);
-}
-
-html {
-    font-size: 100%;
-}
-
-body {
-    font-weight: 400;
-    font-family: 'CursorGothic', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: var(--font-size-md);
-    line-height: var(--line-height-md);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
-    background-color: var(--color-bg);
-    font-style: normal;
-    font-synthesis: none;
-    -webkit-font-smoothing: antialiased;
-    direction: ltr;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    padding-bottom: var(--dock-clearance);
-    transition: color 0.2s ease, background-color 0.2s ease;
-}
-
-::selection {
-    background-color: var(--color-ink);
-    color: var(--color-bg);
-}
-
-:focus-visible {
-    outline: 2px solid var(--color-ink);
-    outline-offset: 2px;
-    border-radius: 4px;
-}
-
-/* ============================================
-   Dock
-   ============================================ */
-
-.dock {
-    /* A long press on a dock control shows its label; without this iOS
-       raises its own callout menu and selects text instead. */
-    -webkit-touch-callout: none;
-    user-select: none;
-    -webkit-user-select: none;
-
-    position: fixed;
-    bottom: var(--dock-bottom);
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 200;
-    width: var(--dock-width);
-    display: flex;
-    /* Bottom-aligned: the face circle sits level with the actions capsule
-       while the progress bar stacks above the actions. */
-    align-items: flex-end;
-    justify-content: space-between;
-}
-
-/* The label that names whichever control is under the pointer, in the manner
-   of the macOS dock. It is positioned absolutely so it never affects layout,
-   and JS centres it over the active control. Same glass as the dock itself. */
-.dock-label {
-    position: absolute;
-    bottom: calc(100% + 10px);
-    left: 0;
-    z-index: 1;
-    padding: 5px 12px;
-    border-radius: 999px;
-    white-space: nowrap;
-    font-size: 12px;
-    line-height: 1.4;
-    letter-spacing: -0.006em;
-    color: var(--color-ink);
-    background-color: var(--glass-bg);
-    backdrop-filter: var(--glass-backdrop);
-    -webkit-backdrop-filter: var(--glass-backdrop);
-    border: 1px solid var(--glass-border);
-    box-shadow:
-        inset 0 1px 0 var(--glass-rim),
-        0 1px 2px var(--glass-shadow-contact),
-        0 6px 20px var(--glass-shadow-ambient);
-    opacity: 0;
-    transform: translate(-50%, 4px);
-    pointer-events: none;
-    transition: opacity 0.18s ease, transform 0.18s ease;
-}
-
-.dock-label.is-visible {
-    opacity: 1;
-    transform: translate(-50%, 0);
-}
-
-/* Progress bar and actions capsule share a column, so the bar inherits the
-   capsule's exact width automatically — however many actions it holds. */
-.dock-cluster {
-    display: flex;
-    flex-direction: column;
-    gap: var(--dock-progress-gap);
-}
-
-.dock-progress {
-    width: 100%;
-    height: var(--dock-progress-height);
-    border-radius: 999px;
-    background-color: rgba(0, 0, 0, 0.12);
-    overflow: hidden;
-}
-
-[data-theme="dark"] .dock-progress {
-    background-color: rgba(255, 255, 255, 0.22);
-}
-
-/* The #007AFF fill scales horizontally with reading progress (driven by JS
-   via a transform, which animates cheaply) and stays #007AFF in both
-   themes. */
-.dock-progress-fill {
-    width: 100%;
-    height: 100%;
-    background-color: #007AFF;
-    transform: scaleX(0);
-    transform-origin: left;
-    will-change: transform;
-    transition: transform 0.15s ease-out;
-}
-
-.dock-face,
-.dock-actions {
-    position: relative;
-    background-color: var(--glass-bg);
-    backdrop-filter: var(--glass-backdrop);
-    -webkit-backdrop-filter: var(--glass-backdrop);
-    border: 1px solid var(--glass-border);
-    box-shadow:
-        inset 0 1px 0 var(--glass-rim),
-        0 1px 2px var(--glass-shadow-contact),
-        0 6px 20px var(--glass-shadow-ambient);
-    color: var(--color-ink);
-    transition:
-        color 0.2s ease,
-        background 0.2s ease,
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        opacity 0.2s ease;
-}
-
-.dock-face {
-    width: var(--dock-height);
-    height: var(--dock-height);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    text-decoration: none;
-}
-
-/* macOS-dock magnification: the control swells slightly under the pointer,
-   then compresses on press and springs back on release. Both are suppressed
-   under prefers-reduced-motion by the global rule. */
-.dock-face:hover,
-.dock-action:hover {
-    transform: scale(1.12);
-}
-
-.dock-face:active,
-.dock-action:active {
-    transform: scale(0.94);
-}
-
-.dock-face,
-.dock-action {
-    transition-property: color, background, border-color, box-shadow, opacity, transform;
-    transition-duration: 0.2s;
-    transition-timing-function: ease;
-}
-
-/* One rule styles every dock glyph — the face and the actions — so size,
-   weight, colour, and caps can never drift apart. */
-.dock-face svg,
-.dock-action svg {
-    width: var(--dock-icon-size);
-    height: var(--dock-icon-size);
-    display: block;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.8; /* SF-regular weight at 22px glyphs */
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-/* Sized by its contents, so adding or removing an action needs no change
-   here — and the progress bar above inherits the new width automatically. */
-.dock-actions {
-    width: max-content;
-    height: var(--dock-height);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--dock-action-gap);
-    padding: var(--space-0) var(--dock-actions-inset);
-    border-radius: 999px;
-}
-
-.dock-action {
-    position: relative;
-    width: var(--dock-action-size);
-    height: var(--dock-action-size);
-    flex: 0 0 var(--dock-action-size);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    border-radius: 50%;
-    appearance: none;
-    -webkit-appearance: none;
-    background: transparent;
-    color: var(--color-ink);
-    text-decoration: none;
-    cursor: pointer;
-}
-
-/* ============================================
-   Page
-   ============================================ */
-
-.container {
-    width: 100%;
-    padding: var(--space-0) var(--page-edge);
-    display: flex;
-    justify-content: center;
-}
-
-.main {
-    width: min(100%, var(--content-width));
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-0);
-}
-
-/* ============================================
-   Intro
-   ============================================ */
-
-/* The intro is a keynote-style lockup at the fluid display scale. The
-   animated hello stands apart from the name/subtext pair — the fluid gap
-   (12px on phones, ~20px on wide screens, in proportion to the hero size)
-   gives the greeting its own beat before the introduction. */
-.hello {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: clamp(20px, 3vw, 36px);
-    padding-top: var(--space-page-top);
-    margin-bottom: var(--space-section);
-    color: var(--color-ink);
-}
-
-.hello-text {
-    /* Explicit 400: this is an <h1>, and browsers default headings to bold
-       via the UA stylesheet — body inheritance alone doesn't undo that. */
-    font-weight: 400;
-    font-size: var(--font-size-display);
-    line-height: var(--line-height-display);
-    letter-spacing: var(--letter-spacing-display);
-    color: var(--color-ink);
-    margin: var(--space-0);
-    padding: var(--space-0);
-    white-space: nowrap;
-    min-height: 1.1em;
-    opacity: 0;
-    transition: opacity 0.8s ease;
-}
-
-.hello-text.visible {
-    opacity: 1;
-}
-
-.hello-intro {
-    display: flex;
-    flex-direction: column;
-}
-
-.hello-name,
-.hello-subtext {
-    font-size: var(--font-size-display);
-    line-height: var(--line-height-display);
-    letter-spacing: var(--letter-spacing-display);
-    color: var(--color-ink);
-}
-
-/* ============================================
-   Work
-   ============================================ */
-
-.works {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-section);
-    margin-bottom: var(--space-fluid-md);
-}
-
-.project {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-fluid-md);
-}
-
-.project-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.project-title {
-    font-size: var(--font-size-lg);
-    line-height: var(--line-height-lg);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
-    margin-bottom: var(--space-2);
-}
-
-/* A project with no subtitle lines carries no trailing gap. */
-.project-title:last-child {
-    margin-bottom: var(--space-0);
-}
-
-/* Subtitle lines under the title: services first, tools beneath. The
-   stack itself has no gap, so consecutive subtitles sit at natural
-   line-height and read as one continuous block of text; only the title
-   carries separation above them. */
-.project-subtitle {
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-subtitle);
-}
-
-.project-description {
-    width: 100%;
-}
-
-/* Collapsed view (toggled from the dock): each project reduces to its
-   title and lead image. The dock button swaps between the minimise and
-   maximise icons to match. */
-body.projects-collapsed .project-subtitle,
-body.projects-collapsed .project-description,
-body.projects-collapsed .image-2,
-body.projects-collapsed .image-3 {
-    display: none;
-}
-
-/* Briefs run the full column. The column itself is now the measure —
-   about 70 characters at 17px — so no extra cap is needed. */
-.project-description-text {
-    font-size: var(--font-size-md);
-    line-height: var(--line-height-md);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
-}
-
-/* ============================================
-   Images
-   ============================================ */
-
-.project-images {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-fluid-md);
-}
-
-/* Every image well shares one treatment: soft depth at rest, a small
-   lift on hover so the page answers the cursor. The lift is suppressed
-   automatically under prefers-reduced-motion by the global rule. */
-.image-1,
-.image-box-a,
-.image-box-b,
-.image-3 {
-    box-shadow: var(--image-shadow);
-    transition:
-        transform var(--ease-soft),
-        box-shadow var(--ease-soft),
-        background-color 0.2s ease;
-}
-
-.image-1:hover,
-.image-box-a:hover,
-.image-box-b:hover,
-.image-3:hover {
-    transform: translateY(-2px);
-}
-
-.image-1 {
-    width: 100%;
-    /* Matches the source image's ratio (1200 x 700) so object-fit: cover has
-       nothing to crop horizontally. Change this if the banner image changes. */
-    aspect-ratio: 1200 / 700;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-}
-
-.image-1 img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.image-2 {
-    width: 100%;
-    display: flex;
-    gap: var(--space-fluid-md);
-}
-
-.image-box-a,
-.image-box-b {
-    width: calc((100% - var(--space-fluid-md)) / 2);
-    aspect-ratio: 316 / 398;
-    background-color: var(--color-panel);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-}
-
-.image-box-a img,
-.image-box-b img {
-    height: 83%; /* scales with the panel at any column width */
-    width: auto;
-    border-radius: var(--radius-sm);
-}
-
-.image-3 {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--image-trio-gap);
-    background-color: var(--color-panel);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6) var(--space-0);
-}
-
-/* Trio screenshots show in full — never cropped. They share a height so the
-   row stays even, keep their own natural widths, and use contain so whatever
-   is placed here always appears exactly as designed. */
-.image-3 img {
-    width: auto;
-    height: clamp(180px, 42vw, 320px);
-    max-width: calc((100% - (var(--image-trio-gap) * 2)) / 3);
-    object-fit: contain;
-    border-radius: var(--radius-sm);
-}
-
-/* ============================================
-   Footer
-   ============================================ */
-
-.site-footer {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: var(--space-6) var(--space-0);
-}
-
-.footer-text {
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-muted);
-}
-
-/* ============================================
+/* --------------------------------------------
    Widget — flip clock, date, conditions
-   ============================================ */
 
-.widget {
-    position: fixed;
-    top: var(--edge-gap);
-    left: var(--edge-gap);
-    z-index: 200;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    padding: 14px;
-    border-radius: 22px;
-    color: var(--color-ink);
-    background-color: var(--glass-bg);
-    backdrop-filter: var(--glass-backdrop);
-    -webkit-backdrop-filter: var(--glass-backdrop);
-    border: 1px solid var(--glass-border);
-    box-shadow:
-        inset 0 1px 0 var(--glass-rim),
-        0 1px 2px var(--glass-shadow-contact),
-        0 6px 20px var(--glass-shadow-ambient);
-    user-select: none;
-    -webkit-user-select: none;
-    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+   The clock is a real split-flap: each digit is two half-height windows
+   onto one glyph, and a change drops a card carrying the old digit while
+   a second card carrying the new one rises to meet it.
+
+   Weather comes from Open-Meteo, which needs no API key — so nothing
+   secret lives in this file.
+   -------------------------------------------- */
+
+const FLIP_MS = 320;              /* keep in step with --flip-ms in the CSS */
+const WEATHER_CACHE_KEY = 'widget_conditions_v1';
+const WEATHER_CACHE_MS = 30 * 60 * 1000;
+
+const DAYS   = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/* WMO weather codes, grouped the way a person would describe them. */
+const CONDITIONS = {
+    0:  ['Clear', '\u2600\ufe0f'],        1:  ['Mainly Clear', '\ud83c\udf24\ufe0f'],
+    2:  ['Partly Cloudy', '\u26c5'],       3:  ['Overcast', '\u2601\ufe0f'],
+    45: ['Fog', '\ud83c\udf2b\ufe0f'],   48: ['Rime Fog', '\ud83c\udf2b\ufe0f'],
+    51: ['Light Drizzle', '\ud83c\udf26\ufe0f'], 53: ['Drizzle', '\ud83c\udf26\ufe0f'],
+    55: ['Heavy Drizzle', '\ud83c\udf26\ufe0f'], 56: ['Freezing Drizzle', '\ud83c\udf27\ufe0f'],
+    57: ['Freezing Drizzle', '\ud83c\udf27\ufe0f'], 61: ['Light Rain', '\ud83c\udf26\ufe0f'],
+    63: ['Rain', '\ud83c\udf27\ufe0f'],  65: ['Heavy Rain', '\ud83c\udf27\ufe0f'],
+    66: ['Freezing Rain', '\ud83c\udf27\ufe0f'], 67: ['Freezing Rain', '\ud83c\udf27\ufe0f'],
+    71: ['Light Snow', '\ud83c\udf28\ufe0f'], 73: ['Snow', '\ud83c\udf28\ufe0f'],
+    75: ['Heavy Snow', '\u2744\ufe0f'],   77: ['Snow Grains', '\ud83c\udf28\ufe0f'],
+    80: ['Showers', '\ud83c\udf26\ufe0f'], 81: ['Showers', '\ud83c\udf27\ufe0f'],
+    82: ['Heavy Showers', '\ud83c\udf27\ufe0f'], 85: ['Snow Showers', '\ud83c\udf28\ufe0f'],
+    86: ['Snow Showers', '\ud83c\udf28\ufe0f'], 95: ['Thunderstorm', '\u26c8\ufe0f'],
+    96: ['Thunderstorm', '\u26c8\ufe0f'], 99: ['Thunderstorm', '\u26c8\ufe0f']
+};
+
+function pad(value) {
+    return String(value).padStart(2, '0');
 }
 
-.widget-date,
-.widget-conditions {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-    padding: 0 2px;
-    font-size: 11px;
-    line-height: 1.4;
-    letter-spacing: -0.004em;
-    color: var(--color-muted);
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
+/* ---- Flaps ---- */
+
+function buildFlap(digit) {
+    const flap = document.createElement('div');
+    flap.className = 'flap';
+    flap.dataset.value = digit;
+    flap.innerHTML =
+        '<div class="flap-half flap-upper"><span>' + digit + '</span></div>' +
+        '<div class="flap-half flap-lower"><span>' + digit + '</span></div>' +
+        '<div class="flap-half flap-fold-upper"><span></span></div>' +
+        '<div class="flap-half flap-fold-lower"><span></span></div>';
+    return flap;
 }
 
-.widget-temp { color: var(--color-ink); }
-
-/* ---- Clock ---- */
-
-.widget-clock {
-    display: flex;
-    align-items: center;
-    gap: 4px;
+function buildPair(container, value) {
+    container.textContent = '';
+    [...value].forEach(digit => container.appendChild(buildFlap(digit)));
 }
 
-.widget-pair {
-    display: flex;
-    gap: 3px;
+function setFlap(flap, next) {
+    const current = flap.dataset.value;
+    if (current === next) return;
+
+    flap.dataset.value = next;
+    flap.querySelector('.flap-upper span').textContent = next;
+    flap.querySelector('.flap-fold-upper span').textContent = current;
+    flap.querySelector('.flap-fold-lower span').textContent = next;
+
+    flap.classList.remove('is-flipping');
+    void flap.offsetWidth;                  /* forces the animation to restart */
+    flap.classList.add('is-flipping');
+
+    window.setTimeout(() => {
+        flap.querySelector('.flap-lower span').textContent = next;
+        flap.classList.remove('is-flipping');
+    }, FLIP_MS);
 }
 
-.widget-colon {
-    width: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
+function setPair(container, value) {
+    const flaps = container.children;
+    [...value].forEach((digit, i) => {
+        if (flaps[i]) setFlap(flaps[i], digit);
+    });
 }
 
-.widget-colon i {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background-color: var(--color-ink);
-    opacity: 0.55;
-    animation: widget-blink 2s steps(1, end) infinite;
+/* ---- Weather ---- */
+
+function readCachedWeather() {
+    try {
+        const raw = sessionStorage.getItem(WEATHER_CACHE_KEY);
+        if (!raw) return null;
+        const cached = JSON.parse(raw);
+        return Date.now() - cached.at < WEATHER_CACHE_MS ? cached : null;
+    } catch (error) {
+        return null;
+    }
 }
 
-@keyframes widget-blink {
-    0%, 50%      { opacity: 0.55; }
-    50.01%, 100% { opacity: 0.14; }
+function writeCachedWeather(payload) {
+    try {
+        sessionStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify(payload));
+    } catch (error) {
+        /* Private browsing: the widget still works, it just refetches. */
+    }
 }
 
-/* ---- One flap ----
-   Each digit is two half-height windows onto the same full-height glyph,
-   so it is cut cleanly along the seam rather than drawn twice. A change
-   drops a card carrying the old digit's top half while a second card
-   carrying the new digit's bottom half rises to meet it — the four beats
-   that read as a physical split-flap rather than a fade. */
-
-.flap {
-    position: relative;
-    width: var(--flap-width);
-    height: var(--flap-height);
-    perspective: 220px;
-    border-radius: 5px;
-    background-color: var(--flap-face);
-    border: 1px solid var(--flap-edge);
-    overflow: hidden;
-    font-size: var(--flap-size);
-    line-height: var(--flap-height);
-    letter-spacing: 0;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
+async function fetchJson(url) {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    return response.json();
 }
 
-.flap-half {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 50%;
-    overflow: hidden;
-    background-color: var(--flap-face);
+async function resolveLocation() {
+    try {
+        const data = await fetchJson('https://ipwho.is/');
+        if (data && data.success !== false && Number.isFinite(data.latitude)) {
+            return { city: data.city || '', latitude: data.latitude, longitude: data.longitude };
+        }
+    } catch (error) {
+        /* fall through to the second provider */
+    }
+
+    const data = await fetchJson('https://ipapi.co/json/');
+    if (!data || data.error || !Number.isFinite(data.latitude)) throw new Error('no location');
+    return { city: data.city || '', latitude: data.latitude, longitude: data.longitude };
 }
 
-.flap-half span {
-    display: block;
-    height: var(--flap-height);
-    line-height: var(--flap-height);
+async function loadConditions() {
+    const placeEl = document.getElementById('widget-place');
+    const tempEl = document.getElementById('widget-temp');
+    if (!placeEl || !tempEl) return;
+
+    const cached = readCachedWeather();
+    if (cached) {
+        placeEl.textContent = cached.city;
+        tempEl.textContent = cached.summary;
+        return;
+    }
+
+    try {
+        const place = await resolveLocation();
+        placeEl.textContent = place.city;
+
+        const weather = await fetchJson(
+            'https://api.open-meteo.com/v1/forecast'
+            + '?latitude=' + place.latitude
+            + '&longitude=' + place.longitude
+            + '&current=temperature_2m,weather_code'
+        );
+
+        const temperature = Math.round(weather.current.temperature_2m);
+        const [label, emoji] = CONDITIONS[weather.current.weather_code] || ['', ''];
+        const summary = temperature + '\u00b0 ' + emoji + ' ' + label;
+
+        tempEl.textContent = summary;
+        writeCachedWeather({ city: place.city, summary, at: Date.now() });
+    } catch (error) {
+        placeEl.textContent = 'Conditions unavailable';
+        tempEl.textContent = '';
+    }
 }
 
-.flap-upper { top: 0; border-bottom: 1px solid var(--flap-seam); }
-.flap-lower { bottom: 0; }
-.flap-lower span { transform: translateY(calc(var(--flap-height) / -2)); }
+/* ---- Assembly ---- */
 
-.flap-fold-upper,
-.flap-fold-lower {
-    z-index: 2;
-    backface-visibility: hidden;
+function initializeWidget() {
+    const widget = document.querySelector('.widget');
+    const hours = document.getElementById('widget-hours');
+    const minutes = document.getElementById('widget-minutes');
+    const dateEl = document.getElementById('widget-date');
+    const timeEl = document.getElementById('widget-time');
+    if (!widget || !hours || !minutes) return;
+
+    function render(first) {
+        const now = new Date();
+        const hh = pad(now.getHours());
+        const mm = pad(now.getMinutes());
+
+        if (first) {
+            buildPair(hours, hh);
+            buildPair(minutes, mm);
+        } else {
+            setPair(hours, hh);
+            setPair(minutes, mm);
+        }
+
+        const date = DAYS[now.getDay()] + ' ' + now.getDate() + ' ' + MONTHS[now.getMonth()];
+        if (dateEl) dateEl.textContent = date;
+        if (timeEl) timeEl.textContent = date + ', ' + hh + ':' + mm;
+    }
+
+    render(true);
+    window.setInterval(() => render(false), 1000);
+
+    /* Publishes the widget's real height so the page can clear it below
+       1000px. Measured rather than assumed, so changing its padding or
+       type never needs a matching constant updated by hand. */
+    function measure() {
+        const height = Math.round(widget.getBoundingClientRect().height);
+        if (height) {
+            document.documentElement.style.setProperty('--widget-height', height + 'px');
+        }
+    }
+
+    measure();
+    if ('ResizeObserver' in window) {
+        new ResizeObserver(measure).observe(widget);
+    }
+
+    loadConditions();
 }
 
-.flap-fold-upper {
-    top: 0;
-    transform-origin: bottom;
-    border-bottom: 1px solid var(--flap-seam);
+/* --------------------------------------------
+   Dock labels
+
+   Names whichever control is under the pointer, like the macOS dock.
+   Three ways in: mouse hover, keyboard focus, and — on touch — a long
+   press that can be dragged across the dock to read each control in
+   turn, the way iOS keyboard key previews work.
+   -------------------------------------------- */
+
+const LONG_PRESS_MS = 250;
+
+const dockLabel = (() => {
+    let dock = null;
+    let label = null;
+    let active = null;          // the control currently being named
+    let pressTimer = null;
+    let longPressed = false;    // suppresses the click that would follow
+
+    function controlFrom(node) {
+        return node && node.closest ? node.closest('[data-label]') : null;
+    }
+
+    function place(control) {
+        const dockBox = dock.getBoundingClientRect();
+        const box = control.getBoundingClientRect();
+        const half = label.offsetWidth / 2;
+
+        // Centre on the control, then keep the whole label inside the dock
+        // so it never runs off screen at the far left or right.
+        const centre = box.left + box.width / 2 - dockBox.left;
+        const clamped = Math.max(half, Math.min(dockBox.width - half, centre));
+
+        label.style.left = clamped + 'px';
+    }
+
+    function show(control) {
+        if (!control || !control.dataset.label) return;
+        active = control;
+        label.textContent = control.dataset.label;
+        place(control);                       // measure and position first
+        label.classList.add('is-visible');    // then reveal, so it never slides in from the wrong place
+    }
+
+    function hide() {
+        active = null;
+        label.classList.remove('is-visible');
+    }
+
+    /* Called when a control's label changes while it may be on screen. */
+    function refresh(control) {
+        if (label && active === control && control.dataset.label) {
+            label.textContent = control.dataset.label;
+            place(control);
+        }
+    }
+
+    function init() {
+        dock = document.querySelector('.dock');
+        label = document.getElementById('dock-label');
+        if (!dock || !label) return;
+
+        /* ---- Pointer: mouse only. Touch is handled below, and letting
+                both run would flash the label on every tap. ---- */
+        dock.addEventListener('pointerover', event => {
+            if (event.pointerType !== 'mouse') return;
+            const control = controlFrom(event.target);
+            if (control) show(control);
+        });
+
+        dock.addEventListener('pointerout', event => {
+            if (event.pointerType !== 'mouse') return;
+            const control = controlFrom(event.target);
+            // Ignore moves between a control and its own child SVG.
+            if (control && !control.contains(event.relatedTarget)) hide();
+        });
+
+        /* ---- Keyboard ---- */
+        dock.addEventListener('focusin', event => show(controlFrom(event.target)));
+        dock.addEventListener('focusout', hide);
+
+        /* ---- Touch: long press, then slide between controls ---- */
+        dock.addEventListener('touchstart', event => {
+            const control = controlFrom(event.target);
+            if (!control) return;
+
+            longPressed = false;
+            window.clearTimeout(pressTimer);
+            pressTimer = window.setTimeout(() => {
+                longPressed = true;
+                show(control);
+            }, LONG_PRESS_MS);
+        }, { passive: true });
+
+        dock.addEventListener('touchmove', event => {
+            if (!longPressed) {
+                // Moving before the press registers means a scroll, not a hold.
+                window.clearTimeout(pressTimer);
+                return;
+            }
+
+            // Hold the page still while the finger reads along the dock.
+            event.preventDefault();
+
+            const touch = event.touches[0];
+            const under = document.elementFromPoint(touch.clientX, touch.clientY);
+            const control = controlFrom(under);
+
+            if (control && control !== active) show(control);
+            else if (!control) hide();
+        }, { passive: false });
+
+        function endTouch() {
+            window.clearTimeout(pressTimer);
+            if (longPressed) hide();
+        }
+
+        dock.addEventListener('touchend', endTouch);
+        dock.addEventListener('touchcancel', endTouch);
+
+        /* A long press is a read, not a tap — swallow the click it would
+           otherwise produce, so holding the email button doesn't open mail. */
+        dock.addEventListener('click', event => {
+            if (longPressed) {
+                event.preventDefault();
+                event.stopPropagation();
+                longPressed = false;
+            }
+        }, true);
+
+        // Anything that moves the dock invalidates the label's position.
+        window.addEventListener('resize', () => { if (active) place(active); }, { passive: true });
+        window.addEventListener('scroll', () => { if (active) place(active); }, { passive: true });
+    }
+
+    return { init, refresh };
+})();
+
+/* --------------------------------------------
+   Project collapse
+   -------------------------------------------- */
+
+const COLLAPSE_ICONS = {
+    collapse: `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m14 10 7-7"></path>
+            <path d="M20 10h-6V4"></path>
+            <path d="m3 21 7-7"></path>
+            <path d="M4 14h6v6"></path>
+        </svg>
+    `,
+    expand: `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15 3h6v6"></path>
+            <path d="m21 3-7 7"></path>
+            <path d="m3 21 7-7"></path>
+            <path d="M9 21H3v-6"></path>
+        </svg>
+    `
+};
+
+function initializeProjectCollapse() {
+    const toggle = document.getElementById('project-collapse');
+    if (!toggle) return;
+
+    function setCollapsed(collapsed) {
+        document.body.classList.toggle('projects-collapsed', collapsed);
+        toggle.innerHTML = collapsed ? COLLAPSE_ICONS.expand : COLLAPSE_ICONS.collapse;
+        toggle.setAttribute('aria-label', collapsed ? 'Expand projects' : 'Collapse projects');
+        toggle.setAttribute('aria-pressed', String(collapsed));
+        toggle.dataset.label = collapsed ? 'Expand Projects' : 'Collapse Projects';
+        dockLabel.refresh(toggle);
+    }
+
+    setCollapsed(false);
+
+    toggle.addEventListener('click', () => {
+        setCollapsed(!document.body.classList.contains('projects-collapsed'));
+    });
 }
 
-.flap-fold-lower {
-    bottom: 0;
-    transform-origin: top;
-    transform: rotateX(90deg);
+/* --------------------------------------------
+   Motion — entrance choreography + image parallax
+
+   Content marked [data-enter] rises and fades as it scrolls into view,
+   staggered within each section. Banner images marked [data-parallax]
+   drift within their frame as they pass through the viewport. Both are
+   inert under prefers-reduced-motion — the CSS neutralises them and this
+   module skips its work.
+   -------------------------------------------- */
+
+const ENTER_STAGGER_MS = 90;   /* keep in step with --enter-stagger in the CSS */
+const PARALLAX_STRENGTH = 0.5; /* half — image drift tips into gimmick fastest */
+
+function prefersReducedMotionNow() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-.flap-fold-lower span { transform: translateY(calc(var(--flap-height) / -2)); }
+function initializeEntrance() {
+    const items = [...document.querySelectorAll('[data-enter]')];
+    if (!items.length) return;
 
-/* The folding cards exist only mid-flip. */
-.flap:not(.is-flipping) .flap-fold-upper,
-.flap:not(.is-flipping) .flap-fold-lower { display: none; }
+    // Reduced motion: reveal everything immediately, run nothing.
+    if (prefersReducedMotionNow() || !('IntersectionObserver' in window)) {
+        items.forEach(el => el.classList.add('is-in'));
+        return;
+    }
 
-.flap.is-flipping .flap-fold-upper { animation: flap-away var(--flip-ms) ease-in forwards; }
-.flap.is-flipping .flap-fold-lower { animation: flap-in var(--flip-ms) ease-out forwards; }
+    // Stagger within each section by DOM order, so a heading leads and its
+    // supporting lines follow.
+    document.querySelectorAll('.project, .hello, .works').forEach(section => {
+        section.querySelectorAll('[data-enter]').forEach((el, i) => {
+            el.style.transitionDelay = (i * ENTER_STAGGER_MS) + 'ms';
+        });
+    });
 
-@keyframes flap-away { to   { transform: rotateX(-90deg); } }
-@keyframes flap-in   { from { transform: rotateX(90deg); } to { transform: rotateX(0deg); } }
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-in');
+                io.unobserve(entry.target);   // reveal once, then stop watching
+            }
+        });
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
 
-/* Announced to screen readers, never shown. */
-.visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-    border: 0;
+    // Anything on screen at load (hero and first project, including its
+    // description) fades in straight away, keeping its stagger; anything
+    // fully below the fold waits for the observer, so each later project
+    // reveals as it is scrolled to. The threshold is the full viewport
+    // height, so nothing sitting near the fold slips through both checks.
+    const viewportBottom = window.innerHeight;
+    items.forEach(el => {
+        const box = el.getBoundingClientRect();
+        const inViewOnLoad = box.top < viewportBottom && box.bottom > 0;
+        if (inViewOnLoad) {
+            el.classList.add('is-in');
+        } else {
+            io.observe(el);
+        }
+    });
+}
+
+function initializeParallax() {
+    if (prefersReducedMotionNow()) return;
+
+    const images = [...document.querySelectorAll('[data-parallax] img')];
+    if (!images.length) return;
+
+    document.body.classList.add('parallax-on');   // unlocks the CSS headroom
+    let ticking = false;
+
+    function drift() {
+        ticking = false;
+        const vh = window.innerHeight;
+
+        images.forEach(img => {
+            const frame = img.parentElement.getBoundingClientRect();
+            if (frame.bottom < 0 || frame.top > vh) return;   // off-screen: skip
+
+            // -1 with the frame low in the viewport, +1 with it high.
+            const progress = 1 - (frame.top + frame.height / 2) / (vh + frame.height) * 2;
+            const shift = progress * -4.5 * PARALLAX_STRENGTH; // percent of image height
+            // Written as a variable so it composes with the CSS centring
+            // offset rather than replacing the whole transform.
+            img.style.setProperty('--parallax-shift', shift.toFixed(2) + '%');
+        });
+    }
+
+    function queue() {
+        if (!ticking) {
+            ticking = true;
+            window.requestAnimationFrame(drift);
+        }
+    }
+
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', queue, { passive: true });
+    drift();
+}
+
+/* --------------------------------------------
+   Back to top
+   -------------------------------------------- */
+
+function initializeScrollTop() {
+    const button = document.getElementById('scroll-top');
+    if (!button) return;
+
+    button.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: prefersReducedMotion() ? 'auto' : 'smooth'
+        });
+    });
 }
 
 /* ============================================
-   Motion preferences
+   Start
    ============================================ */
 
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        transition-duration: 0.01ms !important;
-        animation-duration: 0.01ms !important;
-    }
-
-    /* The blinking colon is ambient rather than informative, so it stops
-       entirely rather than blinking imperceptibly fast. */
-    .widget-colon i {
-        animation: none;
-        opacity: 0.55;
-    }
-
-    /* All entrance and chrome motion collapses to nothing, fully visible. */
-    [data-enter] {
-        opacity: 1 !important;
-        transform: none !important;
-        transition: none !important;
-    }
-
-    .parallax-on .image-1 img {
-        height: 100% !important;
-        transform: none !important;
-    }
-
-    .dock,
-    .widget {
-        animation: none !important;
-    }
+function start() {
+    startHelloAnimation();
+    dockLabel.init();
+    initializeTheme();
+    initializeScroll();
+    initializeProjectCollapse();
+    initializeScrollTop();
+    initializeWidget();
+    initializeEntrance();
+    initializeParallax();
 }
 
-/* Some people find translucency over moving content hard to read; the OS
-   exposes that preference, so the glass becomes a solid surface and the
-   backdrop filter is dropped entirely. Declared per theme (not on :root)
-   so it overrides both palettes at equal specificity. */
-@media (prefers-reduced-transparency: reduce) {
-    [data-theme="light"] {
-        --glass-bg: #F4F4F6;
-        --glass-backdrop: none;
-        --glass-rim: rgba(255, 255, 255, 0.9);
-    }
-
-    [data-theme="dark"] {
-        --glass-bg: #1A1A1C;
-        --glass-backdrop: none;
-        --glass-rim: rgba(255, 255, 255, 0.1);
-    }
-}
-
-/* ============================================
-   Motion
-   ============================================ */
-
-/* Content elements start lowered and transparent; JS adds .is-in when they
-   scroll into view, and a per-element transition-delay (also set in JS)
-   staggers them within each section. */
-[data-enter] {
-    opacity: 0;
-    transform: translateY(var(--enter-rise));
-    transition:
-        opacity var(--enter-ms) var(--enter-ease),
-        transform var(--enter-ms) var(--enter-ease);
-    will-change: opacity, transform;
-}
-
-[data-enter].is-in {
-    opacity: 1;
-    transform: none;
-    will-change: auto;
-}
-
-/* Parallax images carry a little vertical headroom so they can drift within
-   their frame without ever revealing an edge. The headroom only applies
-   once JS confirms parallax is running (body.parallax-on); without JS, or
-   under reduced motion, images fill their frame exactly. */
-/* Parallax slack comes from a small uniform scale-up, not from extra height:
-   scaling keeps object-fit: cover filling exactly 100% width (no side crop),
-   while giving a few percent of vertical room for the image to drift within
-   the container's overflow. The JS writes --parallax-shift; the scale and the
-   drift compose in one transform. */
-.parallax-on .image-1 img {
-    transform: scale(1.08) translateY(var(--parallax-shift, 0%));
-    will-change: transform;
-}
-
-/* The dock and widget settle in once, on load — chrome arrives after the
-   content it frames. The .chrome-in class is added by JS a beat after the
-   first paint; without JS they are simply visible. */
-.dock,
-.widget {
-    animation: chrome-enter var(--chrome-ms) var(--enter-ease) both;
-}
-
-@keyframes chrome-enter {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-/* The dock is horizontally centred by a transform, so its keyframe must
-   carry that translation through or it would jump to the left mid-animation. */
-.dock {
-    animation-name: dock-enter;
-}
-
-@keyframes dock-enter {
-    from { opacity: 0; transform: translateX(-50%) translateY(12px); }
-    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-/* ============================================
-   Responsive
-   ============================================ */
-
-/* The widget floats clear in the left margin on wide screens. Below this
-   the content column reaches it, so the page opens below the widget
-   instead of behind it. */
-@media screen and (max-width: 1000px) {
-    body {
-        padding-top: var(--widget-clearance);
-    }
-}
-
-@media screen and (max-width: 700px) {
-    :root {
-        --page-edge: 1.4rem;
-        --edge-gap: 20px;
-        --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
-    }
-
-    :root {
-        --flap-width: 25px;
-        --flap-height: 35px;
-        --flap-size: 22px;
-    }
-
-    .widget {
-        padding: 11px;
-        border-radius: 18px;
-    }
-
-    .image-2 {
-        flex-direction: column;
-    }
-
-    .image-box-a,
-    .image-box-b {
-        width: 100%;
-    }
-
-    .image-box-a img,
-    .image-box-b img {
-        width: auto;
-        height: auto;
-        max-width: 44%;
-        max-height: 84%;
-    }
-
-    .image-3 {
-        padding: var(--space-6) var(--space-5);
-    }
-}
-
-@media screen and (max-width: 390px) {
-    :root {
-        --image-trio-gap: 12px;
-    }
-
-    .image-3 {
-        padding: var(--space-6) 18px;
-    }
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+} else {
+    start();
 }
