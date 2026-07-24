@@ -98,16 +98,16 @@
        hierarchy keeps its proportions at any width with no breakpoint
        jumps:
        display : keynote lockup — hello, name, subtext (36px -> 56px)
-       lg      : project titles                        (20px -> 24px)
-       md      : body copy                             (15px -> 17px)
+       lg      : project titles                                 (20px)
+       md      : body copy                                      (16px)
        sm      : project subtitles and footer          (13px -> 14px)
 
        The display step is deliberately large while staying at weight 400:
        large and light reads delicate, small and light reads timid.
     -------------------------------------------------- */
     --font-size-display: clamp(2.25rem, 1.5rem + 3vw, 3.5rem);
-    --font-size-lg: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
-    --font-size-md: clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem);
+    --font-size-lg: 1.25rem;
+    --font-size-md: 1rem;
     --font-size-sm: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
 
     --line-height-display: 1.08;
@@ -139,6 +139,12 @@
     --color-bg: #FCFBF9;
     --color-ink: #1C1A17;
     --color-muted: #1C1A17A6;
+    /* Project subtitles sit on their own cool grey, a step apart from the
+       warm muted tone used elsewhere. Light mode uses the darker step of
+       the same family: #9CA3AF measures only 2.45:1 on this ground and
+       would fail WCAG AA, while #6B7280 clears it at 4.67:1 and reads as
+       the same colour idea. */
+    --color-subtitle: #6B7280;
     --color-panel: #F4F2ED;
 
     /* A whisper of depth under image wells — two layers, both under 5%.
@@ -181,10 +187,7 @@
     --dock-height: 48px;
     --dock-bottom: calc(var(--edge-gap) + env(safe-area-inset-bottom, 0px));
     --dock-edge: clamp(24px, 6vw, 28px);
-    /* The dock tracks the content column, so the page reads as one
-       composition rather than narrow content beneath full-width chrome.
-       It falls back to the screen width, less its margins, on phones. */
-    --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
+    --dock-width: calc(100% - (var(--page-edge) * 2));
     --dock-action-size: 44px;
     --dock-action-gap: 8px;
     --dock-actions-inset: 5px;
@@ -234,6 +237,7 @@
     --color-bg: #141210;
     --color-ink: #F7F5F1;
     --color-muted: #F7F5F1A6;
+    --color-subtitle: #9CA3AF; /* 7.36:1 on this ground */
     --color-panel: #1E1B18;
 
     /* Shadows barely register on a dark ground, so depth comes from the
@@ -294,6 +298,12 @@ body {
    ============================================ */
 
 .dock {
+    /* A long press on a dock control shows its label; without this iOS
+       raises its own callout menu and selects text instead. */
+    -webkit-touch-callout: none;
+    user-select: none;
+    -webkit-user-select: none;
+
     position: fixed;
     bottom: var(--dock-bottom);
     left: 50%;
@@ -305,6 +315,40 @@ body {
        while the progress bar stacks above the actions. */
     align-items: flex-end;
     justify-content: space-between;
+}
+
+/* The label that names whichever control is under the pointer, in the manner
+   of the macOS dock. It is positioned absolutely so it never affects layout,
+   and JS centres it over the active control. Same glass as the dock itself. */
+.dock-label {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 0;
+    z-index: 1;
+    padding: 5px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+    font-size: 12px;
+    line-height: 1.4;
+    letter-spacing: -0.006em;
+    color: var(--color-ink);
+    background-color: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop);
+    -webkit-backdrop-filter: var(--glass-backdrop);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+        inset 0 1px 0 var(--glass-rim),
+        0 1px 2px var(--glass-shadow-contact),
+        0 6px 20px var(--glass-shadow-ambient);
+    opacity: 0;
+    transform: translate(-50%, 4px);
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.dock-label.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
 }
 
 /* Progress bar and actions capsule share a column, so the bar inherits the
@@ -370,17 +414,17 @@ body {
     text-decoration: none;
 }
 
+/* macOS-dock magnification: the control swells slightly under the pointer,
+   then compresses on press and springs back on release. Both are suppressed
+   under prefers-reduced-motion by the global rule. */
 .dock-face:hover,
 .dock-action:hover {
-    opacity: 0.62;
+    transform: scale(1.12);
 }
 
-/* iOS-style press feedback: the control compresses under the finger and
-   springs back on release. Respects prefers-reduced-motion via the global
-   rule. */
 .dock-face:active,
 .dock-action:active {
-    transform: scale(0.9);
+    transform: scale(0.94);
 }
 
 .dock-face,
@@ -551,7 +595,7 @@ body {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-sm);
     letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-muted);
+    color: var(--color-subtitle);
 }
 
 .project-description {
@@ -727,6 +771,7 @@ body.projects-collapsed .image-3 {
     :root {
         --page-edge: 1.4rem;
         --edge-gap: 20px;
+        --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
     }
 
     .image-2 {
