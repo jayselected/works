@@ -55,16 +55,16 @@
     /* Desktop targets match the Figma spec (display 56, title 20, body 14,
        meta 12); each clamps down on narrow viewports so the scale stays
        proportional on mobile. */
-    --font-size-display: clamp(2.5rem, 1.9rem + 2.4vw, 3.5rem);
-    --font-size-lg: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);
-    --font-size-md: clamp(0.8125rem, 0.78rem + 0.15vw, 0.875rem);
-    --font-size-sm: clamp(0.6875rem, 0.66rem + 0.12vw, 0.75rem);
+    --font-size-display: clamp(2rem, 1.7rem + 1.2vw, 2.5rem);   /* 32 → 40 */
+    --font-size-lg: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);  /* 18 → 20 */
+    --font-size-md: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);     /* 15 → 16 */
+    --font-size-sm: clamp(0.8125rem, 0.78rem + 0.15vw, 0.875rem);/* 13 → 14 */
 
-    --line-height-display: 1.08;
+    --line-height-display: 1.2;
     --line-height-lg: 1.45;
     --line-height-md: 1.5;
 
-    --letter-spacing-display: -0.02em;
+    --letter-spacing-display: -0.01em;
     --letter-spacing-tight: -0.01em;
 
     /* --- Palette ------------------------------------
@@ -86,13 +86,16 @@
     --color-ink: #1C1A17;
     --color-ink-rgb: 28, 26, 23;   /* ink as channels, for alpha steps below */
 
+    /* Primary text colour across the site. Intended brand grey; note this
+       sits below WCAG AA on the ground (~2:1) by design. */
+    --color-text: #B3B3B3;
+
     --color-muted: rgba(var(--color-ink-rgb), 0.62);   /* secondary text */
     --color-line: rgba(var(--color-ink-rgb), 0.08);    /* hairline */
     --color-divider: rgba(var(--color-ink-rgb), 0.14); /* stronger divider */
 
-    /* Image containers carry their own fill and border, per the design. */
+    /* Banner fill; the phone containers are transparent. */
     --color-image-bg: #F8F8FB;
-    --color-image-border: #E5E5EA;
 
     --color-accent: #007AFF;
 
@@ -211,14 +214,16 @@
     --color-ink: #F7F7F7;
     --color-ink-rgb: 247, 247, 247;
 
+    /* Standard text grey (dark). Placeholder mirror of the light value,
+       pending the dark-mode pass; #B3B3B3 clears AA comfortably here. */
+    --color-text: #B3B3B3;
+
     --color-muted: rgba(var(--color-ink-rgb), 0.50);
     --color-line: rgba(var(--color-ink-rgb), 0.08);
     --color-divider: rgba(var(--color-ink-rgb), 0.14);
 
-    /* Image containers: same subtle-fill / hairline-border relationship as
-       light, tuned for the dark ground. */
+    /* Banner fill for the dark ground; phone containers are transparent. */
     --color-image-bg: #14181B;
-    --color-image-border: #25292C;
 
     /* Accent holds across themes — it is the one fixed hue. */
     --color-accent: #007AFF;
@@ -486,18 +491,18 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 24px;
+    gap: 16px;
     padding-top: var(--space-page-top);
     margin-bottom: var(--space-section);
-    color: var(--color-ink);
+    color: var(--color-text);
 }
 
 .hello-text {
-    font-weight: 700;
+    font-weight: 400;
     font-size: var(--font-size-display);
     line-height: var(--line-height-display);
     letter-spacing: var(--letter-spacing-display);
-    color: var(--color-ink);
+    color: var(--color-text);
     margin: var(--space-0);
     padding: var(--space-0);
     white-space: nowrap;
@@ -519,16 +524,16 @@ body {
 .hello-name {
     font-weight: 400;
     font-size: var(--font-size-display);
-    line-height: 1.07;
+    line-height: var(--line-height-display);
     letter-spacing: var(--letter-spacing-display);
-    color: var(--color-ink);
+    color: var(--color-text);
 }
 
 .hello-role {
     font-size: var(--font-size-md);
     line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-muted);
+    color: var(--color-text);
 }
 
 /* ============================================
@@ -547,7 +552,7 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 48px;
 }
 
 .project-details {
@@ -558,41 +563,35 @@ body {
 }
 
 .project-title {
-    font-weight: 700;
+    font-weight: 400;
     font-size: var(--font-size-lg);
     line-height: var(--line-height-lg);
     letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
+    color: var(--color-text);
 }
 
-/* Meta: a bold "Information" label above a single line of project facts. */
+/* Meta: an "Information" label above a single line of project facts, both at
+   body size in the standard grey. */
 .project-meta {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
 
-.project-meta-label {
-    font-weight: 700;
-    font-size: var(--font-size-sm);
-    line-height: 1.5;
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
-}
-
+.project-meta-label,
 .project-meta-text {
-    font-size: var(--font-size-sm);
-    line-height: 1.5;
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-muted);
-}
-
-.project-description {
-    max-width: 717px;   /* Figma: description measure within the 824 column */
     font-size: var(--font-size-md);
     line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
+    color: var(--color-text);
+}
+
+.project-description {
+    max-width: 717px;   /* Figma description measure */
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-md);
+    letter-spacing: var(--letter-spacing-tight);
+    color: var(--color-text);
 }
 
 /* Collapsed view (toggled from the dock): each project reduces to its
@@ -627,14 +626,12 @@ body.projects-collapsed .stack-pair {
 
 .stack {
     width: 100%;
-    background-color: var(--color-image-bg);
-    border: 1px solid var(--color-image-border);
-    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 /* Banner: image fills the container at the source ratio. */
 .stack-banner {
-    aspect-ratio: 824 / 480;   /* Figma banner ratio */
+    aspect-ratio: 824 / 480;        /* Figma banner ratio */
+    background-color: var(--color-image-bg);
     overflow: hidden;
 }
 
@@ -658,17 +655,19 @@ body.projects-collapsed .stack-pair {
 
 .stack-trio {
     aspect-ratio: 824 / 538.83;   /* Figma Child 1 */
+    padding: 8.54% 0;             /* 46px vertical, 0 horizontal */
     gap: 3.88%;                   /* 32 / 824 */
 }
 
 .stack-pair {
-    aspect-ratio: 824 / 519.83;   /* Figma Child 2 */
+    aspect-ratio: 824 / 573.12;   /* Figma Child 2 */
+    padding: 11.17% 7.77%;        /* 64px, as % of container height / width */
     gap: 3.88%;
 }
 
 .phone {
     height: auto;
-    aspect-ratio: 189.6 / 391.83;   /* device screenshot ratio */
+    aspect-ratio: 216.21 / 446.83;  /* device screenshot ratio */
     object-fit: contain;
     display: block;
     flex: none;
@@ -679,8 +678,9 @@ body.projects-collapsed .stack-pair {
     width: 26.24%;   /* 216.21 / 824 */
 }
 
+
 .stack-pair .phone {
-    width: 23.01%;   /* 189.6 / 824 */
+    width: 26.02%;   /* 214.41 / 824 */
 }
 
 /* ============================================
@@ -695,10 +695,10 @@ body.projects-collapsed .stack-pair {
 }
 
 .footer-text {
-    font-size: var(--font-size-md);
+    font-size: var(--font-size-sm);
     line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-muted);
+    color: var(--color-text);
 }
 
 /* ============================================
@@ -998,7 +998,7 @@ body.projects-collapsed .stack-pair {
     .stack-trio,
     .stack-pair {
         aspect-ratio: auto;
-        padding: 32px 20px;
+        padding: 24px 0;
     }
 
     .stack-trio .phone {
