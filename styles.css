@@ -32,9 +32,9 @@
 :root {
     color-scheme: light;
 
-    /* Content column: 824px, matching the Figma frame (1440 − 308×2). Holds
-       at full width inside the page padding on narrower viewports. */
-    --content-width: 824px;
+    /* Content column: 600px editorial measure. Holds at full width inside
+       the page padding on narrower viewports. */
+    --content-width: 600px;
     --page-edge: 2rem;
 
     /* Distance from the screen edge for both floating glass objects. */
@@ -112,9 +112,9 @@
 
 
     --space-fluid-md: clamp(18px, 3vw, 24px);
-    --space-section: clamp(48px, 6vw, 64px);
+    --space-section: clamp(40px, 4vw + 24px, 64px);
     /* Space above the hero. */
-    --space-page-top: clamp(72px, 12vw, 175px);
+    --space-page-top: clamp(64px, 8vw + 32px, 175px);
 
     /* --- Motion -------------------------------------
        Content elements rise and fade as they enter the viewport; the dock
@@ -547,13 +547,6 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--space-fluid-md);
-}
-
-.project {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
     gap: 32px;
 }
 
@@ -641,7 +634,7 @@ body.projects-collapsed .stack-pair {
 
 /* Banner: image fills the container at the source ratio. */
 .stack-banner {
-    aspect-ratio: 824 / 480;
+    aspect-ratio: 824 / 480;   /* Figma banner ratio */
     overflow: hidden;
 }
 
@@ -652,9 +645,10 @@ body.projects-collapsed .stack-pair {
     display: block;
 }
 
-/* Phone rows. Padding scales as a percentage of width so the proportions
-   hold as the column narrows; phones share the row via flex and keep their
-   device aspect ratio. */
+/* Phone rows. Container aspect ratios and phone widths are taken directly
+   from the Figma frame and expressed as ratios / percentages, so they scale
+   exactly with the column. Phones are centred (not stretched) and keep their
+   device aspect ratio, so nothing distorts. */
 .stack-trio,
 .stack-pair {
     display: flex;
@@ -663,29 +657,30 @@ body.projects-collapsed .stack-pair {
 }
 
 .stack-trio {
-    padding: 5.6% 7.8%;   /* Figma: 46px / 64px on an 824 container */
-    gap: 3.9%;            /* 32px */
+    aspect-ratio: 824 / 538.83;   /* Figma Child 1 */
+    gap: 3.88%;                   /* 32 / 824 */
 }
 
 .stack-pair {
-    padding: 7.8%;        /* Figma: 64px */
-    gap: 3.9%;
+    aspect-ratio: 824 / 519.83;   /* Figma Child 2 */
+    gap: 3.88%;
 }
 
 .phone {
-    flex: 0 1 auto;
     height: auto;
-    aspect-ratio: 216 / 447;   /* device screenshot ratio */
+    aspect-ratio: 189.6 / 391.83;   /* device screenshot ratio */
     object-fit: contain;
     display: block;
+    flex: none;
 }
 
+/* Phone widths as a share of the container, straight from Figma. */
 .stack-trio .phone {
-    width: calc((100% - (3.9% * 2)) / 3);
+    width: 26.24%;   /* 216.21 / 824 */
 }
 
 .stack-pair .phone {
-    width: calc((100% - 3.9%) / 2);
+    width: 23.01%;   /* 189.6 / 824 */
 }
 
 /* ============================================
@@ -997,14 +992,21 @@ body.projects-collapsed .stack-pair {
 
     /* Tighter container padding on narrow screens so the phones keep a
        usable size within the rows. */
-    .stack-trio {
-        padding: 6% 5%;
-        gap: 4%;
+    /* On a narrow screen the fixed desktop ratios would leave the phones
+       tiny, so the containers size to their content and the phones grow to a
+       readable share of the column. */
+    .stack-trio,
+    .stack-pair {
+        aspect-ratio: auto;
+        padding: 32px 20px;
     }
 
-    .stack-pair {
-        padding: 6%;
-        gap: 4%;
+    .stack-trio .phone {
+        width: 30%;
+    }
+
+    .stack-pair .phone {
+        width: 42%;
     }
 }
 
