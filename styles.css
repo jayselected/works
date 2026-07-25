@@ -33,7 +33,7 @@
     color-scheme: light;
 
     /* Content column: 1036px, matching the Figma frame (1440 − 202×2). */
-    --content-width: 1036px;
+    --content-width: 800px;
     --page-edge: 2rem;
 
     /* Distance from the screen edge for both floating glass objects. */
