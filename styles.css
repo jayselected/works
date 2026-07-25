@@ -576,6 +576,16 @@ body {
     color: var(--color-ink);
 }
 
+/* A quiet caption under the display lockup: small, muted, and set a little
+   apart so it reads as a supporting role line rather than a third headline. */
+.hello-role {
+    margin-top: var(--space-2);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-sm);
+    letter-spacing: var(--letter-spacing-tight);
+    color: var(--color-muted);
+}
+
 /* ============================================
    Work
    ============================================ */
@@ -635,7 +645,7 @@ body {
 body.projects-collapsed .project-subtitle,
 body.projects-collapsed .project-description,
 body.projects-collapsed .stack-row,
-body.projects-collapsed .stack-trio {
+body.projects-collapsed .stack-solo {
     display: none;
 }
 
@@ -671,7 +681,7 @@ body.projects-collapsed .stack-trio {
    .stack-banner   full-bleed single image (the landscape banner)
    .stack-row      two square containers side by side (Child Stack 1)
    .stack-square   a 1:1 container holding one phone at 40% width
-   .stack-trio     one container holding three phones at 20% width each
+   .stack-solo     one container holding a single centred phone
    .phone          a device screenshot, sized by % width, natural height
 */
 
@@ -731,19 +741,17 @@ body.projects-collapsed .stack-trio {
     width: 40%;                 /* Framer: phone 236 of 590 square = 40% */
 }
 
-/* ---- Child Stack 2: three phones in one container ---- */
-.stack-trio {
+/* ---- Child Stack 3: a single phone alone in a full-width container ---- */
+.stack-solo {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Framer: 52px vertical padding; the 92px inter-phone gap becomes a
-       proportional gap so it holds at any width. */
-    padding: 7.5% 0;
-    gap: 7.5%;
+    /* Same vertical breathing room as the square pairs. */
+    padding: 8.8% 0;
 }
 
-.stack-trio .phone {
-    width: 20%;                 /* Framer: each phone 20% of the container */
+.stack-solo .phone {
+    width: 40%;                 /* matches a phone in the square pairs */
 }
 
 /* ============================================
@@ -1057,8 +1065,8 @@ body.projects-collapsed .stack-trio {
         border-radius: 18px;
     }
 
-    /* Child Stack 1 stacks its two squares vertically on a narrow screen;
-       Child Stack 2 (the trio) stays horizontal, as in Framer. */
+    /* Both square pairs stack vertically on a narrow screen. The solo stack
+       is a single centred phone, so it needs no change. */
     .stack-row {
         flex-direction: column;
     }
