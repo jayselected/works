@@ -54,7 +54,7 @@
     /* Desktop targets match the Figma spec (display 56, title 20, body 14,
        meta 12); each clamps down on narrow viewports so the scale stays
        proportional on mobile. */
-    --font-size-display: clamp(2.75rem, 1.9rem + 3.4vw, 4.25rem);  /* 44 → 68 */
+    --font-size-display: clamp(2.625rem, 1.9rem + 3.4vw, 4.25rem);  /* 42 → 68 */
     --font-size-lg: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);  /* 18 → 20 */
     --font-size-md: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);     /* 15 → 16 */
     --font-size-sm: clamp(0.8125rem, 0.78rem + 0.15vw, 0.875rem);/* 13 → 14 */
@@ -127,9 +127,6 @@
     --enter-ms: 900ms;
     --enter-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
     --chrome-ms: 800ms;
-    /* The 90ms stagger between elements is applied per-element as an inline
-       transition-delay in siteapp.js (ENTER_STAGGER_MS), since it depends on
-       DOM order — it has no standalone token here. */
 
     /* --- Widget metrics -----------------------------
        A Twemco-style flip clock, fixed at the top-left and sharing the
@@ -549,6 +546,7 @@ body {
 /* Meta: an "Information" label above a single line of project facts, both at
    body size in the standard grey. */
 .project-meta {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -647,25 +645,17 @@ body.projects-collapsed .stack-pair {
 
 .stack-pair {
     aspect-ratio: 824 / 573.12;   /* Figma Child 2 */
-    padding: 11.17% 7.77%;        /* 64px, as % of container height / width */
+    padding: 11.17% 0;            /* vertical only, so phones match the trio */
     gap: 3.88%;
 }
 
 .phone {
+    width: 26.24%;   /* uniform across trio and pair (216.21 / 824) */
     height: auto;
     aspect-ratio: 216.21 / 446.83;  /* device screenshot ratio */
     object-fit: contain;
     display: block;
     flex: none;
-}
-
-/* Phone widths as a share of the container, straight from Figma. */
-.stack-trio .phone {
-    width: 26.24%;   /* 216.21 / 824 */
-}
-
-.stack-pair .phone {
-    width: 26.02%;   /* 214.41 / 824 */
 }
 
 /* ============================================
@@ -782,6 +772,7 @@ body.projects-collapsed .stack-pair {
     border: 1px solid var(--flap-edge);
     overflow: hidden;
     font-size: var(--flap-size);
+    font-weight: 700;
     line-height: var(--flap-height);
     letter-spacing: 0;
     text-align: center;
@@ -903,8 +894,7 @@ body.projects-collapsed .stack-pair {
    ============================================ */
 
 /* Content elements start lowered and transparent; JS adds .is-in when they
-   scroll into view, and a per-element transition-delay (also set in JS)
-   staggers them within each section. */
+   enter the viewport, fading them in together. */
 [data-enter] {
     opacity: 0;
     transform: translateY(var(--enter-rise));
@@ -986,12 +976,8 @@ body.projects-collapsed .stack-pair {
         padding: 24px 0;
     }
 
-    .stack-trio .phone {
+    .phone {
         width: 30%;
-    }
-
-    .stack-pair .phone {
-        width: 42%;
     }
 }
 
