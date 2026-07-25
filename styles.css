@@ -1065,10 +1065,22 @@ body.projects-collapsed .stack-solo {
         border-radius: 18px;
     }
 
-    /* Both square pairs stack vertically on a narrow screen. The solo stack
-       is a single centred phone, so it needs no change. */
+    /* Both square pairs stack vertically on a narrow screen. Stacked 1:1
+       squares read as chunky blocks around a tall thin phone, so on mobile
+       the containers become portrait rectangles and the phone grows to fill
+       them — far better suited to the tall screenshots. */
     .stack-row {
         flex-direction: column;
+    }
+
+    .stack-square,
+    .stack-solo {
+        aspect-ratio: 4 / 5;
+    }
+
+    .stack-square .phone,
+    .stack-solo .phone {
+        width: 55%;
     }
 }
 
