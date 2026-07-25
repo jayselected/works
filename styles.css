@@ -2,69 +2,19 @@
    Fonts
    ============================================ */
 
-/* CursorGothic is the primary face (400 + 700, with italics). Glyphs it
-   doesn't cover — the non-Latin scripts in the Hello animation — fall
-   through per-character to the SF Pro / system stack declared below. */
+/* Helvetica Now Display — primary face, Regular (400) and Bold (700). */
 @font-face {
-    font-family: 'CursorGothic';
-    src: url('fonts/CursorGothic/CursorGothic-Regular.woff2') format('woff2');
+    font-family: 'Helvetica Now Display';
+    src: url('fonts/Helvetica Now/Helvetica_Now_Display.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'CursorGothic';
-    src: url('fonts/CursorGothic/CursorGothic-Italic.woff2') format('woff2');
-    font-weight: 400;
-    font-style: italic;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'CursorGothic';
-    src: url('fonts/CursorGothic/CursorGothic-Bold.woff2') format('woff2');
+    font-family: 'Helvetica Now Display';
+    src: url('fonts/Helvetica Now/Helvetica_Now_Display_Bold.ttf') format('truetype');
     font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'CursorGothic';
-    src: url('fonts/CursorGothic/CursorGothic-BoldItalic.woff2') format('woff2');
-    font-weight: 700;
-    font-style: italic;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Text';
-    src: url('fonts/SF Pro Text/SF Pro Text Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Text';
-    src: url('fonts/SF Pro Text/SF Pro Text Medium.woff') format('woff');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Text';
-    src: url('fonts/SF Pro Text/SF Pro Text Bold.woff') format('woff');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF Pro Text';
-    src: url('fonts/SF Pro Text/SF Pro Text Light.woff') format('woff');
-    font-weight: 300;
     font-style: normal;
     font-display: swap;
 }
@@ -82,12 +32,9 @@
 :root {
     color-scheme: light;
 
-    /* A fixed editorial measure rather than a proportion of the screen: the
-       column stops growing once it has enough room, which is what keeps
-       line length comfortable on a large display. At 17px body copy this
-       runs to roughly 70 characters — the top of the readable range.
-       Phones fall back to full width inside the page padding. */
-    --content-width: 600px;
+    /* Content column: 824px, matching the Figma frame (1440 − 308×2). Holds
+       at full width inside the page padding on narrower viewports. */
+    --content-width: 824px;
     --page-edge: 2rem;
 
     /* Distance from the screen edge for both floating glass objects. */
@@ -100,25 +47,25 @@
        display : keynote lockup — hello, name, subtext (36px -> 56px)
        lg      : project titles                                 (20px)
        md      : body copy                                      (16px)
-       sm      : project subtitles and footer          (12px -> 13px)
+       sm      : meta line                             (11px -> 12px)
 
        The display step is deliberately large while staying at weight 400:
        large and light reads delicate, small and light reads timid.
     -------------------------------------------------- */
-    --font-size-display: clamp(2.25rem, 1.5rem + 3vw, 3.5rem);
+    /* Desktop targets match the Figma spec (display 56, title 20, body 14,
+       meta 12); each clamps down on narrow viewports so the scale stays
+       proportional on mobile. */
+    --font-size-display: clamp(2.5rem, 1.9rem + 2.4vw, 3.5rem);
     --font-size-lg: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);
-    --font-size-md: clamp(0.9375rem, 0.9rem + 0.2vw, 1rem);
-    --font-size-sm: clamp(0.75rem, 0.7rem + 0.2vw, 0.8125rem);
+    --font-size-md: clamp(0.8125rem, 0.78rem + 0.15vw, 0.875rem);
+    --font-size-sm: clamp(0.6875rem, 0.66rem + 0.12vw, 0.75rem);
 
     --line-height-display: 1.08;
-    --line-height-lg: 1.3;
-    /* Air between lines is the strongest calm signal in typography. */
-    --line-height-md: 1.75;
-    --line-height-sm: 1.5;
+    --line-height-lg: 1.45;
+    --line-height-md: 1.5;
 
-    /* Tracking is eased off: delicate is not cramped. */
-    --letter-spacing-display: -0.03em;
-    --letter-spacing-tight: -0.008em;
+    --letter-spacing-display: -0.02em;
+    --letter-spacing-tight: -0.01em;
 
     /* --- Palette ------------------------------------
        Strict system. Two base colours per theme — ink and ground — and
@@ -140,10 +87,12 @@
     --color-ink-rgb: 28, 26, 23;   /* ink as channels, for alpha steps below */
 
     --color-muted: rgba(var(--color-ink-rgb), 0.62);   /* secondary text */
-    --color-subtitle: var(--color-muted);
-    --color-panel: rgba(var(--color-ink-rgb), 0.02);   /* stack / well fill */
     --color-line: rgba(var(--color-ink-rgb), 0.08);    /* hairline */
     --color-divider: rgba(var(--color-ink-rgb), 0.14); /* stronger divider */
+
+    /* Image containers carry their own fill and border, per the design. */
+    --color-image-bg: #F8F8FB;
+    --color-image-border: #E5E5EA;
 
     --color-accent: #007AFF;
 
@@ -153,7 +102,6 @@
     --flap-seam: var(--color-divider);
     --flap-edge: var(--color-line);
 
-    --ease-soft: 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
 
     /* Layout rhythm. Only the steps actually in use are declared; one-off
        optical values live on the rule that needs them rather than
@@ -164,11 +112,9 @@
 
 
     --space-fluid-md: clamp(18px, 3vw, 24px);
-    --space-section: clamp(88px, 18vw, 168px);
-    /* Space above the hero. Tuned separately from --space-section: with no
-       header above it, this is the first thing on the page, and it wants
-       less room than the gaps between sections. */
-    --space-page-top: clamp(72px, 12vw, 148px);
+    --space-section: clamp(48px, 6vw, 64px);
+    /* Space above the hero. */
+    --space-page-top: clamp(72px, 12vw, 175px);
 
     /* --- Motion -------------------------------------
        Content elements rise and fade as they enter the viewport; the dock
@@ -266,10 +212,13 @@
     --color-ink-rgb: 247, 247, 247;
 
     --color-muted: rgba(var(--color-ink-rgb), 0.50);
-    --color-subtitle: var(--color-muted);
-    --color-panel: rgba(var(--color-ink-rgb), 0.02);
     --color-line: rgba(var(--color-ink-rgb), 0.08);
     --color-divider: rgba(var(--color-ink-rgb), 0.14);
+
+    /* Image containers: same subtle-fill / hairline-border relationship as
+       light, tuned for the dark ground. */
+    --color-image-bg: #14181B;
+    --color-image-border: #25292C;
 
     /* Accent holds across themes — it is the one fixed hue. */
     --color-accent: #007AFF;
@@ -293,7 +242,7 @@ html {
 
 body {
     font-weight: 400;
-    font-family: 'CursorGothic', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Now Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: var(--font-size-md);
     line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
@@ -537,16 +486,14 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: clamp(20px, 3vw, 36px);
+    gap: 24px;
     padding-top: var(--space-page-top);
     margin-bottom: var(--space-section);
     color: var(--color-ink);
 }
 
 .hello-text {
-    /* Explicit 400: this is an <h1>, and browsers default headings to bold
-       via the UA stylesheet — body inheritance alone doesn't undo that. */
-    font-weight: 400;
+    font-weight: 700;
     font-size: var(--font-size-display);
     line-height: var(--line-height-display);
     letter-spacing: var(--letter-spacing-display);
@@ -566,22 +513,20 @@ body {
 .hello-intro {
     display: flex;
     flex-direction: column;
+    gap: 16px;
 }
 
-.hello-name,
-.hello-subtext {
+.hello-name {
+    font-weight: 400;
     font-size: var(--font-size-display);
-    line-height: var(--line-height-display);
+    line-height: 1.07;
     letter-spacing: var(--letter-spacing-display);
     color: var(--color-ink);
 }
 
-/* A quiet caption under the display lockup: small, muted, and set a little
-   apart so it reads as a supporting role line rather than a third headline. */
 .hello-role {
-    margin-top: var(--space-2);
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-muted);
 }
@@ -605,110 +550,99 @@ body {
     gap: var(--space-fluid-md);
 }
 
+.project {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.project-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.project-title {
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-lg);
+    letter-spacing: var(--letter-spacing-tight);
+    color: var(--color-ink);
+}
+
+/* Meta: a bold "Information" label above a single line of project facts. */
 .project-meta {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
 
-.project-title {
-    font-size: var(--font-size-lg);
-    line-height: var(--line-height-lg);
+.project-meta-label {
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-ink);
-    margin-bottom: var(--space-2);
 }
 
-/* A project with no subtitle lines carries no trailing gap. */
-.project-title:last-child {
-    margin-bottom: var(--space-0);
-}
-
-/* Subtitle lines under the title: services first, tools beneath. The
-   stack itself has no gap, so consecutive subtitles sit at natural
-   line-height and read as one continuous block of text; only the title
-   carries separation above them. */
-.project-subtitle {
+.project-meta-text {
     font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
+    line-height: 1.5;
     letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-subtitle);
+    color: var(--color-muted);
 }
 
 .project-description {
-    width: 100%;
-}
-
-/* Collapsed view (toggled from the dock): each project reduces to its
-   title and lead image. The dock button swaps between the minimise and
-   maximise icons to match. */
-body.projects-collapsed .project-subtitle,
-body.projects-collapsed .project-description,
-body.projects-collapsed .stack-row,
-body.projects-collapsed .stack-solo {
-    display: none;
-}
-
-/* Briefs run the full column. The column itself is now the measure —
-   about 70 characters at 17px — so no extra cap is needed. */
-.project-description-text {
+    max-width: 717px;   /* Figma: description measure within the 824 column */
     font-size: var(--font-size-md);
     line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-ink);
 }
 
+/* Collapsed view (toggled from the dock): each project reduces to its
+   title and lead image. */
+body.projects-collapsed .project-meta,
+body.projects-collapsed .project-description,
+body.projects-collapsed .stack-trio,
+body.projects-collapsed .stack-pair {
+    display: none;
+}
+
 /* ============================================
    Images
-   ============================================ */
+   ============================================
+
+   Three container types, per the design:
+
+   .stack-banner   full-width landscape image, panel fill
+   .stack-trio     panel holding three phones, evenly spread
+   .stack-pair     panel holding two phones, evenly spread
+
+   Containers carry the fill and hairline border; phones size by flex within
+   the padded interior and keep their own aspect ratio, so nothing distorts.
+*/
 
 .project-images {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--space-fluid-md);
+    gap: 32px;
 }
-
-/* ============================================
-   Stacks — image containers
-   ============================================
-
-   Mirrors the Framer layout directly. A .stack is a padded container with
-   the panel background. Everything inside is sized as a PERCENTAGE of the
-   container, so the whole system scales with the column and matches
-   Framer's proportions at any width.
-
-   .stack-banner   full-bleed single image (the landscape banner)
-   .stack-row      two square containers side by side (Child Stack 1)
-   .stack-square   a 1:1 container holding one phone at 40% width
-   .stack-solo     one container holding a single centred phone
-   .phone          a device screenshot, sized by % width, natural height
-*/
 
 .stack {
     width: 100%;
-    background-color: var(--color-panel);
-    transition:
-        transform var(--ease-soft),
-        background-color 0.2s ease;
+    background-color: var(--color-image-bg);
+    border: 1px solid var(--color-image-border);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.stack:hover {
-    transform: translateY(-2px);
-}
-
-/* A phone screenshot. Width is a share of its container; height follows the
-   image's own proportions, so it never distorts. */
-.phone {
-    height: auto;
-    display: block;
-}
-
-/* ---- Banner: a single image filling the column, no padding ---- */
+/* Banner: image fills the container at the source ratio. */
 .stack-banner {
+    aspect-ratio: 824 / 480;
     overflow: hidden;
-    aspect-ratio: 1200 / 700;   /* the banner's own ratio — no crop */
-    background-color: transparent;
 }
 
 .stack-banner img {
@@ -718,40 +652,40 @@ body.projects-collapsed .stack-solo {
     display: block;
 }
 
-/* ---- Child Stack 1: two squares side by side ---- */
-.stack-row {
-    width: 100%;
-    display: flex;
-    gap: 20px;                  /* Framer: 20px between the two squares */
-}
-
-.stack-square {
-    flex: 1 1 0;
-    min-width: 0;
-    aspect-ratio: 1 / 1;        /* Framer: 590 x 590 */
+/* Phone rows. Padding scales as a percentage of width so the proportions
+   hold as the column narrows; phones share the row via flex and keep their
+   device aspect ratio. */
+.stack-trio,
+.stack-pair {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Framer: 52px top/bottom on a 590 square = 8.8%. As percentage padding
-       it scales with the square. */
-    padding: 8.8% 0;
 }
 
-.stack-square .phone {
-    width: 40%;                 /* Framer: phone 236 of 590 square = 40% */
+.stack-trio {
+    padding: 5.6% 7.8%;   /* Figma: 46px / 64px on an 824 container */
+    gap: 3.9%;            /* 32px */
 }
 
-/* ---- Child Stack 3: a single phone alone in a full-width container ---- */
-.stack-solo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* Same vertical breathing room as the square pairs. */
-    padding: 8.8% 0;
+.stack-pair {
+    padding: 7.8%;        /* Figma: 64px */
+    gap: 3.9%;
 }
 
-.stack-solo .phone {
-    width: 40%;                 /* matches a phone in the square pairs */
+.phone {
+    flex: 0 1 auto;
+    height: auto;
+    aspect-ratio: 216 / 447;   /* device screenshot ratio */
+    object-fit: contain;
+    display: block;
+}
+
+.stack-trio .phone {
+    width: calc((100% - (3.9% * 2)) / 3);
+}
+
+.stack-pair .phone {
+    width: calc((100% - 3.9%) / 2);
 }
 
 /* ============================================
@@ -766,8 +700,8 @@ body.projects-collapsed .stack-solo {
 }
 
 .footer-text {
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-muted);
 }
@@ -1006,10 +940,6 @@ body.projects-collapsed .stack-solo {
     will-change: auto;
 }
 
-/* The banner shows in full, edge to edge — no parallax. Parallax needs to
-   hide part of an image to give it room to drift, which crops the sides of a
-   full-width banner; showing the work uncropped matters more than the drift. */
-
 /* The dock and widget settle in once, on load — chrome arrives after the
    content it frames. The .chrome-in class is added by JS a beat after the
    first paint; without JS they are simply visible. */
@@ -1065,22 +995,16 @@ body.projects-collapsed .stack-solo {
         border-radius: 18px;
     }
 
-    /* Both square pairs stack vertically on a narrow screen. Stacked 1:1
-       squares read as chunky blocks around a tall thin phone, so on mobile
-       the containers become portrait rectangles and the phone grows to fill
-       them — far better suited to the tall screenshots. */
-    .stack-row {
-        flex-direction: column;
+    /* Tighter container padding on narrow screens so the phones keep a
+       usable size within the rows. */
+    .stack-trio {
+        padding: 6% 5%;
+        gap: 4%;
     }
 
-    .stack-square,
-    .stack-solo {
-        aspect-ratio: 4 / 5;
-    }
-
-    .stack-square .phone,
-    .stack-solo .phone {
-        width: 55%;
+    .stack-pair {
+        padding: 6%;
+        gap: 4%;
     }
 }
 
