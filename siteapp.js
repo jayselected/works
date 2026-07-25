@@ -574,14 +574,12 @@ function initializeProjectCollapse() {
 }
 
 /* --------------------------------------------
-   Motion — entrance choreography
+   Motion — entrance
 
-   Content marked [data-enter] rises and fades as it scrolls into view,
-   staggered within each section. Inert under prefers-reduced-motion — the
-   CSS neutralises it and this module skips its work.
+   Content marked [data-enter] fades and rises in when it enters the viewport.
+   Elements in view together reveal together. Inert under prefers-reduced-motion
+   — the CSS neutralises it and this module skips its work.
    -------------------------------------------- */
-
-const ENTER_STAGGER_MS = 90;   /* keep in step with --enter-stagger in the CSS */
 
 function prefersReducedMotionNow() {
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -597,14 +595,6 @@ function initializeEntrance() {
         return;
     }
 
-    // Stagger within each section by DOM order, so a heading leads and its
-    // supporting lines follow.
-    document.querySelectorAll('.project, .hello, .works').forEach(section => {
-        section.querySelectorAll('[data-enter]').forEach((el, i) => {
-            el.style.transitionDelay = (i * ENTER_STAGGER_MS) + 'ms';
-        });
-    });
-
     const io = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -614,16 +604,12 @@ function initializeEntrance() {
         });
     }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
 
-    // Anything on screen at load (hero and first project, including its
-    // description) fades in straight away, keeping its stagger; anything
-    // fully below the fold waits for the observer, so each later project
-    // reveals as it is scrolled to. The threshold is the full viewport
-    // height, so nothing sitting near the fold slips through both checks.
+    // Anything on screen at load reveals immediately; anything below the fold
+    // waits for the observer, so each later project fades in as it is reached.
     const viewportBottom = window.innerHeight;
     items.forEach(el => {
         const box = el.getBoundingClientRect();
-        const inViewOnLoad = box.top < viewportBottom && box.bottom > 0;
-        if (inViewOnLoad) {
+        if (box.top < viewportBottom && box.bottom > 0) {
             el.classList.add('is-in');
         } else {
             io.observe(el);
