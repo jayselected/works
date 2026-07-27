@@ -67,10 +67,8 @@
 
     --color-accent: #007AFF;
 
-    /* Split-flap surfaces: face catches light, seam and edge are hairlines. */
-    --flap-face: rgba(255, 255, 255, 0.55);
-    --flap-seam: rgba(0, 0, 0, 0.14);
-    --flap-edge: var(--color-line);
+    /* The split-flap seam: a faint crease where the digit folds. */
+    --flap-seam: rgba(0, 0, 0, 0.08);
 
     /* Layout rhythm. Only the steps actually in use are declared; one-off
        optical values live on the rule that needs them rather than
@@ -139,28 +137,25 @@
         var(--space-6)
     );
 
-    /* Liquid-glass recipe: a milky translucent body over a strong
-       backdrop blur, a bright specular inset along the top edge, a faint
-       dark inset along the bottom, and soft layered drop shadows. */
-    /* --- Chrome material ----------------------------
-       The fill IS the page colour, held at partial opacity. Over empty
-       page the control all but disappears — it bleeds into the viewport,
-       traced only by a hairline; over an image it blooms into visible
-       frost as the backdrop filter diffuses what passes beneath. Same
-       behaviour Safari's white address pill has on its white toolbar.
-       The rim (--glass-rim) is a single lit line along the top inside
-       edge — the one specular cue real glass has. It is invisible over
-       plain page and catches the light as content passes beneath, which
-       is what makes the material feel alive rather than printed on.
-       Dials: --glass-bg alpha (presence at rest), --glass-backdrop (blur
-       and bloom), --glass-rim (edge light).
-       Used by the dock, the one piece of chrome that floats over content.
-    -------------------------------------------------- */
-    --glass-bg: rgba(252, 251, 249, 0.7);   /* = ground, so the dock bleeds */
-    --glass-backdrop: blur(18px) saturate(180%) brightness(1.04);
+    /* --- Chrome material ---
+       Frosted glass: the fill is the page colour held at partial opacity, so
+       over empty page the chrome nearly vanishes and bleeds into the viewport,
+       traced only by a hairline; over an image it blooms into visible frost as
+       the backdrop filter diffuses what passes beneath. Depth comes from three
+       shadow layers (--glass-shadow): a bright top rim, a faint inner floor
+       glow, and a soft cast shadow — Apple's highlight / illumination / shadow
+       model. Dials: --glass-bg alpha (presence at rest) and --glass-backdrop
+       (blur and bloom). Used by the dock, widget, and dock labels. */
+    --glass-bg: rgba(252, 251, 249, 0.6);   /* = ground, so the dock bleeds */
+    --glass-backdrop: blur(20px) saturate(190%) brightness(1.05);
     --glass-border: var(--color-line);
-    --glass-rim: rgba(255, 255, 255, 0.65);
-    --glass-shadow: rgba(0, 0, 0, 0.05);
+    /* Three depth layers, per Apple's glass model: a bright top rim
+       (highlight), a faint inner floor glow (illumination), and a soft cast
+       shadow below (shadow). */
+    --glass-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.7),
+        inset 0 -1px 1px rgba(255, 255, 255, 0.18),
+        0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
 [data-theme="dark"] {
@@ -175,17 +170,17 @@
     --color-image-bg: #111417;   /* banner fill; phone containers transparent */
     --color-accent: #007AFF;
 
-    --flap-face: rgba(255, 255, 255, 0.06);
-    --flap-seam: rgba(255, 255, 255, 0.14);
-    --flap-edge: var(--color-line);
+    --flap-seam: rgba(255, 255, 255, 0.10);
 
     /* Dark chrome: the fill equals --color-bg, so over empty page the dock
        disappears into the ground and only frosts what scrolls beneath. */
-    --glass-bg: rgba(0, 0, 0, 0.6);
-    --glass-backdrop: blur(18px) saturate(180%) brightness(1.08);
+    --glass-bg: rgba(0, 0, 0, 0.55);
+    --glass-backdrop: blur(20px) saturate(190%) brightness(1.1);
     --glass-border: var(--color-line);
-    --glass-rim: rgba(255, 255, 255, 0.12);
-    --glass-shadow: rgba(0, 0, 0, 0.28);
+    --glass-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.14),
+        inset 0 -1px 1px rgba(255, 255, 255, 0.05),
+        0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 html {
@@ -267,9 +262,7 @@ body {
     backdrop-filter: var(--glass-backdrop);
     -webkit-backdrop-filter: var(--glass-backdrop);
     border: 1px solid var(--glass-border);
-    box-shadow:
-        inset 0 1px 0 var(--glass-rim),
-        0 6px 20px var(--glass-shadow);
+    box-shadow: var(--glass-shadow);
     opacity: 0;
     transform: translate(-50%, 4px);
     pointer-events: none;
@@ -316,9 +309,7 @@ body {
     backdrop-filter: var(--glass-backdrop);
     -webkit-backdrop-filter: var(--glass-backdrop);
     border: 1px solid var(--glass-border);
-    box-shadow:
-        inset 0 1px 0 var(--glass-rim),
-        0 6px 20px var(--glass-shadow);
+    box-shadow: var(--glass-shadow);
     color: var(--color-ink);
     transition:
         color 0.2s ease,
@@ -659,9 +650,7 @@ body.projects-collapsed .stack-pair {
     backdrop-filter: var(--glass-backdrop);
     -webkit-backdrop-filter: var(--glass-backdrop);
     border: 1px solid var(--glass-border);
-    box-shadow:
-        inset 0 1px 0 var(--glass-rim),
-        0 6px 20px var(--glass-shadow);
+    box-shadow: var(--glass-shadow);
     user-select: none;
     -webkit-user-select: none;
     transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
@@ -731,10 +720,6 @@ body.projects-collapsed .stack-pair {
     width: var(--flap-width);
     height: var(--flap-height);
     perspective: 220px;
-    border-radius: 5px;
-    background-color: var(--flap-face);
-    border: 1px solid var(--flap-edge);
-    overflow: hidden;
     font-size: var(--flap-size);
     font-weight: 400;
     line-height: var(--flap-height);
@@ -749,7 +734,6 @@ body.projects-collapsed .stack-pair {
     right: 0;
     height: 50%;
     overflow: hidden;
-    background-color: var(--flap-face);
 }
 
 .flap-half span {
@@ -851,6 +835,13 @@ body.projects-collapsed .stack-pair {
         --glass-bg: #0A0A0A;   /* opaque near-ground */
         --glass-backdrop: none;
     }
+}
+
+/* Without backdrop-filter (e.g. Firefox with it disabled) the frost cannot
+   render, so the fill becomes near-opaque to stay legible over any content. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    [data-theme="light"] { --glass-bg: #F1F0EE; }
+    [data-theme="dark"]  { --glass-bg: #0A0A0A; }
 }
 
 /* ============================================
