@@ -168,7 +168,7 @@
 
     --color-bg: #000000;
     --color-ink: #F7F7F7;        /* Hello greeting and chrome */
-    --color-muted: #7E868A;      /* all other text (5.7:1 on black) */
+    --color-muted: #FFFFFF;      /* all other text */
 
     --color-line: rgba(255, 255, 255, 0.1);   /* meta hairlines */
 
@@ -736,7 +736,7 @@ body.projects-collapsed .stack-pair {
     border: 1px solid var(--flap-edge);
     overflow: hidden;
     font-size: var(--flap-size);
-    font-weight: 700;
+    font-weight: 400;
     line-height: var(--flap-height);
     letter-spacing: 0;
     text-align: center;
