@@ -895,12 +895,15 @@ body.projects-collapsed .stack-pair {
 
 /* The widget floats clear in the left margin on wide screens. Below this
    the content column reaches it, so the page opens below the widget
-   instead of behind it. */
+   instead of behind it.
+   Disabled alongside the widget — re-enable this block when restoring it. */
+/*
 @media screen and (max-width: 1000px) {
     body {
         padding-top: var(--widget-clearance);
     }
 }
+*/
 
 @media screen and (max-width: 700px) {
     :root {
