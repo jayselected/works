@@ -79,7 +79,7 @@ const THEME_STORAGE_KEY = 'portfolio-theme';
    the page. */
 const THEME_BACKGROUNDS = {
     light: '#FCFBF9',
-    dark:  '#0D1114'
+    dark:  '#000000'
 };
 
 const THEME_ICONS = {
