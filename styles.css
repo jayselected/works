@@ -39,14 +39,17 @@
     /* Desktop targets match the Figma spec (display 56, title 20, body 14,
        meta 12); each clamps down on narrow viewports so the scale stays
        proportional on mobile. */
-    --font-size-display: clamp(1.5rem, 1.3rem + 0.9vw, 1.75rem);  /* 24 → 28 */
-    --font-size-lg: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);   /* 18 → 20 */
-    --font-size-md: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);      /* 15 → 16 */
-    --font-size-sm: clamp(0.75rem, 0.73rem + 0.1vw, 0.8125rem);   /* 12 → 13 */
+    /* Nearly everything is 26px/34 now; meta is 24px/34. Fluid down on
+       mobile so the scale shrinks together. */
+    --font-size-display: clamp(1.375rem, 1.2rem + 0.8vw, 1.625rem);  /* 22 → 26 */
+    --font-size-lg: clamp(1.375rem, 1.2rem + 0.8vw, 1.625rem);       /* 22 → 26 */
+    --font-size-md: clamp(1.375rem, 1.2rem + 0.8vw, 1.625rem);       /* 22 → 26 */
+    --font-size-meta: clamp(1.25rem, 1.1rem + 0.7vw, 1.5rem);        /* 20 → 24 */
+    --font-size-sm: clamp(1.375rem, 1.2rem + 0.8vw, 1.625rem);       /* 22 → 26 */
 
-    --line-height-display: 1.29;   /* 36 / 28 */
-    --line-height-lg: 1.2;         /* 24 / 20 */
-    --line-height-md: 1.5;         /* 24 / 16 */
+    --line-height-display: 1.31;   /* 34 / 26 */
+    --line-height-lg: 1.31;
+    --line-height-md: 1.31;
 
     /* Inter runs tight per the design: hero -0.06em, everything else -0.04em. */
     --letter-spacing-display: -0.06em;
@@ -56,11 +59,16 @@
        Two text colours: ink for the Hello greeting and chrome, muted for
        everything else. One accent (#007AFF) on the progress bar. All text
        clears WCAG AA. */
+    /* --- Palette ---
+       Two base colours only — black on light, white on dark — varied by
+       opacity. Primary text and chrome are full strength; meta text is 40%;
+       meta borders are 20%. One accent (#007AFF) on the progress bar. */
     --color-bg: #FCFBF9;
-    --color-ink: #111111;        /* Hello greeting and chrome */
-    --color-muted: #687073;      /* all other text */
+    --color-ink: #000000;               /* primary text and chrome */
+    --color-muted: rgba(0, 0, 0, 0.4);  /* meta text */
 
-    --color-line: rgba(0, 0, 0, 0.1);   /* meta hairlines */
+    --color-line: rgba(0, 0, 0, 0.1);   /* chrome hairlines (dock, glass) */
+    --color-meta-line: rgba(0, 0, 0, 0.2);  /* meta row borders */
 
     /* Banner fill; the phone containers are transparent. */
     --color-image-bg: #F8F8FB;
@@ -162,10 +170,11 @@
     color-scheme: dark;
 
     --color-bg: #000000;
-    --color-ink: #F7F7F7;        /* Hello greeting and chrome */
-    --color-muted: #FFFFFF;      /* all other text */
+    --color-ink: #FFFFFF;                    /* primary text and chrome */
+    --color-muted: rgba(255, 255, 255, 0.4); /* meta text */
 
-    --color-line: rgba(255, 255, 255, 0.1);   /* meta hairlines */
+    --color-line: rgba(255, 255, 255, 0.1);       /* chrome hairlines */
+    --color-meta-line: rgba(255, 255, 255, 0.2);  /* meta row borders */
 
     --color-image-bg: #111417;   /* banner fill; phone containers transparent */
     --color-accent: #007AFF;
@@ -436,12 +445,11 @@ body {
     font-size: var(--font-size-display);
     line-height: var(--line-height-display);
     letter-spacing: var(--letter-spacing-display);
+    color: var(--color-ink);
 }
 
-/* The animated greeting is ink and holds a single line while languages cycle;
-   the name/role line beneath is muted. */
+/* The animated greeting holds a single line while languages cycle. */
 .hello-text {
-    color: var(--color-ink);
     white-space: nowrap;
     min-height: 1.1em;
     opacity: 0;
@@ -450,10 +458,6 @@ body {
 
 .hello-text.visible {
     opacity: 1;
-}
-
-.hello-name {
-    color: var(--color-muted);
 }
 
 /* ============================================
@@ -487,7 +491,7 @@ body {
     font-size: var(--font-size-lg);
     line-height: var(--line-height-lg);
     letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-muted);
+    color: var(--color-ink);
 }
 
 /* Meta: an "Information" label above a single line of project facts, both at
@@ -496,21 +500,17 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
+    gap: 16px;
 }
 
-/* Each row: label left, values right, hairline dividers. The first row
-   carries a top border; every row carries a bottom border, so the rows share
-   single lines rather than doubling. */
+/* Each row: label left, values right, with a single underline. Rows are
+   separated by the stack gap rather than shared borders. */
 .meta-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
-    border-bottom: 0.5px solid var(--color-line);
-}
-
-.meta-row:first-child {
-    border-top: 0.5px solid var(--color-line);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-meta-line);
 }
 
 .meta-values {
@@ -520,8 +520,8 @@ body {
 
 .project-meta,
 .project-meta * {
-    font-size: var(--font-size-sm);
-    line-height: 1.23;
+    font-size: var(--font-size-meta);
+    line-height: 1.42;
     letter-spacing: var(--letter-spacing-tight);
     color: var(--color-muted);
 }
@@ -530,7 +530,7 @@ body {
     font-size: var(--font-size-md);
     line-height: var(--line-height-md);
     letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-muted);
+    color: var(--color-ink);
 }
 
 /* Collapsed view (toggled from the dock): each project reduces to its
@@ -628,7 +628,7 @@ body.projects-collapsed .stack-pair {
     font-size: var(--font-size-sm);
     line-height: 1.46;
     letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-muted);
+    color: var(--color-ink);
 }
 
 /* ============================================
