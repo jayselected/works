@@ -912,6 +912,19 @@ body.projects-collapsed .stack-pair {
         --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
     }
 
+    /* Stack each meta row: label above its values, which wrap freely. On a
+       phone the label and a long value list can't share one line without
+       cramping. */
+    .meta-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .meta-values {
+        flex-wrap: wrap;
+    }
+
     :root {
         --flap-width: 25px;
         --flap-height: 35px;
