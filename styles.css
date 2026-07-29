@@ -49,16 +49,16 @@
     --letter-spacing-tight: -0.04em;
 
     /* --- Palette ---
-       Two base colours only — black on light, white on dark — varied by
-       opacity: primary text and chrome at full strength, meta text at 40%,
-       meta borders at 20%. One accent (#007AFF) on the progress bar. All
-       text clears WCAG AA. */
+       Black on light, white on dark, largely varied by opacity: primary text
+       and chrome at full strength; meta text muted — a fixed #737373 in
+       light (matched to the design; alpha-over-warm-ground can't reproduce a
+       neutral grey), 40% white in dark. One accent (#007AFF) on the progress
+       bar. All text clears WCAG AA. */
     --color-bg: #FCFBF9;
     --color-ink: #000000;               /* primary text and chrome */
-    --color-muted: rgba(0, 0, 0, 0.4);  /* meta text */
+    --color-muted: #737373;             /* meta text */
 
     --color-line: rgba(0, 0, 0, 0.1);   /* chrome hairlines (dock, glass) */
-    --color-meta-line: rgba(0, 0, 0, 0.2);  /* meta row borders */
 
     /* Banner fill; the phone containers are transparent. */
     --color-image-bg: #F8F8FB;
@@ -173,7 +173,6 @@
     --color-muted: rgba(255, 255, 255, 0.4); /* meta text */
 
     --color-line: rgba(255, 255, 255, 0.1);       /* chrome hairlines */
-    --color-meta-line: rgba(255, 255, 255, 0.2);  /* meta row borders */
 
     --color-image-bg: #111417;   /* banner fill; phone containers transparent */
     --color-accent: #007AFF;
@@ -502,14 +501,12 @@ body {
     gap: 16px;
 }
 
-/* Each row: label left, values right, with a single underline. Rows are
-   separated by the stack gap rather than shared borders. */
+/* Each row: label left, values right on one line, set apart from the next
+   row by the meta gap alone — no rule. */
 .meta-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--color-meta-line);
 }
 
 .meta-values {
