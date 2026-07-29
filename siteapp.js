@@ -78,7 +78,7 @@ const THEME_STORAGE_KEY = 'portfolio-theme';
 /* Must match --color-bg in styles.css so the browser's own chrome matches
    the page. */
 const THEME_BACKGROUNDS = {
-    light: '#FCFBF9',
+    light: '#FFFFFF',
     dark:  '#000000'
 };
 
