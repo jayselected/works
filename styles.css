@@ -19,7 +19,9 @@
 
     /* Content column, matching the 800px Figma Main frame. */
     --content-width: 800px;
-    --page-edge: 2rem;
+    /* Side gutter, fluid: 32px on desktop easing down to ~22px on phones, so
+       the margin scales with the page rather than stepping at a breakpoint. */
+    --page-edge: clamp(1.4rem, 0.8rem + 2.4vw, 2rem);
 
     /* Distance from the screen edge for both floating glass objects. */
     --edge-gap: 24px;
@@ -54,8 +56,10 @@
     /* --- Palette ---
        Black on white in light, white on black in dark, largely varied by
        opacity: primary text and chrome at full strength; meta text muted —
-       #737373 in light, 40% white in dark. One accent (#007AFF) on the
-       progress bar. All text clears WCAG AA. */
+       #737373 in light, 40% white in dark. One accent (#007AFF), progress
+       bar only. Contrast: primary text and light-mode meta clear WCAG AA;
+       dark-mode meta clears AA at large sizes — the 40% white is the design's
+       chosen muting, a touch under AA for body-size text. */
     --color-bg: #FFFFFF;
     --color-ink: #000000;               /* primary text and chrome */
     --color-muted: #737373;             /* meta text */
@@ -77,7 +81,6 @@
     --space-2: 8px;
     --space-6: 24px;
 
-    --space-fluid-md: clamp(18px, 3vw, 24px);
     /* Vertical rhythm as one system: every step is a fixed fraction of the
        section gap, so the desktop ratio — 80 / 40 / 16 / 8 — holds at every
        width and carries onto mobile intact, just smaller. Retune the whole
@@ -446,10 +449,12 @@ body {
     color: var(--color-ink);
 }
 
-/* The animated greeting holds a single line while languages cycle. */
+/* The animated greeting holds a single line while languages cycle. The line
+   box is reserved from first paint so filling it in JS causes no layout shift. */
 .hello-text {
     white-space: nowrap;
-    min-height: 1.1em;
+    min-height: 1.4em;   /* fallback for browsers without the lh unit */
+    min-height: 1lh;     /* exact one-line reservation */
     opacity: 0;
     transition: opacity 0.8s ease;
 }
@@ -467,7 +472,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--space-section);
-    margin-bottom: var(--space-fluid-md);
+    margin-bottom: var(--space-section);
 }
 
 .project {
@@ -551,12 +556,13 @@ body.projects-collapsed .stack-pair {
 
    Three container types, per the design:
 
-   .stack-banner   full-width landscape image, panel fill
-   .stack-trio     panel holding three phones, evenly spread
-   .stack-pair     panel holding two phones, evenly spread
+   .stack-banner   full-width landscape image on a panel fill
+   .stack-trio     three phones, evenly spread
+   .stack-pair     two phones, evenly spread
 
-   Containers carry the fill and hairline border; phones size by flex within
-   the padded interior and keep their own aspect ratio, so nothing distorts.
+   Only the banner carries a fill; the phone rows are transparent. Phones size
+   by flex within the padding and keep their own aspect ratio, so nothing
+   distorts. No borders, radii, or shadows anywhere — per the design.
 */
 
 .project-images {
@@ -614,7 +620,6 @@ body.projects-collapsed .stack-pair {
     width: 100%;
     display: flex;
     align-items: center;
-    padding: var(--space-6) var(--space-0);
 }
 
 .footer-text {
@@ -900,7 +905,6 @@ body.projects-collapsed .stack-pair {
 
 @media screen and (max-width: 700px) {
     :root {
-        --page-edge: 1.4rem;
         --edge-gap: 20px;
         --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
         --flap-width: 25px;
