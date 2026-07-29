@@ -17,7 +17,7 @@
 :root {
     color-scheme: light;
 
-    /* Content column: 1036px, matching the Figma frame (1440 − 202×2). */
+    /* Content column, matching the 800px Figma Main frame. */
     --content-width: 800px;
     --page-edge: 2rem;
 
@@ -25,22 +25,15 @@
     --edge-gap: 24px;
 
     /* --- Type scale ---------------------------------
-       Every step is fluid between its phone and desktop size, so the
-       hierarchy keeps its proportions at any width with no breakpoint
-       jumps:
-       display : keynote lockup — hello, name, subtext (36px -> 56px)
-       lg      : project titles                                 (20px)
-       md      : body copy                                      (16px)
-       sm      : meta line                             (11px -> 12px)
+       Nearly everything sits at one size — 26px on desktop, fluid down to
+       22px on narrow screens — so the page reads in a single calm voice
+       rather than a stack of competing sizes. The meta line runs a touch
+       smaller (24px → 20px). Every step clamps on the same curve, so the
+       scale shrinks together on mobile with no breakpoint jumps.
 
-       The display step is deliberately large while staying at weight 400:
-       large and light reads delicate, small and light reads timid.
+       The display step stays at weight 400 by design: large and light reads
+       delicate, where large and heavy would shout.
     -------------------------------------------------- */
-    /* Desktop targets match the Figma spec (display 56, title 20, body 14,
-       meta 12); each clamps down on narrow viewports so the scale stays
-       proportional on mobile. */
-    /* Nearly everything is 26px/34 now; meta is 24px/34. Fluid down on
-       mobile so the scale shrinks together. */
     --font-size-display: clamp(1.375rem, 1.2rem + 0.8vw, 1.625rem);  /* 22 → 26 */
     --font-size-lg: clamp(1.375rem, 1.2rem + 0.8vw, 1.625rem);       /* 22 → 26 */
     --font-size-md: clamp(1.375rem, 1.2rem + 0.8vw, 1.625rem);       /* 22 → 26 */
@@ -56,13 +49,10 @@
     --letter-spacing-tight: -0.04em;
 
     /* --- Palette ---
-       Two text colours: ink for the Hello greeting and chrome, muted for
-       everything else. One accent (#007AFF) on the progress bar. All text
-       clears WCAG AA. */
-    /* --- Palette ---
        Two base colours only — black on light, white on dark — varied by
-       opacity. Primary text and chrome are full strength; meta text is 40%;
-       meta borders are 20%. One accent (#007AFF) on the progress bar. */
+       opacity: primary text and chrome at full strength, meta text at 40%,
+       meta borders at 20%. One accent (#007AFF) on the progress bar. All
+       text clears WCAG AA. */
     --color-bg: #FCFBF9;
     --color-ink: #000000;               /* primary text and chrome */
     --color-muted: rgba(0, 0, 0, 0.4);  /* meta text */
@@ -86,7 +76,16 @@
     --space-6: 24px;
 
     --space-fluid-md: clamp(18px, 3vw, 24px);
-    --space-section: clamp(40px, 4vw + 24px, 62px);
+    /* Gap between sections — hero → works and project → project. Proportional
+       by design: reaches the 80px Figma target as the column meets its 800px
+       cap, then scales down on the same ratio on narrower screens so the
+       rhythm reads identically, just smaller. */
+    --space-section: clamp(32px, 9.3vw, 80px);
+    /* Rhythm inside a project — between title, banner, meta, description and
+       the image rows. Half the section gap at every width (40px once the
+       column reaches its 800px cap), so separation within a project always
+       reads tighter than the breaks between them. */
+    --space-project: clamp(16px, 4.65vw, 40px);
     /* Space above the hero. */
     --space-page-top: clamp(64px, 8vw + 32px, 160px);
 
@@ -476,14 +475,14 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: var(--space-project);
 }
 
 .project-details {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 24px;
+    gap: var(--space-project);
 }
 
 .project-title {
@@ -560,7 +559,7 @@ body.projects-collapsed .stack-pair {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: var(--space-project);
 }
 
 .stack {
