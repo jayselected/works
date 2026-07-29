@@ -49,12 +49,11 @@
     --letter-spacing-tight: -0.04em;
 
     /* --- Palette ---
-       Black on light, white on dark, largely varied by opacity: primary text
-       and chrome at full strength; meta text muted — a fixed #737373 in
-       light (matched to the design; alpha-over-warm-ground can't reproduce a
-       neutral grey), 40% white in dark. One accent (#007AFF) on the progress
-       bar. All text clears WCAG AA. */
-    --color-bg: #FCFBF9;
+       Black on white in light, white on black in dark, largely varied by
+       opacity: primary text and chrome at full strength; meta text muted —
+       #737373 in light, 40% white in dark. One accent (#007AFF) on the
+       progress bar. All text clears WCAG AA. */
+    --color-bg: #FFFFFF;
     --color-ink: #000000;               /* primary text and chrome */
     --color-muted: #737373;             /* meta text */
 
@@ -81,11 +80,11 @@
        cap, then scales down on the same ratio on narrower screens so the
        rhythm reads identically, just smaller. */
     --space-section: clamp(32px, 9.3vw, 80px);
-    /* Rhythm inside a project — between title, banner, meta, description and
-       the image rows. Half the section gap at every width (40px once the
-       column reaches its 800px cap), so separation within a project always
-       reads tighter than the breaks between them. */
-    --space-project: clamp(16px, 4.65vw, 40px);
+    /* The 40px rhythm — between the two hero lines, and between a project's
+       title, banner, meta, description and image rows. Half the section gap at
+       every width (40px once the column reaches its 800px cap), so spacing
+       within a block always reads tighter than the breaks between blocks. */
+    --space-block: clamp(16px, 4.65vw, 40px);
     /* Space above the hero. */
     --space-page-top: clamp(64px, 8vw + 32px, 160px);
 
@@ -153,7 +152,7 @@
        glow, and a soft cast shadow — Apple's highlight / illumination / shadow
        model. Dials: --glass-bg alpha (presence at rest) and --glass-backdrop
        (blur and bloom). Used by the dock, widget, and dock labels. */
-    --glass-bg: rgba(252, 251, 249, 0.6);   /* = ground, so the dock bleeds */
+    --glass-bg: rgba(255, 255, 255, 0.6);   /* = ground, so the dock bleeds */
     --glass-backdrop: blur(20px) saturate(190%) brightness(1.05);
     --glass-border: var(--color-line);
     /* Three depth layers, per Apple's glass model: a bright top rim
@@ -423,16 +422,16 @@ body {
    Intro
    ============================================ */
 
-/* The intro is a keynote-style lockup at the fluid display scale. The
-   animated hello stands apart from the name/subtext pair — the fluid gap
-   (12px on phones, ~20px on wide screens, in proportion to the hero size)
-   gives the greeting its own beat before the introduction. */
+/* The intro is a keynote-style lockup at the fluid display scale. The animated
+   hello stands apart from the name/subtext pair by the block rhythm — 40px at
+   full width, scaling down with it — giving the greeting its own beat before
+   the introduction. */
 .hello {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 32px;
+    gap: var(--space-block);
     padding-top: var(--space-page-top);
     margin-bottom: var(--space-section);
 }
@@ -474,14 +473,14 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--space-project);
+    gap: var(--space-block);
 }
 
 .project-details {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-project);
+    gap: var(--space-block);
 }
 
 .project-title {
@@ -558,7 +557,7 @@ body.projects-collapsed .stack-pair {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--space-project);
+    gap: var(--space-block);
 }
 
 .stack {
@@ -579,27 +578,17 @@ body.projects-collapsed .stack-pair {
     display: block;
 }
 
-/* Phone rows. Container aspect ratios and phone widths are taken directly
-   from the Figma frame and expressed as ratios / percentages, so they scale
-   exactly with the column. Phones are centred (not stretched) and keep their
-   device aspect ratio, so nothing distorts. */
+/* Phone rows — trio and pair share one rhythm: 32px between phones, 40px top
+   and bottom (4% and 5% of the 800px column, so both scale with it). Height is
+   driven by the phones themselves; each keeps its device aspect ratio, so
+   nothing distorts and no fixed container height is needed. */
 .stack-trio,
 .stack-pair {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.stack-trio {
-    aspect-ratio: 800 / 428.57;   /* Figma Child 1 */
-    padding: 8.54% 0;             /* vertical only */
-    gap: 3.18%;                   /* 25.45 / 800 */
-}
-
-.stack-pair {
-    aspect-ratio: 800 / 455.84;   /* Figma Child 2 */
-    padding: 11.17% 0;            /* vertical only, so phones match the trio */
-    gap: 3.18%;                   /* 25.45 / 800 */
+    gap: 4%;          /* 32px at the 800px column */
+    padding: 5% 0;    /* 40px top and bottom at the 800px column */
 }
 
 .phone {
@@ -825,7 +814,7 @@ body.projects-collapsed .stack-pair {
    so it overrides both palettes at equal specificity. */
 @media (prefers-reduced-transparency: reduce) {
     [data-theme="light"] {
-        --glass-bg: #F1F0EE;   /* opaque near-ground for a solid chrome */
+        --glass-bg: #F1F1F1;   /* opaque near-ground for a solid chrome */
         --glass-backdrop: none;
     }
 
@@ -838,7 +827,7 @@ body.projects-collapsed .stack-pair {
 /* Without backdrop-filter (e.g. Firefox with it disabled) the frost cannot
    render, so the fill becomes near-opaque to stay legible over any content. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    [data-theme="light"] { --glass-bg: #F1F0EE; }
+    [data-theme="light"] { --glass-bg: #F1F1F1; }
     [data-theme="dark"]  { --glass-bg: #0A0A0A; }
 }
 
@@ -918,12 +907,11 @@ body.projects-collapsed .stack-pair {
         border-radius: 18px;
     }
 
-    /* On a narrow screen the fixed desktop ratios would leave the phones
-       tiny, so containers size to content and the phones grow to a readable
-       share of the column. */
+    /* On a narrow screen the phones would be too small at their desktop
+       share, so they grow to 30% of the column and the padding tightens to a
+       fixed 24px. */
     .stack-trio,
     .stack-pair {
-        aspect-ratio: auto;
         padding: 24px 0;
     }
 
