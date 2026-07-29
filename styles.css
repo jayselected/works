@@ -501,16 +501,18 @@ body {
     gap: 16px;
 }
 
-/* Each row: label left, values right on one line, set apart from the next
-   row by the meta gap alone — no rule. */
+/* Each row stacks: the label above its values, 8px between. Rows are set
+   apart by the meta gap alone — no rule. */
 .meta-row {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
 }
 
 .meta-values {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
 }
 
@@ -906,22 +908,6 @@ body.projects-collapsed .stack-pair {
         --page-edge: 1.4rem;
         --edge-gap: 20px;
         --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
-    }
-
-    /* Stack each meta row: label above its values, which wrap freely. On a
-       phone the label and a long value list can't share one line without
-       cramping. */
-    .meta-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-    }
-
-    .meta-values {
-        flex-wrap: wrap;
-    }
-
-    :root {
         --flap-width: 25px;
         --flap-height: 35px;
         --flap-size: 22px;
