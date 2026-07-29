@@ -26,16 +26,16 @@
 
     /* --- Type scale ---------------------------------
        All text is one size and one tightness: 24px on desktop, fluid down to
-       16px on phones, with a fixed line-height ratio of 32/24. The ratio is
+       14px on phones, with a fixed line-height ratio of 32/24. The ratio is
        unitless so the desktop tightness holds at every size — 32px at 24px,
-       ~21px at 16px. The named steps are kept as slots: if one ever needs to
+       ~19px at 14px. The named steps are kept as slots: if one ever needs to
        diverge, change it alone; for now they all resolve to the same base.
 
        Display stays at weight 400 by design: light reads delicate, where heavy
        would shout.
     -------------------------------------------------- */
-    --font-size-base: clamp(1rem, 0.5rem + 2vw, 1.5rem);   /* 16 → 24 */
-    --line-height-base: 1.3333;                            /* 32 / 24 */
+    --font-size-base: clamp(0.875rem, 0.25rem + 2.5vw, 1.5rem);   /* 14 → 24 */
+    --line-height-base: 1.3333;                                   /* 32 / 24 */
 
     --font-size-display: var(--font-size-base);
     --font-size-lg: var(--font-size-base);
@@ -78,16 +78,14 @@
     --space-6: 24px;
 
     --space-fluid-md: clamp(18px, 3vw, 24px);
-    /* Gap between sections — hero → works and project → project. Proportional
-       by design: reaches the 80px Figma target as the column meets its 800px
-       cap, then scales down on the same ratio on narrower screens so the
-       rhythm reads identically, just smaller. */
-    --space-section: clamp(32px, 9.3vw, 80px);
-    /* The 40px rhythm — between the two hero lines, and between a project's
-       title, banner, meta, description and image rows. Half the section gap at
-       every width (40px once the column reaches its 800px cap), so spacing
-       within a block always reads tighter than the breaks between blocks. */
-    --space-block: clamp(16px, 4.65vw, 40px);
+    /* Vertical rhythm as one system: every step is a fixed fraction of the
+       section gap, so the desktop ratio — 80 / 40 / 16 / 8 — holds at every
+       width and carries onto mobile intact, just smaller. Retune the whole
+       ladder from --space-section alone. */
+    --space-section: clamp(32px, 9.3vw, 80px);         /* 80px at the 800px cap */
+    --space-block:   calc(var(--space-section) / 2);   /* 40px — hero lines, project parts */
+    --space-meta:    calc(var(--space-section) / 5);   /* 16px — between meta rows */
+    --space-row:     calc(var(--space-section) / 10);  /* 8px — label→values, value→value */
     /* Space above the hero. */
     --space-page-top: clamp(64px, 8vw + 32px, 160px);
 
@@ -494,28 +492,27 @@ body {
     color: var(--color-ink);
 }
 
-/* Meta: an "Information" label above a single line of project facts, both at
-   body size in the standard grey. */
+/* Meta: two stacked rows, set apart by the meta step of the rhythm. */
 .project-meta {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--space-meta);
 }
 
-/* Each row stacks: the label above its values, 8px between. Rows are set
-   apart by the meta gap alone — no rule. */
+/* Each row stacks: the label above its values. Rows are set apart by the meta
+   gap alone — no rule. */
 .meta-row {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: var(--space-row);
 }
 
 .meta-values {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: var(--space-row);
     color: var(--color-muted);
 }
 
@@ -917,13 +914,8 @@ body.projects-collapsed .stack-pair {
     }
 
     /* On a narrow screen the phones would be too small at their desktop
-       share, so they grow to 30% of the column and the padding tightens to a
-       fixed 24px. */
-    .stack-trio,
-    .stack-pair {
-        padding: 24px 0;
-    }
-
+       share, so they grow to 30% of the column. The padding stays proportional
+       (the base 5%), so the rows scale down in step with everything else. */
     .phone {
         width: 30%;
     }
