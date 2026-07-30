@@ -45,6 +45,7 @@ function runFadeSequence() {
 
 function startHelloAnimation() {
     const el = document.getElementById('hello-text');
+    const name = document.querySelector('.hello-name');
     if (!el) return;
 
     el.textContent = HELLO_LANGUAGES[currentLanguageIndex].text;
@@ -52,6 +53,9 @@ function startHelloAnimation() {
 
     setTimeout(() => {
         el.classList.add('visible');
+        /* The name arrives on the same beat as the first greeting; it then
+           stays put while the languages keep cycling above it. */
+        if (name) name.classList.add('visible');
         setTimeout(runFadeSequence, 2400);
     }, 300);
 }
