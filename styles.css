@@ -66,9 +66,6 @@
 
     --color-line: rgba(0, 0, 0, 0.1);   /* chrome hairlines (dock, glass) */
 
-    /* Banner fill; the phone containers are transparent. */
-    --color-image-bg: #F8F8FB;
-
     --color-accent: #007AFF;
 
     /* The split-flap seam: a faint crease where the digit folds. */
@@ -177,7 +174,6 @@
 
     --color-line: rgba(255, 255, 255, 0.1);       /* chrome hairlines */
 
-    --color-image-bg: #111417;   /* banner fill; phone containers transparent */
     --color-accent: #007AFF;
 
     --flap-seam: rgba(255, 255, 255, 0.10);
@@ -566,12 +562,14 @@ body {
     color: var(--color-ink);
 }
 
-/* Collapsed view (toggled from the dock): each project reduces to its
-   title and lead image. */
+/* Collapsed view (toggled from the dock): each project reduces to its title
+   and lead image. The lead is identified by where it sits — the single image
+   inside .project-details — rather than by class, so every supporting stack
+   in .project-images collapses whatever type it is. Adding a new stack to a
+   project needs no change here. */
 body.projects-collapsed .project-meta,
 body.projects-collapsed .project-description,
-body.projects-collapsed .stack-trio,
-body.projects-collapsed .stack-pair {
+body.projects-collapsed .project-images {
     display: none;
 }
 
@@ -579,15 +577,19 @@ body.projects-collapsed .stack-pair {
    Images
    ============================================
 
-   Three container types, per the design:
+   Two container types:
 
-   .stack-banner   full-width landscape image on a panel fill
-   .stack-trio     three phones, evenly spread
-   .stack-pair     two phones, evenly spread
+   .stack        one image, filling the column at its own natural height
+   .stack-row    phones side by side — however many are dropped in
 
-   Only the banner carries a fill; the phone rows are transparent. Phones size
-   by flex within the padding and keep their own aspect ratio, so nothing
-   distorts. No borders, radii, or shadows anywhere — per the design.
+   Nothing is cropped and no height is assumed anywhere; every image keeps
+   its own proportions. To stop the page shifting as images load, give each
+   <img> its real pixel size as width and height attributes — the browser
+   reserves the right space from those and the rules below keep it fluid:
+
+       <img width="2400" height="1500" src="..." alt="...">
+
+   No fills, borders, radii, or shadows — per the design.
 */
 
 .project-images {
@@ -601,26 +603,19 @@ body.projects-collapsed .stack-pair {
     width: 100%;
 }
 
-/* Banner: image fills the container at the source ratio. */
-.stack-banner {
-    aspect-ratio: 800 / 466.67;     /* Figma banner ratio */
-    background-color: var(--color-image-bg);
-    overflow: hidden;
-}
-
-.stack-banner img {
+.stack img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
     display: block;
 }
 
-/* Phone rows — trio and pair share one rhythm: 32px between phones, 40px top
-   and bottom (4% and 5% of the 800px column, so both scale with it). Height is
-   driven by the phones themselves; each keeps its device aspect ratio, so
-   nothing distorts and no fixed container height is needed. */
-.stack-trio,
-.stack-pair {
+/* A row of phones: 32px between them, 40px above and below (4% and 5% of the
+   800px column, so both scale with it). The count is whatever is in the
+   markup — two, three, or more — and the leftover width centres itself, so
+   rows of different lengths sit on the same rhythm.
+
+   This must follow .stack img, which it narrows. */
+.stack-row {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -628,13 +623,8 @@ body.projects-collapsed .stack-pair {
     padding: 5% 0;    /* 40px top and bottom at the 800px column */
 }
 
-.phone {
-    width: 21.5%;    /* uniform across trio and pair (171.97 / 800) */
-    height: auto;
-    aspect-ratio: 171.97 / 355.4;   /* device screenshot ratio */
-    object-fit: contain;
-    display: block;
-    flex: none;
+.stack-row img {
+    width: 21.5%;    /* 171.97 / 800 */
 }
 
 /* ============================================
@@ -945,7 +935,7 @@ body.projects-collapsed .stack-pair {
     /* On a narrow screen the phones would be too small at their desktop
        share, so they grow to 30% of the column. The padding stays proportional
        (the base 5%), so the rows scale down in step with everything else. */
-    .phone {
+    .stack-row img {
         width: 30%;
     }
 }
