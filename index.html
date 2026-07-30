@@ -52,6 +52,16 @@
     </script>
 
     <link rel="stylesheet" href="styles.css">
+
+    <!-- Every fade-in starts at opacity 0 and is revealed by JS; without
+         scripting, real content must simply be visible. -->
+    <noscript>
+        <style>
+            .hello-name,
+            .hello-line,
+            [data-enter] { opacity: 1 !important; transform: none !important; }
+        </style>
+    </noscript>
 </head>
 <body>
 
@@ -82,16 +92,15 @@
         <main class="main">
 
             <section class="hello">
-                <h1 class="hello-text" id="hello-text"></h1>
-
-                <!-- Live date/time and local conditions, set at the same
-                     display scale as the greeting so the lockup speaks in
-                     one voice. Both lines reserve their height and fade in
-                     as they resolve — the clock immediately, the conditions
-                     once the lookup returns — so nothing below ever shifts.
+                <!-- Greeting, live date/time, and local conditions stack
+                     line-to-line as one lockup — no gap between them, just
+                     the shared line-height. The block beat separates the
+                     lockup from the name below. All three fading lines
+                     reserve their height so nothing below ever shifts.
                      Location comes from the visitor's IP (no permission
                      prompt), weather from keyless Open-Meteo. -->
-                <div class="hello-meta">
+                <div class="hello-lockup">
+                    <h1 class="hello-text" id="hello-text"></h1>
                     <p class="hello-line" id="hello-datetime"></p>
                     <p class="hello-line" id="hello-location"></p>
                 </div>
