@@ -74,7 +74,6 @@
     /* Layout rhythm. Only the steps actually in use are declared; one-off
        optical values live on the rule that needs them rather than
        widening this scale. */
-    --space-0: 0;
     --space-2: 8px;
     --space-6: 24px;
 
@@ -379,7 +378,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: var(--dock-action-gap);
-    padding: var(--space-0) var(--dock-actions-inset);
+    padding: 0 var(--dock-actions-inset);
     border-radius: 999px;
 }
 
@@ -407,16 +406,17 @@ body {
 
 .container {
     width: 100%;
-    padding: var(--space-0) var(--page-edge);
-    display: flex;
-    justify-content: center;
+    padding: 0 var(--page-edge);
 }
 
+/* Plain centred block rather than a flex item: a flex item can be forced
+   wider than its own width by a child that refuses to shrink, which is
+   exactly how content escapes a column. A block holds its max-width no
+   matter what is inside it. Children space themselves with margins. */
 .main {
-    width: min(100%, var(--content-width));
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-0);
+    width: 100%;
+    max-width: var(--content-width);
+    margin: 0 auto;
 }
 
 /* ============================================
@@ -611,20 +611,26 @@ body.projects-collapsed .project-images {
 
 /* A row of phones: 32px between them, 40px above and below (4% and 5% of the
    800px column, so both scale with it). The count is whatever is in the
-   markup — two, three, or more — and the leftover width centres itself, so
-   rows of different lengths sit on the same rhythm.
+   markup — the row wraps onto a new line once it is full, so any number of
+   phones stays inside the column, and each line centres its leftover width.
+   Wrapped lines are set apart by the same block step that separates stacks.
+
+   Wrapping rather than squeezing is deliberate: a flex item will not shrink
+   below its own minimum size, so without this the row would run past the
+   column instead of giving way.
 
    This must follow .stack img, which it narrows. */
 .stack-row {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 4%;          /* 32px at the 800px column */
-    padding: 5% 0;    /* 40px top and bottom at the 800px column */
+    gap: var(--space-block) 4%;   /* 40px between lines, 32px between phones */
+    padding: 5% 0;                /* 40px top and bottom at the 800px column */
 }
 
 .stack-row img {
-    width: 21.5%;    /* 171.97 / 800 */
+    width: 21.5%;    /* 171.97 / 800 — four to a line */
 }
 
 /* ============================================
@@ -936,7 +942,7 @@ body.projects-collapsed .project-images {
        share, so they grow to 30% of the column. The padding stays proportional
        (the base 5%), so the rows scale down in step with everything else. */
     .stack-row img {
-        width: 30%;
+        width: 30%;    /* three to a line */
     }
 }
 
