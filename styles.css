@@ -85,7 +85,7 @@
        section gap, so the desktop ratio — 80 / 40 / 16 / 8 — holds at every
        width and carries onto mobile intact, just smaller. Retune the whole
        ladder from --space-section alone. */
-    --space-section: clamp(32px, 9.3vw, 80px);         /* 80px at the 800px cap */
+    --space-section: clamp(32px, 9.3vw, 80px);         /* 80px at ~860px viewport, where the column completes */
     --space-block:   calc(var(--space-section) / 2);   /* 40px — hero lines, project parts */
     --space-meta:    calc(var(--space-section) / 5);   /* 16px — between meta rows */
     --space-row:     calc(var(--space-section) / 10);  /* 8px — label→values, value→value */
@@ -213,7 +213,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 100vh;
+    min-height: 100vh;    /* fallback for browsers without dynamic units */
+    min-height: 100dvh;   /* tracks the real viewport as iOS toolbars collapse */
     padding-bottom: var(--dock-clearance);
     transition: color 0.2s ease, background-color 0.2s ease;
 }
@@ -440,7 +441,10 @@ body {
     margin-bottom: var(--space-section);
 }
 
+/* One rule sets the whole lockup — greeting, date/time, conditions, and
+   name — so the four voices can never drift apart in size or tracking. */
 .hello-text,
+.hello-line,
 .hello-name {
     font-weight: 400;
     font-size: var(--font-size-display);
@@ -453,13 +457,31 @@ body {
    box is reserved from first paint so filling it in JS causes no layout shift. */
 .hello-text {
     white-space: nowrap;
-    min-height: 1.4em;   /* fallback for browsers without the lh unit */
-    min-height: 1lh;     /* exact one-line reservation */
+    min-height: 1.3333em;   /* fallback for browsers without the lh unit; = --line-height-base */
+    min-height: 1lh;        /* exact one-line reservation */
     opacity: 0;
     transition: opacity 0.8s ease;
 }
 
-.hello-text.visible {
+/* Date/time and conditions sit as one two-line block between the greeting
+   and the name, separated from each by the block beat. Lines reserve their
+   height like the greeting does, and tabular figures hold the ticking
+   seconds perfectly still. */
+.hello-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.hello-line {
+    min-height: 1.3333em;
+    min-height: 1lh;
+    font-variant-numeric: tabular-nums;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.hello-text.visible,
+.hello-line.visible {
     opacity: 1;
 }
 
