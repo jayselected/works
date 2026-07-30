@@ -442,7 +442,10 @@ body {
 }
 
 /* One rule sets the whole lockup — greeting, date/time, conditions, and
-   name — so the four voices can never drift apart in size or tracking. */
+   name — so the four voices can never drift apart in size or tracking.
+   They also share one fade: each starts transparent and is revealed by JS,
+   the greeting and name together on load, the conditions line when the
+   lookup resolves. */
 .hello-text,
 .hello-line,
 .hello-name {
@@ -451,6 +454,22 @@ body {
     line-height: var(--line-height-display);
     letter-spacing: var(--letter-spacing-display);
     color: var(--color-ink);
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.hello-text.visible,
+.hello-line.visible,
+.hello-name.visible {
+    opacity: 1;
+}
+
+/* Greeting, date/time, and conditions stack line-to-line — no gap, just the
+   shared line-height — while the section's block beat separates the lockup
+   from the name. */
+.hello-lockup {
+    display: flex;
+    flex-direction: column;
 }
 
 /* The animated greeting holds a single line while languages cycle. The line
@@ -459,30 +478,14 @@ body {
     white-space: nowrap;
     min-height: 1.3333em;   /* fallback for browsers without the lh unit; = --line-height-base */
     min-height: 1lh;        /* exact one-line reservation */
-    opacity: 0;
-    transition: opacity 0.8s ease;
 }
 
-/* Date/time and conditions sit as one two-line block between the greeting
-   and the name, separated from each by the block beat. Lines reserve their
-   height like the greeting does, and tabular figures hold the ticking
-   seconds perfectly still. */
-.hello-meta {
-    display: flex;
-    flex-direction: column;
-}
-
+/* Date/time and conditions reserve their height like the greeting does, and
+   tabular figures hold the ticking seconds perfectly still. */
 .hello-line {
     min-height: 1.3333em;
     min-height: 1lh;
     font-variant-numeric: tabular-nums;
-    opacity: 0;
-    transition: opacity 0.8s ease;
-}
-
-.hello-text.visible,
-.hello-line.visible {
-    opacity: 1;
 }
 
 /* ============================================
