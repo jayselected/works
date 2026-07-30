@@ -37,6 +37,13 @@
                 const savedTheme = localStorage.getItem('portfolio-theme');
                 if (savedTheme === 'dark' || savedTheme === 'light') {
                     document.documentElement.dataset.theme = savedTheme;
+                    /* Keep the browser's own chrome in step from the very
+                       first paint; values mirror THEME_BACKGROUNDS in
+                       siteapp.js, which takes over once it loads. */
+                    const themeColor = document.getElementById('theme-color');
+                    if (themeColor) {
+                        themeColor.setAttribute('content', savedTheme === 'dark' ? '#000000' : '#FFFFFF');
+                    }
                 }
             } catch (error) {
                 document.documentElement.dataset.theme = 'light';
@@ -76,6 +83,19 @@
 
             <section class="hello">
                 <h1 class="hello-text" id="hello-text"></h1>
+
+                <!-- Live date/time and local conditions, set at the same
+                     display scale as the greeting so the lockup speaks in
+                     one voice. Both lines reserve their height and fade in
+                     as they resolve — the clock immediately, the conditions
+                     once the lookup returns — so nothing below ever shifts.
+                     Location comes from the visitor's IP (no permission
+                     prompt), weather from keyless Open-Meteo. -->
+                <div class="hello-meta">
+                    <p class="hello-line" id="hello-datetime"></p>
+                    <p class="hello-line" id="hello-location"></p>
+                </div>
+
                 <p class="hello-name">Select Design Works from, Jay Patel.<br>UK based Graphic and User Interface Designer</p>
             </section>
 
