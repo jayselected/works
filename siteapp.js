@@ -1,11 +1,13 @@
 /**
  * Portfolio behaviour
  * -------------------
- * Two things live here: the multi-language "Hello" fade in the hero, and
- * the chrome (theme, scroll progress, project collapse, back to top).
- * The only script outside this file is the theme bootstrap in the document
- * head, which must run before first paint to avoid a flash of the wrong
- * theme.
+ * Three things live here: the multi-language "Hello" fade in the hero, the
+ * hero's live date/time and local-conditions lines, and the chrome (theme,
+ * scroll progress, project collapse, back to top). The location and weather
+ * lookups are shared with the flip-clock widget, so re-enabling it costs no
+ * second fetch. The only script outside this file is the theme bootstrap in
+ * the document head, which must run before first paint to avoid a flash of
+ * the wrong theme.
  */
 
 const HELLO_LANGUAGES = [
@@ -52,6 +54,58 @@ function startHelloAnimation() {
         el.classList.add('visible');
         setTimeout(runFadeSequence, 2400);
     }, 300);
+}
+
+/* --------------------------------------------
+   Hero meta — live date/time and local conditions
+
+   Two lines beneath the greeting, at the same display scale:
+
+       Thursday, 30 July 15:57:57
+       Manchester, United Kingdom. Sunny 28°
+
+   The clock ticks on the second (scheduled against the clock rather than
+   a drifting interval) and fades in immediately; the conditions line fades
+   in once the shared lookup resolves. If the lookup fails, the line is
+   removed so the lockup closes up cleanly rather than holding a blank.
+   -------------------------------------------- */
+
+function initializeHelloMeta() {
+    const dateEl  = document.getElementById('hello-datetime');
+    const placeEl = document.getElementById('hello-location');
+
+    if (dateEl) {
+        const renderTime = () => {
+            const now = new Date();
+            dateEl.textContent =
+                DAYS_FULL[now.getDay()] + ', '
+                + now.getDate() + ' ' + MONTHS_FULL[now.getMonth()] + ' '
+                + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+        };
+
+        const tick = () => {
+            renderTime();
+            /* Wake exactly on the next second boundary, so the seconds
+               never visibly stall or skip the way a plain interval can. */
+            window.setTimeout(tick, 1000 - (Date.now() % 1000));
+        };
+
+        tick();
+        dateEl.classList.add('visible');
+    }
+
+    if (placeEl) {
+        getConditions()
+            .then(conditions => {
+                const where = [conditions.city, conditions.country].filter(Boolean).join(', ');
+                const what  = (conditions.label + ' ' + conditions.temperature + '\u00b0').trim();
+                placeEl.textContent = where ? where + '. ' + what : what;
+                placeEl.classList.add('visible');
+            })
+            .catch(() => {
+                placeEl.hidden = true;
+            });
+    }
 }
 
 /* ============================================
@@ -193,12 +247,18 @@ function initializeScroll() {
    -------------------------------------------- */
 
 const FLIP_MS = 320;              /* keep in step with --flip-ms in the CSS */
-const WEATHER_CACHE_KEY = 'widget_conditions_v1';
+const WEATHER_CACHE_KEY = 'site_conditions_v2';   /* v2: payload gained country */
 const WEATHER_CACHE_MS = 30 * 60 * 1000;
 
 const DAYS   = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/* Full names for the hero's date line; the widget keeps the short set. */
+const DAYS_FULL   = ['Sunday', 'Monday', 'Tuesday', 'Wednesday',
+                     'Thursday', 'Friday', 'Saturday'];
+const MONTHS_FULL = ['January', 'February', 'March', 'April', 'May', 'June',
+                     'July', 'August', 'September', 'October', 'November', 'December'];
 
 /* WMO weather codes, grouped the way a person would describe them. */
 const CONDITIONS = {
@@ -298,7 +358,12 @@ async function resolveLocation() {
     try {
         const data = await fetchJson('https://ipwho.is/');
         if (data && data.success !== false && Number.isFinite(data.latitude)) {
-            return { city: data.city || '', latitude: data.latitude, longitude: data.longitude };
+            return {
+                city: data.city || '',
+                country: data.country || '',
+                latitude: data.latitude,
+                longitude: data.longitude
+            };
         }
     } catch (error) {
         /* fall through to the second provider */
@@ -306,7 +371,61 @@ async function resolveLocation() {
 
     const data = await fetchJson('https://ipapi.co/json/');
     if (!data || data.error || !Number.isFinite(data.latitude)) throw new Error('no location');
-    return { city: data.city || '', latitude: data.latitude, longitude: data.longitude };
+    return {
+        city: data.city || '',
+        country: data.country_name || '',
+        latitude: data.latitude,
+        longitude: data.longitude
+    };
+}
+
+/* One lookup serves every consumer — the hero line and, if re-enabled, the
+   widget — deduplicated in flight and cached for half an hour, so the page
+   never asks twice. Resolves to { city, country, temperature, label, emoji }. */
+let conditionsPromise = null;
+
+function getConditions() {
+    if (conditionsPromise) return conditionsPromise;
+
+    const cached = readCachedWeather();
+    if (cached) {
+        conditionsPromise = Promise.resolve(cached);
+        return conditionsPromise;
+    }
+
+    conditionsPromise = (async () => {
+        const place = await resolveLocation();
+
+        const weather = await fetchJson(
+            'https://api.open-meteo.com/v1/forecast'
+            + '?latitude=' + place.latitude
+            + '&longitude=' + place.longitude
+            + '&current=temperature_2m,weather_code,is_day'
+        );
+
+        const temperature = Math.round(weather.current.temperature_2m);
+        const code = weather.current.weather_code;
+        let [label, emoji] = CONDITIONS[code] || ['', ''];
+        /* A clear sky reads as "Sunny" only while the sun is up. */
+        if (code === 0) label = weather.current.is_day ? 'Sunny' : 'Clear';
+
+        const payload = {
+            city: place.city,
+            country: place.country,
+            temperature,
+            label,
+            emoji,
+            at: Date.now()
+        };
+        writeCachedWeather(payload);
+        return payload;
+    })();
+
+    /* A failed lookup should not poison the session: clear the memo so a
+       later consumer can retry. (Consumers handle their own rejection.) */
+    conditionsPromise.catch(() => { conditionsPromise = null; });
+
+    return conditionsPromise;
 }
 
 async function loadConditions() {
@@ -314,30 +433,10 @@ async function loadConditions() {
     const tempEl = document.getElementById('widget-temp');
     if (!placeEl || !tempEl) return;
 
-    const cached = readCachedWeather();
-    if (cached) {
-        placeEl.textContent = cached.city;
-        tempEl.textContent = cached.summary;
-        return;
-    }
-
     try {
-        const place = await resolveLocation();
-        placeEl.textContent = place.city;
-
-        const weather = await fetchJson(
-            'https://api.open-meteo.com/v1/forecast'
-            + '?latitude=' + place.latitude
-            + '&longitude=' + place.longitude
-            + '&current=temperature_2m,weather_code'
-        );
-
-        const temperature = Math.round(weather.current.temperature_2m);
-        const [label, emoji] = CONDITIONS[weather.current.weather_code] || ['', ''];
-        const summary = temperature + '\u00b0 ' + emoji + ' ' + label;
-
-        tempEl.textContent = summary;
-        writeCachedWeather({ city: place.city, summary, at: Date.now() });
+        const conditions = await getConditions();
+        placeEl.textContent = conditions.city;
+        tempEl.textContent = conditions.temperature + '\u00b0 ' + conditions.emoji + ' ' + conditions.label;
     } catch (error) {
         placeEl.textContent = 'Conditions unavailable';
         tempEl.textContent = '';
@@ -581,16 +680,12 @@ function initializeProjectCollapse() {
    — the CSS neutralises it and this module skips its work.
    -------------------------------------------- */
 
-function prefersReducedMotionNow() {
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
-
 function initializeEntrance() {
     const items = [...document.querySelectorAll('[data-enter]')];
     if (!items.length) return;
 
     // Reduced motion: reveal everything immediately, run nothing.
-    if (prefersReducedMotionNow() || !('IntersectionObserver' in window)) {
+    if (prefersReducedMotion() || !('IntersectionObserver' in window)) {
         items.forEach(el => el.classList.add('is-in'));
         return;
     }
@@ -639,6 +734,7 @@ function initializeScrollTop() {
 
 function start() {
     startHelloAnimation();
+    initializeHelloMeta();
     dockLabel.init();
     initializeTheme();
     initializeScroll();
