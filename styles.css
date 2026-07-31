@@ -1,10 +1,4 @@
 /* ============================================
-   Fonts
-   ============================================ */
-
-/* Inter is loaded from Google Fonts in the document head. */
-
-/* ============================================
    Foundation
    ============================================ */
 
@@ -17,96 +11,48 @@
 :root {
     color-scheme: light;
 
-    /* Content column, matching the 800px Figma Main frame. */
+    /* Content column, matching the 800px Figma frame. */
     --content-width: 800px;
-    /* Side gutter, fluid: 32px on desktop easing down to ~22px on phones, so
-       the margin scales with the page rather than stepping at a breakpoint. */
+    /* Side gutter: 32px on desktop, easing to ~22px on phones. */
     --page-edge: clamp(1.4rem, 0.8rem + 2.4vw, 2rem);
-
-    /* Distance from the screen edge for both floating glass objects. */
+    /* Screen edge to dock. */
     --edge-gap: 24px;
 
-    /* --- Type ---------------------------------------
-       One size, one leading, one tightness for the whole page: 24px on
-       desktop with 34px leading and -0.2px tracking. Both are expressed as
-       ratios of the size, so the desktop proportions hold at every width —
-       leading stays 1.417x and tracking stays -0.0083em as the size falls to
-       14px on phones. Weight stays 400 throughout: light reads delicate,
-       where heavy would shout.
-    -------------------------------------------------- */
+    /* Type — one size for the whole page: 24 / 34 / -0.2px on desktop,
+       fluid to 14px on phones. Leading and tracking are ratios, so the
+       desktop proportions hold at every size. */
     --font-size: clamp(0.875rem, 0.25rem + 2.5vw, 1.5rem);   /* 14 → 24 */
     --line-height: 1.4167;                                   /* 34 / 24 */
     --letter-spacing: -0.0083em;                             /* -0.2px at 24px */
 
-    /* --- Palette ---
-       Black on white in light, white on black in dark, with a single muted
-       grey for supporting text — project type and meta values. */
+    /* Palette — one ink, one ground, one muted grey for supporting text,
+       one accent used only by the progress bar. */
     --color-bg: #FFFFFF;
-    --color-ink: #000000;               /* primary text and chrome */
+    --color-ink: #000000;
     --color-muted: #C5C5C7;             /* project type, meta values */
-
-    --color-line: rgba(0, 0, 0, 0.1);   /* chrome hairlines (dock, glass) */
-
+    --color-line: rgba(0, 0, 0, 0.1);   /* chrome hairlines */
     --color-accent: #007AFF;
 
-    /* The split-flap seam: a faint crease where the digit folds. */
-    --flap-seam: rgba(0, 0, 0, 0.08);
+    /* Spacing — one step drives every gap, so the desktop ratio
+       160 / 80 / 40 / 32 / 24 holds at every width. Retune here. */
+    --step: clamp(16px, 6vw - 8px, 40px);       /* 40px at an 800px viewport */
+    --space-page:    calc(var(--step) * 4);     /* 160 — page top and bottom */
+    --space-section: calc(var(--step) * 2);     /*  80 — between sections */
+    --space-block:   var(--step);               /*  40 — hero and project parts */
+    --space-stack:   calc(var(--step) * 0.8);   /*  32 — image row padding, gutters */
+    --space-meta:    calc(var(--step) * 0.6);   /*  24 — meta rows, wrapped lines */
 
-    /* Chrome-only steps, unrelated to the content rhythm below. */
-    --space-2: 8px;
-    --space-6: 24px;
-
-    /* --- Spacing ------------------------------------
-       One fluid step drives every gap on the page, and each gap is a fixed
-       multiple of it, so the desktop proportions — 160 / 80 / 40 / 32 / 24 —
-       hold exactly at every width and simply get smaller towards mobile.
-       The step is calibrated on the same 400 → 800px viewport range as the
-       type, so text and spacing shrink in step with each other. Retune the
-       whole page from this one line.
-    -------------------------------------------------- */
-    --step: clamp(16px, 6vw - 8px, 40px);              /* 40px at 800px viewport, 16px at 400px */
-
-    --space-page:    calc(var(--step) * 4);            /* 160px — page top and bottom */
-    --space-section: calc(var(--step) * 2);            /*  80px — between page sections */
-    --space-block:   var(--step);                      /*  40px — hero and project parts */
-    --space-stack:   calc(var(--step) * 0.8);          /*  32px — image row padding and gutters */
-    --space-meta:    calc(var(--step) * 0.6);          /*  24px — meta rows, wrapped image lines */
-
-    /* --- Motion -------------------------------------
-       Content elements rise and fade as they enter the viewport; the dock
-       and widget settle in on load once the content has begun. Distances
-       are short and easing is soft on purpose — restraint is what keeps
-       motion reading as delicate rather than busy. All of it collapses to
-       nothing under prefers-reduced-motion (see that media query).
-    -------------------------------------------------- */
+    /* Motion — short distances, soft easing, all neutralised under
+       prefers-reduced-motion. */
     --enter-rise: 24px;
-    --enter-ms: 900ms;
+    --enter-ms: 900ms;      /* siteapp.js reads this value — do not rename */
     --enter-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-    --chrome-ms: 800ms;
+    --chrome-ms: 800ms;     /* dock settling in on load */
+    --collapse-ms: 400ms;   /* projects morphing between layouts */
 
-    /* --- Widget metrics -----------------------------
-       A Twemco-style flip clock, fixed at the top-left and sharing the
-       dock's edge gap so the two bracket the page at opposite corners.
-       --widget-height is measured and published by siteapp.js; the value
-       here is only a fallback for the first paint. The clearance it feeds
-       applies below 1000px, where the content column grows wide enough to
-       run underneath the widget; above that the widget sits clear in the
-       left margin and the page needs no extra room.
-    -------------------------------------------------- */
-    --widget-height: 118px;
-    --widget-clearance: calc(var(--edge-gap) + var(--widget-height) + var(--space-6));
-    --flap-width: 30px;
-    --flap-height: 42px;
-    --flap-size: 27px;
-    --flip-ms: 320ms;
-
-    /* --- Dock metrics -------------------------------
-       Measured from the iOS 26 Safari bottom bar on an iPhone 12 Pro Max:
-       48pt circle/capsule height, 44pt tap targets with an 8pt gap and a
-       5pt capsule inset (giving the wide-set icon rhythm), 22pt glyphs.
-       CSS px map 1:1 to iOS pt, and the same metrics are kept on desktop —
-       iOS controls don't grow with the screen.
-    -------------------------------------------------- */
+    /* Dock — measured from the iOS 26 Safari bottom bar: 48pt capsule,
+       44pt targets, 8pt gap, 5pt inset, 22pt glyphs. CSS px map 1:1 to pt,
+       and the metrics stay fixed on desktop, as iOS controls do. */
     --dock-height: 48px;
     --dock-bottom: calc(var(--edge-gap) + env(safe-area-inset-bottom, 0px));
     --dock-edge: clamp(24px, 6vw, 28px);
@@ -117,70 +63,50 @@
     --dock-icon-size: 22px;
     --dock-progress-height: 5px;
     --dock-progress-gap: 10px;
-    /* Page padding below the dock, including the progress bar stacked above
-       the actions capsule. */
+    /* Page padding below the dock, counting the progress bar above it. */
     --dock-clearance: calc(
         var(--dock-height) +
         var(--dock-progress-height) +
         var(--dock-progress-gap) +
         var(--dock-bottom) +
-        var(--space-6)
+        24px
     );
 
-    /* --- Chrome material ---
-       Frosted glass: the fill is the page colour held at partial opacity, so
-       over empty page the chrome nearly vanishes and bleeds into the viewport,
-       traced only by a hairline; over an image it blooms into visible frost as
-       the backdrop filter diffuses what passes beneath. Depth comes from three
-       shadow layers (--glass-shadow): a bright top rim, a faint inner floor
-       glow, and a soft cast shadow — Apple's highlight / illumination / shadow
-       model. Dials: --glass-bg alpha (presence at rest) and --glass-backdrop
-       (blur and bloom). Used by the dock, widget, and dock labels. */
-    --glass-bg: rgba(255, 255, 255, 0.6);   /* = ground, so the dock bleeds */
+    /* Frosted glass: the fill is the page colour at partial opacity, so the
+       dock nearly vanishes over empty page and blooms over an image. Depth is
+       Apple's three layers — top rim, inner floor glow, cast shadow. */
+    --glass-bg: rgba(255, 255, 255, 0.6);
     --glass-backdrop: blur(20px) saturate(190%) brightness(1.05);
     --glass-border: var(--color-line);
-    /* Three depth layers, per Apple's glass model: a bright top rim
-       (highlight), a faint inner floor glow (illumination), and a soft cast
-       shadow below (shadow). */
     --glass-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.7),
         inset 0 -1px 1px rgba(255, 255, 255, 0.18),
         0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
+/* Only the values that actually differ; --glass-border resolves against
+   --color-line at use, so it needs no restating here. */
 [data-theme="dark"] {
     color-scheme: dark;
 
     --color-bg: #000000;
-    --color-ink: #FFFFFF;               /* primary text and chrome */
-    --color-muted: #464649;             /* project type, meta values */
+    --color-ink: #FFFFFF;
+    --color-muted: #464649;
+    --color-line: rgba(255, 255, 255, 0.1);
 
-    --color-line: rgba(255, 255, 255, 0.1);       /* chrome hairlines */
-
-    --color-accent: #007AFF;
-
-    --flap-seam: rgba(255, 255, 255, 0.10);
-
-    /* Dark chrome: the fill equals --color-bg, so over empty page the dock
-       disappears into the ground and only frosts what scrolls beneath. */
     --glass-bg: rgba(0, 0, 0, 0.55);
     --glass-backdrop: blur(20px) saturate(190%) brightness(1.1);
-    --glass-border: var(--color-line);
     --glass-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.14),
         inset 0 -1px 1px rgba(255, 255, 255, 0.05),
         0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
-html {
-    font-size: 100%;
-}
-
 body {
     font-weight: 400;
-    /* SF Pro is Apple's system face and isn't licensed for self-hosting, so
-       it is requested through the system stack — real SF Pro on Apple
-       devices, Inter (loaded in the head) as the closest match elsewhere. */
+    /* SF Pro isn't licensed for self-hosting, so it comes from the system
+       stack — real SF Pro on Apple devices, Inter (loaded in the head)
+       elsewhere. */
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', system-ui, sans-serif;
     font-size: var(--font-size);
     line-height: var(--line-height);
@@ -195,14 +121,13 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 100vh;    /* fallback for browsers without dynamic units */
-    min-height: 100dvh;   /* tracks the real viewport as iOS toolbars collapse */
+    min-height: 100vh;    /* fallback where dvh is unsupported */
+    min-height: 100dvh;   /* tracks the viewport as iOS toolbars collapse */
     padding-bottom: var(--dock-clearance);
     transition: color 0.2s ease, background-color 0.2s ease;
 }
 
-/* Headings carry no size or weight of their own — the page is one type
-   treatment, set once on body, and h1/h2 remain purely structural. */
+/* The page is one type treatment, set on body; headings stay structural. */
 h1, h2 {
     font-size: inherit;
     font-weight: inherit;
@@ -224,8 +149,8 @@ h1, h2 {
    ============================================ */
 
 .dock {
-    /* A long press on a dock control shows its label; without this iOS
-       raises its own callout menu and selects text instead. */
+    /* A long press names a control; without this iOS raises its own callout
+       menu and selects text instead. */
     -webkit-touch-callout: none;
     user-select: none;
     -webkit-user-select: none;
@@ -237,15 +162,14 @@ h1, h2 {
     z-index: 200;
     width: var(--dock-width);
     display: flex;
-    /* Bottom-aligned: the face circle sits level with the actions capsule
-       while the progress bar stacks above the actions. */
+    /* Bottom-aligned, so the face sits level with the actions capsule while
+       the progress bar stacks above it. */
     align-items: flex-end;
     justify-content: space-between;
 }
 
-/* The label that names whichever control is under the pointer, in the manner
-   of the macOS dock. It is positioned absolutely so it never affects layout,
-   and JS centres it over the active control. Same glass as the dock itself. */
+/* Names whichever control is under the pointer, like the macOS dock.
+   Absolutely positioned so it never affects layout; JS centres it. */
 .dock-label {
     position: absolute;
     bottom: calc(100% + 10px);
@@ -274,8 +198,8 @@ h1, h2 {
     transform: translate(-50%, 0);
 }
 
-/* Progress bar and actions capsule share a column, so the bar inherits the
-   capsule's exact width automatically — however many actions it holds. */
+/* Progress bar and actions share a column, so the bar inherits the capsule's
+   width however many actions it holds. */
 .dock-cluster {
     display: flex;
     flex-direction: column;
@@ -290,8 +214,7 @@ h1, h2 {
     overflow: hidden;
 }
 
-/* The accent fill scales horizontally with reading progress (driven by JS
-   via a transform, which animates cheaply); the one hue on the site. */
+/* Scaled by JS via a transform, which animates cheaply. */
 .dock-progress-fill {
     width: 100%;
     height: 100%;
@@ -311,12 +234,6 @@ h1, h2 {
     border: 1px solid var(--glass-border);
     box-shadow: var(--glass-shadow);
     color: var(--color-ink);
-    transition:
-        color 0.2s ease,
-        background 0.2s ease,
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        opacity 0.2s ease;
 }
 
 .dock-face {
@@ -329,9 +246,7 @@ h1, h2 {
     text-decoration: none;
 }
 
-/* macOS-dock magnification: the control swells slightly under the pointer,
-   then compresses on press and springs back on release. Both are suppressed
-   under prefers-reduced-motion by the global rule. */
+/* macOS-dock magnification: swells under the pointer, compresses on press. */
 .dock-face:hover,
 .dock-action:hover {
     transform: scale(1.12);
@@ -342,15 +257,18 @@ h1, h2 {
     transform: scale(0.94);
 }
 
+/* One transition for all three, so the chrome eases together on a theme
+   change. Only the face and actions carry the hover transform, but listing
+   it here is harmless for the capsule. */
 .dock-face,
+.dock-actions,
 .dock-action {
-    transition-property: color, background, border-color, box-shadow, opacity, transform;
+    transition-property: color, background-color, border-color, box-shadow, opacity, transform;
     transition-duration: 0.2s;
     transition-timing-function: ease;
 }
 
-/* One rule styles every dock glyph — the face and the actions — so size,
-   weight, colour, and caps can never drift apart. */
+/* One rule for every dock glyph, so weight and size can never drift apart. */
 .dock-face svg,
 .dock-action svg {
     width: var(--dock-icon-size);
@@ -358,13 +276,13 @@ h1, h2 {
     display: block;
     fill: none;
     stroke: currentColor;
-    stroke-width: 1.8; /* SF-regular weight at 22px glyphs */
+    stroke-width: 1.8;   /* SF-regular weight at 22px */
     stroke-linecap: round;
     stroke-linejoin: round;
 }
 
-/* Sized by its contents, so adding or removing an action needs no change
-   here — and the progress bar above inherits the new width automatically. */
+/* Sized by its contents, so adding an action needs no change here — and the
+   progress bar above inherits the new width. */
 .dock-actions {
     width: max-content;
     height: var(--dock-height);
@@ -397,22 +315,22 @@ h1, h2 {
 /* ============================================
    Page
 
-   The containers, in the order they nest, with the gap each one sets
-   between its children:
+   The containers, in nesting order, with the gap each sets between
+   its own children:
 
      .container    page gutter, full width
-     .main         Main container ...... 80px, 160px top and bottom
-       .hero       Hero container ...... 40px
-         .hero-meta    date and weather, two lines, no gap
-       .works      all projects ........ 80px
-         .project        Project container ......... 40px
-           .project-details  Project details ....... 40px
-             .project-title    Title container ..... no gap
-             .project-meta     Meta container ...... 24px
-               .meta-row         Row ............... no gap
-                 .meta-values      Values .......... no gap
-           .project-images   image stacks .......... 40px
-             .stack-row        Image row ........... 32px, 24px between lines
+     .main         Main ................ 80, 160 top and bottom
+       .hero       Hero ................ 40
+         .hero-meta    date and weather ... 0
+       .works      all projects ........ 80
+         .project        Project ............ 40
+           .project-details  Details .......... 40
+             .project-title    Title .......... 0
+             .project-meta     Meta ........... 24
+               .meta-row         Row .......... 0
+                 .meta-values      Values ..... 0
+           .project-images   image stacks ..... 40
+             .stack-row        Image row ...... 32, 24 between lines
        .site-footer
    ============================================ */
 
@@ -421,9 +339,10 @@ h1, h2 {
     padding: 0 var(--page-edge);
 }
 
-/* The column: one rhythm for the whole page. Sections are spaced by this
-   gap alone and carry no margins of their own, so the page reads top to
-   bottom as 160 / 80 / 80 / 160 and retunes from --step. */
+/* Sections are spaced by this gap alone and carry no margins, so the page
+   reads 160 / 80 / 80 / 160 top to bottom. A block rather than a flex item:
+   a flex item can be forced wider by a child that refuses to shrink, which
+   is how content escapes a column. */
 .main {
     width: 100%;
     max-width: var(--content-width);
@@ -438,8 +357,7 @@ h1, h2 {
    Hero
    ============================================ */
 
-/* The intro is three items, evenly spaced by the block step: the animated
-   greeting, the live date and conditions, and the introduction. */
+/* Three items: the greeting, the date and conditions, the introduction. */
 .hero {
     width: 100%;
     display: flex;
@@ -448,13 +366,11 @@ h1, h2 {
     gap: var(--space-block);
 }
 
-/* Greeting, date/time, conditions, and name all inherit the page's single
-   type treatment, so nothing here sets size or tracking. What they share is
-   one fade — the same duration and easing as every other entrance on the
-   page — revealed by JS: the greeting and name together on load, the
-   conditions when the lookup resolves. They fade without the rise that
-   scrolled content gets, because the greeting re-fades on every language
-   change and a repeating rise would read as restless. */
+/* All four lines inherit the page's type, so nothing here sets size. What
+   they share is one fade, at the same speed as every other entrance — JS
+   reveals the greeting and name on load, the conditions when the lookup
+   returns. No rise: the greeting re-fades on every language change, and a
+   repeating rise would read as restless. */
 .hero-hello,
 .hero-line,
 .hero-name {
@@ -468,16 +384,15 @@ h1, h2 {
     opacity: 1;
 }
 
-/* The animated greeting holds a single line while languages cycle. The line
-   box is reserved from first paint so filling it in JS causes no layout shift. */
+/* One line held while the languages cycle, its box reserved from first paint
+   so filling it in JS shifts nothing. */
 .hero-hello {
     white-space: nowrap;
-    min-height: 1.4167em;   /* fallback for browsers without the lh unit; = --line-height */
-    min-height: 1lh;        /* exact one-line reservation */
+    min-height: 1.4167em;   /* fallback where lh is unsupported */
+    min-height: 1lh;
 }
 
-/* Date/time and conditions are one item: two lines set by their own leading,
-   with no gap between them. Tabular figures hold the ticking seconds still. */
+/* Tabular figures hold the ticking seconds still. */
 .hero-line {
     min-height: 1.4167em;
     min-height: 1lh;
@@ -509,19 +424,13 @@ h1, h2 {
     gap: var(--space-block);
 }
 
-/* Title and project type sit line to line with no gap between them — a plain
-   block, so their own leading does the spacing. The type reads in muted grey;
-   that colour is the only hierarchy, since the size never changes. */
+/* Colour is the only hierarchy here, since the size never changes. */
 .project-type {
     color: var(--color-muted);
 }
 
-/* Meta: two rows — Information and Toolkit — set 24px apart. Within a row
-   the label sits directly above its values with no gap, and the values stack
-   line to line the same way, so each row's own leading does the spacing.
-   The label reads at full ink; the values sit back in muted grey.
-   .meta-row needs no rule of its own: a plain block already stacks its
-   children with no gap. */
+/* Two rows, 24px apart. .meta-row and .project-title need no rules: a plain
+   block already stacks its children on their own leading. */
 .project-meta {
     display: flex;
     flex-direction: column;
@@ -532,47 +441,41 @@ h1, h2 {
     color: var(--color-muted);
 }
 
-/* Collapsed view (toggled from the dock): each project reduces to its title,
-   type, and lead image. What stays is identified by where it sits — the
-   title block and the single image inside .project-details — so everything
-   in .project-images collapses whatever it holds, and adding a new stack to
-   a project needs no change here. */
+/* --- Collapsed view (dock toggle) ---
+   Each project reduces to its title, type, and lead image. What stays is
+   identified by where it sits, so a new stack in .project-images needs no
+   change here. */
 body.projects-collapsed .project-meta,
 body.projects-collapsed .project-description,
 body.projects-collapsed .project-images {
     display: none;
 }
 
-/* Reduced to a title and one image, a project no longer needs the full
-   column, so the collapsed view pairs them up: two across, as many rows as
-   there are projects. Rows are set 80px apart against 40px between columns —
-   the wider vertical gap keeps each title bound to the image below it, since
-   that pair is itself 40px apart. Below 700px this reverts to the single
-   column, in the Responsive section. */
+/* Two across, as many rows as there are projects. Rows sit 80 apart against
+   40 between columns: the wider vertical gap keeps each title bound to the
+   image below it, which is itself 40 away. Reverts to one column under
+   700px, in Responsive. */
 body.projects-collapsed .works {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-section) var(--space-block);
 }
 
+/* The whole card expands the view again; JS gives it a button role to match. */
+body.projects-collapsed .project {
+    cursor: pointer;
+}
+
 /* ============================================
    Images
-   ============================================
 
-   Two container types:
+   .stack        one image, filling the column at its natural height
+   .stack-row    images side by side, however many are dropped in
 
-   .stack        one image, filling the column at its own natural height
-   .stack-row    phones side by side — however many are dropped in
-
-   Nothing is cropped and no height is assumed anywhere; every image keeps
-   its own proportions. To stop the page shifting as images load, give each
-   <img> its real pixel size as width and height attributes — the browser
-   reserves the right space from those and the rules below keep it fluid:
-
-       <img width="2400" height="1500" src="..." alt="...">
-
-   No fills, borders, radii, or shadows — per the design.
-*/
+   Nothing is cropped and no height is assumed. To stop the page shifting as
+   images load, give each <img> its real pixel size:
+   <img width="2400" height="1500" src="..." alt="...">
+   ============================================ */
 
 .project-images {
     width: 100%;
@@ -591,23 +494,18 @@ body.projects-collapsed .works {
     display: block;
 }
 
-/* A row of images: 32px of padding on all four sides, 32px between images,
-   and 24px between lines when the row wraps. The count is whatever is in the
-   markup — the row wraps once a line is full, so any number stays inside the
-   column, and each line centres its leftover width.
-
-   Wrapping rather than squeezing is deliberate: a flex item will not shrink
-   below its own minimum size, so without this the row would run past the
-   column instead of giving way.
-
-   This must follow .stack img, which it narrows. */
+/* Wraps once a line is full, so any number stays inside the column and each
+   line centres its leftover width. Wrapping rather than squeezing is
+   deliberate: a flex item will not shrink below its own minimum size, so
+   without this the row would run past the column instead of giving way.
+   Must follow .stack img, which it narrows. */
 .stack-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: var(--space-meta) var(--space-stack);   /* 24px between lines, 32px between images */
-    padding: var(--space-stack);                 /* 32px on all four sides */
+    gap: var(--space-meta) var(--space-stack);   /* 24 between lines, 32 between images */
+    padding: var(--space-stack);
 }
 
 .stack-row img {
@@ -625,224 +523,10 @@ body.projects-collapsed .works {
 }
 
 /* ============================================
-   Widget — flip clock, date, conditions
-   ============================================ */
-
-.widget {
-    position: fixed;
-    top: var(--edge-gap);
-    left: var(--edge-gap);
-    z-index: 200;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    padding: 14px;
-    border-radius: 22px;
-    color: var(--color-ink);
-    background-color: var(--glass-bg);
-    backdrop-filter: var(--glass-backdrop);
-    -webkit-backdrop-filter: var(--glass-backdrop);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
-    user-select: none;
-    -webkit-user-select: none;
-    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.widget-date,
-.widget-conditions {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-    padding: 0 2px;
-    font-size: 11px;
-    line-height: 1.4;
-    letter-spacing: -0.004em;
-    color: var(--color-muted);
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-}
-
-.widget-temp { color: var(--color-ink); }
-
-/* ---- Clock ---- */
-
-.widget-clock {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.widget-pair {
-    display: flex;
-    gap: 3px;
-}
-
-.widget-colon {
-    width: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-}
-
-.widget-colon i {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background-color: var(--color-ink);
-    opacity: 0.55;
-    animation: widget-blink 2s steps(1, end) infinite;
-}
-
-@keyframes widget-blink {
-    0%, 50%      { opacity: 0.55; }
-    50.01%, 100% { opacity: 0.14; }
-}
-
-/* ---- One flap ----
-   Each digit is two half-height windows onto the same full-height glyph,
-   so it is cut cleanly along the seam rather than drawn twice. A change
-   drops a card carrying the old digit's top half while a second card
-   carrying the new digit's bottom half rises to meet it — the four beats
-   that read as a physical split-flap rather than a fade. */
-
-.flap {
-    position: relative;
-    width: var(--flap-width);
-    height: var(--flap-height);
-    perspective: 220px;
-    font-size: var(--flap-size);
-    font-weight: 400;
-    line-height: var(--flap-height);
-    letter-spacing: 0;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-}
-
-.flap-half {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 50%;
-    overflow: hidden;
-}
-
-.flap-half span {
-    display: block;
-    height: var(--flap-height);
-    line-height: var(--flap-height);
-}
-
-.flap-upper { top: 0; border-bottom: 1px solid var(--flap-seam); }
-.flap-lower { bottom: 0; }
-.flap-lower span { transform: translateY(calc(var(--flap-height) / -2)); }
-
-.flap-fold-upper,
-.flap-fold-lower {
-    z-index: 2;
-    backface-visibility: hidden;
-}
-
-.flap-fold-upper {
-    top: 0;
-    transform-origin: bottom;
-    border-bottom: 1px solid var(--flap-seam);
-}
-
-.flap-fold-lower {
-    bottom: 0;
-    transform-origin: top;
-    transform: rotateX(90deg);
-}
-
-.flap-fold-lower span { transform: translateY(calc(var(--flap-height) / -2)); }
-
-/* The folding cards exist only mid-flip. */
-.flap:not(.is-flipping) .flap-fold-upper,
-.flap:not(.is-flipping) .flap-fold-lower { display: none; }
-
-.flap.is-flipping .flap-fold-upper { animation: flap-away var(--flip-ms) ease-in forwards; }
-.flap.is-flipping .flap-fold-lower { animation: flap-in var(--flip-ms) ease-out forwards; }
-
-@keyframes flap-away { to   { transform: rotateX(-90deg); } }
-@keyframes flap-in   { from { transform: rotateX(90deg); } to { transform: rotateX(0deg); } }
-
-/* Announced to screen readers, never shown. */
-.visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-    border: 0;
-}
-
-/* ============================================
-   Motion preferences
-   ============================================ */
-
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        transition-duration: 0.01ms !important;
-        animation-duration: 0.01ms !important;
-    }
-
-    /* The blinking colon is ambient rather than informative, so it stops
-       entirely rather than blinking imperceptibly fast. */
-    .widget-colon i {
-        animation: none;
-        opacity: 0.55;
-    }
-
-    /* All entrance and chrome motion collapses to nothing, fully visible. */
-    [data-enter] {
-        opacity: 1 !important;
-        transform: none !important;
-        transition: none !important;
-    }
-
-    .dock,
-    .widget {
-        animation: none !important;
-    }
-}
-
-/* Some people find translucency over moving content hard to read; the OS
-   exposes that preference, so the glass becomes a solid surface and the
-   backdrop filter is dropped entirely. Declared per theme (not on :root)
-   so it overrides both palettes at equal specificity. */
-@media (prefers-reduced-transparency: reduce) {
-    [data-theme="light"] {
-        --glass-bg: #F1F1F1;   /* opaque near-ground for a solid chrome */
-        --glass-backdrop: none;
-    }
-
-    [data-theme="dark"] {
-        --glass-bg: #0A0A0A;   /* opaque near-ground */
-        --glass-backdrop: none;
-    }
-}
-
-/* Without backdrop-filter (e.g. Firefox with it disabled) the frost cannot
-   render, so the fill becomes near-opaque to stay legible over any content. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    [data-theme="light"] { --glass-bg: #F1F1F1; }
-    [data-theme="dark"]  { --glass-bg: #0A0A0A; }
-}
-
-/* ============================================
    Motion
    ============================================ */
 
-/* Content elements start lowered and transparent; JS adds .is-in when they
-   enter the viewport, fading them in together. */
+/* Content starts lowered and transparent; JS adds .is-in on entry. */
 [data-enter] {
     opacity: 0;
     transform: translateY(var(--enter-rise));
@@ -858,23 +542,11 @@ body.projects-collapsed .works {
     will-change: auto;
 }
 
-/* The dock and widget settle in once, on load — chrome arrives after the
-   content it frames. The .chrome-in class is added by JS a beat after the
-   first paint; without JS they are simply visible. */
-.dock,
-.widget {
-    animation: chrome-enter var(--chrome-ms) var(--enter-ease) both;
-}
-
-@keyframes chrome-enter {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-/* The dock is horizontally centred by a transform, so its keyframe must
-   carry that translation through or it would jump to the left mid-animation. */
+/* The dock settles in once, on load — chrome arrives after the content it
+   frames. Its keyframe carries the centring translate through, or it would
+   jump left mid-animation. */
 .dock {
-    animation-name: dock-enter;
+    animation: dock-enter var(--chrome-ms) var(--enter-ease) both;
 }
 
 @keyframes dock-enter {
@@ -882,51 +554,92 @@ body.projects-collapsed .works {
     to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
+/* --- Collapse morph ---
+   Collapsing swaps a column for a grid, which is a layout change and so
+   cannot be transitioned directly. A view transition lets the browser
+   interpolate between the two states instead: siteapp.js names each project
+   so they travel individually rather than cross-fading as one block, and
+   skips the transition entirely where it is unsupported or unwanted.
+   Naming the parts that move keeps them out of the page-wide snapshot,
+   which would otherwise stretch as the page changes height. */
+.hero        { view-transition-name: hero; }
+.site-footer { view-transition-name: footer; }
+.dock        { view-transition-name: dock; }
+
+::view-transition-group(*) {
+    animation-duration: var(--collapse-ms);
+    animation-timing-function: var(--enter-ease);
+}
+
+/* ============================================
+   Motion preferences
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+
+    /* Entrance and chrome motion collapse to nothing, fully visible.
+       The collapse morph is skipped in JS, so it needs no rule. */
+    [data-enter] {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+
+    .dock {
+        animation: none !important;
+    }
+}
+
+/* Translucency over moving content is hard for some people to read; the OS
+   exposes that preference, so the glass becomes solid. Declared per theme so
+   it overrides both palettes at equal specificity. */
+@media (prefers-reduced-transparency: reduce) {
+    [data-theme="light"] {
+        --glass-bg: #F1F1F1;
+        --glass-backdrop: none;
+    }
+
+    [data-theme="dark"] {
+        --glass-bg: #0A0A0A;
+        --glass-backdrop: none;
+    }
+}
+
+/* Without backdrop-filter the frost cannot render, so the fill goes
+   near-opaque to stay legible over any content. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    [data-theme="light"] { --glass-bg: #F1F1F1; }
+    [data-theme="dark"]  { --glass-bg: #0A0A0A; }
+}
+
 /* ============================================
    Responsive
    ============================================ */
-
-/* The widget floats clear in the left margin on wide screens. Below this
-   the content column reaches it, so the page opens below the widget
-   instead of behind it.
-   Disabled alongside the widget — re-enable this block when restoring it. */
-/*
-@media screen and (max-width: 1000px) {
-    body {
-        padding-top: var(--widget-clearance);
-    }
-}
-*/
 
 @media screen and (max-width: 700px) {
     :root {
         --edge-gap: 20px;
         --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
-        --flap-width: 25px;
-        --flap-height: 35px;
-        --flap-size: 22px;
     }
 
-    .widget {
-        padding: 11px;
-        border-radius: 18px;
-    }
-
-    /* On a narrow screen the phones would be too small at their desktop
-       share, so they grow to 30% of the column. The row's padding and gaps
-       are already fluid, so the rows scale down in step with everything else. */
+    /* At their desktop share the images would be too small here. Padding and
+       gaps are already fluid, so the rows scale down in step. */
     .stack-row img {
         width: 30%;    /* three to a line */
     }
 
-    /* Two collapsed projects side by side would leave each too narrow to
-       read here, so the grid reverts to the single stacked column. Only the
-       display needs resetting — .works already carries the column direction
-       and the 80px gap, and the grid's column gap is simply unused. */
+    /* Two collapsed projects side by side would leave each too narrow, so the
+       grid reverts to the stacked column. Only display needs resetting —
+       .works already carries the column direction and the 80px gap. */
     body.projects-collapsed .works {
         display: flex;
     }
 }
 
-/* Nothing width-specific needed below 390px — the percentage-based stacks
-   scale down cleanly on their own. */
+/* Nothing width-specific below 390px — the percentage stacks scale cleanly. */
