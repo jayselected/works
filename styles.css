@@ -49,6 +49,7 @@
     --enter-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
     --chrome-ms: 800ms;     /* dock settling in on load */
     --collapse-ms: 400ms;   /* projects morphing between layouts */
+    --bar-ms: 400ms;        /* top bar fading in and out */
 
     /* Dock — measured from the iOS 26 Safari bottom bar: 48pt capsule,
        44pt targets, 8pt gap, 5pt inset, 22pt glyphs. CSS px map 1:1 to pt,
@@ -147,10 +148,9 @@ h1, h2 {
 /* ============================================
    Top bar
 
-   A scroll affordance: absent at the top of the page, arriving as soon as
-   the page moves and retiring when the top is reached again. It carries the
-   date and conditions that scroll away with the hero, and wears the same
-   glass as the dock so the two read as one system.
+   Takes over once the hero's own date and conditions have scrolled behind
+   it, carrying the same information onward, and retires when they return.
+   Same glass as the dock, so the two read as one system.
    ============================================ */
 
 .topbar {
@@ -170,29 +170,54 @@ h1, h2 {
     line-height: 1.4;
     letter-spacing: -0.006em;
     font-variant-numeric: tabular-nums;
-    color: var(--color-ink);   /* one colour throughout — no muted values here */
+    color: var(--color-ink);   /* one colour throughout — nothing muted here */
 
     background-color: var(--glass-bg);
     backdrop-filter: var(--glass-backdrop);
     -webkit-backdrop-filter: var(--glass-backdrop);
     border-bottom: 1px solid var(--glass-border);
 
+    /* Arrives as a soft fade with the smallest of rises, rather than a
+       slide — the same at every width. */
     opacity: 0;
-    transform: translateY(-100%);
+    transform: translateY(-6px);
     pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition:
+        opacity var(--bar-ms) var(--enter-ease),
+        transform var(--bar-ms) var(--enter-ease);
 }
 
 .topbar.is-visible {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
     pointer-events: auto;
 }
 
-.topbar-meta {
+.topbar-left,
+.topbar-right {
     display: flex;
+    align-items: center;
     gap: 14px;
     white-space: nowrap;
+}
+
+.topbar-left { gap: 10px; }
+
+/* The one spot of colour on the page, echoing the progress bar. */
+.topbar-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--color-accent);
+}
+
+/* A rule, not text — so it takes its weight from opacity rather than a
+   second grey. */
+.topbar-sep {
+    width: 1px;
+    height: 11px;
+    background-color: currentColor;
+    opacity: 0.28;
 }
 
 /* ============================================
@@ -688,9 +713,11 @@ body.projects-collapsed .project {
         width: 30%;    /* three to a line */
     }
 
-    /* The bar cannot hold all three at this width; the hero still carries
-       the conditions in full, so the bar keeps the name and the clock. */
-    .topbar-conditions {
+    /* The row cannot hold everything at this width. The hero carries it all
+       in full, so the bar keeps the name, the weather and the clock. */
+    .topbar-sub,
+    .topbar-place,
+    .topbar-place-sep {
         display: none;
     }
 
