@@ -92,15 +92,14 @@
         <main class="main">
 
             <section class="hello">
-                <!-- Greeting, live date/time, and local conditions stack
-                     line-to-line as one lockup — no gap between them, just
-                     the shared line-height. The block beat separates the
-                     lockup from the name below. All three fading lines
-                     reserve their height so nothing below ever shifts.
-                     Location comes from the visitor's IP (no permission
-                     prompt), weather from keyless Open-Meteo. -->
-                <div class="hello-lockup">
-                    <h1 class="hello-text" id="hello-text"></h1>
+                <h1 class="hello-text" id="hello-text"></h1>
+
+                <!-- One item, two lines: live date/time above local
+                     conditions. Location comes from the visitor's IP (no
+                     permission prompt), weather from keyless Open-Meteo.
+                     Both lines reserve their height and fade in as they
+                     resolve, so nothing below ever shifts. -->
+                <div class="hello-meta">
                     <p class="hello-line" id="hello-datetime"></p>
                     <p class="hello-line" id="hello-location"></p>
                 </div>
@@ -112,7 +111,10 @@
 
                 <article class="project">
                     <div class="project-details">
-                        <h2 class="project-title" data-enter>Cine Asia</h2>
+                        <div class="project-heading" data-enter>
+                            <h2 class="project-title">Cine Asia</h2>
+                            <p class="project-type">Application Design</p>
+                        </div>
 
                         <div class="stack" data-enter>
                             <img loading="lazy" decoding="async" src="https://framerusercontent.com/images/HyNx4h88GowWDEBafQKrWsFKOdA.png" alt="Cine Asia banner">
@@ -155,7 +157,9 @@
 
                 <article class="project">
                     <div class="project-details">
-                        <h2 class="project-title" data-enter>Little Hands</h2>
+                        <div class="project-heading" data-enter>
+                            <h2 class="project-title">Little Hands</h2>
+                        </div>
 
                         <div class="stack" data-enter>
                             <img loading="lazy" decoding="async" src="https://framerusercontent.com/images/KYGPRZxdcLtbHnnWz8zIKmelf4.png" alt="Little Hands banner">
@@ -198,7 +202,9 @@
 
                 <article class="project">
                     <div class="project-details">
-                        <h2 class="project-title" data-enter>Regen</h2>
+                        <div class="project-heading" data-enter>
+                            <h2 class="project-title">Regen</h2>
+                        </div>
 
                         <div class="stack" data-enter>
                             <img loading="lazy" decoding="async" src="https://framerusercontent.com/images/fGKKjQkpmkp08E2jVHoJvb66Bc.png" alt="Regen banner">
@@ -209,7 +215,7 @@
                                 <span class="meta-label">Information</span>
                                 <span class="meta-values">
                                     <span>Stage: Startup</span>
-                                    <span>Services: Branding &amp; Website Design</span>
+                                    <span>Services: Branding &amp; User Interface Design</span>
                                 </span>
                             </div>
                             <div class="meta-row">
@@ -275,7 +281,7 @@
             </div>
 
             <div class="dock-actions" role="group" aria-label="Quick actions">
-                <a class="dock-action" href="mailto:jayarchiveone@gmail.com" data-label="Email" aria-label="Email Jay Patel">
+                <a class="dock-action" href="mailto:j-patel94@live.com" data-label="Email" aria-label="Email Jay Patel">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
                         <circle cx="12" cy="12" r="4"></circle>
                         <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path>
