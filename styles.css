@@ -408,7 +408,9 @@ h1, h2 {
          .project        Project container ......... 40px
            .project-details  Project details ....... 40px
              .project-title    Title container ..... no gap
-             .project-meta     Meta container ...... no gap
+             .project-meta     Meta container ...... 24px
+               .meta-row         Row ............... no gap
+                 .meta-values      Values .......... no gap
            .project-images   image stacks .......... 40px
              .stack-row        Image row ........... 32px, 24px between lines
        .site-footer
@@ -514,9 +516,19 @@ h1, h2 {
     color: var(--color-muted);
 }
 
-/* Meta: three plain lines — stage, services, toolkit — set line to line by
-   their own leading, and held back in muted grey against the description. */
+/* Meta: two rows — Information and Toolkit — set 24px apart. Within a row
+   the label sits directly above its values with no gap, and the values stack
+   line to line the same way, so each row's own leading does the spacing.
+   The label reads at full ink; the values sit back in muted grey.
+   .meta-row needs no rule of its own: a plain block already stacks its
+   children with no gap. */
 .project-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-meta);
+}
+
+.meta-values {
     color: var(--color-muted);
 }
 
