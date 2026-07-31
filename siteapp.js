@@ -94,7 +94,6 @@ const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
    top bar — so nothing is fetched or counted twice. */
 function initializeHeroMeta() {
     const clocks = [...document.querySelectorAll('[data-clock]')];
-    const places = [...document.querySelectorAll('[data-conditions]')];
 
     if (clocks.length) {
         clocks.forEach(el => el.classList.add('visible'));
@@ -115,21 +114,50 @@ function initializeHeroMeta() {
         tick();
     }
 
-    if (places.length) {
+    if (document.querySelector('[data-conditions], [data-place], [data-weather]')) {
         getConditions()
             .then(conditions => {
                 const where = [conditions.city, conditions.country].filter(Boolean).join(', ');
                 const what  = (conditions.label + ' ' + conditions.temperature + '\u00b0').trim();
-                const text  = where ? where + '. ' + what : what;
-                places.forEach(el => {
-                    el.textContent = text;
-                    el.classList.add('visible');
-                });
+
+                /* Published three ways from one lookup: the hero shows them
+                   as a sentence, the bar as separate fields. */
+                fill('[data-place]', where);
+                fill('[data-weather]', what);
+                fill('[data-conditions]', where ? where + '. ' + what : what);
             })
             /* On failure the lines are removed, so the hero closes up cleanly
                rather than holding a blank. */
-            .catch(() => { places.forEach(el => { el.hidden = true; }); });
+            .catch(() => {
+                document.querySelectorAll('[data-conditions], [data-place], [data-weather]')
+                    .forEach(el => { el.hidden = true; });
+            });
     }
+}
+
+function fill(selector, text) {
+    document.querySelectorAll(selector).forEach(el => {
+        el.textContent = text;
+        el.classList.add('visible');
+    });
+}
+
+/* --------------------------------------------
+   Top bar
+   -------------------------------------------- */
+
+function initializeTopBar() {
+    const topbar = document.getElementById('topbar');
+    const anchor = document.querySelector('.hero-meta');
+    if (!topbar || !anchor || !('IntersectionObserver' in window)) return;
+
+    /* Shown once the hero's own date and conditions have passed behind the
+       bar, so the two never say the same thing at the same time. The top
+       margin matches the bar's height, which is where they disappear. */
+    new IntersectionObserver(([entry]) => {
+        const passed = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+        topbar.classList.toggle('is-visible', passed);
+    }, { rootMargin: '-40px 0px 0px 0px', threshold: 0 }).observe(anchor);
 }
 
 /* ============================================
@@ -319,33 +347,23 @@ function initializeTheme() {
    Scroll progress
    ============================================ */
 
-const BAR_REVEAL_PX = 24;   /* far enough not to flicker on a nudge */
-
 function initializeScroll() {
     const progress = document.getElementById('scroll-progress');
-    const fill     = document.getElementById('scroll-progress-fill');
-    const topbar   = document.getElementById('topbar');
-    if (!progress && !topbar) return;
+    const bar      = document.getElementById('scroll-progress-fill');
+    if (!progress || !bar) return;
 
     let queued = false;
 
     function render() {
         queued = false;
 
-        if (progress && fill) {
-            const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-            const ratio = scrollable > 0
-                ? Math.min(1, Math.max(0, window.scrollY / scrollable))
-                : 0;
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        const ratio = scrollable > 0
+            ? Math.min(1, Math.max(0, window.scrollY / scrollable))
+            : 0;
 
-            fill.style.transform = `scaleX(${ratio})`;
-            progress.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
-        }
-
-        /* Present the moment the page moves, gone again at the very top. */
-        if (topbar) {
-            topbar.classList.toggle('is-visible', window.scrollY > BAR_REVEAL_PX);
-        }
+        bar.style.transform = `scaleX(${ratio})`;
+        progress.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
     }
 
     /* Scroll fires far more often than the screen refreshes; coalescing into
@@ -683,6 +701,7 @@ function start() {
         initializeHeroMeta,
         initializeTheme,
         initializeScroll,
+        initializeTopBar,
         initializeProjectCollapse,
         initializeScrollTop,
         initializeEntrance
