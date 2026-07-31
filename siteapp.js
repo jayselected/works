@@ -90,37 +90,45 @@ const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday',
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
                 'July', 'August', 'September', 'October', 'November', 'December'];
 
+/* One clock and one lookup feed every subscriber — the hero lines and the
+   top bar — so nothing is fetched or counted twice. */
 function initializeHeroMeta() {
-    const dateEl  = document.getElementById('hero-date');
-    const placeEl = document.getElementById('hero-place');
+    const clocks = [...document.querySelectorAll('[data-clock]')];
+    const places = [...document.querySelectorAll('[data-conditions]')];
 
-    if (dateEl) {
+    if (clocks.length) {
+        clocks.forEach(el => el.classList.add('visible'));
+
         const tick = () => {
             const now = new Date();
-            dateEl.textContent =
+            const text =
                 DAYS[now.getDay()] + ', '
                 + now.getDate() + ' ' + MONTHS[now.getMonth()] + ' '
                 + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+
+            clocks.forEach(el => { el.textContent = text; });
             /* Wake on the next second boundary, so the seconds never stall
                or skip the way a plain interval can. */
             window.setTimeout(tick, 1000 - (Date.now() % 1000));
         };
 
         tick();
-        dateEl.classList.add('visible');
     }
 
-    if (placeEl) {
+    if (places.length) {
         getConditions()
             .then(conditions => {
                 const where = [conditions.city, conditions.country].filter(Boolean).join(', ');
                 const what  = (conditions.label + ' ' + conditions.temperature + '\u00b0').trim();
-                placeEl.textContent = where ? where + '. ' + what : what;
-                placeEl.classList.add('visible');
+                const text  = where ? where + '. ' + what : what;
+                places.forEach(el => {
+                    el.textContent = text;
+                    el.classList.add('visible');
+                });
             })
-            /* On failure the line is removed, so the hero closes up cleanly
+            /* On failure the lines are removed, so the hero closes up cleanly
                rather than holding a blank. */
-            .catch(() => { placeEl.hidden = true; });
+            .catch(() => { places.forEach(el => { el.hidden = true; }); });
     }
 }
 
@@ -311,22 +319,33 @@ function initializeTheme() {
    Scroll progress
    ============================================ */
 
+const BAR_REVEAL_PX = 24;   /* far enough not to flicker on a nudge */
+
 function initializeScroll() {
     const progress = document.getElementById('scroll-progress');
     const fill     = document.getElementById('scroll-progress-fill');
-    if (!progress || !fill) return;
+    const topbar   = document.getElementById('topbar');
+    if (!progress && !topbar) return;
 
     let queued = false;
 
     function render() {
         queued = false;
-        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-        const ratio = scrollable > 0
-            ? Math.min(1, Math.max(0, window.scrollY / scrollable))
-            : 0;
 
-        fill.style.transform = `scaleX(${ratio})`;
-        progress.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
+        if (progress && fill) {
+            const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+            const ratio = scrollable > 0
+                ? Math.min(1, Math.max(0, window.scrollY / scrollable))
+                : 0;
+
+            fill.style.transform = `scaleX(${ratio})`;
+            progress.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
+        }
+
+        /* Present the moment the page moves, gone again at the very top. */
+        if (topbar) {
+            topbar.classList.toggle('is-visible', window.scrollY > BAR_REVEAL_PX);
+        }
     }
 
     /* Scroll fires far more often than the screen refreshes; coalescing into
@@ -563,7 +582,19 @@ function initializeProjectCollapse() {
             return;
         }
 
-        document.startViewTransition(paint);
+        /* Fixed chrome is named only for the length of the morph. Holding a
+           view-transition name permanently makes an element a backdrop root,
+           which stops the frosted glass inside it from sampling the page. */
+        const chrome = ['.topbar', '.dock']
+            .map(selector => document.querySelector(selector))
+            .filter(Boolean);
+
+        chrome.forEach((el, index) => { el.style.viewTransitionName = 'chrome-' + index; });
+        const release = () => chrome.forEach(el => { el.style.viewTransitionName = ''; });
+
+        /* then(release, release): a skipped transition rejects, and the name
+           must come off either way. */
+        document.startViewTransition(paint).finished.then(release, release);
     }
 
     paint();
