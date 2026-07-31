@@ -145,6 +145,57 @@ h1, h2 {
 }
 
 /* ============================================
+   Top bar
+
+   A scroll affordance: absent at the top of the page, arriving as soon as
+   the page moves and retiring when the top is reached again. It carries the
+   date and conditions that scroll away with the hero, and wears the same
+   glass as the dock so the two read as one system.
+   ============================================ */
+
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 var(--page-edge);
+
+    font-size: 12px;
+    line-height: 1.4;
+    letter-spacing: -0.006em;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink);   /* one colour throughout — no muted values here */
+
+    background-color: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop);
+    -webkit-backdrop-filter: var(--glass-backdrop);
+    border-bottom: 1px solid var(--glass-border);
+
+    opacity: 0;
+    transform: translateY(-100%);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.topbar.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.topbar-meta {
+    display: flex;
+    gap: 14px;
+    white-space: nowrap;
+}
+
+/* ============================================
    Dock
    ============================================ */
 
@@ -561,10 +612,13 @@ body.projects-collapsed .project {
    so they travel individually rather than cross-fading as one block, and
    skips the transition entirely where it is unsupported or unwanted.
    Naming the parts that move keeps them out of the page-wide snapshot,
-   which would otherwise stretch as the page changes height. */
+   which would otherwise stretch as the page changes height.
+
+   The fixed chrome is named by siteapp.js only while a morph runs: a
+   permanent name makes an element a backdrop root, which stops the frosted
+   glass inside it from sampling the page behind. */
 .hero        { view-transition-name: hero; }
 .site-footer { view-transition-name: footer; }
-.dock        { view-transition-name: dock; }
 
 ::view-transition-group(*) {
     animation-duration: var(--collapse-ms);
@@ -632,6 +686,12 @@ body.projects-collapsed .project {
        gaps are already fluid, so the rows scale down in step. */
     .stack-row img {
         width: 30%;    /* three to a line */
+    }
+
+    /* The bar cannot hold all three at this width; the hero still carries
+       the conditions in full, so the bar keeps the name and the clock. */
+    .topbar-conditions {
+        display: none;
     }
 
     /* Two collapsed projects side by side would leave each too narrow, so the
