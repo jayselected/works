@@ -26,43 +26,24 @@
     /* Distance from the screen edge for both floating glass objects. */
     --edge-gap: 24px;
 
-    /* --- Type scale ---------------------------------
-       All text is one size and one tightness: 24px on desktop, fluid down to
-       14px on phones, with a fixed line-height ratio of 32/24. The ratio is
-       unitless so the desktop tightness holds at every size — 32px at 24px,
-       ~19px at 14px. The named steps are kept as slots: if one ever needs to
-       diverge, change it alone; for now they all resolve to the same base.
-
-       Display stays at weight 400 by design: light reads delicate, where heavy
-       would shout.
+    /* --- Type ---------------------------------------
+       One size, one leading, one tightness for the whole page: 24px on
+       desktop with 34px leading and -0.2px tracking. Both are expressed as
+       ratios of the size, so the desktop proportions hold at every width —
+       leading stays 1.417x and tracking stays -0.0083em as the size falls to
+       14px on phones. Weight stays 400 throughout: light reads delicate,
+       where heavy would shout.
     -------------------------------------------------- */
-    --font-size-base: clamp(0.875rem, 0.25rem + 2.5vw, 1.5rem);   /* 14 → 24 */
-    --line-height-base: 1.3333;                                   /* 32 / 24 */
-
-    --font-size-display: var(--font-size-base);
-    --font-size-lg: var(--font-size-base);
-    --font-size-md: var(--font-size-base);
-    --font-size-meta: var(--font-size-base);
-    --font-size-sm: var(--font-size-base);
-
-    --line-height-display: var(--line-height-base);
-    --line-height-lg: var(--line-height-base);
-    --line-height-md: var(--line-height-base);
-
-    /* Inter runs tight per the design: hero -0.06em, everything else -0.04em. */
-    --letter-spacing-display: -0.06em;
-    --letter-spacing-tight: -0.04em;
+    --font-size: clamp(0.875rem, 0.25rem + 2.5vw, 1.5rem);   /* 14 → 24 */
+    --line-height: 1.4167;                                   /* 34 / 24 */
+    --letter-spacing: -0.0083em;                             /* -0.2px at 24px */
 
     /* --- Palette ---
-       Black on white in light, white on black in dark, largely varied by
-       opacity: primary text and chrome at full strength; meta text muted —
-       #737373 in light, 40% white in dark. One accent (#007AFF), progress
-       bar only. Contrast: primary text and light-mode meta clear WCAG AA;
-       dark-mode meta clears AA at large sizes — the 40% white is the design's
-       chosen muting, a touch under AA for body-size text. */
+       Black on white in light, white on black in dark, with a single muted
+       grey for supporting text — project type and meta values. */
     --color-bg: #FFFFFF;
     --color-ink: #000000;               /* primary text and chrome */
-    --color-muted: #737373;             /* meta text */
+    --color-muted: #C5C5C7;             /* project type, meta values */
 
     --color-line: rgba(0, 0, 0, 0.1);   /* chrome hairlines (dock, glass) */
 
@@ -71,22 +52,25 @@
     /* The split-flap seam: a faint crease where the digit folds. */
     --flap-seam: rgba(0, 0, 0, 0.08);
 
-    /* Layout rhythm. Only the steps actually in use are declared; one-off
-       optical values live on the rule that needs them rather than
-       widening this scale. */
+    /* Chrome-only steps, unrelated to the content rhythm below. */
     --space-2: 8px;
     --space-6: 24px;
 
-    /* Vertical rhythm as one system: every step is a fixed fraction of the
-       section gap, so the desktop ratio — 80 / 40 / 16 / 8 — holds at every
-       width and carries onto mobile intact, just smaller. Retune the whole
-       ladder from --space-section alone. */
-    --space-section: clamp(32px, 9.3vw, 80px);         /* 80px at ~860px viewport, where the column completes */
-    --space-block:   calc(var(--space-section) / 2);   /* 40px — hero lines, project parts */
-    --space-meta:    calc(var(--space-section) / 5);   /* 16px — between meta rows */
-    --space-row:     calc(var(--space-section) / 10);  /* 8px — label→values, value→value */
-    /* Space above the hero. */
-    --space-page-top: clamp(64px, 8vw + 32px, 160px);
+    /* --- Spacing ------------------------------------
+       One fluid step drives every gap on the page, and each gap is a fixed
+       multiple of it, so the desktop proportions — 160 / 80 / 40 / 32 / 24 —
+       hold exactly at every width and simply get smaller towards mobile.
+       The step is calibrated on the same 400 → 800px viewport range as the
+       type, so text and spacing shrink in step with each other. Retune the
+       whole page from this one line.
+    -------------------------------------------------- */
+    --step: clamp(16px, 6vw - 8px, 40px);              /* 40px at 800px viewport, 16px at 400px */
+
+    --space-page:    calc(var(--step) * 4);            /* 160px — page top and bottom */
+    --space-section: calc(var(--step) * 2);            /*  80px — between page sections */
+    --space-block:   var(--step);                      /*  40px — hero and project parts */
+    --space-stack:   calc(var(--step) * 0.8);          /*  32px — image row padding and gutters */
+    --space-meta:    calc(var(--step) * 0.6);          /*  24px — meta rows, wrapped image lines */
 
     /* --- Motion -------------------------------------
        Content elements rise and fade as they enter the viewport; the dock
@@ -168,8 +152,8 @@
     color-scheme: dark;
 
     --color-bg: #000000;
-    --color-ink: #FFFFFF;                    /* primary text and chrome */
-    --color-muted: rgba(255, 255, 255, 0.4); /* meta text */
+    --color-ink: #FFFFFF;               /* primary text and chrome */
+    --color-muted: #464649;             /* project type, meta values */
 
     --color-line: rgba(255, 255, 255, 0.1);       /* chrome hairlines */
 
@@ -194,10 +178,13 @@ html {
 
 body {
     font-weight: 400;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: var(--font-size-md);
-    line-height: var(--line-height-md);
-    letter-spacing: var(--letter-spacing-tight);
+    /* SF Pro is Apple's system face and isn't licensed for self-hosting, so
+       it is requested through the system stack — real SF Pro on Apple
+       devices, Inter (loaded in the head) as the closest match elsewhere. */
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', system-ui, sans-serif;
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+    letter-spacing: var(--letter-spacing);
     color: var(--color-ink);
     background-color: var(--color-bg);
     font-style: normal;
@@ -212,6 +199,13 @@ body {
     min-height: 100dvh;   /* tracks the real viewport as iOS toolbars collapse */
     padding-bottom: var(--dock-clearance);
     transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+/* Headings carry no size or weight of their own — the page is one type
+   treatment, set once on body, and h1/h2 remain purely structural. */
+h1, h2 {
+    font-size: inherit;
+    font-weight: inherit;
 }
 
 ::selection {
@@ -409,47 +403,40 @@ body {
     padding: 0 var(--page-edge);
 }
 
-/* Plain centred block rather than a flex item: a flex item can be forced
-   wider than its own width by a child that refuses to shrink, which is
-   exactly how content escapes a column. A block holds its max-width no
-   matter what is inside it. Children space themselves with margins. */
+/* The column: one rhythm for the whole page. Sections are spaced by this
+   gap alone and carry no margins of their own, so the page reads top to
+   bottom as 160 / 80 / 80 / 160 and retunes from --step. */
 .main {
     width: 100%;
     max-width: var(--content-width);
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-section);
+    padding: var(--space-page) 0;
 }
 
 /* ============================================
    Intro
    ============================================ */
 
-/* The intro is a keynote-style lockup at the fluid display scale. The animated
-   hello stands apart from the name/subtext pair by the block rhythm — 40px at
-   full width, scaling down with it — giving the greeting its own beat before
-   the introduction. */
+/* The intro is three items, evenly spaced by the block step: the animated
+   greeting, the live date and conditions, and the introduction. */
 .hello {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-block);
-    padding-top: var(--space-page-top);
-    margin-bottom: var(--space-section);
 }
 
-/* One rule sets the whole lockup — greeting, date/time, conditions, and
-   name — so the four voices can never drift apart in size or tracking.
-   They also share one fade: each starts transparent and is revealed by JS,
-   the greeting and name together on load, the conditions line when the
-   lookup resolves. */
+/* Greeting, date/time, conditions, and name all inherit the page's single
+   type treatment, so nothing here sets size or tracking. What they share is
+   one fade: each starts transparent and is revealed by JS — the greeting and
+   name together on load, the conditions when the lookup resolves. */
 .hello-text,
 .hello-line,
 .hello-name {
-    font-weight: 400;
-    font-size: var(--font-size-display);
-    line-height: var(--line-height-display);
-    letter-spacing: var(--letter-spacing-display);
-    color: var(--color-ink);
     opacity: 0;
     transition: opacity 0.8s ease;
 }
@@ -460,26 +447,18 @@ body {
     opacity: 1;
 }
 
-/* Greeting, date/time, and conditions stack line-to-line — no gap, just the
-   shared line-height — while the section's block beat separates the lockup
-   from the name. */
-.hello-lockup {
-    display: flex;
-    flex-direction: column;
-}
-
 /* The animated greeting holds a single line while languages cycle. The line
    box is reserved from first paint so filling it in JS causes no layout shift. */
 .hello-text {
     white-space: nowrap;
-    min-height: 1.3333em;   /* fallback for browsers without the lh unit; = --line-height-base */
+    min-height: 1.4167em;   /* fallback for browsers without the lh unit; = --line-height */
     min-height: 1lh;        /* exact one-line reservation */
 }
 
-/* Date/time and conditions reserve their height like the greeting does, and
-   tabular figures hold the ticking seconds perfectly still. */
+/* Date/time and conditions are one item: two lines set by their own leading,
+   with no gap between them. Tabular figures hold the ticking seconds still. */
 .hello-line {
-    min-height: 1.3333em;
+    min-height: 1.4167em;
     min-height: 1lh;
     font-variant-numeric: tabular-nums;
 }
@@ -493,7 +472,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--space-section);
-    margin-bottom: var(--space-section);
 }
 
 .project {
@@ -510,15 +488,15 @@ body {
     gap: var(--space-block);
 }
 
-.project-title {
-    font-weight: 400;
-    font-size: var(--font-size-lg);
-    line-height: var(--line-height-lg);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
+/* Title and project type sit line to line with no gap between them — a plain
+   block, so their own leading does the spacing. The type reads in muted grey;
+   that colour is the only hierarchy, since the size never changes. */
+.project-type {
+    color: var(--color-muted);
 }
 
-/* Meta: two stacked rows, set apart by the meta step of the rhythm. */
+/* Meta: two stacked rows. Within a row the label sits directly above its
+   values with no gap, and the values stack line to line the same way. */
 .project-meta {
     width: 100%;
     display: flex;
@@ -526,40 +504,16 @@ body {
     gap: var(--space-meta);
 }
 
-/* Each row stacks: the label above its values. Rows are set apart by the meta
-   gap alone — no rule. */
 .meta-row {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-row);
 }
 
 .meta-values {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-row);
+    flex-direction: column;
     color: var(--color-muted);
-}
-
-/* One size for the whole meta block; colour splits here — the label reads at
-   full ink, the values sit back in the muted grey. */
-.project-meta,
-.project-meta * {
-    font-size: var(--font-size-meta);
-    line-height: var(--line-height-base);
-    letter-spacing: var(--letter-spacing-tight);
-}
-
-.meta-label {
-    color: var(--color-ink);
-}
-
-.project-description {
-    font-size: var(--font-size-md);
-    line-height: var(--line-height-md);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
 }
 
 /* Collapsed view (toggled from the dock): each project reduces to its title
@@ -609,11 +563,10 @@ body.projects-collapsed .project-images {
     display: block;
 }
 
-/* A row of phones: 32px between them, 40px above and below (4% and 5% of the
-   800px column, so both scale with it). The count is whatever is in the
-   markup — the row wraps onto a new line once it is full, so any number of
-   phones stays inside the column, and each line centres its leftover width.
-   Wrapped lines are set apart by the same block step that separates stacks.
+/* A row of images: 32px of padding on all four sides, 32px between images,
+   and 24px between lines when the row wraps. The count is whatever is in the
+   markup — the row wraps once a line is full, so any number stays inside the
+   column, and each line centres its leftover width.
 
    Wrapping rather than squeezing is deliberate: a flex item will not shrink
    below its own minimum size, so without this the row would run past the
@@ -625,8 +578,8 @@ body.projects-collapsed .project-images {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: var(--space-block) 4%;   /* 40px between lines, 32px between phones */
-    padding: 5% 0;                /* 40px top and bottom at the 800px column */
+    gap: var(--space-meta) var(--space-stack);   /* 24px between lines, 32px between images */
+    padding: var(--space-stack);                 /* 32px on all four sides */
 }
 
 .stack-row img {
@@ -641,13 +594,6 @@ body.projects-collapsed .project-images {
     width: 100%;
     display: flex;
     align-items: center;
-}
-
-.footer-text {
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-base);
-    letter-spacing: var(--letter-spacing-tight);
-    color: var(--color-ink);
 }
 
 /* ============================================
