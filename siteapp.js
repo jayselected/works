@@ -29,8 +29,14 @@ const HELLO_LANGUAGES = [
 
 let currentLanguageIndex = 0;
 
+/* Every fade on the page runs at one speed. FADE_MS must stay in step with
+   --enter-ms in the CSS: the JS waits exactly this long for a greeting to
+   fade out before swapping the word, so a mismatch would show the swap. */
+const FADE_MS = 900;
+const HELLO_HOLD_MS = 2400;   /* how long each greeting is held once shown */
+
 function runFadeSequence() {
-    const el = document.getElementById('hello-text');
+    const el = document.getElementById('hero-hello');
     if (!el) return;
 
     el.classList.remove('visible');
@@ -39,13 +45,13 @@ function runFadeSequence() {
         el.textContent = HELLO_LANGUAGES[currentLanguageIndex].text;
         currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
         el.classList.add('visible');
-        setTimeout(runFadeSequence, 2400);
-    }, 800);
+        setTimeout(runFadeSequence, HELLO_HOLD_MS);
+    }, FADE_MS);
 }
 
 function startHelloAnimation() {
-    const el = document.getElementById('hello-text');
-    const name = document.querySelector('.hello-name');
+    const el = document.getElementById('hero-hello');
+    const name = document.querySelector('.hero-name');
     if (!el) return;
 
     el.textContent = HELLO_LANGUAGES[currentLanguageIndex].text;
@@ -56,7 +62,7 @@ function startHelloAnimation() {
         /* The name arrives on the same beat as the first greeting; it then
            stays put while the languages keep cycling above it. */
         if (name) name.classList.add('visible');
-        setTimeout(runFadeSequence, 2400);
+        setTimeout(runFadeSequence, HELLO_HOLD_MS);
     }, 300);
 }
 
@@ -74,9 +80,9 @@ function startHelloAnimation() {
    removed so the lockup closes up cleanly rather than holding a blank.
    -------------------------------------------- */
 
-function initializeHelloMeta() {
-    const dateEl  = document.getElementById('hello-datetime');
-    const placeEl = document.getElementById('hello-location');
+function initializeHeroMeta() {
+    const dateEl  = document.getElementById('hero-date');
+    const placeEl = document.getElementById('hero-place');
 
     if (dateEl) {
         const renderTime = () => {
@@ -738,7 +744,7 @@ function initializeScrollTop() {
 
 function start() {
     startHelloAnimation();
-    initializeHelloMeta();
+    initializeHeroMeta();
     dockLabel.init();
     initializeTheme();
     initializeScroll();
