@@ -67,6 +67,16 @@
 </head>
 <body>
 
+    <!-- Scroll affordance: hidden at the top of the page, revealed once it
+         moves. Carries the date and conditions that scroll away with the hero. -->
+    <header class="topbar" id="topbar">
+        <span>Jay Patel</span>
+        <span class="topbar-meta">
+            <span class="topbar-conditions" data-conditions></span>
+            <span data-clock></span>
+        </span>
+    </header>
+
     <div class="container">
         <main class="main">
 
@@ -79,8 +89,8 @@
                      Both lines reserve their height and fade in as they
                      resolve, so nothing below ever shifts. -->
                 <div class="hero-meta">
-                    <p class="hero-line" id="hero-date"></p>
-                    <p class="hero-line" id="hero-place"></p>
+                    <p class="hero-line" id="hero-date" data-clock></p>
+                    <p class="hero-line" id="hero-place" data-conditions></p>
                 </div>
 
                 <p class="hero-name">Select Design Works from, Jay Patel.<br>UK based Graphic and User Interface Designer</p>
