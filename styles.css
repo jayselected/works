@@ -532,15 +532,27 @@ h1, h2 {
     color: var(--color-muted);
 }
 
-/* Collapsed view (toggled from the dock): each project reduces to its title
-   and lead image. The lead is identified by where it sits — the single image
-   inside .project-details — rather than by class, so every supporting stack
-   in .project-images collapses whatever type it is. Adding a new stack to a
-   project needs no change here. */
+/* Collapsed view (toggled from the dock): each project reduces to its title,
+   type, and lead image. What stays is identified by where it sits — the
+   title block and the single image inside .project-details — so everything
+   in .project-images collapses whatever it holds, and adding a new stack to
+   a project needs no change here. */
 body.projects-collapsed .project-meta,
 body.projects-collapsed .project-description,
 body.projects-collapsed .project-images {
     display: none;
+}
+
+/* Reduced to a title and one image, a project no longer needs the full
+   column, so the collapsed view pairs them up: two across, as many rows as
+   there are projects. Rows are set 80px apart against 40px between columns —
+   the wider vertical gap keeps each title bound to the image below it, since
+   that pair is itself 40px apart. Below 700px this reverts to the single
+   column, in the Responsive section. */
+body.projects-collapsed .works {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-section) var(--space-block);
 }
 
 /* ============================================
@@ -901,10 +913,18 @@ body.projects-collapsed .project-images {
     }
 
     /* On a narrow screen the phones would be too small at their desktop
-       share, so they grow to 30% of the column. The padding stays proportional
-       (the base 5%), so the rows scale down in step with everything else. */
+       share, so they grow to 30% of the column. The row's padding and gaps
+       are already fluid, so the rows scale down in step with everything else. */
     .stack-row img {
         width: 30%;    /* three to a line */
+    }
+
+    /* Two collapsed projects side by side would leave each too narrow to
+       read here, so the grid reverts to the single stacked column. Only the
+       display needs resetting — .works already carries the column direction
+       and the 80px gap, and the grid's column gap is simply unused. */
+    body.projects-collapsed .works {
+        display: flex;
     }
 }
 
