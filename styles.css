@@ -396,6 +396,22 @@ h1, h2 {
 
 /* ============================================
    Page
+
+   The containers, in the order they nest, with the gap each one sets
+   between its children:
+
+     .container    page gutter, full width
+     .main         Main container ...... 80px, 160px top and bottom
+       .hero       Hero container ...... 40px
+         .hero-meta    date and weather, two lines, no gap
+       .works      all projects ........ 80px
+         .project        Project container ......... 40px
+           .project-details  Project details ....... 40px
+             .project-title    Title container ..... no gap
+             .project-meta     Meta container ...... no gap
+           .project-images   image stacks .......... 40px
+             .stack-row        Image row ........... 32px, 24px between lines
+       .site-footer
    ============================================ */
 
 .container {
@@ -417,12 +433,12 @@ h1, h2 {
 }
 
 /* ============================================
-   Intro
+   Hero
    ============================================ */
 
 /* The intro is three items, evenly spaced by the block step: the animated
    greeting, the live date and conditions, and the introduction. */
-.hello {
+.hero {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -432,24 +448,27 @@ h1, h2 {
 
 /* Greeting, date/time, conditions, and name all inherit the page's single
    type treatment, so nothing here sets size or tracking. What they share is
-   one fade: each starts transparent and is revealed by JS — the greeting and
-   name together on load, the conditions when the lookup resolves. */
-.hello-text,
-.hello-line,
-.hello-name {
+   one fade — the same duration and easing as every other entrance on the
+   page — revealed by JS: the greeting and name together on load, the
+   conditions when the lookup resolves. They fade without the rise that
+   scrolled content gets, because the greeting re-fades on every language
+   change and a repeating rise would read as restless. */
+.hero-hello,
+.hero-line,
+.hero-name {
     opacity: 0;
-    transition: opacity 0.8s ease;
+    transition: opacity var(--enter-ms) var(--enter-ease);
 }
 
-.hello-text.visible,
-.hello-line.visible,
-.hello-name.visible {
+.hero-hello.visible,
+.hero-line.visible,
+.hero-name.visible {
     opacity: 1;
 }
 
 /* The animated greeting holds a single line while languages cycle. The line
    box is reserved from first paint so filling it in JS causes no layout shift. */
-.hello-text {
+.hero-hello {
     white-space: nowrap;
     min-height: 1.4167em;   /* fallback for browsers without the lh unit; = --line-height */
     min-height: 1lh;        /* exact one-line reservation */
@@ -457,14 +476,14 @@ h1, h2 {
 
 /* Date/time and conditions are one item: two lines set by their own leading,
    with no gap between them. Tabular figures hold the ticking seconds still. */
-.hello-line {
+.hero-line {
     min-height: 1.4167em;
     min-height: 1lh;
     font-variant-numeric: tabular-nums;
 }
 
 /* ============================================
-   Work
+   Projects
    ============================================ */
 
 .works {
@@ -495,24 +514,9 @@ h1, h2 {
     color: var(--color-muted);
 }
 
-/* Meta: two stacked rows. Within a row the label sits directly above its
-   values with no gap, and the values stack line to line the same way. */
+/* Meta: three plain lines — stage, services, toolkit — set line to line by
+   their own leading, and held back in muted grey against the description. */
 .project-meta {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-meta);
-}
-
-.meta-row {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.meta-values {
-    display: flex;
-    flex-direction: column;
     color: var(--color-muted);
 }
 
