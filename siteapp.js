@@ -1,39 +1,56 @@
 /**
  * Portfolio behaviour
  * -------------------
- * Three things live here: the multi-language "Hello" fade in the hero, the
- * hero's live date/time and local-conditions lines, and the chrome (theme,
- * scroll progress, project collapse, back to top). The location and weather
- * lookups are shared with the flip-clock widget, so re-enabling it costs no
- * second fetch. The only script outside this file is the theme bootstrap in
- * the document head, which must run before first paint to avoid a flash of
- * the wrong theme.
+ * The hero (cycling greeting, live date, local conditions) and the chrome
+ * (theme, scroll progress, project collapse, back to top, entrance motion).
+ * The only script outside this file is the theme bootstrap in the document
+ * head, which must run before first paint to avoid a flash of the wrong theme.
  */
 
+/* ============================================
+   Shared
+   ============================================ */
+
+/* Read live, so a change to the OS setting mid-session is respected. */
+function prefersReducedMotion() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+/* Reads a duration token from the stylesheet, so timings that must match the
+   CSS are single-sourced rather than duplicated here. */
+function cssDuration(name, fallback) {
+    const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    if (raw.endsWith('ms')) return parseFloat(raw) || fallback;
+    if (raw.endsWith('s'))  return (parseFloat(raw) || 0) * 1000 || fallback;
+    return fallback;
+}
+
+function pad(value) {
+    return String(value).padStart(2, '0');
+}
+
+/* ============================================
+   Hero — cycling greeting
+   ============================================ */
+
 const HELLO_LANGUAGES = [
-    { text: 'Hello.' },
-    { text: 'Hola.' },
-    { text: 'Bonjour.' },
-    { text: 'Hallo.' },
-    { text: 'Ciao.' },
-    { text: 'Olá.' },
-    { text: 'Привет.' },
-    { text: '你好.' },
-    { text: 'こんにちは.' },
-    { text: '안녕하세요.' },
-    { text: 'नमस्ते.' },
-    { text: 'مرحبا.' },
-    { text: 'Hej.' },
-    { text: 'Merhaba.' }
+    'Hello.', 'Hola.', 'Bonjour.', 'Hallo.', 'Ciao.', 'Olá.', 'Привет.',
+    '你好.', 'こんにちは.', '안녕하세요.', 'नमस्ते.', 'مرحبا.', 'Hej.', 'Merhaba.'
 ];
 
-let currentLanguageIndex = 0;
+const HELLO_HOLD_MS = 2400;   /* how long each greeting is held */
+const FIRST_FADE_MS = 300;    /* beat before the page speaks */
 
-/* Every fade on the page runs at one speed. FADE_MS must stay in step with
-   --enter-ms in the CSS: the JS waits exactly this long for a greeting to
-   fade out before swapping the word, so a mismatch would show the swap. */
-const FADE_MS = 900;
-const HELLO_HOLD_MS = 2400;   /* how long each greeting is held once shown */
+/* Set from --enter-ms at start: the swap waits for the fade-out to finish,
+   so a mismatch would show the word changing. */
+let fadeMs = 900;
+
+let languageIndex = 0;
+
+function nextGreeting(el) {
+    el.textContent = HELLO_LANGUAGES[languageIndex];
+    languageIndex = (languageIndex + 1) % HELLO_LANGUAGES.length;
+}
 
 function runFadeSequence() {
     const el = document.getElementById('hero-hello');
@@ -42,11 +59,10 @@ function runFadeSequence() {
     el.classList.remove('visible');
 
     setTimeout(() => {
-        el.textContent = HELLO_LANGUAGES[currentLanguageIndex].text;
-        currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
+        nextGreeting(el);
         el.classList.add('visible');
         setTimeout(runFadeSequence, HELLO_HOLD_MS);
-    }, FADE_MS);
+    }, fadeMs);
 }
 
 function startHelloAnimation() {
@@ -54,49 +70,39 @@ function startHelloAnimation() {
     const name = document.querySelector('.hero-name');
     if (!el) return;
 
-    el.textContent = HELLO_LANGUAGES[currentLanguageIndex].text;
-    currentLanguageIndex = (currentLanguageIndex + 1) % HELLO_LANGUAGES.length;
+    nextGreeting(el);
 
     setTimeout(() => {
         el.classList.add('visible');
-        /* The name arrives on the same beat as the first greeting; it then
-           stays put while the languages keep cycling above it. */
+        /* The name arrives on the same beat, then stays while the languages
+           keep cycling above it. */
         if (name) name.classList.add('visible');
         setTimeout(runFadeSequence, HELLO_HOLD_MS);
-    }, 300);
+    }, FIRST_FADE_MS);
 }
 
-/* --------------------------------------------
-   Hero meta — live date/time and local conditions
+/* ============================================
+   Hero — date and local conditions
+   ============================================ */
 
-   Two lines beneath the greeting, at the same display scale:
-
-       Thursday, 30 July 15:57:57
-       Manchester, United Kingdom. Sunny 28°
-
-   The clock ticks on the second (scheduled against the clock rather than
-   a drifting interval) and fades in immediately; the conditions line fades
-   in once the shared lookup resolves. If the lookup fails, the line is
-   removed so the lockup closes up cleanly rather than holding a blank.
-   -------------------------------------------- */
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday',
+              'Thursday', 'Friday', 'Saturday'];
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'];
 
 function initializeHeroMeta() {
     const dateEl  = document.getElementById('hero-date');
     const placeEl = document.getElementById('hero-place');
 
     if (dateEl) {
-        const renderTime = () => {
+        const tick = () => {
             const now = new Date();
             dateEl.textContent =
-                DAYS_FULL[now.getDay()] + ', '
-                + now.getDate() + ' ' + MONTHS_FULL[now.getMonth()] + ' '
+                DAYS[now.getDay()] + ', '
+                + now.getDate() + ' ' + MONTHS[now.getMonth()] + ' '
                 + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
-        };
-
-        const tick = () => {
-            renderTime();
-            /* Wake exactly on the next second boundary, so the seconds
-               never visibly stall or skip the way a plain interval can. */
+            /* Wake on the next second boundary, so the seconds never stall
+               or skip the way a plain interval can. */
             window.setTimeout(tick, 1000 - (Date.now() % 1000));
         };
 
@@ -112,232 +118,35 @@ function initializeHeroMeta() {
                 placeEl.textContent = where ? where + '. ' + what : what;
                 placeEl.classList.add('visible');
             })
-            .catch(() => {
-                placeEl.hidden = true;
-            });
+            /* On failure the line is removed, so the hero closes up cleanly
+               rather than holding a blank. */
+            .catch(() => { placeEl.hidden = true; });
     }
 }
 
 /* ============================================
-   Interface
-   --------------------------------------------
-   Everything below drives the chrome: theme, scroll progress, the project collapse,
-   back-to-top, the flip-clock widget, and the entrance motion. All of it lives here rather than in index.html so behaviour
-   has one home. The only exception is the theme bootstrap in the document
-   head, which must run before first paint to avoid a flash.
+   Location and weather
+
+   IP geolocation (two providers, second as fallback) plus Open-Meteo, which
+   needs no API key — nothing secret lives in this file.
    ============================================ */
 
-/* Honours the OS "reduce motion" setting; read live so a change mid-session
-   is respected without a reload. */
-function prefersReducedMotion() {
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
-
-/* --------------------------------------------
-   Theme
-   -------------------------------------------- */
-
-const THEME_STORAGE_KEY = 'portfolio-theme';
-
-/* Must match --color-bg in styles.css so the browser's own chrome matches
-   the page. */
-const THEME_BACKGROUNDS = {
-    light: '#FFFFFF',
-    dark:  '#000000'
-};
-
-const THEME_ICONS = {
-    light: `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
-    `,
-    dark: `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-    `
-};
-
-function applyTheme(theme) {
-    document.documentElement.dataset.theme = theme;
-
-    const toggle = document.getElementById('theme-toggle');
-    if (toggle) {
-        toggle.innerHTML = THEME_ICONS[theme];
-        toggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
-        toggle.dataset.label = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
-        dockLabel.refresh(toggle);
-    }
-
-    const themeColor = document.getElementById('theme-color');
-    if (themeColor) {
-        themeColor.setAttribute('content', THEME_BACKGROUNDS[theme]);
-    }
-
-    try {
-        localStorage.setItem(THEME_STORAGE_KEY, theme);
-    } catch (error) {
-        // Private browsing or storage disabled: the theme still applies for
-        // this session, it just will not be remembered.
-    }
-}
-
-function initializeTheme() {
-    const toggle = document.getElementById('theme-toggle');
-    applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
-
-    if (toggle) {
-        toggle.addEventListener('click', () => {
-            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
-        });
-    }
-}
-
-/* --------------------------------------------
-   Scroll progress
-   -------------------------------------------- */
-
-function initializeScroll() {
-    const progress = document.getElementById('scroll-progress');
-    const fill     = document.getElementById('scroll-progress-fill');
-    let queued = false;
-
-    function render() {
-        queued = false;
-        if (!progress || !fill) return;
-
-        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-        const ratio = scrollable > 0
-            ? Math.min(1, Math.max(0, window.scrollY / scrollable))
-            : 0;
-
-        fill.style.transform = `scaleX(${ratio})`;
-        progress.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
-    }
-
-    /* Scroll events can fire far more often than the screen refreshes;
-       coalescing into one frame keeps this off the critical path. */
-    function queueRender() {
-        if (!queued) {
-            queued = true;
-            window.requestAnimationFrame(render);
-        }
-    }
-
-    window.addEventListener('scroll', queueRender, { passive: true });
-    window.addEventListener('resize', queueRender, { passive: true });
-
-    if ('ResizeObserver' in window) {
-        // The page changes height when images load or projects collapse;
-        // the progress ratio must follow.
-        new ResizeObserver(queueRender).observe(document.body);
-    }
-
-    render();
-}
-
-/* --------------------------------------------
-   Widget — flip clock, date, conditions
-
-   The clock is a real split-flap: each digit is two half-height windows
-   onto one glyph, and a change drops a card carrying the old digit while
-   a second card carrying the new one rises to meet it.
-
-   Weather comes from Open-Meteo, which needs no API key — so nothing
-   secret lives in this file.
-   -------------------------------------------- */
-
-const FLIP_MS = 320;              /* keep in step with --flip-ms in the CSS */
-const WEATHER_CACHE_KEY = 'site_conditions_v2';   /* v2: payload gained country */
+const WEATHER_CACHE_KEY = 'site-conditions-v3';
 const WEATHER_CACHE_MS = 30 * 60 * 1000;
-
-const DAYS   = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-/* Full names for the hero's date line; the widget keeps the short set. */
-const DAYS_FULL   = ['Sunday', 'Monday', 'Tuesday', 'Wednesday',
-                     'Thursday', 'Friday', 'Saturday'];
-const MONTHS_FULL = ['January', 'February', 'March', 'April', 'May', 'June',
-                     'July', 'August', 'September', 'October', 'November', 'December'];
 
 /* WMO weather codes, grouped the way a person would describe them. */
 const CONDITIONS = {
-    0:  ['Clear', '\u2600\ufe0f'],        1:  ['Mainly Clear', '\ud83c\udf24\ufe0f'],
-    2:  ['Partly Cloudy', '\u26c5'],       3:  ['Overcast', '\u2601\ufe0f'],
-    45: ['Fog', '\ud83c\udf2b\ufe0f'],   48: ['Rime Fog', '\ud83c\udf2b\ufe0f'],
-    51: ['Light Drizzle', '\ud83c\udf26\ufe0f'], 53: ['Drizzle', '\ud83c\udf26\ufe0f'],
-    55: ['Heavy Drizzle', '\ud83c\udf26\ufe0f'], 56: ['Freezing Drizzle', '\ud83c\udf27\ufe0f'],
-    57: ['Freezing Drizzle', '\ud83c\udf27\ufe0f'], 61: ['Light Rain', '\ud83c\udf26\ufe0f'],
-    63: ['Rain', '\ud83c\udf27\ufe0f'],  65: ['Heavy Rain', '\ud83c\udf27\ufe0f'],
-    66: ['Freezing Rain', '\ud83c\udf27\ufe0f'], 67: ['Freezing Rain', '\ud83c\udf27\ufe0f'],
-    71: ['Light Snow', '\ud83c\udf28\ufe0f'], 73: ['Snow', '\ud83c\udf28\ufe0f'],
-    75: ['Heavy Snow', '\u2744\ufe0f'],   77: ['Snow Grains', '\ud83c\udf28\ufe0f'],
-    80: ['Showers', '\ud83c\udf26\ufe0f'], 81: ['Showers', '\ud83c\udf27\ufe0f'],
-    82: ['Heavy Showers', '\ud83c\udf27\ufe0f'], 85: ['Snow Showers', '\ud83c\udf28\ufe0f'],
-    86: ['Snow Showers', '\ud83c\udf28\ufe0f'], 95: ['Thunderstorm', '\u26c8\ufe0f'],
-    96: ['Thunderstorm', '\u26c8\ufe0f'], 99: ['Thunderstorm', '\u26c8\ufe0f']
+    0: 'Clear',            1: 'Mainly Clear',     2: 'Partly Cloudy',
+    3: 'Overcast',        45: 'Fog',             48: 'Rime Fog',
+    51: 'Light Drizzle',  53: 'Drizzle',         55: 'Heavy Drizzle',
+    56: 'Freezing Drizzle', 57: 'Freezing Drizzle',
+    61: 'Light Rain',     63: 'Rain',            65: 'Heavy Rain',
+    66: 'Freezing Rain',  67: 'Freezing Rain',
+    71: 'Light Snow',     73: 'Snow',            75: 'Heavy Snow',
+    77: 'Snow Grains',    80: 'Showers',         81: 'Showers',
+    82: 'Heavy Showers',  85: 'Snow Showers',    86: 'Snow Showers',
+    95: 'Thunderstorm',   96: 'Thunderstorm',    99: 'Thunderstorm'
 };
-
-function pad(value) {
-    return String(value).padStart(2, '0');
-}
-
-/* ---- Flaps ---- */
-
-function buildFlap(digit) {
-    const flap = document.createElement('div');
-    flap.className = 'flap';
-    flap.dataset.value = digit;
-    flap.innerHTML =
-        '<div class="flap-half flap-upper"><span>' + digit + '</span></div>' +
-        '<div class="flap-half flap-lower"><span>' + digit + '</span></div>' +
-        '<div class="flap-half flap-fold-upper"><span></span></div>' +
-        '<div class="flap-half flap-fold-lower"><span></span></div>';
-    return flap;
-}
-
-function buildPair(container, value) {
-    container.textContent = '';
-    [...value].forEach(digit => container.appendChild(buildFlap(digit)));
-}
-
-function setFlap(flap, next) {
-    const current = flap.dataset.value;
-    if (current === next) return;
-
-    flap.dataset.value = next;
-    flap.querySelector('.flap-upper span').textContent = next;
-    flap.querySelector('.flap-fold-upper span').textContent = current;
-    flap.querySelector('.flap-fold-lower span').textContent = next;
-
-    flap.classList.remove('is-flipping');
-    void flap.offsetWidth;                  /* forces the animation to restart */
-    flap.classList.add('is-flipping');
-
-    window.setTimeout(() => {
-        flap.querySelector('.flap-lower span').textContent = next;
-        flap.classList.remove('is-flipping');
-    }, FLIP_MS);
-}
-
-function setPair(container, value) {
-    const flaps = container.children;
-    [...value].forEach((digit, i) => {
-        if (flaps[i]) setFlap(flaps[i], digit);
-    });
-}
-
-/* ---- Weather ---- */
 
 function readCachedWeather() {
     try {
@@ -354,7 +163,7 @@ function writeCachedWeather(payload) {
     try {
         sessionStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify(payload));
     } catch (error) {
-        /* Private browsing: the widget still works, it just refetches. */
+        /* Private browsing: it still works, it just refetches. */
     }
 }
 
@@ -389,9 +198,8 @@ async function resolveLocation() {
     };
 }
 
-/* One lookup serves every consumer — the hero line and, if re-enabled, the
-   widget — deduplicated in flight and cached for half an hour, so the page
-   never asks twice. Resolves to { city, country, temperature, label, emoji }. */
+/* Deduplicated in flight and cached for half an hour, so the page never asks
+   twice. Resolves to { city, country, temperature, label }. */
 let conditionsPromise = null;
 
 function getConditions() {
@@ -413,110 +221,148 @@ function getConditions() {
             + '&current=temperature_2m,weather_code,is_day'
         );
 
-        const temperature = Math.round(weather.current.temperature_2m);
         const code = weather.current.weather_code;
-        let [label, emoji] = CONDITIONS[code] || ['', ''];
         /* A clear sky reads as "Sunny" only while the sun is up. */
-        if (code === 0) label = weather.current.is_day ? 'Sunny' : 'Clear';
+        const label = code === 0
+            ? (weather.current.is_day ? 'Sunny' : 'Clear')
+            : (CONDITIONS[code] || '');
 
         const payload = {
             city: place.city,
             country: place.country,
-            temperature,
+            temperature: Math.round(weather.current.temperature_2m),
             label,
-            emoji,
             at: Date.now()
         };
         writeCachedWeather(payload);
         return payload;
     })();
 
-    /* A failed lookup should not poison the session: clear the memo so a
-       later consumer can retry. (Consumers handle their own rejection.) */
+    /* A failed lookup must not poison the session: clear the memo so a later
+       consumer can retry. Consumers handle their own rejection. */
     conditionsPromise.catch(() => { conditionsPromise = null; });
 
     return conditionsPromise;
 }
 
-async function loadConditions() {
-    const placeEl = document.getElementById('widget-place');
-    const tempEl = document.getElementById('widget-temp');
-    if (!placeEl || !tempEl) return;
+/* ============================================
+   Theme
+   ============================================ */
+
+const THEME_STORAGE_KEY = 'portfolio-theme';
+
+/* Must match --color-bg, so the browser's own chrome matches the page. */
+const THEME_BACKGROUNDS = { light: '#FFFFFF', dark: '#000000' };
+
+const THEME_ICONS = {
+    light: `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    `,
+    dark: `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+    `
+};
+
+function applyTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+
+    const toggle = document.getElementById('theme-toggle');
+    if (toggle) {
+        toggle.innerHTML = THEME_ICONS[theme];
+        toggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+        toggle.dataset.label = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+        dockLabel.refresh(toggle);
+    }
+
+    const themeColor = document.getElementById('theme-color');
+    if (themeColor) themeColor.setAttribute('content', THEME_BACKGROUNDS[theme]);
 
     try {
-        const conditions = await getConditions();
-        placeEl.textContent = conditions.city;
-        tempEl.textContent = conditions.temperature + '\u00b0 ' + conditions.emoji + ' ' + conditions.label;
+        localStorage.setItem(THEME_STORAGE_KEY, theme);
     } catch (error) {
-        placeEl.textContent = 'Conditions unavailable';
-        tempEl.textContent = '';
+        /* Storage disabled: the theme holds for this session, unremembered. */
     }
 }
 
-/* ---- Assembly ---- */
+function initializeTheme() {
+    const toggle = document.getElementById('theme-toggle');
+    applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
 
-function initializeWidget() {
-    const widget = document.querySelector('.widget');
-    const hours = document.getElementById('widget-hours');
-    const minutes = document.getElementById('widget-minutes');
-    const dateEl = document.getElementById('widget-date');
-    const timeEl = document.getElementById('widget-time');
-    if (!widget || !hours || !minutes) return;
+    if (toggle) {
+        toggle.addEventListener('click', () => {
+            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+    }
+}
 
-    function render(first) {
-        const now = new Date();
-        const hh = pad(now.getHours());
-        const mm = pad(now.getMinutes());
+/* ============================================
+   Scroll progress
+   ============================================ */
 
-        if (first) {
-            buildPair(hours, hh);
-            buildPair(minutes, mm);
-        } else {
-            setPair(hours, hh);
-            setPair(minutes, mm);
-        }
+function initializeScroll() {
+    const progress = document.getElementById('scroll-progress');
+    const fill     = document.getElementById('scroll-progress-fill');
+    if (!progress || !fill) return;
 
-        const date = DAYS[now.getDay()] + ' ' + now.getDate() + ' ' + MONTHS[now.getMonth()];
-        if (dateEl) dateEl.textContent = date;
-        if (timeEl) timeEl.textContent = date + ', ' + hh + ':' + mm;
+    let queued = false;
+
+    function render() {
+        queued = false;
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        const ratio = scrollable > 0
+            ? Math.min(1, Math.max(0, window.scrollY / scrollable))
+            : 0;
+
+        fill.style.transform = `scaleX(${ratio})`;
+        progress.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
     }
 
-    render(true);
-    window.setInterval(() => render(false), 1000);
-
-    /* Publishes the widget's real height so the page can clear it below
-       1000px. Measured rather than assumed, so changing its padding or
-       type never needs a matching constant updated by hand. */
-    function measure() {
-        const height = Math.round(widget.getBoundingClientRect().height);
-        if (height) {
-            document.documentElement.style.setProperty('--widget-height', height + 'px');
+    /* Scroll fires far more often than the screen refreshes; coalescing into
+       one frame keeps this off the critical path. */
+    function queueRender() {
+        if (!queued) {
+            queued = true;
+            window.requestAnimationFrame(render);
         }
     }
 
-    measure();
+    window.addEventListener('scroll', queueRender, { passive: true });
+    window.addEventListener('resize', queueRender, { passive: true });
+
+    /* The page changes height when images load or projects collapse. */
     if ('ResizeObserver' in window) {
-        new ResizeObserver(measure).observe(widget);
+        new ResizeObserver(queueRender).observe(document.body);
     }
 
-    loadConditions();
+    render();
 }
 
-/* --------------------------------------------
+/* ============================================
    Dock labels
 
-   Names whichever control is under the pointer, like the macOS dock.
-   Three ways in: mouse hover, keyboard focus, and — on touch — a long
-   press that can be dragged across the dock to read each control in
-   turn, the way iOS keyboard key previews work.
-   -------------------------------------------- */
+   Names whichever control is under the pointer, like the macOS dock. Three
+   ways in: mouse hover, keyboard focus, and — on touch — a long press that
+   can be dragged across the dock to read each control in turn.
+   ============================================ */
 
 const LONG_PRESS_MS = 250;
 
 const dockLabel = (() => {
     let dock = null;
     let label = null;
-    let active = null;          // the control currently being named
+    let active = null;          // the control currently named
     let pressTimer = null;
     let longPressed = false;    // suppresses the click that would follow
 
@@ -529,12 +375,10 @@ const dockLabel = (() => {
         const box = control.getBoundingClientRect();
         const half = label.offsetWidth / 2;
 
-        // Centre on the control, then keep the whole label inside the dock
-        // so it never runs off screen at the far left or right.
+        // Centre on the control, then keep the label inside the dock so it
+        // never runs off screen at either end.
         const centre = box.left + box.width / 2 - dockBox.left;
-        const clamped = Math.max(half, Math.min(dockBox.width - half, centre));
-
-        label.style.left = clamped + 'px';
+        label.style.left = Math.max(half, Math.min(dockBox.width - half, centre)) + 'px';
     }
 
     function show(control) {
@@ -547,7 +391,7 @@ const dockLabel = (() => {
 
     function hide() {
         active = null;
-        label.classList.remove('is-visible');
+        if (label) label.classList.remove('is-visible');
     }
 
     /* Called when a control's label changes while it may be on screen. */
@@ -563,8 +407,8 @@ const dockLabel = (() => {
         label = document.getElementById('dock-label');
         if (!dock || !label) return;
 
-        /* ---- Pointer: mouse only. Touch is handled below, and letting
-                both run would flash the label on every tap. ---- */
+        /* Mouse only; touch is handled below, and letting both run would
+           flash the label on every tap. */
         dock.addEventListener('pointerover', event => {
             if (event.pointerType !== 'mouse') return;
             const control = controlFrom(event.target);
@@ -578,11 +422,10 @@ const dockLabel = (() => {
             if (control && !control.contains(event.relatedTarget)) hide();
         });
 
-        /* ---- Keyboard ---- */
         dock.addEventListener('focusin', event => show(controlFrom(event.target)));
         dock.addEventListener('focusout', hide);
 
-        /* ---- Touch: long press, then slide between controls ---- */
+        /* Touch: long press, then slide between controls. */
         dock.addEventListener('touchstart', event => {
             const control = controlFrom(event.target);
             if (!control) return;
@@ -602,12 +445,10 @@ const dockLabel = (() => {
                 return;
             }
 
-            // Hold the page still while the finger reads along the dock.
-            event.preventDefault();
+            event.preventDefault();   // hold the page still while reading
 
             const touch = event.touches[0];
-            const under = document.elementFromPoint(touch.clientX, touch.clientY);
-            const control = controlFrom(under);
+            const control = controlFrom(document.elementFromPoint(touch.clientX, touch.clientY));
 
             if (control && control !== active) show(control);
             else if (!control) hide();
@@ -622,7 +463,7 @@ const dockLabel = (() => {
         dock.addEventListener('touchcancel', endTouch);
 
         /* A long press is a read, not a tap — swallow the click it would
-           otherwise produce, so holding the email button doesn't open mail. */
+           otherwise produce, so holding Email doesn't open mail. */
         dock.addEventListener('click', event => {
             if (longPressed) {
                 event.preventDefault();
@@ -639,9 +480,14 @@ const dockLabel = (() => {
     return { init, refresh };
 })();
 
-/* --------------------------------------------
+/* ============================================
    Project collapse
-   -------------------------------------------- */
+
+   Reduces every project to its title, type, and lead image, laid out as a
+   grid by the CSS. Collapsing is a layout change and so cannot be
+   transitioned directly; where the browser supports view transitions the
+   swap runs inside one and is interpolated instead.
+   ============================================ */
 
 const COLLAPSE_ICONS = {
     collapse: `
@@ -664,43 +510,97 @@ const COLLAPSE_ICONS = {
 
 function initializeProjectCollapse() {
     const toggle = document.getElementById('project-collapse');
-    if (!toggle) return;
+    const works = document.querySelector('.works');
+    if (!toggle || !works) return;
 
-    function setCollapsed(collapsed) {
+    const projects = [...works.querySelectorAll('.project')];
+    let collapsed = false;
+
+    /* A unique name per project lets the browser move each one individually
+       between the two layouts; without them the whole block cross-fades.
+       Indexed rather than hard-coded, so adding a project needs nothing. */
+    projects.forEach((project, index) => {
+        project.style.viewTransitionName = 'project-' + (index + 1);
+    });
+
+    function paint() {
         document.body.classList.toggle('projects-collapsed', collapsed);
+
         toggle.innerHTML = collapsed ? COLLAPSE_ICONS.expand : COLLAPSE_ICONS.collapse;
         toggle.setAttribute('aria-label', collapsed ? 'Expand projects' : 'Collapse projects');
         toggle.setAttribute('aria-pressed', String(collapsed));
         toggle.dataset.label = collapsed ? 'Expand Projects' : 'Collapse Projects';
         dockLabel.refresh(toggle);
+
+        projects.forEach(project => {
+            if (!collapsed) {
+                project.removeAttribute('role');
+                project.removeAttribute('tabindex');
+                project.removeAttribute('aria-label');
+                return;
+            }
+
+            /* Collapsed, the whole card is the control that expands the view
+               again — by keyboard as well as pointer. The title goes in the
+               label so the card still says which project it is. */
+            const title = project.querySelector('h2');
+            project.setAttribute('role', 'button');
+            project.setAttribute('tabindex', '0');
+            project.setAttribute('aria-label',
+                (title ? title.textContent.trim() + ', ' : '') + 'expand projects');
+
+            /* Nothing should still be mid-entrance when the grid forms. */
+            project.querySelectorAll('[data-enter]').forEach(el => el.classList.add('is-in'));
+        });
     }
 
-    setCollapsed(false);
+    function setCollapsed(next) {
+        if (next === collapsed) return;
+        collapsed = next;
 
-    toggle.addEventListener('click', () => {
-        setCollapsed(!document.body.classList.contains('projects-collapsed'));
+        if (prefersReducedMotion() || typeof document.startViewTransition !== 'function') {
+            paint();
+            return;
+        }
+
+        document.startViewTransition(paint);
+    }
+
+    paint();
+
+    toggle.addEventListener('click', () => setCollapsed(!collapsed));
+
+    works.addEventListener('click', () => {
+        if (collapsed) setCollapsed(false);
+    });
+
+    works.addEventListener('keydown', event => {
+        if (!collapsed) return;
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setCollapsed(false);
+        }
     });
 }
 
-/* --------------------------------------------
-   Motion — entrance
+/* ============================================
+   Entrance motion
 
-   Content marked [data-enter] fades and rises in when it enters the viewport.
-   Elements in view together reveal together. Inert under prefers-reduced-motion
-   — the CSS neutralises it and this module skips its work.
-   -------------------------------------------- */
+   Content marked [data-enter] fades and rises in as it enters the viewport.
+   Inert under prefers-reduced-motion — the CSS neutralises it and this skips
+   its work.
+   ============================================ */
 
 function initializeEntrance() {
     const items = [...document.querySelectorAll('[data-enter]')];
     if (!items.length) return;
 
-    // Reduced motion: reveal everything immediately, run nothing.
     if (prefersReducedMotion() || !('IntersectionObserver' in window)) {
         items.forEach(el => el.classList.add('is-in'));
         return;
     }
 
-    const io = new IntersectionObserver((entries) => {
+    const io = new IntersectionObserver(entries => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('is-in');
@@ -709,32 +609,26 @@ function initializeEntrance() {
         });
     }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
 
-    // Anything on screen at load reveals immediately; anything below the fold
-    // waits for the observer, so each later project fades in as it is reached.
+    /* On screen at load reveals immediately; anything below the fold waits,
+       so each later project fades in as it is reached. */
     const viewportBottom = window.innerHeight;
     items.forEach(el => {
         const box = el.getBoundingClientRect();
-        if (box.top < viewportBottom && box.bottom > 0) {
-            el.classList.add('is-in');
-        } else {
-            io.observe(el);
-        }
+        if (box.top < viewportBottom && box.bottom > 0) el.classList.add('is-in');
+        else io.observe(el);
     });
 }
 
-/* --------------------------------------------
+/* ============================================
    Back to top
-   -------------------------------------------- */
+   ============================================ */
 
 function initializeScrollTop() {
     const button = document.getElementById('scroll-top');
     if (!button) return;
 
     button.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: prefersReducedMotion() ? 'auto' : 'smooth'
-        });
+        window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
     });
 }
 
@@ -742,16 +636,32 @@ function initializeScrollTop() {
    Start
    ============================================ */
 
+let started = false;
+
 function start() {
-    startHelloAnimation();
-    initializeHeroMeta();
-    dockLabel.init();
-    initializeTheme();
-    initializeScroll();
-    initializeProjectCollapse();
-    initializeScrollTop();
-    initializeWidget();
-    initializeEntrance();
+    if (started) return;   // never bind twice, however this file is loaded
+    started = true;
+
+    fadeMs = cssDuration('--enter-ms', fadeMs);
+
+    /* Each module is isolated: one failing must not take the rest with it.
+       dockLabel goes first — the theme and collapse modules refresh it. */
+    [
+        () => dockLabel.init(),
+        startHelloAnimation,
+        initializeHeroMeta,
+        initializeTheme,
+        initializeScroll,
+        initializeProjectCollapse,
+        initializeScrollTop,
+        initializeEntrance
+    ].forEach(run => {
+        try {
+            run();
+        } catch (error) {
+            console.error('[site] module failed:', error);
+        }
+    });
 }
 
 if (document.readyState === 'loading') {
