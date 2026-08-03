@@ -160,7 +160,7 @@ h1, h2 {
     left: 0;
     right: 0;
     z-index: 200;
-    height: 40px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -170,9 +170,9 @@ h1, h2 {
     padding-left: max(var(--page-edge), env(safe-area-inset-left, 0px));
     padding-right: max(var(--page-edge), env(safe-area-inset-right, 0px));
 
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1.4;
-    letter-spacing: -0.006em;
+    letter-spacing: -0.008em;
     font-variant-numeric: tabular-nums;
     color: var(--color-ink);   /* one colour throughout — nothing muted here */
 
@@ -230,7 +230,7 @@ h1, h2 {
    second grey. */
 .topbar-sep {
     width: 1px;
-    height: 11px;
+    height: 13px;
     background-color: currentColor;
     opacity: 0.28;
 }
@@ -269,9 +269,9 @@ h1, h2 {
     padding: 5px 12px;
     border-radius: 999px;
     white-space: nowrap;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1.4;
-    letter-spacing: -0.006em;
+    letter-spacing: -0.008em;
     color: var(--color-ink);
     background-color: var(--glass-bg);
     backdrop-filter: var(--glass-backdrop);
@@ -746,21 +746,20 @@ body.projects-collapsed .project {
 }
 
 /* --- Top bar: sheds what will not fit ---
-   Measured against the longest strings the bar can hold — a full weekday and
-   month, and "Thunderstorm". Everything dropped here is still carried in
-   full by the hero, so nothing is lost, only repeated less. */
+   Measured at 14px against the longest strings the bar can hold — a full
+   weekday and month, and "Thunderstorm". Everything dropped here is still
+   carried in full by the hero, so nothing is lost, only repeated less. */
 
-/* The full row needs ~743px. */
-@media screen and (max-width: 780px) {
-    .topbar-sub,
+/* The full row needs ~735px. */
+@media screen and (max-width: 760px) {
     .topbar-place,
     .topbar-place-sep {
         display: none;
     }
 }
 
-/* Name, weather and clock need ~452px. */
-@media screen and (max-width: 480px) {
+/* Name, weather and clock need ~514px. */
+@media screen and (max-width: 540px) {
     .topbar-weather,
     .topbar-weather-sep {
         display: none;
