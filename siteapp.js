@@ -152,12 +152,15 @@ function initializeTopBar() {
     if (!topbar || !anchor || !('IntersectionObserver' in window)) return;
 
     /* Shown once the hero's own date and conditions have passed behind the
-       bar, so the two never say the same thing at the same time. The top
-       margin matches the bar's height, which is where they disappear. */
+       bar, so the two never say the same thing at the same time. The bar is
+       measured rather than assumed, so its height lives in the CSS alone. */
     new IntersectionObserver(([entry]) => {
         const passed = !entry.isIntersecting && entry.boundingClientRect.top < 0;
         topbar.classList.toggle('is-visible', passed);
-    }, { rootMargin: '-40px 0px 0px 0px', threshold: 0 }).observe(anchor);
+    }, {
+        rootMargin: `-${topbar.offsetHeight}px 0px 0px 0px`,
+        threshold: 0
+    }).observe(anchor);
 }
 
 /* ============================================
