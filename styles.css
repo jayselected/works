@@ -41,6 +41,7 @@
     --space-block:   var(--step);               /*  40 — hero and project parts */
     --space-stack:   calc(var(--step) * 0.8);   /*  32 — image row padding, gutters */
     --space-meta:    calc(var(--step) * 0.6);   /*  24 — meta rows, wrapped lines */
+    --space-row:     calc(var(--step) * 0.2);   /*   8 — label to its values */
 
     /* Motion — short distances, soft easing, all neutralised under
        prefers-reduced-motion. */
@@ -164,7 +165,10 @@ h1, h2 {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    padding: 0 var(--page-edge);
+    /* env() keeps the row clear of a notch in landscape; max() means it
+       never falls inside the page gutter. */
+    padding-left: max(var(--page-edge), env(safe-area-inset-left, 0px));
+    padding-right: max(var(--page-edge), env(safe-area-inset-right, 0px));
 
     font-size: 12px;
     line-height: 1.4;
@@ -201,7 +205,18 @@ h1, h2 {
     white-space: nowrap;
 }
 
-.topbar-left { gap: 10px; }
+/* The readings are the point of the bar, so they hold their width and the
+   identity side yields — trimmed with an ellipsis rather than overflowing.
+   Belt and braces behind the breakpoints below, at widths no one has
+   measured. */
+.topbar-left {
+    gap: 10px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.topbar-right { flex: none; }
 
 /* The one spot of colour on the page, echoing the progress bar. */
 .topbar-dot {
@@ -505,12 +520,21 @@ h1, h2 {
     color: var(--color-muted);
 }
 
-/* Two rows, 24px apart. .meta-row and .project-title need no rules: a plain
-   block already stacks its children on their own leading. */
+/* Two rows, 24px apart, each holding its label 8px above its values. The
+   3:1 between those two gaps is what binds a label to its own values while
+   keeping the rows apart, and it holds at every width because both derive
+   from --step. .project-title needs no rule: a plain block already stacks
+   its children on their own leading. */
 .project-meta {
     display: flex;
     flex-direction: column;
     gap: var(--space-meta);
+}
+
+.meta-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-row);
 }
 
 .meta-values {
@@ -713,14 +737,6 @@ body.projects-collapsed .project {
         width: 30%;    /* three to a line */
     }
 
-    /* The row cannot hold everything at this width. The hero carries it all
-       in full, so the bar keeps the name, the weather and the clock. */
-    .topbar-sub,
-    .topbar-place,
-    .topbar-place-sep {
-        display: none;
-    }
-
     /* Two collapsed projects side by side would leave each too narrow, so the
        grid reverts to the stacked column. Only display needs resetting —
        .works already carries the column direction and the 80px gap. */
@@ -729,4 +745,26 @@ body.projects-collapsed .project {
     }
 }
 
-/* Nothing width-specific below 390px — the percentage stacks scale cleanly. */
+/* --- Top bar: sheds what will not fit ---
+   Measured against the longest strings the bar can hold — a full weekday and
+   month, and "Thunderstorm". Everything dropped here is still carried in
+   full by the hero, so nothing is lost, only repeated less. */
+
+/* The full row needs ~743px. */
+@media screen and (max-width: 780px) {
+    .topbar-sub,
+    .topbar-place,
+    .topbar-place-sep {
+        display: none;
+    }
+}
+
+/* Name, weather and clock need ~452px. */
+@media screen and (max-width: 480px) {
+    .topbar-weather,
+    .topbar-weather-sep {
+        display: none;
+    }
+}
+
+/* Nothing width-specific below 320px — the percentage stacks scale cleanly. */
