@@ -51,6 +51,7 @@
     --chrome-ms: 800ms;     /* dock settling in on load */
     --collapse-ms: 400ms;   /* projects morphing between layouts */
     --bar-ms: 400ms;        /* top bar fading in and out */
+    --viewer-ms: 320ms;     /* enlarged image growing in and away */
 
     /* Dock — measured from the iOS 26 Safari bottom bar: 48pt capsule,
        44pt targets, 8pt gap, 5pt inset, 22pt glyphs. CSS px map 1:1 to pt,
@@ -612,6 +613,133 @@ body.projects-collapsed .project {
     width: 21.5%;    /* 171.97 / 800 — four to a line */
 }
 
+/* --- Carousel ---
+   A horizontal strip that snaps. The scrolling, the swipe and its momentum
+   are all native, so there is no gesture code anywhere — siteapp.js only
+   builds the dots, tracks which slide is showing, and opens the viewer.
+   Without JS it stays a scrollable strip, which still works. */
+
+.carousel-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;              /* the dots are the indicator */
+    -ms-overflow-style: none;
+    overscroll-behavior-x: contain;     /* never scrolls the page sideways */
+}
+
+.carousel-track::-webkit-scrollbar {
+    display: none;
+}
+
+.carousel-track > * {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+    cursor: zoom-in;
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-row);
+    padding-top: var(--space-meta);
+}
+
+/* Hit area stays 24px for touch while the mark itself reads at 7px. */
+.carousel-dot {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    background: none;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-dot::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--color-ink);
+    opacity: 0.2;
+    transition: opacity 0.2s ease;
+}
+
+.carousel-dot[aria-current="true"]::before {
+    opacity: 1;
+}
+
+/* --- Viewer ---
+   A native dialog, so Escape, the focus trap and the backdrop come for
+   free. It holds a second carousel built from the same images, driven by
+   the same code. */
+
+.viewer {
+    width: 100vw;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    overflow: hidden;
+}
+
+.viewer::backdrop {
+    background-color: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity var(--viewer-ms) var(--enter-ease);
+}
+
+.viewer-inner {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-meta);
+    padding: var(--space-stack) 0;
+    /* Grows from slightly small as it arrives, and shrinks away again. */
+    opacity: 0;
+    transform: scale(0.97);
+    transition:
+        opacity var(--viewer-ms) var(--enter-ease),
+        transform var(--viewer-ms) var(--enter-ease);
+}
+
+.viewer.is-open::backdrop { opacity: 1; }
+
+.viewer.is-open .viewer-inner {
+    opacity: 1;
+    transform: none;
+}
+
+/* Anywhere off the image closes it, so there is no button to place. */
+.viewer .carousel-track > * {
+    cursor: zoom-out;
+    align-self: center;
+    max-height: 100%;
+    width: auto;
+    max-width: min(92vw, 1400px);
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+.viewer .carousel-dots {
+    padding-top: 0;
+}
+
+.viewer .carousel-dot::before {
+    background-color: #FFFFFF;   /* always over the dimmed backdrop */
+}
+
 /* ============================================
    Footer
    ============================================ */
@@ -696,6 +824,11 @@ body.projects-collapsed .project {
 
     .dock {
         animation: none !important;
+    }
+
+    /* Snapping jumps rather than glides. */
+    .carousel-track {
+        scroll-behavior: auto !important;
     }
 }
 
