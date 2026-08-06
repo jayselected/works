@@ -21,7 +21,7 @@
     /* Type — one size for the whole page: 24 / 34 / -0.2px on desktop,
        fluid to 14px on phones. Leading and tracking are ratios, so the
        desktop proportions hold at every size. */
-    --font-size: clamp(0.875rem, 0.25rem + 2.5vw, 1.5rem);   /* 14 → 24 */
+    --font-size: clamp(1rem, 0.5rem + 2vw, 1.5rem);          /* 16 → 24 */
     --line-height: 1.4167;                                   /* 34 / 24 */
     --letter-spacing: -0.0083em;                             /* -0.2px at 24px */
 
@@ -58,6 +58,11 @@
     --enter-ms: 900ms;      /* siteapp.js reads this value — do not rename */
     --enter-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
     --chrome-ms: 800ms;     /* dock settling in on load */
+    /* Small state changes — hover, press, theme, a dot lighting up. Quicker
+       than an entrance and on the browser's own curve, because these answer
+       the reader rather than announcing anything. */
+    --ui-ms: 200ms;
+    --ui-ease: ease;
     --collapse-ms: 400ms;   /* projects morphing between layouts */
     --bar-ms: 400ms;        /* top bar fading in and out */
     --viewer-ms: 320ms;     /* enlarged image growing in and away */
@@ -67,7 +72,7 @@
        and the metrics stay fixed on desktop, as iOS controls do. */
     --dock-height: 48px;
     --dock-bottom: calc(var(--edge-gap) + env(safe-area-inset-bottom, 0px));
-    --dock-edge: clamp(24px, 6vw, 28px);
+    --dock-edge: clamp(16px, 6vw, 28px);
     --dock-width: calc(100% - (var(--page-edge) * 2));
     --dock-action-size: 44px;
     --dock-action-gap: 8px;
@@ -143,7 +148,7 @@ body {
     min-height: 100vh;    /* fallback where dvh is unsupported */
     min-height: 100dvh;   /* tracks the viewport as iOS toolbars collapse */
     padding-bottom: var(--dock-clearance);
-    transition: color 0.2s ease, background-color 0.2s ease;
+    transition: color var(--ui-ms) var(--ui-ease), background-color var(--ui-ms) var(--ui-ease);
 }
 
 /* The page is one type treatment, set on body; headings stay structural. */
@@ -298,7 +303,7 @@ h1, h2 {
     opacity: 0;
     transform: translate(-50%, 4px);
     pointer-events: none;
-    transition: opacity 0.18s ease, transform 0.18s ease;
+    transition: opacity var(--ui-ms) var(--ui-ease), transform var(--ui-ms) var(--ui-ease);
 }
 
 .dock-label.is-visible {
@@ -322,7 +327,9 @@ h1, h2 {
     overflow: hidden;
 }
 
-/* Scaled by JS via a transform, which animates cheaply. */
+/* Scaled by JS via a transform, which animates cheaply. Deliberately quicker
+   and flatter than the UI easing: this tracks the scroll rather than
+   responding to a press, and at 200ms it would visibly trail the page. */
 .dock-progress-fill {
     width: 100%;
     height: 100%;
@@ -372,8 +379,8 @@ h1, h2 {
 .dock-actions,
 .dock-action {
     transition-property: color, background-color, border-color, box-shadow, opacity, transform;
-    transition-duration: 0.2s;
-    transition-timing-function: ease;
+    transition-duration: var(--ui-ms);
+    transition-timing-function: var(--ui-ease);
 }
 
 /* One rule for every dock glyph, so weight and size can never drift apart. */
@@ -518,11 +525,13 @@ h1, h2 {
     gap: var(--space-section);
 }
 
+/* The images sit the same distance below the text as they do from each
+   other, so the first image is not held closer than the rest. */
 .project {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--space-block);
+    gap: var(--space-images);
 }
 
 .project-details {
@@ -630,7 +639,10 @@ body.projects-collapsed .project {
 }
 
 .stack-row img {
-    width: 21.5%;    /* 171.97 / 800 — four to a line */
+    /* One share at every width — three to a line throughout, so the row
+       never jumps at a breakpoint, and 172px at the full column, which is
+       the size the mockups were drawn at. */
+    width: 27%;
 }
 
 /* --- Carousel ---
@@ -706,7 +718,7 @@ body.projects-collapsed .project {
     border-radius: 50%;
     background-color: var(--color-ink);
     opacity: 0.2;
-    transition: opacity 0.2s ease, transform 0.2s var(--enter-ease);
+    transition: opacity var(--ui-ms) var(--ui-ease), transform var(--ui-ms) var(--ui-ease);
 }
 
 .carousel-dot:hover::before {
@@ -831,13 +843,6 @@ body.projects-collapsed .project {
 /* The page must not scroll behind the viewer. */
 body.viewer-open {
     overflow: hidden;
-}
-
-@media screen and (max-width: 700px) {
-    .viewer-slide img {
-        max-width: 86vw;   /* a phone has no room to spare */
-        max-height: 68dvh;
-    }
 }
 
 /* ============================================
@@ -966,12 +971,18 @@ body.viewer-open {
     :root {
         --edge-gap: 20px;
         --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
+
+        /* Chrome steps down with the page. Content falls from 24 to 16 here,
+           so holding the bar at its desktop size would leave interface and
+           content the same size — and that difference is what tells a reader
+           which is which. */
+        --font-chrome: 13px;
+        --font-chrome-small: 11px;
     }
 
-    /* At their desktop share the images would be too small here. Padding and
-       gaps are already fluid, so the rows scale down in step. */
-    .stack-row img {
-        width: 30%;    /* three to a line */
+    .viewer-slide img {
+        max-width: 86vw;   /* a phone has no room to spare */
+        max-height: 68dvh;
     }
 
     /* Two collapsed projects side by side would leave each too narrow, so the
@@ -979,6 +990,15 @@ body.viewer-open {
        .works already carries the column direction and the 80px gap. */
     body.projects-collapsed .works {
         display: flex;
+    }
+}
+
+/* A finger is not a pointer: where there is no hover the marks keep their
+   size but the targets widen to the 24px minimum, which a mouse does not
+   need and which would leave the row looking sparse on a desktop. */
+@media (hover: none) {
+    .carousel-dot {
+        width: 24px;
     }
 }
 
