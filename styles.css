@@ -777,9 +777,11 @@ body.projects-collapsed .project {
     transform: none;
 }
 
-/* Over glass rather than near-black, the image wants an edge of its own. */
+/* Over glass rather than near-black, the image wants a little edge of its
+   own — enough to lift a light screenshot off a light veil, not so much
+   that it reads as a band down the sides. */
 .viewer-slide img {
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
 }
 
 /* Each slide is the full width of the track, so only one image is ever in
@@ -824,6 +826,9 @@ body.viewer-open {
     .viewer-slide img {
         max-width: 86vw;   /* a phone has no room to spare */
         max-height: 68dvh;
+        /* At this width the image all but meets the screen edges, so a cast
+           shadow has nowhere to fall and shows as dark bands beside it. */
+        box-shadow: none;
     }
 }
 
