@@ -52,7 +52,6 @@
     --collapse-ms: 400ms;   /* projects morphing between layouts */
     --bar-ms: 400ms;        /* top bar fading in and out */
     --viewer-ms: 320ms;     /* enlarged image growing in and away */
-    --wrap-ms: 280ms;       /* carousel looping back to the first slide */
 
     /* Dock — measured from the iOS 26 Safari bottom bar: 48pt capsule,
        44pt targets, 8pt gap, 5pt inset, 22pt glyphs. CSS px map 1:1 to pt,
@@ -86,6 +85,11 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.7),
         inset 0 -1px 1px rgba(255, 255, 255, 0.18),
         0 8px 24px rgba(0, 0, 0, 0.06);
+
+    /* The veil behind an enlarged image: the page still shows through it,
+       heavily blurred, rather than being blacked out. */
+    --veil: rgba(255, 255, 255, 0.62);
+    --veil-blur: blur(28px) saturate(180%);
 }
 
 /* Only the values that actually differ; --glass-border resolves against
@@ -104,6 +108,8 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.14),
         inset 0 -1px 1px rgba(255, 255, 255, 0.05),
         0 8px 24px rgba(0, 0, 0, 0.35);
+
+    --veil: rgba(0, 0, 0, 0.55);
 }
 
 body {
@@ -645,14 +651,6 @@ body.projects-collapsed .project {
     opacity: 1;
 }
 
-/* Only the wrap from the last slide back to the first is eased — every
-   other move is driven frame by frame by the scroll itself. */
-.carousel-track.is-wrapping > * {
-    transition:
-        opacity var(--wrap-ms) var(--enter-ease),
-        transform var(--wrap-ms) var(--enter-ease);
-}
-
 .carousel-track img {
     cursor: zoom-in;
 }
@@ -675,7 +673,7 @@ body.projects-collapsed .project {
 /* The mark reads at 7px; the button stays 24px tall for touch and is kept
    narrow so the marks sit close together rather than drifting apart. */
 .carousel-dot {
-    width: 17px;
+    width: 14px;
     height: 24px;
     padding: 0;
     border: 0;
@@ -702,8 +700,28 @@ body.projects-collapsed .project {
     opacity: 0.45;
 }
 
+/* The one in frame takes the accent, as the progress bar and the bar's dot
+   do; the rest stay muted. */
 .carousel-dot[aria-current="true"]::before {
     opacity: 1;
+    background-color: var(--color-accent);
+}
+
+/* A tap is not a request for a focus ring, and the page's default ring reads
+   as a hard black box around a 14px control. Keyboard focus gets a ring
+   drawn round the mark instead, and touch gets none. */
+.carousel-dot:focus {
+    outline: none;
+}
+
+.carousel-dot:focus-visible::before {
+    box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-accent);
+}
+
+@media (hover: none) {
+    .carousel-dot:focus-visible::before {
+        box-shadow: none;
+    }
 }
 
 /* --- Viewer ---
@@ -719,17 +737,24 @@ body.projects-collapsed .project {
     margin: 0;
     padding: 0;
     border: 0;
-    background: none;
     overflow: hidden;
-}
 
-.viewer::backdrop {
-    background-color: rgba(0, 0, 0, 0.82);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    /* The glass sits on the dialog itself: ::backdrop cannot read the theme
+       tokens dependably across browsers, and the dialog already fills the
+       screen. The page stays visible behind it, blurred back. */
+    background-color: var(--veil);
+    backdrop-filter: var(--veil-blur);
+    -webkit-backdrop-filter: var(--veil-blur);
+
     opacity: 0;
     transition: opacity var(--viewer-ms) var(--enter-ease);
 }
+
+.viewer::backdrop {
+    background-color: transparent;
+}
+
+.viewer.is-open { opacity: 1; }
 
 .viewer-inner {
     height: 100%;
@@ -739,6 +764,7 @@ body.projects-collapsed .project {
     gap: var(--space-meta);
     padding: var(--space-stack) 0;
     /* Grows in from slightly small, and shrinks away again. */
+    /* The image lifts in slightly ahead of the veil settling. */
     opacity: 0;
     transform: scale(0.96);
     transition:
@@ -746,11 +772,14 @@ body.projects-collapsed .project {
         transform var(--viewer-ms) var(--enter-ease);
 }
 
-.viewer.is-open::backdrop { opacity: 1; }
-
 .viewer.is-open .viewer-inner {
     opacity: 1;
     transform: none;
+}
+
+/* Over glass rather than near-black, the image wants an edge of its own. */
+.viewer-slide img {
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
 }
 
 /* Each slide is the full width of the track, so only one image is ever in
@@ -779,7 +808,11 @@ body.projects-collapsed .project {
 }
 
 .viewer .carousel-dot::before {
-    background-color: #FFFFFF;   /* always over the dimmed backdrop */
+    background-color: var(--color-ink);   /* the veil carries the theme */
+}
+
+.viewer .carousel-dot[aria-current="true"]::before {
+    background-color: var(--color-accent);
 }
 
 /* The page must not scroll behind the viewer. */
@@ -893,19 +926,23 @@ body.viewer-open {
     [data-theme="light"] {
         --glass-bg: #F1F1F1;
         --glass-backdrop: none;
+        --veil: #F1F1F1;
+        --veil-blur: none;
     }
 
     [data-theme="dark"] {
         --glass-bg: #0A0A0A;
         --glass-backdrop: none;
+        --veil: #0A0A0A;
+        --veil-blur: none;
     }
 }
 
 /* Without backdrop-filter the frost cannot render, so the fill goes
    near-opaque to stay legible over any content. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    [data-theme="light"] { --glass-bg: #F1F1F1; }
-    [data-theme="dark"]  { --glass-bg: #0A0A0A; }
+    [data-theme="light"] { --glass-bg: #F1F1F1; --veil: rgba(255, 255, 255, 0.96); }
+    [data-theme="dark"]  { --glass-bg: #0A0A0A; --veil: rgba(0, 0, 0, 0.92); }
 }
 
 /* ============================================
