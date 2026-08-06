@@ -11,10 +11,10 @@
 :root {
     color-scheme: light;
 
-    /* Content column, matching the 800px Figma frame. */
-    --content-width: 800px;
-    /* Side gutter: 32px on desktop, easing to ~22px on phones. */
-    --page-edge: clamp(1.4rem, 0.8rem + 2.4vw, 2rem);
+    /* Content column. */
+    --content-width: 700px;
+    /* Side gutter: 32px on desktop, holding 28px on phones. */
+    --page-edge: clamp(1.75rem, 1.5rem + 1vw, 2rem);
     /* Screen edge to dock. */
     --edge-gap: 24px;
 
@@ -38,6 +38,7 @@
     --step: clamp(16px, 6vw - 8px, 40px);       /* 40px at an 800px viewport */
     --space-page:    calc(var(--step) * 4);     /* 160 — page top and bottom */
     --space-section: calc(var(--step) * 2);     /*  80 — between sections */
+    --space-images:  calc(var(--step) * 1.4);   /*  56 — between image stacks */
     --space-block:   var(--step);               /*  40 — hero and project parts */
     --space-stack:   calc(var(--step) * 0.8);   /*  32 — image row padding, gutters */
     --space-meta:    calc(var(--step) * 0.6);   /*  24 — meta rows, wrapped lines */
@@ -585,11 +586,15 @@ body.projects-collapsed .project {
    <img width="2400" height="1500" src="..." alt="...">
    ============================================ */
 
+/* Image stacks are set further apart than the text parts above them: a
+   picture needs air around it in a way a paragraph does not, and this keeps
+   each stack reading as its own object without reaching the 80px that
+   separates whole projects. */
 .project-images {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--space-block);
+    gap: var(--space-images);
 }
 
 .stack {
@@ -707,21 +712,15 @@ body.projects-collapsed .project {
     background-color: var(--color-accent);
 }
 
-/* A tap is not a request for a focus ring, and the page's default ring reads
-   as a hard black box around a 14px control. Keyboard focus gets a ring
-   drawn round the mark instead, and touch gets none. */
+/* No ring of any kind: the page's default outline reads as a hard box around
+   a 14px control, and a drawn ring is no better. Keyboard focus grows the
+   mark instead, which is unmistakable and cannot band or clip. */
 .carousel-dot:focus {
     outline: none;
 }
 
 .carousel-dot:focus-visible::before {
-    box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-accent);
-}
-
-@media (hover: none) {
-    .carousel-dot:focus-visible::before {
-        box-shadow: none;
-    }
+    transform: scale(1.5);
 }
 
 /* --- Viewer ---
@@ -777,12 +776,9 @@ body.projects-collapsed .project {
     transform: none;
 }
 
-/* Over glass rather than near-black, the image wants a little edge of its
-   own — enough to lift a light screenshot off a light veil, not so much
-   that it reads as a band down the sides. */
-.viewer-slide img {
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
-}
+/* No shadow: a cast shadow on an image this close to the screen edges has
+   nowhere to fall and reads as dark bands beside it. The blurred veil
+   already separates the image from the page. */
 
 /* Each slide is the full width of the track, so only one image is ever in
    frame — its neighbours sit a full screen away. The image is sized well
@@ -826,9 +822,6 @@ body.viewer-open {
     .viewer-slide img {
         max-width: 86vw;   /* a phone has no room to spare */
         max-height: 68dvh;
-        /* At this width the image all but meets the screen edges, so a cast
-           shadow has nowhere to fall and shows as dark bands beside it. */
-        box-shadow: none;
     }
 }
 
