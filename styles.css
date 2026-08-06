@@ -53,11 +53,17 @@
     --space-row:     calc(var(--step) * 0.2);   /*   8 — label to its values */
 
     /* Motion — short distances, soft easing, all neutralised under
-       prefers-reduced-motion. */
-    --enter-rise: 24px;
-    --enter-ms: 900ms;      /* siteapp.js reads this value — do not rename */
+       prefers-reduced-motion.
+
+       Two paces, because there are two jobs. Content entering the viewport
+       is answering the reader's scroll, so it arrives at interface speed and
+       is legible almost at once. The hero's greeting is an ambient loop that
+       runs whether or not anyone is watching, and can afford to be slow. */
+    --enter-rise: 12px;
+    --enter-ms: 400ms;      /* content arriving as it is scrolled to */
+    --hero-ms: 900ms;       /* the greeting cycling — siteapp.js reads this */
     --enter-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-    --chrome-ms: 800ms;     /* dock settling in on load */
+    --chrome-ms: 600ms;     /* dock settling in on load */
     /* Small state changes — hover, press, theme, a dot lighting up. Quicker
        than an entrance and on the browser's own curve, because these answer
        the reader rather than announcing anything. */
@@ -72,9 +78,11 @@
        and the metrics stay fixed on desktop, as iOS controls do. */
     --dock-height: 48px;
     --dock-bottom: calc(var(--edge-gap) + env(safe-area-inset-bottom, 0px));
-    /* Exactly the content column, at every width: the dock belongs to the
-       document it navigates, so its ends sit on the same edges as the text. */
-    --dock-width: min(var(--content-width), calc(100% - (var(--page-edge) * 2)));
+    /* The dock spans the window, at the page gutter. Below 764px that gutter
+       is also where the column starts, so on a phone the dock and the column
+       are exactly as wide as each other; on a desktop it reads as a floating
+       control that belongs to the window rather than to the text. */
+    --dock-width: calc(100% - (var(--page-edge) * 2));
     --dock-action-size: 44px;
     --dock-action-gap: 8px;
     --dock-actions-inset: 5px;
@@ -163,8 +171,10 @@ h1, h2 {
     color: var(--color-bg);
 }
 
+/* The accent rather than the ink: a focus ring is the system speaking, not
+   the page, and it must stay legible against text of either colour. */
 :focus-visible {
-    outline: 2px solid var(--color-ink);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
     border-radius: 4px;
 }
@@ -501,7 +511,7 @@ h1, h2 {
 .hero-line,
 .hero-name {
     opacity: 0;
-    transition: opacity var(--enter-ms) var(--enter-ease);
+    transition: opacity var(--hero-ms) var(--enter-ease);
 }
 
 .hero-hello.visible,
@@ -946,6 +956,14 @@ body.viewer-open {
     .carousel-track {
         scroll-behavior: auto !important;
     }
+}
+
+/* Some people ask their system for more contrast. That is a request, not a
+   default: the muted grey stays exactly as designed for everyone else, and
+   only those who have asked get the stronger system grey. */
+@media (prefers-contrast: more) {
+    [data-theme="light"] { --color-muted: #6E6E73; }
+    [data-theme="dark"]  { --color-muted: #98989D; }
 }
 
 /* Translucency over moving content is hard for some people to read; the OS
