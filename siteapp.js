@@ -650,11 +650,11 @@ function setupCarousel(root, onPick) {
     if (!track || track.children.length < 2) return null;
 
     /* Looping is done with copies rather than a jump. The last slide is
-       repeated before the first and the first after the last, so moving off
-       either end is an ordinary scroll in the direction of travel — the
-       reader sees continuous motion. Once it settles on a copy the strip is
-       silently repositioned onto the real one, which is invisible because
-       the two are identical. */
+       repeated before the first and the first after the last, so leaving
+       either end is an ordinary scroll in the direction of travel. Once the
+       strip is resting on a copy it is shifted by exactly one cycle onto the
+       real slide — invisible, because the two are the same picture at the
+       same offset within the frame. */
     const real = [...track.children];
     const count = real.length;
 
@@ -667,11 +667,16 @@ function setupCarousel(root, onPick) {
     track.prepend(head);
     track.append(tail);
 
-    const slides = [...track.children];          // count + 2
-    const FIRST = 1;                             // where the real slides start
-    const LAST = count;
-    const toReal = position => ((position - FIRST) + count) % count;
-    const offsetOf = position => slides[position].offsetLeft - track.offsetLeft;
+    const slides = [...track.children];   // count + 2
+    const FIRST = 1;                      // first real slide
+    const LAST = count;                   // last real slide
+    const COPY_END = count + 1;           // the copy that follows it
+
+    const offsetOf = at => slides[at].offsetLeft - track.offsetLeft;
+    const toReal = at => ((at - FIRST) + count) % count;
+    /* One full cycle, measured rather than assumed, so it stays correct at
+       any width and whatever the slides turn out to be. */
+    const cycle = () => offsetOf(COPY_END) - offsetOf(FIRST);
 
     const dots = document.createElement('div');
     dots.className = 'carousel-dots';
@@ -691,9 +696,10 @@ function setupCarousel(root, onPick) {
 
     root.appendChild(dots);
 
-    let current = 0;
-    let pending = null;    // a copy we are travelling to, and its real twin
-    let steering = false;  // a move we started, still under way
+    let at = FIRST;         // the slide we are on, or moving to
+    let current = 0;        // the real image that names it
+    let steering = false;   // a move of ours is under way
+    let holding = false;    // a finger is on the strip
 
     function mark(index) {
         if (index === current) return;
@@ -701,91 +707,112 @@ function setupCarousel(root, onPick) {
         buttons.forEach((dot, i) => dot.setAttribute('aria-current', String(i === index)));
     }
 
-    function scrollTo(position, instant) {
+    function nearest() {
+        const middle = track.scrollLeft + track.clientWidth / 2;
+        let best = FIRST, shortest = Infinity;
+        slides.forEach((slide, i) => {
+            const gap = Math.abs((slide.offsetLeft - track.offsetLeft + slide.offsetWidth / 2) - middle);
+            if (gap < shortest) { shortest = gap; best = i; }
+        });
+        return best;
+    }
+
+    /* Standing on a copy is always temporary. Shifting by one whole cycle
+       moves onto the real twin while preserving the exact position within
+       the frame, so it is unseen — at rest, and equally mid-gesture. */
+    function normalise() {
+        if (at >= COPY_END)  { track.scrollLeft -= cycle(); at -= count; }
+        else if (at <= 0)    { track.scrollLeft += cycle(); at += count; }
+    }
+
+    function glide(to, instant) {
         const smooth = !instant && !prefersReducedMotion();
+        at = to;
         steering = smooth;
-        track.scrollTo({ left: offsetOf(position), behavior: smooth ? 'smooth' : 'auto' });
+        mark(toReal(to));
+        track.scrollTo({ left: offsetOf(to), behavior: smooth ? 'smooth' : 'auto' });
     }
 
-    /* The destination is marked as the move begins, not when it arrives, so
-       a quick run of key presses advances one slide per press instead of
-       recomputing from wherever the last scroll happened to have reached. */
-    function goTo(index, instant) {
-        pending = null;
-        const clamped = Math.max(0, Math.min(count - 1, index));
-        mark(clamped);
-        scrollTo(FIRST + clamped, instant);
-    }
-
-    /* Off either end, travel onto the copy — the motion continues the way it
-       was already going — and note where to land once it stops. */
+    /* Never step away from a copy: come back to the real slide first, at the
+       same point in the frame, so the next move carries on rather than
+       doubling back across the whole strip. */
     function step(offset) {
-        const next = current + offset;
-
-        if (next >= count || next < 0) {
-            const forward = next >= count;
-            pending = forward ? { copy: LAST + 1, real: FIRST } : { copy: 0, real: LAST };
-            mark(forward ? 0 : count - 1);
-            return scrollTo(pending.copy);
-        }
-
-        goTo(next);
+        normalise();
+        glide(at + offset);
     }
 
-    function land() {
-        if (!pending) return;
-        /* Only once it has actually arrived — a finger held still mid-drag
-           must not trigger this. */
-        if (Math.abs(track.scrollLeft - offsetOf(pending.copy)) > 2) return;
-        const destination = offsetOf(pending.real);
-        pending = null;
-        track.scrollLeft = destination;   // assignment is always instant
+    function goTo(index) {
+        normalise();
+        glide(FIRST + Math.max(0, Math.min(count - 1, index)));
+    }
+
+    function jumpTo(index) {
+        glide(FIRST + Math.max(0, Math.min(count - 1, index || 0)), true);
+    }
+
+    /* Whatever moved the strip — key, dot, swipe or momentum — once it comes
+       to rest we take the position at face value and normalise from there.
+       This is what keeps a fast swipe cycling rather than stranding the
+       strip on a copy with nowhere left to go. */
+    function settle() {
+        if (holding) return;   // still under a finger; wait for it to lift
+        steering = false;
+        at = nearest();
+        mark(toReal(at));
+        normalise();
     }
 
     /* Every frame of the scroll, each slide is faded and settled by how far
-       it sits from the centre, so the neighbour arrives as the current one
-       leaves. Driven by position rather than events, it reads the same
-       whether the strip was swiped, keyed or dotted. */
+       it sits from the centre, so the next image arrives as the current one
+       leaves and no two are ever seen flush together. Driven by position
+       rather than events, it reads the same however the strip was moved. */
     function paint() {
         const frame = track.clientWidth;
         if (!frame) return;   // not laid out yet; the observers below re-run this
 
         const middle = track.scrollLeft + frame / 2;
         const reduced = prefersReducedMotion();
-        let nearest = FIRST, shortest = Infinity;
+        let closest = FIRST, shortest = Infinity;
 
         slides.forEach((slide, i) => {
-            const centre = slide.offsetLeft - track.offsetLeft + slide.offsetWidth / 2;
-            const gap = Math.abs(centre - middle);
-            if (gap < shortest) { shortest = gap; nearest = i; }
+            const gap = Math.abs((slide.offsetLeft - track.offsetLeft + slide.offsetWidth / 2) - middle);
+            if (gap < shortest) { shortest = gap; closest = i; }
 
             const away = Math.min(1, (gap / frame) * 1.15);   // 0 centred, 1 a frame away
             slide.style.opacity = String(1 - away);
             slide.style.transform = reduced ? '' : 'scale(' + (1 - away * 0.04) + ')';
         });
 
-        /* While a move of our own is under way the destination is already
-           marked, so only a scroll the reader drove updates the dots. */
-        if (!steering) mark(toReal(nearest));
+        /* During a move of ours the destination is already named; otherwise
+           the dots follow the reader's own scrolling. */
+        if (!steering) mark(toReal(closest));
     }
 
     let queued = false;
-    let idle = null;
+    let quiet = null;
+
     track.addEventListener('scroll', () => {
-        clearTimeout(idle);
-        idle = setTimeout(settled, 120);   // 120ms of quiet means it has stopped
+        clearTimeout(quiet);
+        quiet = setTimeout(settle, 120);   // 120ms of stillness means it has stopped
 
         if (queued) return;
         queued = true;
         requestAnimationFrame(() => { queued = false; paint(); });
     }, { passive: true });
 
-    function settled() {
-        steering = false;
-        land();
-    }
+    /* scrollend is exact where it exists; the timer above covers the rest. */
+    if ('onscrollend' in window) track.addEventListener('scrollend', settle);
 
-    if ('onscrollend' in window) track.addEventListener('scrollend', settled);
+    /* Nothing is repositioned under a live finger — that would fight the
+       gesture. The strip is tidied the moment it is let go. */
+    track.addEventListener('touchstart', () => { holding = true; }, { passive: true });
+    ['touchend', 'touchcancel'].forEach(event => {
+        track.addEventListener(event, () => {
+            holding = false;
+            clearTimeout(quiet);
+            quiet = setTimeout(settle, 120);
+        }, { passive: true });
+    });
 
     /* Deliberately not focusable: the dots are the keyboard interface, and a
        ring around the strip reads as a rule against the artwork. */
@@ -800,18 +827,9 @@ function setupCarousel(root, onPick) {
         });
     }
 
-    /* Start on the real first slide, past the copy that precedes it. */
-    function reset(index) {
-        const start = Math.max(0, Math.min(count - 1, index || 0));
-        pending = null;
-        mark(start);
-        scrollTo(FIRST + start, true);
-        paint();
-    }
-
     buttons[0].setAttribute('aria-current', 'true');
-    reset(0);
-    current = 0;
+    jumpTo(0);
+    paint();
 
     /* Images arrive at their own pace, and each one changes the geometry. */
     slides.forEach(slide => {
@@ -819,9 +837,15 @@ function setupCarousel(root, onPick) {
         if (image && !image.complete) image.addEventListener('load', paint, { once: true });
     });
 
-    if ('ResizeObserver' in window) new ResizeObserver(() => paint()).observe(track);
+    /* A resize moves every offset, including the one we are parked on. */
+    if ('ResizeObserver' in window) {
+        new ResizeObserver(() => {
+            track.scrollLeft = offsetOf(at);
+            paint();
+        }).observe(track);
+    }
 
-    return { root, step, goTo: reset, index: () => current };
+    return { root, step, goTo: jumpTo, index: () => current };
 }
 
 function initializeCarousels() {
