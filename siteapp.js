@@ -896,6 +896,16 @@ function initializeCarousels() {
 
     if (!carousels.size) return;
 
+    /* Every visit starts on the first image. Two things would otherwise
+       leave it elsewhere: browsers restore a scroll container's position on
+       reload and when a page is returned to from history, and a strip that
+       is measured before it has been laid out reads every offset as zero,
+       which parks it on the copy that precedes the first slide. pageshow
+       covers both, firing after any restoration. */
+    window.addEventListener('pageshow', () => {
+        carousels.forEach(carousel => carousel.goTo(0));
+    });
+
     document.addEventListener('keydown', event => {
         const step = { ArrowLeft: -1, ArrowRight: 1 }[event.key];
         if (!step || event.metaKey || event.ctrlKey || event.altKey) return;
@@ -921,7 +931,9 @@ function createViewer() {
 
     const viewer = document.createElement('dialog');
     viewer.className = 'viewer';
-    viewer.innerHTML = '<div class="viewer-inner"><div class="carousel-track" data-track></div></div>';
+    /* autofocus keeps the opening focus off the first dot; tabindex makes
+       the container able to hold it. */
+    viewer.innerHTML = '<div class="viewer-inner" tabindex="-1" autofocus><div class="carousel-track" data-track></div></div>';
     document.body.appendChild(viewer);
 
     const inner = viewer.querySelector('.viewer-inner');
