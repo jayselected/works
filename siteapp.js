@@ -638,10 +638,11 @@ function initializeProjectCollapse() {
 /* ============================================
    Carousel
 
-   Scrolling, swiping and snapping are native — this only builds the dots
-   from however many slides there are, keeps the current one marked, and
-   opens the viewer. The viewer is a second carousel over the same images,
-   so both are driven by the code below.
+   Scrolling, swiping and snapping are native, so there is no gesture code
+   here. This builds the dots from however many slides exist, marks the one
+   in frame, routes the arrow keys to whichever carousel is being looked at,
+   and opens the viewer. The viewer runs the same controller over the same
+   images, so enlarged behaviour is identical by construction.
    ============================================ */
 
 function setupCarousel(root, onPick) {
@@ -654,7 +655,6 @@ function setupCarousel(root, onPick) {
     dots.className = 'carousel-dots';
     dots.setAttribute('role', 'tablist');
     dots.setAttribute('aria-label', 'Choose image');
-    root.appendChild(dots);
 
     const buttons = slides.map((slide, index) => {
         const dot = document.createElement('button');
@@ -667,7 +667,9 @@ function setupCarousel(root, onPick) {
         return dot;
     });
 
-    let current = -1;
+    root.appendChild(dots);
+
+    let current = 0;
 
     function mark(index) {
         if (index === current) return;
@@ -675,17 +677,19 @@ function setupCarousel(root, onPick) {
         buttons.forEach((dot, i) => dot.setAttribute('aria-current', String(i === index)));
     }
 
-    function goTo(index) {
-        const target = slides[Math.max(0, Math.min(slides.length - 1, index))];
-        /* Scrolling the track directly would also scroll the page to it. */
+    /* Instant when placing the viewer on the image that was clicked; eased
+       when the reader asked to move. */
+    function goTo(index, instant) {
+        const clamped = Math.max(0, Math.min(slides.length - 1, index));
         track.scrollTo({
-            left: target.offsetLeft - track.offsetLeft,
-            behavior: prefersReducedMotion() ? 'auto' : 'smooth'
+            left: slides[clamped].offsetLeft - track.offsetLeft,
+            behavior: (instant || prefersReducedMotion()) ? 'auto' : 'smooth'
         });
+        mark(clamped);
     }
 
-    /* Whichever slide is nearest the centre is the one being looked at —
-       true whether it arrived by swipe, dot or key. */
+    /* Whichever slide is nearest the centre is the one in frame — true
+       however it got there: swipe, dot or key. */
     let queued = false;
     track.addEventListener('scroll', () => {
         if (queued) return;
@@ -693,38 +697,107 @@ function setupCarousel(root, onPick) {
         requestAnimationFrame(() => {
             queued = false;
             const middle = track.scrollLeft + track.clientWidth / 2;
-            mark(slides.reduce((best, slide, i) => {
+            let best = 0, gap = Infinity;
+            slides.forEach((slide, i) => {
                 const centre = slide.offsetLeft - track.offsetLeft + slide.offsetWidth / 2;
-                return Math.abs(centre - middle) < best.gap
-                    ? { gap: Math.abs(centre - middle), i }
-                    : best;
-            }, { gap: Infinity, i: 0 }).i);
+                if (Math.abs(centre - middle) < gap) { gap = Math.abs(centre - middle); best = i; }
+            });
+            mark(best);
         });
     }, { passive: true });
 
     track.tabIndex = 0;
-    track.setAttribute('aria-label', slides.length + ' images, use arrow keys');
-    track.addEventListener('keydown', event => {
-        const step = { ArrowLeft: -1, ArrowRight: 1 }[event.key];
-        if (!step) return;
-        event.preventDefault();
-        goTo(current + step);
-    });
+    track.setAttribute('role', 'group');
+    track.setAttribute('aria-roledescription', 'carousel');
+    track.setAttribute('aria-label', slides.length + ' images. Use the arrow keys to move between them.');
 
     if (onPick) {
-        slides.forEach((slide, index) => slide.addEventListener('click', () => onPick(index)));
+        slides.forEach((slide, index) => {
+            const image = slide.tagName === 'IMG' ? slide : slide.querySelector('img');
+            if (image) image.addEventListener('click', () => onPick(index));
+        });
     }
 
-    mark(0);
-    return { goTo, index: () => current };
+    buttons[0].setAttribute('aria-current', 'true');
+
+    return {
+        root,
+        step: offset => goTo(current + offset),
+        goTo,
+        index: () => current
+    };
 }
 
 function initializeCarousels() {
     const roots = [...document.querySelectorAll('[data-carousel]')];
-    if (!roots.length || typeof HTMLDialogElement !== 'function') {
-        roots.forEach(root => setupCarousel(root));
-        return;
+    if (!roots.length) return;
+
+    const carousels = new Map();
+    let inView = null;   // the one filling most of the screen
+
+    /* The arrow keys should work the moment a carousel is reached, without
+       clicking it first. A carousel claims them once it is at least half in
+       view; anything less and the keys stay with the page, as they should.
+       Where this is unavailable the carousel still works in every other
+       respect — the keys simply wait until the strip is focused. */
+    const watcher = 'IntersectionObserver' in window
+        ? new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                entry.target.dataset.ratio = entry.intersectionRatio.toFixed(3);
+            });
+
+            let best = null, ratio = 0.5;
+            carousels.forEach((carousel, root) => {
+                const value = parseFloat(root.dataset.ratio || '0');
+                if (value > ratio) { ratio = value; best = carousel; }
+            });
+            inView = best;
+        }, { threshold: [0, 0.25, 0.5, 0.75, 1] })
+        : null;
+
+    /* Focus wins over proximity: if the reader has tabbed into a strip, that
+       is the one they mean, wherever it sits on screen. */
+    function active() {
+        const focused = document.activeElement && document.activeElement.closest
+            ? document.activeElement.closest('[data-carousel]')
+            : null;
+        return (focused && carousels.get(focused)) || inView;
     }
+
+    const viewer = createViewer();
+
+    roots.forEach(root => {
+        const images = [...root.querySelectorAll('[data-track] > img')];
+        const carousel = setupCarousel(root, viewer && (index => viewer.open(images, index)));
+        if (!carousel) return;
+        carousels.set(root, carousel);
+        if (watcher) watcher.observe(root);
+    });
+
+    if (!carousels.size) return;
+
+    document.addEventListener('keydown', event => {
+        const step = { ArrowLeft: -1, ArrowRight: 1 }[event.key];
+        if (!step || event.metaKey || event.ctrlKey || event.altKey) return;
+
+        /* Never steal the keys from a text field. */
+        const tag = document.activeElement && document.activeElement.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || (document.activeElement && document.activeElement.isContentEditable)) return;
+
+        const target = (viewer && viewer.isOpen()) ? viewer.carousel() : active();
+        if (!target) return;
+
+        event.preventDefault();
+        target.step(step);
+    });
+}
+
+/* --------------------------------------------
+   Viewer — one dialog, reused by every carousel
+   -------------------------------------------- */
+
+function createViewer() {
+    if (typeof HTMLDialogElement !== 'function') return null;
 
     const viewer = document.createElement('dialog');
     viewer.className = 'viewer';
@@ -737,25 +810,37 @@ function initializeCarousels() {
 
     function open(images, index) {
         track.replaceChildren(...images.map(source => {
+            const slide = document.createElement('div');
+            slide.className = 'viewer-slide';
             const img = document.createElement('img');
+            /* currentSrc is what the browser actually loaded, so the
+               enlarged view reuses the cached file rather than fetching. */
             img.src = source.currentSrc || source.src;
             img.alt = source.alt;
-            return img;
+            img.decoding = 'async';
+            slide.appendChild(img);
+            return slide;
         }));
 
-        viewer.querySelectorAll('.carousel-dots').forEach(el => el.remove());
-        carousel = setupCarousel(inner, close);
+        inner.querySelectorAll('.carousel-dots').forEach(el => el.remove());
+        carousel = setupCarousel(inner);
 
+        document.body.classList.add('viewer-open');
         viewer.showModal();
-        if (carousel) carousel.goTo(index);
-        /* Two frames: one for the slides to lay out, one so the browser has
-           a start value to animate from. */
+
+        /* Placed on the image that was clicked before anything is visible,
+           so it opens on that image rather than travelling to it. */
+        if (carousel) carousel.goTo(index, true);
+
+        /* Two frames: one for the slides to lay out, one to give the
+           transition a start value to animate from. */
         requestAnimationFrame(() => requestAnimationFrame(() => viewer.classList.add('is-open')));
     }
 
     function close() {
         if (!viewer.classList.contains('is-open')) return;
         viewer.classList.remove('is-open');
+        document.body.classList.remove('viewer-open');
 
         if (prefersReducedMotion()) {
             viewer.close();
@@ -770,21 +855,24 @@ function initializeCarousels() {
         setTimeout(finish, cssDuration('--viewer-ms', 320) + 60);
     }
 
-    /* Escape closes the dialog itself, so mirror it back into the animation. */
+    /* Escape closes the dialog outright, so mirror it back into the animation. */
     viewer.addEventListener('cancel', event => {
         event.preventDefault();
         close();
     });
 
-    /* Anywhere that is not a dot or the image closes it. */
+    /* Anywhere but the image and the dots dismisses it. */
     viewer.addEventListener('click', event => {
-        if (!event.target.closest('.carousel-dot')) close();
+        if (event.target.closest('.carousel-dot, .viewer-slide img')) return;
+        close();
     });
 
-    roots.forEach(root => {
-        const images = [...root.querySelectorAll('[data-track] > img')];
-        setupCarousel(root, index => open(images, index));
-    });
+    return {
+        open,
+        close,
+        isOpen: () => viewer.classList.contains('is-open'),
+        carousel: () => carousel
+    };
 }
 
 /* ============================================
