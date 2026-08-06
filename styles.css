@@ -614,10 +614,10 @@ body.projects-collapsed .project {
 }
 
 /* --- Carousel ---
-   A horizontal strip that snaps. The scrolling, the swipe and its momentum
-   are all native, so there is no gesture code anywhere — siteapp.js only
-   builds the dots, tracks which slide is showing, and opens the viewer.
-   Without JS it stays a scrollable strip, which still works. */
+   Scrolling, swiping, momentum and snapping are all native, so there is no
+   gesture code anywhere. siteapp.js builds the dots from however many slides
+   there are, marks the current one, and routes the arrow keys to whichever
+   carousel is being looked at. Without JS it stays a scrollable strip. */
 
 .carousel-track {
     display: flex;
@@ -635,19 +635,30 @@ body.projects-collapsed .project {
 .carousel-track > * {
     flex: 0 0 100%;
     scroll-snap-align: center;
+}
+
+.carousel-track img {
     cursor: zoom-in;
+}
+
+/* Focus belongs on the strip, but the ring reads better around the whole
+   frame than tight to one image. */
+.carousel-track:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 4px;
+    border-radius: 4px;
 }
 
 .carousel-dots {
     display: flex;
     justify-content: center;
-    gap: var(--space-row);
     padding-top: var(--space-meta);
 }
 
-/* Hit area stays 24px for touch while the mark itself reads at 7px. */
+/* The mark reads at 7px; the button stays 24px tall for touch and is kept
+   narrow so the marks sit close together rather than drifting apart. */
 .carousel-dot {
-    width: 24px;
+    width: 17px;
     height: 24px;
     padding: 0;
     border: 0;
@@ -667,7 +678,11 @@ body.projects-collapsed .project {
     border-radius: 50%;
     background-color: var(--color-ink);
     opacity: 0.2;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease, transform 0.2s var(--enter-ease);
+}
+
+.carousel-dot:hover::before {
+    opacity: 0.45;
 }
 
 .carousel-dot[aria-current="true"]::before {
@@ -675,9 +690,9 @@ body.projects-collapsed .project {
 }
 
 /* --- Viewer ---
-   A native dialog, so Escape, the focus trap and the backdrop come for
-   free. It holds a second carousel built from the same images, driven by
-   the same code. */
+   A native dialog, so Escape, the focus trap and the backdrop come free. It
+   holds a second carousel over the same images, driven by the same code, so
+   swipe, dots and keys behave identically enlarged. */
 
 .viewer {
     width: 100vw;
@@ -692,9 +707,9 @@ body.projects-collapsed .project {
 }
 
 .viewer::backdrop {
-    background-color: rgba(0, 0, 0, 0.72);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    background-color: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     opacity: 0;
     transition: opacity var(--viewer-ms) var(--enter-ease);
 }
@@ -706,9 +721,9 @@ body.projects-collapsed .project {
     justify-content: center;
     gap: var(--space-meta);
     padding: var(--space-stack) 0;
-    /* Grows from slightly small as it arrives, and shrinks away again. */
+    /* Grows in from slightly small, and shrinks away again. */
     opacity: 0;
-    transform: scale(0.97);
+    transform: scale(0.96);
     transition:
         opacity var(--viewer-ms) var(--enter-ease),
         transform var(--viewer-ms) var(--enter-ease);
@@ -721,23 +736,45 @@ body.projects-collapsed .project {
     transform: none;
 }
 
-/* Anywhere off the image closes it, so there is no button to place. */
-.viewer .carousel-track > * {
-    cursor: zoom-out;
-    align-self: center;
-    max-height: 100%;
+/* Each slide is the full width of the track, so only one image is ever in
+   frame — its neighbours sit a full screen away. The image is sized well
+   inside that, which is what gives it room to sit in. */
+.viewer-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    cursor: zoom-out;   /* the space around the image dismisses it */
+}
+
+.viewer-slide img {
     width: auto;
-    max-width: min(92vw, 1400px);
+    height: auto;
+    max-width: min(68vw, 980px);
+    max-height: 72dvh;
     object-fit: contain;
-    margin: 0 auto;
+    cursor: default;    /* the image itself is the content, not a target */
 }
 
 .viewer .carousel-dots {
     padding-top: 0;
+    flex: none;
 }
 
 .viewer .carousel-dot::before {
     background-color: #FFFFFF;   /* always over the dimmed backdrop */
+}
+
+/* The page must not scroll behind the viewer. */
+body.viewer-open {
+    overflow: hidden;
+}
+
+@media screen and (max-width: 700px) {
+    .viewer-slide img {
+        max-width: 86vw;   /* a phone has no room to spare */
+        max-height: 68dvh;
+    }
 }
 
 /* ============================================
