@@ -52,6 +52,7 @@
     --collapse-ms: 400ms;   /* projects morphing between layouts */
     --bar-ms: 400ms;        /* top bar fading in and out */
     --viewer-ms: 320ms;     /* enlarged image growing in and away */
+    --wrap-ms: 280ms;       /* carousel looping back to the first slide */
 
     /* Dock — measured from the iOS 26 Safari bottom bar: 48pt capsule,
        44pt targets, 8pt gap, 5pt inset, 22pt glyphs. CSS px map 1:1 to pt,
@@ -621,6 +622,10 @@ body.projects-collapsed .project {
 
 .carousel-track {
     display: flex;
+    /* Slides are set a clear space apart, so no two are ever edge to edge.
+       siteapp.js fades and settles them by distance from the centre, which
+       is what makes the neighbour arrive rather than simply sit there. */
+    gap: var(--space-section);
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;              /* the dots are the indicator */
@@ -635,18 +640,30 @@ body.projects-collapsed .project {
 .carousel-track > * {
     flex: 0 0 100%;
     scroll-snap-align: center;
+    /* Set by siteapp.js as the strip moves; this is the resting value, and
+       the one that stands without JS. */
+    opacity: 1;
+}
+
+/* Only the wrap from the last slide back to the first is eased — every
+   other move is driven frame by frame by the scroll itself. */
+.carousel-track.is-wrapping > * {
+    transition:
+        opacity var(--wrap-ms) var(--enter-ease),
+        transform var(--wrap-ms) var(--enter-ease);
 }
 
 .carousel-track img {
     cursor: zoom-in;
 }
 
-/* Focus belongs on the strip, but the ring reads better around the whole
-   frame than tight to one image. */
+/* The dots are the keyboard interface — real buttons, with the page's own
+   focus ring. Browsers make scroll containers focusable of their own accord,
+   and a ring drawn tight around the strip reads as a hard rule against the
+   artwork, so it is suppressed here rather than shown twice. */
+.carousel-track:focus,
 .carousel-track:focus-visible {
-    outline: 2px solid var(--color-ink);
-    outline-offset: 4px;
-    border-radius: 4px;
+    outline: none;
 }
 
 .carousel-dots {
