@@ -636,6 +636,158 @@ function initializeProjectCollapse() {
 }
 
 /* ============================================
+   Carousel
+
+   Scrolling, swiping and snapping are native — this only builds the dots
+   from however many slides there are, keeps the current one marked, and
+   opens the viewer. The viewer is a second carousel over the same images,
+   so both are driven by the code below.
+   ============================================ */
+
+function setupCarousel(root, onPick) {
+    const track = root.querySelector('[data-track]');
+    if (!track || track.children.length < 2) return null;
+
+    const slides = [...track.children];
+
+    const dots = document.createElement('div');
+    dots.className = 'carousel-dots';
+    dots.setAttribute('role', 'tablist');
+    dots.setAttribute('aria-label', 'Choose image');
+    root.appendChild(dots);
+
+    const buttons = slides.map((slide, index) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'carousel-dot';
+        dot.setAttribute('role', 'tab');
+        dot.setAttribute('aria-label', 'Image ' + (index + 1) + ' of ' + slides.length);
+        dot.addEventListener('click', () => goTo(index));
+        dots.appendChild(dot);
+        return dot;
+    });
+
+    let current = -1;
+
+    function mark(index) {
+        if (index === current) return;
+        current = index;
+        buttons.forEach((dot, i) => dot.setAttribute('aria-current', String(i === index)));
+    }
+
+    function goTo(index) {
+        const target = slides[Math.max(0, Math.min(slides.length - 1, index))];
+        /* Scrolling the track directly would also scroll the page to it. */
+        track.scrollTo({
+            left: target.offsetLeft - track.offsetLeft,
+            behavior: prefersReducedMotion() ? 'auto' : 'smooth'
+        });
+    }
+
+    /* Whichever slide is nearest the centre is the one being looked at —
+       true whether it arrived by swipe, dot or key. */
+    let queued = false;
+    track.addEventListener('scroll', () => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(() => {
+            queued = false;
+            const middle = track.scrollLeft + track.clientWidth / 2;
+            mark(slides.reduce((best, slide, i) => {
+                const centre = slide.offsetLeft - track.offsetLeft + slide.offsetWidth / 2;
+                return Math.abs(centre - middle) < best.gap
+                    ? { gap: Math.abs(centre - middle), i }
+                    : best;
+            }, { gap: Infinity, i: 0 }).i);
+        });
+    }, { passive: true });
+
+    track.tabIndex = 0;
+    track.setAttribute('aria-label', slides.length + ' images, use arrow keys');
+    track.addEventListener('keydown', event => {
+        const step = { ArrowLeft: -1, ArrowRight: 1 }[event.key];
+        if (!step) return;
+        event.preventDefault();
+        goTo(current + step);
+    });
+
+    if (onPick) {
+        slides.forEach((slide, index) => slide.addEventListener('click', () => onPick(index)));
+    }
+
+    mark(0);
+    return { goTo, index: () => current };
+}
+
+function initializeCarousels() {
+    const roots = [...document.querySelectorAll('[data-carousel]')];
+    if (!roots.length || typeof HTMLDialogElement !== 'function') {
+        roots.forEach(root => setupCarousel(root));
+        return;
+    }
+
+    const viewer = document.createElement('dialog');
+    viewer.className = 'viewer';
+    viewer.innerHTML = '<div class="viewer-inner"><div class="carousel-track" data-track></div></div>';
+    document.body.appendChild(viewer);
+
+    const inner = viewer.querySelector('.viewer-inner');
+    const track = viewer.querySelector('[data-track]');
+    let carousel = null;
+
+    function open(images, index) {
+        track.replaceChildren(...images.map(source => {
+            const img = document.createElement('img');
+            img.src = source.currentSrc || source.src;
+            img.alt = source.alt;
+            return img;
+        }));
+
+        viewer.querySelectorAll('.carousel-dots').forEach(el => el.remove());
+        carousel = setupCarousel(inner, close);
+
+        viewer.showModal();
+        if (carousel) carousel.goTo(index);
+        /* Two frames: one for the slides to lay out, one so the browser has
+           a start value to animate from. */
+        requestAnimationFrame(() => requestAnimationFrame(() => viewer.classList.add('is-open')));
+    }
+
+    function close() {
+        if (!viewer.classList.contains('is-open')) return;
+        viewer.classList.remove('is-open');
+
+        if (prefersReducedMotion()) {
+            viewer.close();
+            return;
+        }
+
+        /* Let it shrink away before the dialog goes; the timeout is the
+           backstop if the transition never fires. */
+        let done = false;
+        const finish = () => { if (!done) { done = true; viewer.close(); } };
+        inner.addEventListener('transitionend', finish, { once: true });
+        setTimeout(finish, cssDuration('--viewer-ms', 320) + 60);
+    }
+
+    /* Escape closes the dialog itself, so mirror it back into the animation. */
+    viewer.addEventListener('cancel', event => {
+        event.preventDefault();
+        close();
+    });
+
+    /* Anywhere that is not a dot or the image closes it. */
+    viewer.addEventListener('click', event => {
+        if (!event.target.closest('.carousel-dot')) close();
+    });
+
+    roots.forEach(root => {
+        const images = [...root.querySelectorAll('[data-track] > img')];
+        setupCarousel(root, index => open(images, index));
+    });
+}
+
+/* ============================================
    Entrance motion
 
    Content marked [data-enter] fades and rises in as it enters the viewport.
@@ -707,6 +859,7 @@ function start() {
         initializeTopBar,
         initializeProjectCollapse,
         initializeScrollTop,
+        initializeCarousels,
         initializeEntrance
     ].forEach(run => {
         try {
