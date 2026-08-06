@@ -39,9 +39,21 @@ const HELLO_LANGUAGES = [
 ];
 
 const HELLO_HOLD_MS = 2400;   /* how long each greeting is held */
-const FIRST_FADE_MS = 300;    /* beat before the page speaks */
+const HERO_BEAT_MS = 300;     /* the beat on which the hero arrives */
 
-/* Set from --enter-ms at start: the swap waits for the fade-out to finish,
+/* The moment the hero is due. Everything in it reveals then — together, and
+   never sooner: a class added in the same frame an element first exists has
+   no transparent state to fade from, so it would simply appear. */
+const heroDue = () => startedAt + HERO_BEAT_MS;
+let startedAt = 0;
+
+/* Reveals on the hero's beat, however early the caller is ready. */
+function revealOnBeat(elements) {
+    const wait = Math.max(0, heroDue() - Date.now());
+    setTimeout(() => elements.forEach(el => el.classList.add('visible')), wait);
+}
+
+/* Set from --hero-ms at start: the swap waits for the fade-out to finish,
    so a mismatch would show the word changing. */
 let fadeMs = 900;
 
@@ -72,13 +84,10 @@ function startHelloAnimation() {
 
     nextGreeting(el);
 
-    setTimeout(() => {
-        el.classList.add('visible');
-        /* The name arrives on the same beat, then stays while the languages
-           keep cycling above it. */
-        if (name) name.classList.add('visible');
-        setTimeout(runFadeSequence, HELLO_HOLD_MS);
-    }, FIRST_FADE_MS);
+    /* Greeting and name arrive on the beat together; the name then stays
+       while the languages keep cycling above it. */
+    revealOnBeat([el, name].filter(Boolean));
+    setTimeout(runFadeSequence, HERO_BEAT_MS + HELLO_HOLD_MS);
 }
 
 /* ============================================
@@ -96,7 +105,9 @@ function initializeHeroMeta() {
     const clocks = [...document.querySelectorAll('[data-clock]')];
 
     if (clocks.length) {
-        clocks.forEach(el => el.classList.add('visible'));
+        /* On the beat, with the greeting and the name — not on load, which
+           would skip the fade entirely. */
+        revealOnBeat(clocks);
 
         const tick = () => {
             const now = new Date();
@@ -125,6 +136,11 @@ function initializeHeroMeta() {
                 fill('[data-place]', where);
                 fill('[data-weather]', what);
                 fill('[data-conditions]', where ? where + '. ' + what : what);
+
+                /* Held to the same beat, so a cached reading — which returns
+                   almost at once — arrives with the rest rather than ahead
+                   of it. A first visit fades in when the lookup lands. */
+                revealOnBeat([...document.querySelectorAll('[data-conditions], [data-place], [data-weather]')]);
             })
             /* On failure the lines are removed, so the hero closes up cleanly
                rather than holding a blank. */
@@ -136,10 +152,7 @@ function initializeHeroMeta() {
 }
 
 function fill(selector, text) {
-    document.querySelectorAll(selector).forEach(el => {
-        el.textContent = text;
-        el.classList.add('visible');
-    });
+    document.querySelectorAll(selector).forEach(el => { el.textContent = text; });
 }
 
 /* --------------------------------------------
@@ -1066,7 +1079,8 @@ function start() {
     if (started) return;   // never bind twice, however this file is loaded
     started = true;
 
-    fadeMs = cssDuration('--enter-ms', fadeMs);
+    startedAt = Date.now();
+    fadeMs = cssDuration('--hero-ms', fadeMs);
 
     /* Each module is isolated: one failing must not take the rest with it.
        dockLabel goes first — the theme and collapse modules refresh it. */
