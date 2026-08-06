@@ -25,6 +25,14 @@
     --line-height: 1.4167;                                   /* 34 / 24 */
     --letter-spacing: -0.0083em;                             /* -0.2px at 24px */
 
+    /* Chrome type — the bar and the dock's label. Fixed rather than fluid,
+       as interface furniture is on every system: a menu bar is the same size
+       on a laptop and a 32" display. The label is a step down from the bar,
+       being a passing note rather than a standing readout. */
+    --font-chrome: 14px;
+    --font-chrome-small: 12px;
+    --line-height-chrome: 1.4;
+
     /* Palette — one ink, one ground, one muted grey for supporting text,
        one accent used only by the progress bar. */
     --color-bg: #FFFFFF;
@@ -179,9 +187,9 @@ h1, h2 {
     padding-left: max(var(--page-edge), env(safe-area-inset-left, 0px));
     padding-right: max(var(--page-edge), env(safe-area-inset-right, 0px));
 
-    font-size: 14px;
-    line-height: 1.4;
-    letter-spacing: -0.008em;
+    font-size: var(--font-chrome);
+    line-height: var(--line-height-chrome);
+    letter-spacing: var(--letter-spacing);
     font-variant-numeric: tabular-nums;
     color: var(--color-ink);   /* one colour throughout — nothing muted here */
 
@@ -278,9 +286,9 @@ h1, h2 {
     padding: 5px 12px;
     border-radius: 999px;
     white-space: nowrap;
-    font-size: 14px;
-    line-height: 1.4;
-    letter-spacing: -0.008em;
+    font-size: var(--font-chrome-small);
+    line-height: var(--line-height-chrome);
+    letter-spacing: var(--letter-spacing);
     color: var(--color-ink);
     background-color: var(--glass-bg);
     backdrop-filter: var(--glass-backdrop);
