@@ -72,8 +72,9 @@
        and the metrics stay fixed on desktop, as iOS controls do. */
     --dock-height: 48px;
     --dock-bottom: calc(var(--edge-gap) + env(safe-area-inset-bottom, 0px));
-    --dock-edge: clamp(16px, 6vw, 28px);
-    --dock-width: calc(100% - (var(--page-edge) * 2));
+    /* Exactly the content column, at every width: the dock belongs to the
+       document it navigates, so its ends sit on the same edges as the text. */
+    --dock-width: min(var(--content-width), calc(100% - (var(--page-edge) * 2)));
     --dock-action-size: 44px;
     --dock-action-gap: 8px;
     --dock-actions-inset: 5px;
@@ -187,10 +188,20 @@ h1, h2 {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    /* env() keeps the row clear of a notch in landscape; max() means it
-       never falls inside the page gutter. */
-    padding-left: max(var(--page-edge), env(safe-area-inset-left, 0px));
-    padding-right: max(var(--page-edge), env(safe-area-inset-right, 0px));
+    /* The glass spans the window, but its contents land on the same column
+       as the page, so the name here sits directly above the greeting below.
+       The three terms are the page gutter, the notch in landscape, and the
+       column's own inset — whichever is largest wins. */
+    padding-left: max(
+        var(--page-edge),
+        env(safe-area-inset-left, 0px),
+        calc((100% - var(--content-width)) / 2)
+    );
+    padding-right: max(
+        var(--page-edge),
+        env(safe-area-inset-right, 0px),
+        calc((100% - var(--content-width)) / 2)
+    );
 
     font-size: var(--font-chrome);
     line-height: var(--line-height-chrome);
@@ -970,7 +981,6 @@ body.viewer-open {
 @media screen and (max-width: 700px) {
     :root {
         --edge-gap: 20px;
-        --dock-width: min(var(--content-width), calc(100% - (var(--dock-edge) * 2)));
 
         /* Chrome steps down with the page. Content falls from 24 to 16 here,
            so holding the bar at its desktop size would leave interface and
@@ -993,12 +1003,13 @@ body.viewer-open {
     }
 }
 
-/* A finger is not a pointer: where there is no hover the marks keep their
-   size but the targets widen to the 24px minimum, which a mouse does not
-   need and which would leave the row looking sparse on a desktop. */
+/* A finger is less precise than a pointer, so on touch the target grows
+   downward rather than sideways — height a finger can find, width the eye
+   still reads as one tight row. Swipe is the primary gesture here in any
+   case; the dots are chiefly an indicator. */
 @media (hover: none) {
     .carousel-dot {
-        width: 24px;
+        height: 44px;
     }
 }
 
