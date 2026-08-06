@@ -649,19 +649,41 @@ function setupCarousel(root, onPick) {
     const track = root.querySelector('[data-track]');
     if (!track || track.children.length < 2) return null;
 
-    const slides = [...track.children];
+    /* Looping is done with copies rather than a jump. The last slide is
+       repeated before the first and the first after the last, so moving off
+       either end is an ordinary scroll in the direction of travel — the
+       reader sees continuous motion. Once it settles on a copy the strip is
+       silently repositioned onto the real one, which is invisible because
+       the two are identical. */
+    const real = [...track.children];
+    const count = real.length;
+
+    const head = real[count - 1].cloneNode(true);
+    const tail = real[0].cloneNode(true);
+    [head, tail].forEach(copy => {
+        copy.dataset.copy = '';
+        copy.setAttribute('aria-hidden', 'true');
+    });
+    track.prepend(head);
+    track.append(tail);
+
+    const slides = [...track.children];          // count + 2
+    const FIRST = 1;                             // where the real slides start
+    const LAST = count;
+    const toReal = position => ((position - FIRST) + count) % count;
+    const offsetOf = position => slides[position].offsetLeft - track.offsetLeft;
 
     const dots = document.createElement('div');
     dots.className = 'carousel-dots';
     dots.setAttribute('role', 'tablist');
     dots.setAttribute('aria-label', 'Choose image');
 
-    const buttons = slides.map((slide, index) => {
+    const buttons = real.map((slide, index) => {
         const dot = document.createElement('button');
         dot.type = 'button';
         dot.className = 'carousel-dot';
         dot.setAttribute('role', 'tab');
-        dot.setAttribute('aria-label', 'Image ' + (index + 1) + ' of ' + slides.length);
+        dot.setAttribute('aria-label', 'Image ' + (index + 1) + ' of ' + count);
         dot.addEventListener('click', () => goTo(index));
         dots.appendChild(dot);
         return dot;
@@ -670,6 +692,8 @@ function setupCarousel(root, onPick) {
     root.appendChild(dots);
 
     let current = 0;
+    let pending = null;    // a copy we are travelling to, and its real twin
+    let steering = false;  // a move we started, still under way
 
     function mark(index) {
         if (index === current) return;
@@ -677,65 +701,117 @@ function setupCarousel(root, onPick) {
         buttons.forEach((dot, i) => dot.setAttribute('aria-current', String(i === index)));
     }
 
-    /* Instant when placing the viewer on the image that was clicked; eased
-       when the reader asked to move. */
-    function goTo(index, instant) {
-        const clamped = Math.max(0, Math.min(slides.length - 1, index));
-        track.scrollTo({
-            left: slides[clamped].offsetLeft - track.offsetLeft,
-            behavior: (instant || prefersReducedMotion()) ? 'auto' : 'smooth'
-        });
-        mark(clamped);
+    function scrollTo(position, instant) {
+        const smooth = !instant && !prefersReducedMotion();
+        steering = smooth;
+        track.scrollTo({ left: offsetOf(position), behavior: smooth ? 'smooth' : 'auto' });
     }
 
-    /* Past either end, the strip comes round rather than stopping dead. The
-       jump itself is instant — travelling back through every slide would be
-       a long sweep — so it is eased by a brief crossfade instead, and the
-       arriving image appears rather than snapping in. */
+    /* The destination is marked as the move begins, not when it arrives, so
+       a quick run of key presses advances one slide per press instead of
+       recomputing from wherever the last scroll happened to have reached. */
+    function goTo(index, instant) {
+        pending = null;
+        const clamped = Math.max(0, Math.min(count - 1, index));
+        mark(clamped);
+        scrollTo(FIRST + clamped, instant);
+    }
+
+    /* Off either end, travel onto the copy — the motion continues the way it
+       was already going — and note where to land once it stops. */
     function step(offset) {
         const next = current + offset;
-        if (next >= 0 && next < slides.length) return goTo(next);
 
-        const wrapped = next < 0 ? slides.length - 1 : 0;
-        if (prefersReducedMotion()) return goTo(wrapped, true);
+        if (next >= count || next < 0) {
+            const forward = next >= count;
+            pending = forward ? { copy: LAST + 1, real: FIRST } : { copy: 0, real: LAST };
+            mark(forward ? 0 : count - 1);
+            return scrollTo(pending.copy);
+        }
 
-        track.classList.add('is-wrapping');
-        goTo(wrapped, true);
-        setTimeout(() => track.classList.remove('is-wrapping'), cssDuration('--wrap-ms', 280) + 40);
+        goTo(next);
+    }
+
+    function land() {
+        if (!pending) return;
+        /* Only once it has actually arrived — a finger held still mid-drag
+           must not trigger this. */
+        if (Math.abs(track.scrollLeft - offsetOf(pending.copy)) > 2) return;
+        const destination = offsetOf(pending.real);
+        pending = null;
+        track.scrollLeft = destination;   // assignment is always instant
     }
 
     /* Every frame of the scroll, each slide is faded and settled by how far
-       it sits from the centre. The neighbour arrives as the current one
-       leaves, so nothing is ever seen flush against its neighbour, and this
-       reads the same whether the strip was swiped, keyed or dotted. */
+       it sits from the centre, so the neighbour arrives as the current one
+       leaves. Driven by position rather than events, it reads the same
+       whether the strip was swiped, keyed or dotted. */
     function paint() {
         const frame = track.clientWidth;
         if (!frame) return;   // not laid out yet; the observers below re-run this
 
         const middle = track.scrollLeft + frame / 2;
         const reduced = prefersReducedMotion();
-        let nearest = 0, shortest = Infinity;
+        let nearest = FIRST, shortest = Infinity;
 
         slides.forEach((slide, i) => {
             const centre = slide.offsetLeft - track.offsetLeft + slide.offsetWidth / 2;
             const gap = Math.abs(centre - middle);
             if (gap < shortest) { shortest = gap; nearest = i; }
 
-            /* 0 at the centre, 1 once a full frame away. */
-            const away = Math.min(1, (gap / frame) * 1.15);
+            const away = Math.min(1, (gap / frame) * 1.15);   // 0 centred, 1 a frame away
             slide.style.opacity = String(1 - away);
             slide.style.transform = reduced ? '' : 'scale(' + (1 - away * 0.04) + ')';
         });
 
-        mark(nearest);
+        /* While a move of our own is under way the destination is already
+           marked, so only a scroll the reader drove updates the dots. */
+        if (!steering) mark(toReal(nearest));
     }
 
     let queued = false;
+    let idle = null;
     track.addEventListener('scroll', () => {
+        clearTimeout(idle);
+        idle = setTimeout(settled, 120);   // 120ms of quiet means it has stopped
+
         if (queued) return;
         queued = true;
         requestAnimationFrame(() => { queued = false; paint(); });
     }, { passive: true });
+
+    function settled() {
+        steering = false;
+        land();
+    }
+
+    if ('onscrollend' in window) track.addEventListener('scrollend', settled);
+
+    /* Deliberately not focusable: the dots are the keyboard interface, and a
+       ring around the strip reads as a rule against the artwork. */
+    track.setAttribute('role', 'group');
+    track.setAttribute('aria-roledescription', 'carousel');
+    track.setAttribute('aria-label', count + ' images. Use the arrow keys to move between them.');
+
+    if (onPick) {
+        slides.forEach((slide, position) => {
+            const image = slide.tagName === 'IMG' ? slide : slide.querySelector('img');
+            if (image) image.addEventListener('click', () => onPick(toReal(position)));
+        });
+    }
+
+    /* Start on the real first slide, past the copy that precedes it. */
+    function reset(index) {
+        const start = Math.max(0, Math.min(count - 1, index || 0));
+        pending = null;
+        mark(start);
+        scrollTo(FIRST + start, true);
+        paint();
+    }
+
+    buttons[0].setAttribute('aria-current', 'true');
+    reset(0);
+    current = 0;
 
     /* Images arrive at their own pace, and each one changes the geometry. */
     slides.forEach(slide => {
@@ -745,23 +821,7 @@ function setupCarousel(root, onPick) {
 
     if ('ResizeObserver' in window) new ResizeObserver(() => paint()).observe(track);
 
-    /* Deliberately not focusable: the dots are the keyboard interface, and
-       a ring around the strip reads as a rule against the artwork. */
-    track.setAttribute('role', 'group');
-    track.setAttribute('aria-roledescription', 'carousel');
-    track.setAttribute('aria-label', slides.length + ' images. Use the arrow keys to move between them.');
-
-    if (onPick) {
-        slides.forEach((slide, index) => {
-            const image = slide.tagName === 'IMG' ? slide : slide.querySelector('img');
-            if (image) image.addEventListener('click', () => onPick(index));
-        });
-    }
-
-    buttons[0].setAttribute('aria-current', 'true');
-    paint();
-
-    return { root, step, goTo, index: () => current };
+    return { root, step, goTo: reset, index: () => current };
 }
 
 function initializeCarousels() {
