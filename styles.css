@@ -38,7 +38,7 @@
     --step: clamp(16px, 6vw - 8px, 40px);       /* 40px at an 800px viewport */
     --space-page:    calc(var(--step) * 4);     /* 160 — page top and bottom */
     --space-section: calc(var(--step) * 2);     /*  80 — between sections */
-    --space-images:  calc(var(--step) * 1.4);   /*  56 — between image stacks */
+    --space-images:  calc(var(--step) * 1.2);   /*  48 — between image stacks */
     --space-block:   var(--step);               /*  40 — hero and project parts */
     --space-stack:   calc(var(--step) * 0.8);   /*  32 — image row padding, gutters */
     --space-meta:    calc(var(--step) * 0.6);   /*  24 — meta rows, wrapped lines */
@@ -754,6 +754,13 @@ body.projects-collapsed .project {
 }
 
 .viewer.is-open { opacity: 1; }
+
+/* Focus lands here rather than on the first dot, which would otherwise take
+   the focus mark the moment the dialog opens and read as an odd dot out. */
+.viewer-inner:focus,
+.viewer-inner:focus-visible {
+    outline: none;
+}
 
 .viewer-inner {
     height: 100%;
