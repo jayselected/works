@@ -688,25 +688,65 @@ function setupCarousel(root, onPick) {
         mark(clamped);
     }
 
-    /* Whichever slide is nearest the centre is the one in frame — true
-       however it got there: swipe, dot or key. */
+    /* Past either end, the strip comes round rather than stopping dead. The
+       jump itself is instant — travelling back through every slide would be
+       a long sweep — so it is eased by a brief crossfade instead, and the
+       arriving image appears rather than snapping in. */
+    function step(offset) {
+        const next = current + offset;
+        if (next >= 0 && next < slides.length) return goTo(next);
+
+        const wrapped = next < 0 ? slides.length - 1 : 0;
+        if (prefersReducedMotion()) return goTo(wrapped, true);
+
+        track.classList.add('is-wrapping');
+        goTo(wrapped, true);
+        setTimeout(() => track.classList.remove('is-wrapping'), cssDuration('--wrap-ms', 280) + 40);
+    }
+
+    /* Every frame of the scroll, each slide is faded and settled by how far
+       it sits from the centre. The neighbour arrives as the current one
+       leaves, so nothing is ever seen flush against its neighbour, and this
+       reads the same whether the strip was swiped, keyed or dotted. */
+    function paint() {
+        const frame = track.clientWidth;
+        if (!frame) return;   // not laid out yet; the observers below re-run this
+
+        const middle = track.scrollLeft + frame / 2;
+        const reduced = prefersReducedMotion();
+        let nearest = 0, shortest = Infinity;
+
+        slides.forEach((slide, i) => {
+            const centre = slide.offsetLeft - track.offsetLeft + slide.offsetWidth / 2;
+            const gap = Math.abs(centre - middle);
+            if (gap < shortest) { shortest = gap; nearest = i; }
+
+            /* 0 at the centre, 1 once a full frame away. */
+            const away = Math.min(1, (gap / frame) * 1.15);
+            slide.style.opacity = String(1 - away);
+            slide.style.transform = reduced ? '' : 'scale(' + (1 - away * 0.04) + ')';
+        });
+
+        mark(nearest);
+    }
+
     let queued = false;
     track.addEventListener('scroll', () => {
         if (queued) return;
         queued = true;
-        requestAnimationFrame(() => {
-            queued = false;
-            const middle = track.scrollLeft + track.clientWidth / 2;
-            let best = 0, gap = Infinity;
-            slides.forEach((slide, i) => {
-                const centre = slide.offsetLeft - track.offsetLeft + slide.offsetWidth / 2;
-                if (Math.abs(centre - middle) < gap) { gap = Math.abs(centre - middle); best = i; }
-            });
-            mark(best);
-        });
+        requestAnimationFrame(() => { queued = false; paint(); });
     }, { passive: true });
 
-    track.tabIndex = 0;
+    /* Images arrive at their own pace, and each one changes the geometry. */
+    slides.forEach(slide => {
+        const image = slide.tagName === 'IMG' ? slide : slide.querySelector('img');
+        if (image && !image.complete) image.addEventListener('load', paint, { once: true });
+    });
+
+    if ('ResizeObserver' in window) new ResizeObserver(() => paint()).observe(track);
+
+    /* Deliberately not focusable: the dots are the keyboard interface, and
+       a ring around the strip reads as a rule against the artwork. */
     track.setAttribute('role', 'group');
     track.setAttribute('aria-roledescription', 'carousel');
     track.setAttribute('aria-label', slides.length + ' images. Use the arrow keys to move between them.');
@@ -719,13 +759,9 @@ function setupCarousel(root, onPick) {
     }
 
     buttons[0].setAttribute('aria-current', 'true');
+    paint();
 
-    return {
-        root,
-        step: offset => goTo(current + offset),
-        goTo,
-        index: () => current
-    };
+    return { root, step, goTo, index: () => current };
 }
 
 function initializeCarousels() {
