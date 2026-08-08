@@ -168,7 +168,9 @@ function initializeTopBar() {
         const passed = !entry.isIntersecting && entry.boundingClientRect.top < 0;
         topbar.classList.toggle('is-visible', passed);
     }, {
-        rootMargin: `-${topbar.offsetHeight}px 0px 0px 0px`,
+        /* The bar's lower edge, not its height: it floats clear of the top,
+           and that edge is where the hero's own readings disappear. */
+        rootMargin: `-${Math.round(topbar.getBoundingClientRect().bottom)}px 0px 0px 0px`,
         threshold: 0
     }).observe(anchor);
 }
