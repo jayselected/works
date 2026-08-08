@@ -1,10 +1,8 @@
 /**
- * Portfolio behaviour
- * -------------------
- * The hero (cycling greeting, live date, local conditions) and the chrome
- * (theme, scroll progress, project collapse, back to top, entrance motion).
- * The only script outside this file is the theme bootstrap in the document
- * head, which must run before first paint to avoid a flash of the wrong theme.
+ * Portfolio behaviour — the hero (cycling greeting, live date, conditions)
+ * and the chrome (theme, scroll, collapse, carousels, entrance motion).
+ * The only script outside this file is the theme bootstrap in the head,
+ * which must run before first paint to avoid a flash of the wrong theme.
  */
 
 /* ============================================
@@ -41,9 +39,8 @@ const HELLO_LANGUAGES = [
 const HELLO_HOLD_MS = 2400;   /* how long each greeting is held */
 const HERO_BEAT_MS = 300;     /* the beat on which the hero arrives */
 
-/* The moment the hero is due. Everything in it reveals then — together, and
-   never sooner: a class added in the same frame an element first exists has
-   no transparent state to fade from, so it would simply appear. */
+/* Everything in the hero reveals on this beat, and never sooner: a class
+   added in the frame an element first exists has nothing to fade from. */
 const heroDue = () => startedAt + HERO_BEAT_MS;
 let startedAt = 0;
 
@@ -651,23 +648,20 @@ function initializeProjectCollapse() {
 /* ============================================
    Carousel
 
-   Scrolling, swiping and snapping are native, so there is no gesture code
-   here. This builds the dots from however many slides exist, marks the one
-   in frame, routes the arrow keys to whichever carousel is being looked at,
-   and opens the viewer. The viewer runs the same controller over the same
-   images, so enlarged behaviour is identical by construction.
+   Scrolling, swiping and snapping are native. This builds the dots, marks
+   the slide in frame, routes the arrow keys to whichever carousel is being
+   looked at, and opens the viewer — which runs the same controller, so
+   enlarged behaviour is identical by construction.
    ============================================ */
 
 function setupCarousel(root, onPick) {
     const track = root.querySelector('[data-track]');
     if (!track || track.children.length < 2) return null;
 
-    /* Looping is done with copies rather than a jump. The last slide is
-       repeated before the first and the first after the last, so leaving
-       either end is an ordinary scroll in the direction of travel. Once the
-       strip is resting on a copy it is shifted by exactly one cycle onto the
-       real slide — invisible, because the two are the same picture at the
-       same offset within the frame. */
+    /* Looping by copies, not by jumping: the last slide is repeated before
+       the first and the first after the last, so leaving either end is an
+       ordinary scroll. Resting on a copy, the strip shifts by exactly one
+       cycle onto the real slide — invisible, being the same picture. */
     const real = [...track.children];
     const count = real.length;
 
@@ -730,9 +724,8 @@ function setupCarousel(root, onPick) {
         return best;
     }
 
-    /* Standing on a copy is always temporary. Shifting by one whole cycle
-       moves onto the real twin while preserving the exact position within
-       the frame, so it is unseen — at rest, and equally mid-gesture. */
+    /* One whole cycle preserves the exact position within the frame, so the
+       shift is unseen at rest and equally unseen mid-gesture. */
     function normalise() {
         if (at >= COPY_END)  { track.scrollLeft -= cycle(); at -= count; }
         else if (at <= 0)    { track.scrollLeft += cycle(); at += count; }
@@ -763,10 +756,9 @@ function setupCarousel(root, onPick) {
         glide(FIRST + Math.max(0, Math.min(count - 1, index || 0)), true);
     }
 
-    /* Whatever moved the strip — key, dot, swipe or momentum — once it comes
-       to rest we take the position at face value and normalise from there.
-       This is what keeps a fast swipe cycling rather than stranding the
-       strip on a copy with nowhere left to go. */
+    /* Whatever moved the strip, once it rests we take the position at face
+       value. This is what keeps a fast swipe cycling rather than stranding
+       it on a copy with nowhere left to go. */
     function settle() {
         if (holding) return;   // still under a finger; wait for it to lift
         steering = false;
@@ -775,10 +767,9 @@ function setupCarousel(root, onPick) {
         normalise();
     }
 
-    /* Every frame of the scroll, each slide is faded and settled by how far
-       it sits from the centre, so the next image arrives as the current one
-       leaves and no two are ever seen flush together. Driven by position
-       rather than events, it reads the same however the strip was moved. */
+    /* Each slide is faded by its distance from the centre, so the next image
+       arrives as the current one leaves. Driven by position, not events, so
+       it reads the same however the strip was moved. */
     function paint() {
         const frame = track.clientWidth;
         if (!frame) return;   // not laid out yet; the observers below re-run this
@@ -868,11 +859,9 @@ function initializeCarousels() {
     const carousels = new Map();
     let inView = null;   // the one filling most of the screen
 
-    /* The arrow keys should work the moment a carousel is reached, without
-       clicking it first. A carousel claims them once it is at least half in
-       view; anything less and the keys stay with the page, as they should.
-       Where this is unavailable the carousel still works in every other
-       respect — the keys simply wait until the strip is focused. */
+    /* A carousel claims the arrow keys once it is at least half in view;
+       anything less and they stay with the page. Without this the carousel
+       still works — the keys just wait until the strip is focused. */
     const watcher = 'IntersectionObserver' in window
         ? new IntersectionObserver(entries => {
             entries.forEach(entry => {
@@ -909,12 +898,10 @@ function initializeCarousels() {
 
     if (!carousels.size) return;
 
-    /* Every visit starts on the first image. Two things would otherwise
-       leave it elsewhere: browsers restore a scroll container's position on
-       reload and when a page is returned to from history, and a strip that
-       is measured before it has been laid out reads every offset as zero,
-       which parks it on the copy that precedes the first slide. pageshow
-       covers both, firing after any restoration. */
+    /* Every visit starts on the first image. Browsers restore a scroll
+       container's position on reload and on a history return, and a strip
+       measured before layout reads every offset as zero — parking it on the
+       leading copy. pageshow covers both, firing after restoration. */
     window.addEventListener('pageshow', () => {
         carousels.forEach(carousel => carousel.goTo(0));
     });
