@@ -44,7 +44,12 @@
 
     /* Spacing — one step drives every gap, so the desktop ratio
        160 / 80 / 40 / 32 / 24 holds at every width. Retune here. */
-    --step: clamp(16px, 6vw - 8px, 40px);       /* 40px at an 800px viewport */
+    /* The step is a multiple of the type, not of the viewport, so every gap
+       on the page holds the same proportion to the words it separates. That
+       is what makes a phone feel like the same page as a desktop rather than
+       a squeezed one: at 22px the step is 40, at 14px it is 25.5, and the
+       ratios below are unchanged either way. */
+    --step: calc(var(--font-size) * 1.8182);   /* 40 at the 22px cap */
     --space-page:    calc(var(--step) * 4);     /* 160 — page top and bottom */
     --space-section: calc(var(--step) * 1.4);   /*  56 — between sections and projects */
     --space-stack:   calc(var(--step) * 1.2);   /*  48 — air inside an image row */
