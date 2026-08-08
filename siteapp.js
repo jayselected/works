@@ -156,25 +156,6 @@ function fill(selector, text) {
    Top bar
    -------------------------------------------- */
 
-function initializeTopBar() {
-    const topbar = document.getElementById('topbar');
-    const anchor = document.querySelector('.hero-meta');
-    if (!topbar || !anchor || !('IntersectionObserver' in window)) return;
-
-    /* Shown once the hero's own date and conditions have passed behind the
-       bar, so the two never say the same thing at the same time. The bar is
-       measured rather than assumed, so its height lives in the CSS alone. */
-    new IntersectionObserver(([entry]) => {
-        const passed = !entry.isIntersecting && entry.boundingClientRect.top < 0;
-        topbar.classList.toggle('is-visible', passed);
-    }, {
-        /* The bar's lower edge, not its height: it floats clear of the top,
-           and that edge is where the hero's own readings disappear. */
-        rootMargin: `-${Math.round(topbar.getBoundingClientRect().bottom)}px 0px 0px 0px`,
-        threshold: 0
-    }).observe(anchor);
-}
-
 /* ============================================
    Location and weather
 
@@ -365,6 +346,8 @@ function initializeTheme() {
 function initializeScroll() {
     const progress = document.getElementById('scroll-progress');
     const bar      = document.getElementById('scroll-progress-fill');
+    const topbar   = document.getElementById('topbar');
+    const anchor   = document.querySelector('.hero-meta');
     if (!progress || !bar) return;
 
     let queued = false;
@@ -379,6 +362,18 @@ function initializeScroll() {
 
         bar.style.transform = `scaleX(${ratio})`;
         progress.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
+
+        /* The bar takes over once the hero's own readings have gone behind
+           it. Both edges are read here, on the frame they are needed, rather
+           than measured once at load — a measurement taken before layout has
+           settled reads zero, and the bar then triggers at the wrong place or
+           not at all. */
+        if (topbar && anchor) {
+            topbar.classList.toggle(
+                'is-visible',
+                anchor.getBoundingClientRect().bottom <= topbar.getBoundingClientRect().bottom
+            );
+        }
     }
 
     /* Scroll fires far more often than the screen refreshes; coalescing into
@@ -1079,7 +1074,6 @@ function start() {
         initializeHeroMeta,
         initializeTheme,
         initializeScroll,
-        initializeTopBar,
         initializeProjectCollapse,
         initializeScrollTop,
         initializeCarousels,
