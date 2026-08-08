@@ -856,42 +856,6 @@ body.viewer-open {
     will-change: auto;
 }
 
-/* --- Fading past the top ---
-   Content dissolves as it leaves, driven by scroll position rather than time,
-   so it tracks the finger exactly and runs off the main thread.
-
-   The bar's lower edge is at 72px (24 top + 48 tall). Insetting the timeline
-   by 160px starts the fade there, and running it over 88px of scroll finishes
-   it exactly at 72px — so nothing is ever seen in the strip above the bar.
-   The run is a length, not a percentage, so it takes the same distance
-   whether the thing leaving is a line of text or a tall image.
-
-   Longhands, never the shorthand: the shorthand resets animation-duration to
-   0s, which on a scroll timeline finishes instantly and holds opacity 0 —
-   blanking the page. The guard tests every value used here, so an engine that
-   cannot parse one of them skips the block rather than half-applying it.
-
-   Only the exit is animated; `forwards` means nothing applies before the
-   range begins, leaving the entrance transition free. The hero fades as a
-   whole so the greeting can keep cycling underneath. */
-@supports (animation-timeline: view(block 160px 0px))
-      and (animation-range: exit 0px exit 88px)
-      and (animation-duration: auto) {
-    .hero,
-    [data-enter] {
-        animation-name: fade-past;
-        animation-duration: auto;
-        animation-timing-function: linear;
-        animation-fill-mode: forwards;
-        animation-timeline: view(block 160px 0px);
-        animation-range: exit 0px exit 88px;
-    }
-}
-
-@keyframes fade-past {
-    to { opacity: 0; }
-}
-
 /* The dock settles in once, on load — chrome arrives after the content it
    frames. Its keyframe carries the centring translate through, or it would
    jump left mid-animation. */
