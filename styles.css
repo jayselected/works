@@ -78,6 +78,9 @@
        targets, 8pt gap, 5pt inset, 22pt glyphs. Fixed at every width. */
     --dock-height: 48px;
     --dock-bottom: calc(var(--edge-gap) + env(safe-area-inset-bottom, 0px));
+    /* The bar's mirror of it, so the two float the same distance in. */
+    --bar-top: calc(var(--edge-gap) + env(safe-area-inset-top, 0px));
+    --bar-inset: 20px;   /* text to capsule edge */
     /* The dock spans the window, at the page gutter. Below 764px that gutter
        is also where the column starts, so on a phone the dock and the column
        are exactly as wide as each other; on a desktop it reads as a floating
@@ -185,20 +188,22 @@ h1, h2 {
    ============================================ */
 
 .topbar {
+    /* A floating capsule, inset and spaced exactly as the dock is: same
+       width, same distance from its edge, same glass. Auto margins centre it
+       without a transform, leaving the entrance free to move it. */
     position: fixed;
-    top: 0;
+    top: var(--bar-top);
     left: 0;
     right: 0;
+    width: var(--dock-width);
+    margin: 0 auto;
     z-index: 200;
-    height: 48px;
+    height: var(--dock-height);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    /* At the page gutter, like the dock: both are window chrome and sit on
-       the window's edges. env() keeps the row clear of a notch in landscape. */
-    padding-left: max(var(--page-edge), env(safe-area-inset-left, 0px));
-    padding-right: max(var(--page-edge), env(safe-area-inset-right, 0px));
+    padding: 0 var(--bar-inset);
 
     font-size: var(--font-chrome);
     line-height: var(--line-height-chrome);
@@ -209,7 +214,9 @@ h1, h2 {
     background-color: var(--glass-bg);
     backdrop-filter: var(--glass-backdrop);
     -webkit-backdrop-filter: var(--glass-backdrop);
-    border-bottom: 1px solid var(--glass-border);
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    box-shadow: var(--glass-shadow);
 
     /* Arrives as a soft fade with the smallest of rises, rather than a
        slide — the same at every width. */
@@ -952,6 +959,7 @@ body.viewer-open {
            would leave interface and content indistinguishable. */
         --font-chrome: 12px;
         --font-chrome-small: 11px;
+        --bar-inset: 12px;   /* a smaller capsule wants a tighter inset */
     }
 
     .viewer-slide img {
@@ -980,8 +988,8 @@ body.viewer-open {
    weekday and month, and "Thunderstorm". Everything dropped here is still
    carried in full by the hero, so nothing is lost, only repeated less. */
 
-/* The full row needs ~735px. */
-@media screen and (max-width: 760px) {
+/* Inside the capsule the full row needs ~673px of usable width. */
+@media screen and (max-width: 800px) {
     .topbar-place,
     .topbar-place-sep {
         display: none;
