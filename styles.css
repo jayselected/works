@@ -949,7 +949,6 @@ body.viewer-open {
 
 @media screen and (max-width: 700px) {
     :root {
-        --edge-gap: 20px;
 
         /* Content falls to 16 here; holding the bar at its desktop size
            would leave interface and content indistinguishable. */
