@@ -1,1100 +1,1032 @@
-/**
- * Portfolio behaviour — the hero (cycling greeting, live date, conditions)
- * and the chrome (theme, scroll, collapse, carousels, entrance motion).
- * The only script outside this file is the theme bootstrap in the head,
- * which must run before first paint to avoid a flash of the wrong theme.
- */
-
 /* ============================================
-   Shared
+   Foundation
    ============================================ */
 
-/* Read live, so a change to the OS setting mid-session is respected. */
-function prefersReducedMotion() {
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* Reads a duration token from the stylesheet, so timings that must match the
-   CSS are single-sourced rather than duplicated here. */
-function cssDuration(name, fallback) {
-    const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-    if (raw.endsWith('ms')) return parseFloat(raw) || fallback;
-    if (raw.endsWith('s'))  return (parseFloat(raw) || 0) * 1000 || fallback;
-    return fallback;
+:root {
+    color-scheme: light;
+
+    /* Content column. */
+    --content-width: 700px;
+    /* Side gutter: 32px on desktop, holding 28px on phones. */
+    --page-edge: clamp(1.75rem, 1.5rem + 1vw, 2rem);
+    /* Screen edge to dock. */
+    --edge-gap: 24px;
+
+    /* Type — one size for the whole page: 24 / 34 / -0.2px on desktop,
+       fluid to 14px on phones. Leading and tracking are ratios, so the
+       desktop proportions hold at every size. */
+    --font-size: clamp(0.875rem, 0.375rem + 2vw, 1.375rem);  /* 14 → 22 */
+    /* A length, not a ratio: 20/14 and 28/22 are different proportions, and
+       smaller type wants comparatively more leading. Both ends land exactly
+       and the ratio loosens on the way down, which is how it should. */
+    --line-height: clamp(1.25rem, 0.75rem + 2vw, 1.75rem);   /* 20 → 28 */
+    --letter-spacing: -0.0091em;                             /* -0.2px at 22px */
+
+    /* Chrome type — fixed, not fluid: interface furniture is the same size on
+       a laptop and a 32" display. The label sits a step below the bar. */
+    --font-chrome: 14px;
+    --font-chrome-small: 12px;
+    --line-height-chrome: 1.4;
+
+    /* Palette — one ink, one ground, one muted grey for supporting text,
+       one accent used only by the progress bar. */
+    --color-bg: #FFFFFF;
+    --color-ink: #000000;
+    --color-muted: #86868B;             /* project type, meta values */
+    --color-line: rgba(0, 0, 0, 0.1);   /* chrome hairlines */
+    --color-accent: #007AFF;
+
+    /* Spacing — one step drives every gap, so the desktop ratio
+       160 / 80 / 40 / 32 / 24 holds at every width. Retune here. */
+    /* The step is a multiple of the type, not of the viewport, so every gap
+       on the page holds the same proportion to the words it separates. That
+       is what makes a phone feel like the same page as a desktop rather than
+       a squeezed one: at 22px the step is 40, at 14px it is 25.5, and the
+       ratios below are unchanged either way. */
+    --step: calc(var(--font-size) * 1.8182);   /* 40 at the 22px cap */
+    --space-page:    calc(var(--step) * 4);     /* 160 — page top and bottom */
+    --space-section: calc(var(--step) * 1.4);   /*  56 — between sections and projects */
+    --space-stack:   calc(var(--step) * 1.2);   /*  48 — air inside an image row */
+    --space-block:   calc(var(--step) * 0.8);   /*  32 — hero and project parts */
+    --space-meta:    calc(var(--step) * 0.6);   /*  24 — meta rows, wrapped image lines */
+    --space-row:     calc(var(--step) * 0.2);   /*   8 — label to its values */
+
+    /* Two paces: content answers the reader's scroll and arrives at interface
+       speed; the hero's greeting is an ambient loop and can afford to be
+       slow. All of it is neutralised under prefers-reduced-motion. */
+    --enter-rise: 12px;
+    --enter-ms: 400ms;      /* content arriving as it is scrolled to */
+    --hero-ms: 900ms;       /* the greeting cycling — siteapp.js reads this */
+    --enter-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --chrome-ms: 600ms;     /* dock settling in on load */
+    /* Small state changes — hover, press, theme, a dot lighting up. Quicker
+       than an entrance and on the browser's own curve, because these answer
+       the reader rather than announcing anything. */
+    --ui-ms: 200ms;
+    --ui-ease: ease;
+    --collapse-ms: 400ms;   /* projects morphing between layouts */
+    --bar-ms: 400ms;        /* top bar fading in and out */
+    --viewer-ms: 320ms;     /* enlarged image growing in and away */
+
+    /* Dock — measured from the iOS 26 Safari bottom bar: 48pt capsule, 44pt
+       targets, 8pt gap, 5pt inset, 22pt glyphs. Fixed at every width. */
+    --dock-height: 48px;
+    --dock-bottom: calc(var(--edge-gap) + env(safe-area-inset-bottom, 0px));
+    /* The bar's mirror of it, so the two float the same distance in. */
+    --bar-top: calc(var(--edge-gap) + env(safe-area-inset-top, 0px));
+    --bar-inset: 20px;   /* text to capsule edge */
+    /* The dock spans the window, at the page gutter. Below 764px that gutter
+       is also where the column starts, so on a phone the dock and the column
+       are exactly as wide as each other; on a desktop it reads as a floating
+       control that belongs to the window rather than to the text. */
+    --dock-width: calc(100% - (var(--page-edge) * 2));
+    --dock-action-size: 44px;
+    --dock-action-gap: 8px;
+    --dock-actions-inset: 5px;
+    --dock-icon-size: 22px;
+    --dock-progress-height: 5px;
+    --dock-progress-gap: 10px;
+    /* Page padding below the dock, counting the progress bar above it. */
+    --dock-clearance: calc(
+        var(--dock-height) +
+        var(--dock-progress-height) +
+        var(--dock-progress-gap) +
+        var(--dock-bottom) +
+        24px
+    );
+
+    /* Frosted glass: the fill is the page colour at partial opacity, so it
+       nearly vanishes over empty page and blooms over an image. */
+    --glass-bg: rgba(255, 255, 255, 0.6);
+    --glass-backdrop: blur(20px) saturate(190%) brightness(1.05);
+    --glass-border: var(--color-line);
+    --glass-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.7),
+        inset 0 -1px 1px rgba(255, 255, 255, 0.18),
+        0 8px 24px rgba(0, 0, 0, 0.06);
+
+    /* The veil behind an enlarged image — blurred, not blacked out. */
+    --veil: rgba(255, 255, 255, 0.62);
+    --veil-blur: blur(28px) saturate(180%);
 }
 
-function pad(value) {
-    return String(value).padStart(2, '0');
+/* Only the values that actually differ; --glass-border resolves against
+   --color-line at use, so it needs no restating here. */
+[data-theme="dark"] {
+    color-scheme: dark;
+
+    --color-bg: #000000;
+    --color-ink: #FFFFFF;
+    --color-line: rgba(255, 255, 255, 0.1);
+
+    --glass-bg: rgba(0, 0, 0, 0.55);
+    --glass-backdrop: blur(20px) saturate(190%) brightness(1.1);
+    --glass-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.14),
+        inset 0 -1px 1px rgba(255, 255, 255, 0.05),
+        0 8px 24px rgba(0, 0, 0, 0.35);
+
+    --veil: rgba(0, 0, 0, 0.55);
+}
+
+body {
+    font-weight: 400;
+    /* SF Pro isn't licensed for self-hosting, so it comes from the system
+       stack — real SF Pro on Apple devices, Inter (loaded in the head)
+       elsewhere. */
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', system-ui, sans-serif;
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+    letter-spacing: var(--letter-spacing);
+    color: var(--color-ink);
+    background-color: var(--color-bg);
+    font-style: normal;
+    font-synthesis: none;
+    -webkit-font-smoothing: antialiased;
+    direction: ltr;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;    /* fallback where dvh is unsupported */
+    min-height: 100dvh;   /* tracks the viewport as iOS toolbars collapse */
+    padding-bottom: var(--dock-clearance);
+    transition: color var(--ui-ms) var(--ui-ease), background-color var(--ui-ms) var(--ui-ease);
+}
+
+/* The page is one type treatment, set on body; headings stay structural. */
+h1, h2 {
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+::selection {
+    background-color: var(--color-ink);
+    color: var(--color-bg);
+}
+
+/* The accent rather than the ink: a focus ring is the system speaking, not
+   the page, and it must stay legible against text of either colour. */
+:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
 }
 
 /* ============================================
-   Hero — cycling greeting
-   ============================================ */
-
-const HELLO_LANGUAGES = [
-    'Hello.', 'Hola.', 'Bonjour.', 'Hallo.', 'Ciao.', 'Olá.', 'Привет.',
-    '你好.', 'こんにちは.', '안녕하세요.', 'नमस्ते.', 'مرحبا.', 'Hej.', 'Merhaba.'
-];
-
-const HELLO_HOLD_MS = 2400;   /* how long each greeting is held */
-const HERO_BEAT_MS = 300;     /* the beat on which the hero arrives */
-
-/* Everything in the hero reveals on this beat, and never sooner: a class
-   added in the frame an element first exists has nothing to fade from. */
-const heroDue = () => startedAt + HERO_BEAT_MS;
-let startedAt = 0;
-
-/* Reveals on the hero's beat, however early the caller is ready. */
-function revealOnBeat(elements) {
-    const wait = Math.max(0, heroDue() - Date.now());
-    setTimeout(() => elements.forEach(el => el.classList.add('visible')), wait);
-}
-
-/* Set from --hero-ms at start: the swap waits for the fade-out to finish,
-   so a mismatch would show the word changing. */
-let fadeMs = 900;
-
-let languageIndex = 0;
-
-function nextGreeting(el) {
-    el.textContent = HELLO_LANGUAGES[languageIndex];
-    languageIndex = (languageIndex + 1) % HELLO_LANGUAGES.length;
-}
-
-function runFadeSequence() {
-    const el = document.getElementById('hero-hello');
-    if (!el) return;
-
-    el.classList.remove('visible');
-
-    setTimeout(() => {
-        nextGreeting(el);
-        el.classList.add('visible');
-        setTimeout(runFadeSequence, HELLO_HOLD_MS);
-    }, fadeMs);
-}
-
-function startHelloAnimation() {
-    const el = document.getElementById('hero-hello');
-    const name = document.querySelector('.hero-name');
-    if (!el) return;
-
-    nextGreeting(el);
-
-    /* Greeting and name arrive on the beat together; the name then stays
-       while the languages keep cycling above it. */
-    revealOnBeat([el, name].filter(Boolean));
-    setTimeout(runFadeSequence, HERO_BEAT_MS + HELLO_HOLD_MS);
-}
-
-/* ============================================
-   Hero — date and local conditions
-   ============================================ */
-
-const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday',
-              'Thursday', 'Friday', 'Saturday'];
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
-                'July', 'August', 'September', 'October', 'November', 'December'];
-
-/* One clock and one lookup feed every subscriber — the hero lines and the
-   top bar — so nothing is fetched or counted twice. */
-function initializeHeroMeta() {
-    const clocks = [...document.querySelectorAll('[data-clock]')];
-
-    if (clocks.length) {
-        /* On the beat, with the greeting and the name — not on load, which
-           would skip the fade entirely. */
-        revealOnBeat(clocks);
-
-        const tick = () => {
-            const now = new Date();
-            const text =
-                DAYS[now.getDay()] + ', '
-                + now.getDate() + ' ' + MONTHS[now.getMonth()] + ' '
-                + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
-
-            clocks.forEach(el => { el.textContent = text; });
-            /* Wake on the next second boundary, so the seconds never stall
-               or skip the way a plain interval can. */
-            window.setTimeout(tick, 1000 - (Date.now() % 1000));
-        };
-
-        tick();
-    }
-
-    if (document.querySelector('[data-conditions], [data-place], [data-weather]')) {
-        getConditions()
-            .then(conditions => {
-                const where = [conditions.city, conditions.country].filter(Boolean).join(', ');
-                const what  = (conditions.label + ' ' + conditions.temperature + '\u00b0').trim();
-
-                /* Published three ways from one lookup: the hero shows them
-                   as a sentence, the bar as separate fields. */
-                fill('[data-place]', where);
-                fill('[data-weather]', what);
-                fill('[data-conditions]', where ? where + '. ' + what : what);
-
-                /* Held to the same beat, so a cached reading — which returns
-                   almost at once — arrives with the rest rather than ahead
-                   of it. A first visit fades in when the lookup lands. */
-                revealOnBeat([...document.querySelectorAll('[data-conditions], [data-place], [data-weather]')]);
-            })
-            /* On failure the lines are removed, so the hero closes up cleanly
-               rather than holding a blank. */
-            .catch(() => {
-                document.querySelectorAll('[data-conditions], [data-place], [data-weather]')
-                    .forEach(el => { el.hidden = true; });
-            });
-    }
-}
-
-function fill(selector, text) {
-    document.querySelectorAll(selector).forEach(el => { el.textContent = text; });
-}
-
-/* --------------------------------------------
    Top bar
-   -------------------------------------------- */
 
-function initializeTopBar() {
-    const topbar = document.getElementById('topbar');
-    const anchor = document.querySelector('.hero-meta');
-    if (!topbar || !anchor || !('IntersectionObserver' in window)) return;
+   Takes over once the hero's own date and conditions have scrolled behind
+   it, carrying the same information onward, and retires when they return.
+   Same glass as the dock, so the two read as one system.
+   ============================================ */
 
-    /* Shown once the hero's own date and conditions have passed behind the
-       bar, so the two never say the same thing at the same time. The bar is
-       measured rather than assumed, so its height lives in the CSS alone. */
-    new IntersectionObserver(([entry]) => {
-        const passed = !entry.isIntersecting && entry.boundingClientRect.top < 0;
-        topbar.classList.toggle('is-visible', passed);
-    }, {
-        /* The bar's lower edge, not its height: it floats clear of the top,
-           and that edge is where the hero's own readings disappear. */
-        rootMargin: `-${Math.round(topbar.getBoundingClientRect().bottom)}px 0px 0px 0px`,
-        threshold: 0
-    }).observe(anchor);
+.topbar {
+    /* A floating capsule, inset and spaced exactly as the dock is: same
+       width, same distance from its edge, same glass. Auto margins centre it
+       without a transform, leaving the entrance free to move it. */
+    position: fixed;
+    top: var(--bar-top);
+    left: 0;
+    right: 0;
+    width: var(--dock-width);
+    margin: 0 auto;
+    z-index: 200;
+    height: var(--dock-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 var(--bar-inset);
+
+    font-size: var(--font-chrome);
+    line-height: var(--line-height-chrome);
+    letter-spacing: var(--letter-spacing);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink);   /* one colour throughout — nothing muted here */
+
+    background-color: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop);
+    -webkit-backdrop-filter: var(--glass-backdrop);
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    box-shadow: var(--glass-shadow);
+
+    /* Arrives as a soft fade with the smallest of rises, rather than a
+       slide — the same at every width. */
+    opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
+    transition:
+        opacity var(--bar-ms) var(--enter-ease),
+        transform var(--bar-ms) var(--enter-ease);
+}
+
+.topbar.is-visible {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+}
+
+.topbar-left,
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    white-space: nowrap;
+}
+
+/* The readings are the point of the bar, so they hold their width and the
+   identity side yields — trimmed with an ellipsis rather than overflowing.
+   Belt and braces behind the breakpoints below, at widths no one has
+   measured. */
+.topbar-left {
+    gap: 10px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.topbar-right { flex: none; }
+
+/* The one spot of colour on the page, echoing the progress bar. */
+.topbar-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--color-accent);
+}
+
+/* A rule, not text — so it takes its weight from opacity rather than a
+   second grey. */
+.topbar-sep {
+    width: 1px;
+    height: 13px;
+    background-color: currentColor;
+    opacity: 0.28;
 }
 
 /* ============================================
-   Location and weather
-
-   IP geolocation (two providers, second as fallback) plus Open-Meteo, which
-   needs no API key — nothing secret lives in this file.
+   Dock
    ============================================ */
 
-const WEATHER_CACHE_KEY = 'site-conditions-v3';
-const WEATHER_CACHE_MS = 30 * 60 * 1000;
+.dock {
+    /* A long press names a control; without this iOS raises its own callout
+       menu and selects text instead. */
+    -webkit-touch-callout: none;
+    user-select: none;
+    -webkit-user-select: none;
 
-/* WMO weather codes, grouped the way a person would describe them. */
-const CONDITIONS = {
-    0: 'Clear',            1: 'Mainly Clear',     2: 'Partly Cloudy',
-    3: 'Overcast',        45: 'Fog',             48: 'Rime Fog',
-    51: 'Light Drizzle',  53: 'Drizzle',         55: 'Heavy Drizzle',
-    56: 'Freezing Drizzle', 57: 'Freezing Drizzle',
-    61: 'Light Rain',     63: 'Rain',            65: 'Heavy Rain',
-    66: 'Freezing Rain',  67: 'Freezing Rain',
-    71: 'Light Snow',     73: 'Snow',            75: 'Heavy Snow',
-    77: 'Snow Grains',    80: 'Showers',         81: 'Showers',
-    82: 'Heavy Showers',  85: 'Snow Showers',    86: 'Snow Showers',
-    95: 'Thunderstorm',   96: 'Thunderstorm',    99: 'Thunderstorm'
-};
-
-function readCachedWeather() {
-    try {
-        const raw = sessionStorage.getItem(WEATHER_CACHE_KEY);
-        if (!raw) return null;
-        const cached = JSON.parse(raw);
-        return Date.now() - cached.at < WEATHER_CACHE_MS ? cached : null;
-    } catch (error) {
-        return null;
-    }
+    position: fixed;
+    bottom: var(--dock-bottom);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    width: var(--dock-width);
+    display: flex;
+    /* Bottom-aligned, so the face sits level with the actions capsule while
+       the progress bar stacks above it. */
+    align-items: flex-end;
+    justify-content: space-between;
 }
 
-function writeCachedWeather(payload) {
-    try {
-        sessionStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify(payload));
-    } catch (error) {
-        /* Private browsing: it still works, it just refetches. */
-    }
+/* Names the control under the pointer. Absolute, so it never affects
+   layout; JS centres it. */
+.dock-label {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 0;
+    z-index: 1;
+    padding: 5px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+    font-size: var(--font-chrome-small);
+    line-height: var(--line-height-chrome);
+    letter-spacing: var(--letter-spacing);
+    color: var(--color-ink);
+    background-color: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop);
+    -webkit-backdrop-filter: var(--glass-backdrop);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    opacity: 0;
+    transform: translate(-50%, 4px);
+    pointer-events: none;
+    transition: opacity var(--ui-ms) var(--ui-ease), transform var(--ui-ms) var(--ui-ease);
 }
 
-async function fetchJson(url) {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('HTTP ' + response.status);
-    return response.json();
+.dock-label.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
 }
 
-async function resolveLocation() {
-    try {
-        const data = await fetchJson('https://ipwho.is/');
-        if (data && data.success !== false && Number.isFinite(data.latitude)) {
-            return {
-                city: data.city || '',
-                country: data.country || '',
-                latitude: data.latitude,
-                longitude: data.longitude
-            };
-        }
-    } catch (error) {
-        /* fall through to the second provider */
-    }
-
-    const data = await fetchJson('https://ipapi.co/json/');
-    if (!data || data.error || !Number.isFinite(data.latitude)) throw new Error('no location');
-    return {
-        city: data.city || '',
-        country: data.country_name || '',
-        latitude: data.latitude,
-        longitude: data.longitude
-    };
+/* Progress bar and actions share a column, so the bar inherits the capsule's
+   width however many actions it holds. */
+.dock-cluster {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dock-progress-gap);
 }
 
-/* Deduplicated in flight and cached for half an hour, so the page never asks
-   twice. Resolves to { city, country, temperature, label }. */
-let conditionsPromise = null;
+.dock-progress {
+    width: 100%;
+    height: var(--dock-progress-height);
+    border-radius: 999px;
+    background-color: var(--color-line);
+    overflow: hidden;
+}
 
-function getConditions() {
-    if (conditionsPromise) return conditionsPromise;
+/* Scaled by JS via transform. Quicker and flatter than the UI easing: this
+   tracks the scroll, and at 200ms it would visibly trail the page. */
+.dock-progress-fill {
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    will-change: transform;
+    transition: transform 0.15s ease-out;
+}
 
-    const cached = readCachedWeather();
-    if (cached) {
-        conditionsPromise = Promise.resolve(cached);
-        return conditionsPromise;
-    }
+.dock-face,
+.dock-actions {
+    position: relative;
+    background-color: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop);
+    -webkit-backdrop-filter: var(--glass-backdrop);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    color: var(--color-ink);
+}
 
-    conditionsPromise = (async () => {
-        const place = await resolveLocation();
+.dock-face {
+    width: var(--dock-height);
+    height: var(--dock-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    text-decoration: none;
+}
 
-        const weather = await fetchJson(
-            'https://api.open-meteo.com/v1/forecast'
-            + '?latitude=' + place.latitude
-            + '&longitude=' + place.longitude
-            + '&current=temperature_2m,weather_code,is_day'
-        );
+/* macOS-dock magnification: swells under the pointer, compresses on press. */
+.dock-face:hover,
+.dock-action:hover {
+    transform: scale(1.12);
+}
 
-        const code = weather.current.weather_code;
-        /* A clear sky reads as "Sunny" only while the sun is up. */
-        const label = code === 0
-            ? (weather.current.is_day ? 'Sunny' : 'Clear')
-            : (CONDITIONS[code] || '');
+.dock-face:active,
+.dock-action:active {
+    transform: scale(0.94);
+}
 
-        const payload = {
-            city: place.city,
-            country: place.country,
-            temperature: Math.round(weather.current.temperature_2m),
-            label,
-            at: Date.now()
-        };
-        writeCachedWeather(payload);
-        return payload;
-    })();
+/* One transition for all three, so the chrome eases together on a theme
+   change. Only the face and actions carry the hover transform, but listing
+   it here is harmless for the capsule. */
+.dock-face,
+.dock-actions,
+.dock-action {
+    transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+    transition-duration: var(--ui-ms);
+    transition-timing-function: var(--ui-ease);
+}
 
-    /* A failed lookup must not poison the session: clear the memo so a later
-       consumer can retry. Consumers handle their own rejection. */
-    conditionsPromise.catch(() => { conditionsPromise = null; });
+/* One rule for every glyph, so weight and size cannot drift apart. */
+.dock-face svg,
+.dock-action svg {
+    width: var(--dock-icon-size);
+    height: var(--dock-icon-size);
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;   /* SF-regular weight at 22px */
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
 
-    return conditionsPromise;
+/* Sized by its contents: adding an action needs no change, and the progress
+   bar above inherits the new width. */
+.dock-actions {
+    width: max-content;
+    height: var(--dock-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--dock-action-gap);
+    padding: 0 var(--dock-actions-inset);
+    border-radius: 999px;
+}
+
+.dock-action {
+    position: relative;
+    width: var(--dock-action-size);
+    height: var(--dock-action-size);
+    flex: 0 0 var(--dock-action-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    color: var(--color-ink);
+    text-decoration: none;
+    cursor: pointer;
 }
 
 /* ============================================
-   Theme
+   Page
+
+   Containers in nesting order, with the gap each sets:
+
+     .main               56, 160 top and bottom
+       .hero             32
+       .works            56
+         .project        32
+           .project-details  32
+             .project-meta   24
+               .meta-row     8
+           .project-images   32
+             .stack-row      48 vertical, 32 horizontal
    ============================================ */
 
-const THEME_STORAGE_KEY = 'portfolio-theme';
-
-/* Must match --color-bg, so the browser's own chrome matches the page. */
-const THEME_BACKGROUNDS = { light: '#FFFFFF', dark: '#000000' };
-
-const THEME_ICONS = {
-    light: `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
-    `,
-    dark: `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-    `
-};
-
-function applyTheme(theme) {
-    document.documentElement.dataset.theme = theme;
-
-    const toggle = document.getElementById('theme-toggle');
-    if (toggle) {
-        toggle.innerHTML = THEME_ICONS[theme];
-        toggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
-        toggle.dataset.label = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
-        dockLabel.refresh(toggle);
-    }
-
-    const themeColor = document.getElementById('theme-color');
-    if (themeColor) themeColor.setAttribute('content', THEME_BACKGROUNDS[theme]);
-
-    try {
-        localStorage.setItem(THEME_STORAGE_KEY, theme);
-    } catch (error) {
-        /* Storage disabled: the theme holds for this session, unremembered. */
-    }
+.container {
+    width: 100%;
+    padding: 0 var(--page-edge);
 }
 
-function initializeTheme() {
-    const toggle = document.getElementById('theme-toggle');
-    applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
-
-    if (toggle) {
-        toggle.addEventListener('click', () => {
-            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
-        });
-    }
+/* A block, not a flex item: a flex item can be forced wider by a child that
+   refuses to shrink, which is how content escapes a column. */
+.main {
+    width: 100%;
+    max-width: var(--content-width);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-section);
+    padding: var(--space-page) 0;
 }
 
 /* ============================================
-   Scroll progress
+   Hero
    ============================================ */
 
-function initializeScroll() {
-    const progress = document.getElementById('scroll-progress');
-    const bar      = document.getElementById('scroll-progress-fill');
-    if (!progress || !bar) return;
+/* Three items: the greeting, the date and conditions, the introduction. */
+.hero {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-block);
+}
 
-    let queued = false;
+/* One fade, revealed by JS. No rise: the greeting re-fades on every language
+   change, and a repeating rise would read as restless. */
+.hero-hello,
+.hero-line,
+.hero-name {
+    opacity: 0;
+    transition: opacity var(--hero-ms) var(--enter-ease);
+}
 
-    function render() {
-        queued = false;
+.hero-hello.visible,
+.hero-line.visible,
+.hero-name.visible {
+    opacity: 1;
+}
 
-        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-        const ratio = scrollable > 0
-            ? Math.min(1, Math.max(0, window.scrollY / scrollable))
-            : 0;
+/* Box reserved from first paint, so filling it in JS shifts nothing. */
+.hero-hello {
+    white-space: nowrap;
+    min-height: 1.4167em;   /* fallback where lh is unsupported */
+    min-height: 1lh;
+}
 
-        bar.style.transform = `scaleX(${ratio})`;
-        progress.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
-    }
-
-    /* Scroll fires far more often than the screen refreshes; coalescing into
-       one frame keeps this off the critical path. */
-    function queueRender() {
-        if (!queued) {
-            queued = true;
-            window.requestAnimationFrame(render);
-        }
-    }
-
-    window.addEventListener('scroll', queueRender, { passive: true });
-    window.addEventListener('resize', queueRender, { passive: true });
-
-    /* The page changes height when images load or projects collapse. */
-    if ('ResizeObserver' in window) {
-        new ResizeObserver(queueRender).observe(document.body);
-    }
-
-    render();
+/* Tabular figures hold the ticking seconds still. */
+.hero-line {
+    min-height: 1.4167em;
+    min-height: 1lh;
+    font-variant-numeric: tabular-nums;
 }
 
 /* ============================================
-   Dock labels
-
-   Names whichever control is under the pointer, like the macOS dock. Three
-   ways in: mouse hover, keyboard focus, and — on touch — a long press that
-   can be dragged across the dock to read each control in turn.
+   Projects
    ============================================ */
 
-const LONG_PRESS_MS = 250;
+.works {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-section);
+}
 
-const dockLabel = (() => {
-    let dock = null;
-    let label = null;
-    let active = null;          // the control currently named
-    let pressTimer = null;
-    let longPressed = false;    // suppresses the click that would follow
+/* The images sit the same distance below the text as they do from each
+   other, so the first is not held closer than the rest. */
+.project {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-block);
+}
 
-    function controlFrom(node) {
-        return node && node.closest ? node.closest('[data-label]') : null;
-    }
+.project-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-block);
+}
 
-    function place(control) {
-        const dockBox = dock.getBoundingClientRect();
-        const box = control.getBoundingClientRect();
-        const half = label.offsetWidth / 2;
+/* Colour is the only hierarchy here, since the size never changes. */
+.project-type {
+    color: var(--color-muted);
+}
 
-        // Centre on the control, then keep the label inside the dock so it
-        // never runs off screen at either end.
-        const centre = box.left + box.width / 2 - dockBox.left;
-        label.style.left = Math.max(half, Math.min(dockBox.width - half, centre)) + 'px';
-    }
+/* Rows 24 apart, label 8 above its values — the 3:1 binds each label to its
+   own values. .project-title needs no rule; a block already stacks. */
+.project-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-meta);
+}
 
-    function show(control) {
-        if (!control || !control.dataset.label) return;
-        active = control;
-        label.textContent = control.dataset.label;
-        place(control);                       // measure and position first
-        label.classList.add('is-visible');    // then reveal, so it never slides in from the wrong place
-    }
+.meta-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-row);
+}
 
-    function hide() {
-        active = null;
-        if (label) label.classList.remove('is-visible');
-    }
+.meta-values {
+    color: var(--color-muted);
+}
 
-    /* Called when a control's label changes while it may be on screen. */
-    function refresh(control) {
-        if (label && active === control && control.dataset.label) {
-            label.textContent = control.dataset.label;
-            place(control);
-        }
-    }
+/* --- Collapsed view (dock toggle) ---
+   Identified by position, so a new stack needs no change here. */
+body.projects-collapsed .project-meta,
+body.projects-collapsed .project-description,
+body.projects-collapsed .project-images {
+    display: none;
+}
 
-    function init() {
-        dock = document.querySelector('.dock');
-        label = document.getElementById('dock-label');
-        if (!dock || !label) return;
+/* Two across. The wider row gap keeps each title bound to its own image
+   rather than the one below. One column under 700px, in Responsive. */
+body.projects-collapsed .works {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-section) var(--space-block);
+}
 
-        /* Mouse only; touch is handled below, and letting both run would
-           flash the label on every tap. */
-        dock.addEventListener('pointerover', event => {
-            if (event.pointerType !== 'mouse') return;
-            const control = controlFrom(event.target);
-            if (control) show(control);
-        });
-
-        dock.addEventListener('pointerout', event => {
-            if (event.pointerType !== 'mouse') return;
-            const control = controlFrom(event.target);
-            // Ignore moves between a control and its own child SVG.
-            if (control && !control.contains(event.relatedTarget)) hide();
-        });
-
-        dock.addEventListener('focusin', event => show(controlFrom(event.target)));
-        dock.addEventListener('focusout', hide);
-
-        /* Touch: long press, then slide between controls. */
-        dock.addEventListener('touchstart', event => {
-            const control = controlFrom(event.target);
-            if (!control) return;
-
-            longPressed = false;
-            window.clearTimeout(pressTimer);
-            pressTimer = window.setTimeout(() => {
-                longPressed = true;
-                show(control);
-            }, LONG_PRESS_MS);
-        }, { passive: true });
-
-        dock.addEventListener('touchmove', event => {
-            if (!longPressed) {
-                // Moving before the press registers means a scroll, not a hold.
-                window.clearTimeout(pressTimer);
-                return;
-            }
-
-            event.preventDefault();   // hold the page still while reading
-
-            const touch = event.touches[0];
-            const control = controlFrom(document.elementFromPoint(touch.clientX, touch.clientY));
-
-            if (control && control !== active) show(control);
-            else if (!control) hide();
-        }, { passive: false });
-
-        function endTouch() {
-            window.clearTimeout(pressTimer);
-            if (longPressed) hide();
-        }
-
-        dock.addEventListener('touchend', endTouch);
-        dock.addEventListener('touchcancel', endTouch);
-
-        /* A long press is a read, not a tap — swallow the click it would
-           otherwise produce, so holding Email doesn't open mail. */
-        dock.addEventListener('click', event => {
-            if (longPressed) {
-                event.preventDefault();
-                event.stopPropagation();
-                longPressed = false;
-            }
-        }, true);
-
-        // Anything that moves the dock invalidates the label's position.
-        window.addEventListener('resize', () => { if (active) place(active); }, { passive: true });
-        window.addEventListener('scroll', () => { if (active) place(active); }, { passive: true });
-    }
-
-    return { init, refresh };
-})();
-
-/* ============================================
-   Project collapse
-
-   Reduces every project to its title, type, and lead image, laid out as a
-   grid by the CSS. Collapsing is a layout change and so cannot be
-   transitioned directly; where the browser supports view transitions the
-   swap runs inside one and is interpolated instead.
-   ============================================ */
-
-const COLLAPSE_ICONS = {
-    collapse: `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="m14 10 7-7"></path>
-            <path d="M20 10h-6V4"></path>
-            <path d="m3 21 7-7"></path>
-            <path d="M4 14h6v6"></path>
-        </svg>
-    `,
-    expand: `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M15 3h6v6"></path>
-            <path d="m21 3-7 7"></path>
-            <path d="m3 21 7-7"></path>
-            <path d="M9 21H3v-6"></path>
-        </svg>
-    `
-};
-
-function initializeProjectCollapse() {
-    const toggle = document.getElementById('project-collapse');
-    const works = document.querySelector('.works');
-    if (!toggle || !works) return;
-
-    const projects = [...works.querySelectorAll('.project')];
-    let collapsed = false;
-
-    /* A unique name per project lets the browser move each one individually
-       between the two layouts; without them the whole block cross-fades.
-       Indexed rather than hard-coded, so adding a project needs nothing. */
-    projects.forEach((project, index) => {
-        project.style.viewTransitionName = 'project-' + (index + 1);
-    });
-
-    function paint() {
-        document.body.classList.toggle('projects-collapsed', collapsed);
-
-        toggle.innerHTML = collapsed ? COLLAPSE_ICONS.expand : COLLAPSE_ICONS.collapse;
-        toggle.setAttribute('aria-label', collapsed ? 'Expand projects' : 'Collapse projects');
-        toggle.setAttribute('aria-pressed', String(collapsed));
-        toggle.dataset.label = collapsed ? 'Expand Projects' : 'Collapse Projects';
-        dockLabel.refresh(toggle);
-
-        projects.forEach(project => {
-            if (!collapsed) {
-                project.removeAttribute('role');
-                project.removeAttribute('tabindex');
-                project.removeAttribute('aria-label');
-                return;
-            }
-
-            /* Collapsed, the whole card is the control that expands the view
-               again — by keyboard as well as pointer. The title goes in the
-               label so the card still says which project it is. */
-            const title = project.querySelector('h2');
-            project.setAttribute('role', 'button');
-            project.setAttribute('tabindex', '0');
-            project.setAttribute('aria-label',
-                (title ? title.textContent.trim() + ', ' : '') + 'expand projects');
-
-            /* Nothing should still be mid-entrance when the grid forms. */
-            project.querySelectorAll('[data-enter]').forEach(el => el.classList.add('is-in'));
-        });
-    }
-
-    function setCollapsed(next) {
-        if (next === collapsed) return;
-        collapsed = next;
-
-        if (prefersReducedMotion() || typeof document.startViewTransition !== 'function') {
-            paint();
-            return;
-        }
-
-        /* Fixed chrome is named only for the length of the morph. Holding a
-           view-transition name permanently makes an element a backdrop root,
-           which stops the frosted glass inside it from sampling the page. */
-        const chrome = ['.topbar', '.dock']
-            .map(selector => document.querySelector(selector))
-            .filter(Boolean);
-
-        chrome.forEach((el, index) => { el.style.viewTransitionName = 'chrome-' + index; });
-        const release = () => chrome.forEach(el => { el.style.viewTransitionName = ''; });
-
-        /* then(release, release): a skipped transition rejects, and the name
-           must come off either way. */
-        document.startViewTransition(paint).finished.then(release, release);
-    }
-
-    paint();
-
-    toggle.addEventListener('click', () => setCollapsed(!collapsed));
-
-    works.addEventListener('click', () => {
-        if (collapsed) setCollapsed(false);
-    });
-
-    works.addEventListener('keydown', event => {
-        if (!collapsed) return;
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            setCollapsed(false);
-        }
-    });
+/* The whole card expands the view again; JS gives it a button role to match. */
+body.projects-collapsed .project {
+    cursor: pointer;
 }
 
 /* ============================================
-   Carousel
+   Images
 
-   Scrolling, swiping and snapping are native. This builds the dots, marks
-   the slide in frame, routes the arrow keys to whichever carousel is being
-   looked at, and opens the viewer — which runs the same controller, so
-   enlarged behaviour is identical by construction.
+   .stack        one image, filling the column at its natural height
+   .stack-row    images side by side, however many are dropped in
+
+   Nothing is cropped and no height is assumed. To stop the page shifting as
+   images load, give each <img> its real pixel size:
+   <img width="2400" height="1500" src="..." alt="...">
    ============================================ */
 
-function setupCarousel(root, onPick) {
-    const track = root.querySelector('[data-track]');
-    if (!track || track.children.length < 2) return null;
-
-    /* Looping by copies, not by jumping: the last slide is repeated before
-       the first and the first after the last, so leaving either end is an
-       ordinary scroll. Resting on a copy, the strip shifts by exactly one
-       cycle onto the real slide — invisible, being the same picture. */
-    const real = [...track.children];
-    const count = real.length;
-
-    const head = real[count - 1].cloneNode(true);
-    const tail = real[0].cloneNode(true);
-    [head, tail].forEach(copy => {
-        copy.dataset.copy = '';
-        copy.setAttribute('aria-hidden', 'true');
-    });
-    track.prepend(head);
-    track.append(tail);
-
-    const slides = [...track.children];   // count + 2
-    const FIRST = 1;                      // first real slide
-    const LAST = count;                   // last real slide
-    const COPY_END = count + 1;           // the copy that follows it
-
-    const offsetOf = at => slides[at].offsetLeft - track.offsetLeft;
-    const toReal = at => ((at - FIRST) + count) % count;
-    /* One full cycle, measured rather than assumed, so it stays correct at
-       any width and whatever the slides turn out to be. */
-    const cycle = () => offsetOf(COPY_END) - offsetOf(FIRST);
-
-    const dots = document.createElement('div');
-    dots.className = 'carousel-dots';
-    dots.setAttribute('role', 'tablist');
-    dots.setAttribute('aria-label', 'Choose image');
-
-    const buttons = real.map((slide, index) => {
-        const dot = document.createElement('button');
-        dot.type = 'button';
-        dot.className = 'carousel-dot';
-        dot.setAttribute('role', 'tab');
-        dot.setAttribute('aria-label', 'Image ' + (index + 1) + ' of ' + count);
-        dot.addEventListener('click', () => goTo(index));
-        dots.appendChild(dot);
-        return dot;
-    });
-
-    root.appendChild(dots);
-
-    let at = FIRST;         // the slide we are on, or moving to
-    let current = 0;        // the real image that names it
-    let steering = false;   // a move of ours is under way
-    let holding = false;    // a finger is on the strip
-
-    function mark(index) {
-        if (index === current) return;
-        current = index;
-        buttons.forEach((dot, i) => dot.setAttribute('aria-current', String(i === index)));
-    }
-
-    function nearest() {
-        const middle = track.scrollLeft + track.clientWidth / 2;
-        let best = FIRST, shortest = Infinity;
-        slides.forEach((slide, i) => {
-            const gap = Math.abs((slide.offsetLeft - track.offsetLeft + slide.offsetWidth / 2) - middle);
-            if (gap < shortest) { shortest = gap; best = i; }
-        });
-        return best;
-    }
-
-    /* One whole cycle preserves the exact position within the frame, so the
-       shift is unseen at rest and equally unseen mid-gesture. */
-    function normalise() {
-        if (at >= COPY_END)  { track.scrollLeft -= cycle(); at -= count; }
-        else if (at <= 0)    { track.scrollLeft += cycle(); at += count; }
-    }
-
-    function glide(to, instant) {
-        const smooth = !instant && !prefersReducedMotion();
-        at = to;
-        steering = smooth;
-        mark(toReal(to));
-        track.scrollTo({ left: offsetOf(to), behavior: smooth ? 'smooth' : 'auto' });
-    }
-
-    /* Never step away from a copy: come back to the real slide first, at the
-       same point in the frame, so the next move carries on rather than
-       doubling back across the whole strip. */
-    function step(offset) {
-        normalise();
-        glide(at + offset);
-    }
-
-    function goTo(index) {
-        normalise();
-        glide(FIRST + Math.max(0, Math.min(count - 1, index)));
-    }
-
-    function jumpTo(index) {
-        glide(FIRST + Math.max(0, Math.min(count - 1, index || 0)), true);
-    }
-
-    /* Whatever moved the strip, once it rests we take the position at face
-       value. This is what keeps a fast swipe cycling rather than stranding
-       it on a copy with nowhere left to go. */
-    function settle() {
-        if (holding) return;   // still under a finger; wait for it to lift
-        steering = false;
-        at = nearest();
-        mark(toReal(at));
-        normalise();
-    }
-
-    /* Each slide is faded by its distance from the centre, so the next image
-       arrives as the current one leaves. Driven by position, not events, so
-       it reads the same however the strip was moved. */
-    function paint() {
-        const frame = track.clientWidth;
-        if (!frame) return;   // not laid out yet; the observers below re-run this
-
-        const middle = track.scrollLeft + frame / 2;
-        const reduced = prefersReducedMotion();
-        let closest = FIRST, shortest = Infinity;
-
-        slides.forEach((slide, i) => {
-            const gap = Math.abs((slide.offsetLeft - track.offsetLeft + slide.offsetWidth / 2) - middle);
-            if (gap < shortest) { shortest = gap; closest = i; }
-
-            const away = Math.min(1, (gap / frame) * 1.15);   // 0 centred, 1 a frame away
-            slide.style.opacity = String(1 - away);
-            slide.style.transform = reduced ? '' : 'scale(' + (1 - away * 0.04) + ')';
-        });
-
-        /* During a move of ours the destination is already named; otherwise
-           the dots follow the reader's own scrolling. */
-        if (!steering) mark(toReal(closest));
-    }
-
-    let queued = false;
-    let quiet = null;
-
-    track.addEventListener('scroll', () => {
-        clearTimeout(quiet);
-        quiet = setTimeout(settle, 120);   // 120ms of stillness means it has stopped
-
-        if (queued) return;
-        queued = true;
-        requestAnimationFrame(() => { queued = false; paint(); });
-    }, { passive: true });
-
-    /* scrollend is exact where it exists; the timer above covers the rest. */
-    if ('onscrollend' in window) track.addEventListener('scrollend', settle);
-
-    /* Nothing is repositioned under a live finger — that would fight the
-       gesture. The strip is tidied the moment it is let go. */
-    track.addEventListener('touchstart', () => { holding = true; }, { passive: true });
-    ['touchend', 'touchcancel'].forEach(event => {
-        track.addEventListener(event, () => {
-            holding = false;
-            clearTimeout(quiet);
-            quiet = setTimeout(settle, 120);
-        }, { passive: true });
-    });
-
-    /* Deliberately not focusable: the dots are the keyboard interface, and a
-       ring around the strip reads as a rule against the artwork. */
-    track.setAttribute('role', 'group');
-    track.setAttribute('aria-roledescription', 'carousel');
-    track.setAttribute('aria-label', count + ' images. Use the arrow keys to move between them.');
-
-    if (onPick) {
-        slides.forEach((slide, position) => {
-            const image = slide.tagName === 'IMG' ? slide : slide.querySelector('img');
-            if (image) image.addEventListener('click', () => onPick(toReal(position)));
-        });
-    }
-
-    buttons[0].setAttribute('aria-current', 'true');
-    jumpTo(0);
-    paint();
-
-    /* Images arrive at their own pace, and each one changes the geometry. */
-    slides.forEach(slide => {
-        const image = slide.tagName === 'IMG' ? slide : slide.querySelector('img');
-        if (image && !image.complete) image.addEventListener('load', paint, { once: true });
-    });
-
-    /* A resize moves every offset, including the one we are parked on. */
-    if ('ResizeObserver' in window) {
-        new ResizeObserver(() => {
-            track.scrollLeft = offsetOf(at);
-            paint();
-        }).observe(track);
-    }
-
-    return { root, step, goTo: jumpTo, index: () => current };
+.project-images {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-block);
 }
 
-function initializeCarousels() {
-    const roots = [...document.querySelectorAll('[data-carousel]')];
-    if (!roots.length) return;
-
-    const carousels = new Map();
-    let inView = null;   // the one filling most of the screen
-
-    /* A carousel claims the arrow keys once it is at least half in view;
-       anything less and they stay with the page. Without this the carousel
-       still works — the keys just wait until the strip is focused. */
-    const watcher = 'IntersectionObserver' in window
-        ? new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                entry.target.dataset.ratio = entry.intersectionRatio.toFixed(3);
-            });
-
-            let best = null, ratio = 0.5;
-            carousels.forEach((carousel, root) => {
-                const value = parseFloat(root.dataset.ratio || '0');
-                if (value > ratio) { ratio = value; best = carousel; }
-            });
-            inView = best;
-        }, { threshold: [0, 0.25, 0.5, 0.75, 1] })
-        : null;
-
-    /* Focus wins over proximity: if the reader has tabbed into a strip, that
-       is the one they mean, wherever it sits on screen. */
-    function active() {
-        const focused = document.activeElement && document.activeElement.closest
-            ? document.activeElement.closest('[data-carousel]')
-            : null;
-        return (focused && carousels.get(focused)) || inView;
-    }
-
-    const viewer = createViewer();
-
-    roots.forEach(root => {
-        const images = [...root.querySelectorAll('[data-track] > img')];
-        const carousel = setupCarousel(root, viewer && (index => viewer.open(images, index)));
-        if (!carousel) return;
-        carousels.set(root, carousel);
-        if (watcher) watcher.observe(root);
-    });
-
-    if (!carousels.size) return;
-
-    /* Every visit starts on the first image. Browsers restore a scroll
-       container's position on reload and on a history return, and a strip
-       measured before layout reads every offset as zero — parking it on the
-       leading copy. pageshow covers both, firing after restoration. */
-    window.addEventListener('pageshow', () => {
-        carousels.forEach(carousel => carousel.goTo(0));
-    });
-
-    document.addEventListener('keydown', event => {
-        const step = { ArrowLeft: -1, ArrowRight: 1 }[event.key];
-        if (!step || event.metaKey || event.ctrlKey || event.altKey) return;
-
-        /* Never steal the keys from a text field. */
-        const tag = document.activeElement && document.activeElement.tagName;
-        if (tag === 'INPUT' || tag === 'TEXTAREA' || (document.activeElement && document.activeElement.isContentEditable)) return;
-
-        const target = (viewer && viewer.isOpen()) ? viewer.carousel() : active();
-        if (!target) return;
-
-        event.preventDefault();
-        target.step(step);
-    });
+.stack {
+    width: 100%;
 }
 
-/* --------------------------------------------
-   Viewer — one dialog, reused by every carousel
-   -------------------------------------------- */
+.stack img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
 
-function createViewer() {
-    if (typeof HTMLDialogElement !== 'function') return null;
+/* Wraps once a line is full, so any number stays inside the column. Wrapping
+   rather than squeezing is deliberate: a flex item will not shrink below its
+   own minimum size. Must follow .stack img, which it narrows. */
+.stack-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-meta) var(--space-block);   /* 24 between lines, 32 between images */
+    padding: var(--space-stack) var(--space-block);   /* 48 above and below, 32 either side */
+}
 
-    const viewer = document.createElement('dialog');
-    viewer.className = 'viewer';
-    /* autofocus keeps the opening focus off the first dot; tabindex makes
-       the container able to hold it. */
-    viewer.innerHTML = '<div class="viewer-inner" tabindex="-1" autofocus><div class="carousel-track" data-track></div></div>';
-    document.body.appendChild(viewer);
+.stack-row img {
+    /* One share at every width — three to a line throughout, so the row
+       never jumps at a breakpoint, and 172px at the full column, which is
+       the size the mockups were drawn at. */
+    width: 27%;
+}
 
-    const inner = viewer.querySelector('.viewer-inner');
-    const track = viewer.querySelector('[data-track]');
-    let carousel = null;
+/* --- Carousel ---
+   Scrolling, swiping and snapping are native; siteapp.js only builds the
+   dots and routes the keys. Without JS it stays a scrollable strip. */
 
-    function open(images, index) {
-        track.replaceChildren(...images.map(source => {
-            const slide = document.createElement('div');
-            slide.className = 'viewer-slide';
-            const img = document.createElement('img');
-            /* currentSrc is what the browser actually loaded, so the
-               enlarged view reuses the cached file rather than fetching. */
-            img.src = source.currentSrc || source.src;
-            img.alt = source.alt;
-            img.decoding = 'async';
-            slide.appendChild(img);
-            return slide;
-        }));
+.carousel-track {
+    display: flex;
+    /* Slides are set a clear space apart, so no two are ever edge to edge.
+       siteapp.js fades and settles them by distance from the centre, which
+       is what makes the neighbour arrive rather than simply sit there. */
+    gap: var(--space-section);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;              /* the dots are the indicator */
+    -ms-overflow-style: none;
+    overscroll-behavior-x: contain;     /* never scrolls the page sideways */
+}
 
-        inner.querySelectorAll('.carousel-dots').forEach(el => el.remove());
-        carousel = setupCarousel(inner);
+.carousel-track::-webkit-scrollbar {
+    display: none;
+}
 
-        document.body.classList.add('viewer-open');
-        viewer.showModal();
+.carousel-track > * {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+    /* Set by siteapp.js as the strip moves; this is the resting value, and
+       the one that stands without JS. */
+    opacity: 1;
+}
 
-        /* Placed on the image that was clicked before anything is visible,
-           so it opens on that image rather than travelling to it. */
-        if (carousel) carousel.goTo(index, true);
+.carousel-track img {
+    cursor: zoom-in;
+}
 
-        /* Two frames: one for the slides to lay out, one to give the
-           transition a start value to animate from. */
-        requestAnimationFrame(() => requestAnimationFrame(() => viewer.classList.add('is-open')));
-    }
+/* Browsers make scroll containers focusable; a ring tight around the strip
+   reads as a rule against the artwork. The dots carry the focus instead. */
+.carousel-track:focus,
+.carousel-track:focus-visible {
+    outline: none;
+}
 
-    function close() {
-        if (!viewer.classList.contains('is-open')) return;
-        viewer.classList.remove('is-open');
-        document.body.classList.remove('viewer-open');
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    padding-top: var(--space-meta);
+}
 
-        if (prefersReducedMotion()) {
-            viewer.close();
-            return;
-        }
+/* The mark reads at 7px; the button stays 24px tall for touch and is kept
+   narrow so the marks sit close together rather than drifting apart. */
+.carousel-dot {
+    width: 14px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    background: none;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-        /* Let it shrink away before the dialog goes; the timeout is the
-           backstop if the transition never fires. */
-        let done = false;
-        const finish = () => { if (!done) { done = true; viewer.close(); } };
-        inner.addEventListener('transitionend', finish, { once: true });
-        setTimeout(finish, cssDuration('--viewer-ms', 320) + 60);
-    }
+.carousel-dot::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--color-ink);
+    opacity: 0.2;
+    transition: opacity var(--ui-ms) var(--ui-ease), transform var(--ui-ms) var(--ui-ease);
+}
 
-    /* Escape closes the dialog outright, so mirror it back into the animation. */
-    viewer.addEventListener('cancel', event => {
-        event.preventDefault();
-        close();
-    });
+.carousel-dot:hover::before {
+    opacity: 0.45;
+}
 
-    /* Anywhere but the image and the dots dismisses it. */
-    viewer.addEventListener('click', event => {
-        if (event.target.closest('.carousel-dot, .viewer-slide img')) return;
-        close();
-    });
+/* The one in frame takes the accent, as the progress bar and the bar's dot
+   do; the rest stay muted. */
+.carousel-dot[aria-current="true"]::before {
+    opacity: 1;
+    background-color: var(--color-accent);
+}
 
-    return {
-        open,
-        close,
-        isOpen: () => viewer.classList.contains('is-open'),
-        carousel: () => carousel
-    };
+/* The default outline reads as a hard box around a 14px control. Keyboard
+   focus grows the mark instead — unmistakable, and it cannot band. */
+.carousel-dot:focus {
+    outline: none;
+}
+
+.carousel-dot:focus-visible::before {
+    transform: scale(1.5);
+}
+
+/* --- Viewer ---
+   A native dialog: Escape, the focus trap and the backdrop come free. It runs
+   the same carousel code, so enlarged behaviour is identical by construction. */
+
+.viewer {
+    width: 100vw;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+
+    /* The glass sits on the dialog itself: ::backdrop cannot read the theme
+       tokens dependably across browsers, and the dialog already fills the
+       screen. The page stays visible behind it, blurred back. */
+    background-color: var(--veil);
+    backdrop-filter: var(--veil-blur);
+    -webkit-backdrop-filter: var(--veil-blur);
+
+    opacity: 0;
+    transition: opacity var(--viewer-ms) var(--enter-ease);
+}
+
+.viewer::backdrop {
+    background-color: transparent;
+}
+
+.viewer.is-open { opacity: 1; }
+
+/* Focus lands here rather than on the first dot, which would otherwise take
+   the focus mark the moment the dialog opens and read as an odd dot out. */
+.viewer-inner:focus,
+.viewer-inner:focus-visible {
+    outline: none;
+}
+
+.viewer-inner {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-meta);
+    padding: var(--space-stack) 0;
+    /* Grows in from slightly small, and shrinks away again. */
+    /* The image lifts in slightly ahead of the veil settling. */
+    opacity: 0;
+    transform: scale(0.96);
+    transition:
+        opacity var(--viewer-ms) var(--enter-ease),
+        transform var(--viewer-ms) var(--enter-ease);
+}
+
+.viewer.is-open .viewer-inner {
+    opacity: 1;
+    transform: none;
+}
+
+/* No shadow: this close to the screen edges it has nowhere to fall and reads
+   as dark bands. The blurred veil already separates image from page. */
+
+/* Full-width slides, so only one image is ever in frame — its neighbours sit
+   a screen away. The image is sized well inside that. */
+.viewer-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    cursor: zoom-out;   /* the space around the image dismisses it */
+}
+
+.viewer-slide img {
+    width: auto;
+    height: auto;
+    max-width: min(68vw, 980px);
+    max-height: 72dvh;
+    object-fit: contain;
+    cursor: default;    /* the image itself is the content, not a target */
+}
+
+.viewer .carousel-dots {
+    padding-top: 0;
+    flex: none;
+}
+
+.viewer .carousel-dot::before {
+    background-color: var(--color-ink);   /* the veil carries the theme */
+}
+
+.viewer .carousel-dot[aria-current="true"]::before {
+    background-color: var(--color-accent);
+}
+
+/* The page must not scroll behind the viewer. */
+body.viewer-open {
+    overflow: hidden;
 }
 
 /* ============================================
-   Entrance motion
-
-   Content marked [data-enter] fades and rises in as it enters the viewport.
-   Inert under prefers-reduced-motion — the CSS neutralises it and this skips
-   its work.
+   Footer
    ============================================ */
 
-function initializeEntrance() {
-    const items = [...document.querySelectorAll('[data-enter]')];
-    if (!items.length) return;
+.site-footer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
 
-    if (prefersReducedMotion() || !('IntersectionObserver' in window)) {
-        items.forEach(el => el.classList.add('is-in'));
-        return;
+/* ============================================
+   Motion
+   ============================================ */
+
+/* Content starts lowered and transparent; JS adds .is-in on entry. */
+[data-enter] {
+    opacity: 0;
+    transform: translateY(var(--enter-rise));
+    transition:
+        opacity var(--enter-ms) var(--enter-ease),
+        transform var(--enter-ms) var(--enter-ease);
+    will-change: opacity, transform;
+}
+
+[data-enter].is-in {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+}
+
+/* --- Fading past the top ---
+   Content dissolves as it leaves the top of the screen, driven by scroll
+   position rather than by time, so it tracks the finger exactly and runs off
+   the main thread. Only the exit is animated: `forwards` means nothing is
+   applied before the range begins, which leaves the entrance transition
+   above free to do its own work.
+
+   The hero fades as a whole rather than line by line, so the greeting can go
+   on cycling its own opacity underneath.
+
+   Where scroll-driven animations are unsupported the page behaves exactly as
+   it did — content arrives and stays. */
+@supports (animation-timeline: view()) {
+    .hero,
+    [data-enter] {
+        animation: fade-past linear forwards;
+        animation-timeline: view();
+        animation-range: exit 0% exit 80%;
+    }
+}
+
+@keyframes fade-past {
+    to { opacity: 0; }
+}
+
+/* The dock settles in once, on load — chrome arrives after the content it
+   frames. Its keyframe carries the centring translate through, or it would
+   jump left mid-animation. */
+.dock {
+    animation: dock-enter var(--chrome-ms) var(--enter-ease) both;
+}
+
+@keyframes dock-enter {
+    from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* --- Collapse morph ---
+   Collapsing swaps a column for a grid, which is a layout change and so
+   cannot be transitioned directly. A view transition lets the browser
+   interpolate between the two states instead: siteapp.js names each project
+   so they travel individually rather than cross-fading as one block, and
+   skips the transition entirely where it is unsupported or unwanted.
+   Naming the parts that move keeps them out of the page-wide snapshot,
+   which would otherwise stretch as the page changes height.
+
+   The fixed chrome is named by siteapp.js only while a morph runs: a
+   permanent name makes an element a backdrop root, which stops the frosted
+   glass inside it from sampling the page behind. */
+.hero        { view-transition-name: hero; }
+.site-footer { view-transition-name: footer; }
+
+::view-transition-group(*) {
+    animation-duration: var(--collapse-ms);
+    animation-timing-function: var(--enter-ease);
+}
+
+/* ============================================
+   Motion preferences
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
     }
 
-    const io = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('is-in');
-                io.unobserve(entry.target);   // reveal once, then stop watching
-            }
-        });
-    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+    /* Entrance and chrome motion collapse to nothing, fully visible.
+       The collapse morph is skipped in JS, so it needs no rule. */
+    [data-enter] {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
 
-    /* On screen at load reveals immediately; anything below the fold waits,
-       so each later project fades in as it is reached. */
-    const viewportBottom = window.innerHeight;
-    items.forEach(el => {
-        const box = el.getBoundingClientRect();
-        if (box.top < viewportBottom && box.bottom > 0) el.classList.add('is-in');
-        else io.observe(el);
-    });
+    .dock {
+        animation: none !important;
+    }
+
+    /* Snapping jumps rather than glides. */
+    .carousel-track {
+        scroll-behavior: auto !important;
+    }
+}
+
+/* A request, not a default: only those who have asked get the stronger grey. */
+@media (prefers-contrast: more) {
+    [data-theme="light"] { --color-muted: #6E6E73; }
+    [data-theme="dark"]  { --color-muted: #98989D; }
+}
+
+/* Translucency is hard for some people to read. Per theme, so it overrides
+   both palettes at equal specificity. */
+@media (prefers-reduced-transparency: reduce) {
+    [data-theme="light"] {
+        --glass-bg: #F1F1F1;
+        --glass-backdrop: none;
+        --veil: #F1F1F1;
+        --veil-blur: none;
+    }
+
+    [data-theme="dark"] {
+        --glass-bg: #0A0A0A;
+        --glass-backdrop: none;
+        --veil: #0A0A0A;
+        --veil-blur: none;
+    }
+}
+
+/* Without backdrop-filter the fill goes near-opaque to stay legible. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    [data-theme="light"] { --glass-bg: #F1F1F1; --veil: rgba(255, 255, 255, 0.96); }
+    [data-theme="dark"]  { --glass-bg: #0A0A0A; --veil: rgba(0, 0, 0, 0.92); }
 }
 
 /* ============================================
-   Back to top
+   Responsive
    ============================================ */
 
-function initializeScrollTop() {
-    const button = document.getElementById('scroll-top');
-    if (!button) return;
+@media screen and (max-width: 700px) {
+    :root {
 
-    button.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
-    });
+        /* Content falls to 16 here; holding the bar at its desktop size
+           would leave interface and content indistinguishable. */
+        --font-chrome: 12px;
+        --font-chrome-small: 11px;
+        --bar-inset: 12px;   /* a smaller capsule wants a tighter inset */
+    }
+
+    .viewer-slide img {
+        max-width: 86vw;   /* a phone has no room to spare */
+        max-height: 68dvh;
+    }
+
+    /* Two collapsed projects side by side would leave each too narrow, so the
+       grid reverts to the stacked column. Only display needs resetting —
+       .works already carries the column direction and the 80px gap. */
+    body.projects-collapsed .works {
+        display: flex;
+    }
 }
 
-/* ============================================
-   Start
-   ============================================ */
-
-let started = false;
-
-function start() {
-    if (started) return;   // never bind twice, however this file is loaded
-    started = true;
-
-    startedAt = Date.now();
-    fadeMs = cssDuration('--hero-ms', fadeMs);
-
-    /* Each module is isolated: one failing must not take the rest with it.
-       dockLabel goes first — the theme and collapse modules refresh it. */
-    [
-        () => dockLabel.init(),
-        startHelloAnimation,
-        initializeHeroMeta,
-        initializeTheme,
-        initializeScroll,
-        initializeTopBar,
-        initializeProjectCollapse,
-        initializeScrollTop,
-        initializeCarousels,
-        initializeEntrance
-    ].forEach(run => {
-        try {
-            run();
-        } catch (error) {
-            console.error('[site] module failed:', error);
-        }
-    });
+/* On touch the target grows downward, not sideways: height a finger can
+   find, width the eye still reads as one tight row. */
+@media (hover: none) {
+    .carousel-dot {
+        height: 44px;
+    }
 }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start);
-} else {
-    start();
+/* --- Top bar: sheds what will not fit ---
+   Measured at 14px against the longest strings the bar can hold — a full
+   weekday and month, and "Thunderstorm". Everything dropped here is still
+   carried in full by the hero, so nothing is lost, only repeated less. */
+
+/* Inside the capsule the full row needs ~673px of usable width. */
+@media screen and (max-width: 800px) {
+    .topbar-place,
+    .topbar-place-sep {
+        display: none;
+    }
 }
+
+/* Name, weather and clock need ~514px. */
+@media screen and (max-width: 540px) {
+    .topbar-weather,
+    .topbar-weather-sep {
+        display: none;
+    }
+}
+
+/* Nothing width-specific below 320px — the percentage stacks scale cleanly. */
