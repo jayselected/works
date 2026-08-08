@@ -21,14 +21,12 @@
     /* Type — one size for the whole page: 24 / 34 / -0.2px on desktop,
        fluid to 14px on phones. Leading and tracking are ratios, so the
        desktop proportions hold at every size. */
-    --font-size: clamp(1rem, 0.5rem + 2vw, 1.5rem);          /* 16 → 24 */
-    --line-height: 1.4167;                                   /* 34 / 24 */
-    --letter-spacing: -0.0083em;                             /* -0.2px at 24px */
+    --font-size: clamp(1rem, 0.625rem + 1.5vw, 1.375rem);    /* 16 → 22 */
+    --line-height: 1.2727;                                   /* 28 / 22 */
+    --letter-spacing: -0.0091em;                             /* -0.2px at 22px */
 
-    /* Chrome type — the bar and the dock's label. Fixed rather than fluid,
-       as interface furniture is on every system: a menu bar is the same size
-       on a laptop and a 32" display. The label is a step down from the bar,
-       being a passing note rather than a standing readout. */
+    /* Chrome type — fixed, not fluid: interface furniture is the same size on
+       a laptop and a 32" display. The label sits a step below the bar. */
     --font-chrome: 14px;
     --font-chrome-small: 12px;
     --line-height-chrome: 1.4;
@@ -37,7 +35,7 @@
        one accent used only by the progress bar. */
     --color-bg: #FFFFFF;
     --color-ink: #000000;
-    --color-muted: #C5C5C7;             /* project type, meta values */
+    --color-muted: #86868B;             /* project type, meta values */
     --color-line: rgba(0, 0, 0, 0.1);   /* chrome hairlines */
     --color-accent: #007AFF;
 
@@ -45,20 +43,15 @@
        160 / 80 / 40 / 32 / 24 holds at every width. Retune here. */
     --step: clamp(16px, 6vw - 8px, 40px);       /* 40px at an 800px viewport */
     --space-page:    calc(var(--step) * 4);     /* 160 — page top and bottom */
-    --space-section: calc(var(--step) * 2);     /*  80 — between sections */
-    --space-images:  calc(var(--step) * 1.2);   /*  48 — between image stacks */
-    --space-block:   var(--step);               /*  40 — hero and project parts */
-    --space-stack:   calc(var(--step) * 0.8);   /*  32 — image row padding, gutters */
-    --space-meta:    calc(var(--step) * 0.6);   /*  24 — meta rows, wrapped lines */
+    --space-section: calc(var(--step) * 1.4);   /*  56 — between sections and projects */
+    --space-stack:   calc(var(--step) * 1.2);   /*  48 — air inside an image row */
+    --space-block:   calc(var(--step) * 0.8);   /*  32 — hero and project parts */
+    --space-meta:    calc(var(--step) * 0.6);   /*  24 — meta rows, wrapped image lines */
     --space-row:     calc(var(--step) * 0.2);   /*   8 — label to its values */
 
-    /* Motion — short distances, soft easing, all neutralised under
-       prefers-reduced-motion.
-
-       Two paces, because there are two jobs. Content entering the viewport
-       is answering the reader's scroll, so it arrives at interface speed and
-       is legible almost at once. The hero's greeting is an ambient loop that
-       runs whether or not anyone is watching, and can afford to be slow. */
+    /* Two paces: content answers the reader's scroll and arrives at interface
+       speed; the hero's greeting is an ambient loop and can afford to be
+       slow. All of it is neutralised under prefers-reduced-motion. */
     --enter-rise: 12px;
     --enter-ms: 400ms;      /* content arriving as it is scrolled to */
     --hero-ms: 900ms;       /* the greeting cycling — siteapp.js reads this */
@@ -73,9 +66,8 @@
     --bar-ms: 400ms;        /* top bar fading in and out */
     --viewer-ms: 320ms;     /* enlarged image growing in and away */
 
-    /* Dock — measured from the iOS 26 Safari bottom bar: 48pt capsule,
-       44pt targets, 8pt gap, 5pt inset, 22pt glyphs. CSS px map 1:1 to pt,
-       and the metrics stay fixed on desktop, as iOS controls do. */
+    /* Dock — measured from the iOS 26 Safari bottom bar: 48pt capsule, 44pt
+       targets, 8pt gap, 5pt inset, 22pt glyphs. Fixed at every width. */
     --dock-height: 48px;
     --dock-bottom: calc(var(--edge-gap) + env(safe-area-inset-bottom, 0px));
     /* The dock spans the window, at the page gutter. Below 764px that gutter
@@ -98,9 +90,8 @@
         24px
     );
 
-    /* Frosted glass: the fill is the page colour at partial opacity, so the
-       dock nearly vanishes over empty page and blooms over an image. Depth is
-       Apple's three layers — top rim, inner floor glow, cast shadow. */
+    /* Frosted glass: the fill is the page colour at partial opacity, so it
+       nearly vanishes over empty page and blooms over an image. */
     --glass-bg: rgba(255, 255, 255, 0.6);
     --glass-backdrop: blur(20px) saturate(190%) brightness(1.05);
     --glass-border: var(--color-line);
@@ -109,8 +100,7 @@
         inset 0 -1px 1px rgba(255, 255, 255, 0.18),
         0 8px 24px rgba(0, 0, 0, 0.06);
 
-    /* The veil behind an enlarged image: the page still shows through it,
-       heavily blurred, rather than being blacked out. */
+    /* The veil behind an enlarged image — blurred, not blacked out. */
     --veil: rgba(255, 255, 255, 0.62);
     --veil-blur: blur(28px) saturate(180%);
 }
@@ -122,7 +112,6 @@
 
     --color-bg: #000000;
     --color-ink: #FFFFFF;
-    --color-muted: #464649;
     --color-line: rgba(255, 255, 255, 0.1);
 
     --glass-bg: rgba(0, 0, 0, 0.55);
@@ -302,8 +291,8 @@ h1, h2 {
     justify-content: space-between;
 }
 
-/* Names whichever control is under the pointer, like the macOS dock.
-   Absolutely positioned so it never affects layout; JS centres it. */
+/* Names the control under the pointer. Absolute, so it never affects
+   layout; JS centres it. */
 .dock-label {
     position: absolute;
     bottom: calc(100% + 10px);
@@ -348,9 +337,8 @@ h1, h2 {
     overflow: hidden;
 }
 
-/* Scaled by JS via a transform, which animates cheaply. Deliberately quicker
-   and flatter than the UI easing: this tracks the scroll rather than
-   responding to a press, and at 200ms it would visibly trail the page. */
+/* Scaled by JS via transform. Quicker and flatter than the UI easing: this
+   tracks the scroll, and at 200ms it would visibly trail the page. */
 .dock-progress-fill {
     width: 100%;
     height: 100%;
@@ -404,7 +392,7 @@ h1, h2 {
     transition-timing-function: var(--ui-ease);
 }
 
-/* One rule for every dock glyph, so weight and size can never drift apart. */
+/* One rule for every glyph, so weight and size cannot drift apart. */
 .dock-face svg,
 .dock-action svg {
     width: var(--dock-icon-size);
@@ -417,8 +405,8 @@ h1, h2 {
     stroke-linejoin: round;
 }
 
-/* Sized by its contents, so adding an action needs no change here — and the
-   progress bar above inherits the new width. */
+/* Sized by its contents: adding an action needs no change, and the progress
+   bar above inherits the new width. */
 .dock-actions {
     width: max-content;
     height: var(--dock-height);
@@ -451,23 +439,17 @@ h1, h2 {
 /* ============================================
    Page
 
-   The containers, in nesting order, with the gap each sets between
-   its own children:
+   Containers in nesting order, with the gap each sets:
 
-     .container    page gutter, full width
-     .main         Main ................ 80, 160 top and bottom
-       .hero       Hero ................ 40
-         .hero-meta    date and weather ... 0
-       .works      all projects ........ 80
-         .project        Project ............ 40
-           .project-details  Details .......... 40
-             .project-title    Title .......... 0
-             .project-meta     Meta ........... 24
-               .meta-row         Row .......... 0
-                 .meta-values      Values ..... 0
-           .project-images   image stacks ..... 40
-             .stack-row        Image row ...... 32, 24 between lines
-       .site-footer
+     .main               56, 160 top and bottom
+       .hero             32
+       .works            56
+         .project        32
+           .project-details  32
+             .project-meta   24
+               .meta-row     8
+           .project-images   32
+             .stack-row      48 vertical, 32 horizontal
    ============================================ */
 
 .container {
@@ -475,10 +457,8 @@ h1, h2 {
     padding: 0 var(--page-edge);
 }
 
-/* Sections are spaced by this gap alone and carry no margins, so the page
-   reads 160 / 80 / 80 / 160 top to bottom. A block rather than a flex item:
-   a flex item can be forced wider by a child that refuses to shrink, which
-   is how content escapes a column. */
+/* A block, not a flex item: a flex item can be forced wider by a child that
+   refuses to shrink, which is how content escapes a column. */
 .main {
     width: 100%;
     max-width: var(--content-width);
@@ -502,11 +482,8 @@ h1, h2 {
     gap: var(--space-block);
 }
 
-/* All four lines inherit the page's type, so nothing here sets size. What
-   they share is one fade, at the same speed as every other entrance — JS
-   reveals the greeting and name on load, the conditions when the lookup
-   returns. No rise: the greeting re-fades on every language change, and a
-   repeating rise would read as restless. */
+/* One fade, revealed by JS. No rise: the greeting re-fades on every language
+   change, and a repeating rise would read as restless. */
 .hero-hello,
 .hero-line,
 .hero-name {
@@ -520,8 +497,7 @@ h1, h2 {
     opacity: 1;
 }
 
-/* One line held while the languages cycle, its box reserved from first paint
-   so filling it in JS shifts nothing. */
+/* Box reserved from first paint, so filling it in JS shifts nothing. */
 .hero-hello {
     white-space: nowrap;
     min-height: 1.4167em;   /* fallback where lh is unsupported */
@@ -547,12 +523,12 @@ h1, h2 {
 }
 
 /* The images sit the same distance below the text as they do from each
-   other, so the first image is not held closer than the rest. */
+   other, so the first is not held closer than the rest. */
 .project {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--space-images);
+    gap: var(--space-block);
 }
 
 .project-details {
@@ -567,11 +543,8 @@ h1, h2 {
     color: var(--color-muted);
 }
 
-/* Two rows, 24px apart, each holding its label 8px above its values. The
-   3:1 between those two gaps is what binds a label to its own values while
-   keeping the rows apart, and it holds at every width because both derive
-   from --step. .project-title needs no rule: a plain block already stacks
-   its children on their own leading. */
+/* Rows 24 apart, label 8 above its values — the 3:1 binds each label to its
+   own values. .project-title needs no rule; a block already stacks. */
 .project-meta {
     display: flex;
     flex-direction: column;
@@ -589,19 +562,15 @@ h1, h2 {
 }
 
 /* --- Collapsed view (dock toggle) ---
-   Each project reduces to its title, type, and lead image. What stays is
-   identified by where it sits, so a new stack in .project-images needs no
-   change here. */
+   Identified by position, so a new stack needs no change here. */
 body.projects-collapsed .project-meta,
 body.projects-collapsed .project-description,
 body.projects-collapsed .project-images {
     display: none;
 }
 
-/* Two across, as many rows as there are projects. Rows sit 80 apart against
-   40 between columns: the wider vertical gap keeps each title bound to the
-   image below it, which is itself 40 away. Reverts to one column under
-   700px, in Responsive. */
+/* Two across. The wider row gap keeps each title bound to its own image
+   rather than the one below. One column under 700px, in Responsive. */
 body.projects-collapsed .works {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -624,15 +593,11 @@ body.projects-collapsed .project {
    <img width="2400" height="1500" src="..." alt="...">
    ============================================ */
 
-/* Image stacks are set further apart than the text parts above them: a
-   picture needs air around it in a way a paragraph does not, and this keeps
-   each stack reading as its own object without reaching the 80px that
-   separates whole projects. */
 .project-images {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--space-images);
+    gap: var(--space-block);
 }
 
 .stack {
@@ -645,18 +610,16 @@ body.projects-collapsed .project {
     display: block;
 }
 
-/* Wraps once a line is full, so any number stays inside the column and each
-   line centres its leftover width. Wrapping rather than squeezing is
-   deliberate: a flex item will not shrink below its own minimum size, so
-   without this the row would run past the column instead of giving way.
-   Must follow .stack img, which it narrows. */
+/* Wraps once a line is full, so any number stays inside the column. Wrapping
+   rather than squeezing is deliberate: a flex item will not shrink below its
+   own minimum size. Must follow .stack img, which it narrows. */
 .stack-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: var(--space-meta) var(--space-stack);   /* 24 between lines, 32 between images */
-    padding: var(--space-stack);
+    gap: var(--space-meta) var(--space-block);   /* 24 between lines, 32 between images */
+    padding: var(--space-stack) var(--space-block);   /* 48 above and below, 32 either side */
 }
 
 .stack-row img {
@@ -667,10 +630,8 @@ body.projects-collapsed .project {
 }
 
 /* --- Carousel ---
-   Scrolling, swiping, momentum and snapping are all native, so there is no
-   gesture code anywhere. siteapp.js builds the dots from however many slides
-   there are, marks the current one, and routes the arrow keys to whichever
-   carousel is being looked at. Without JS it stays a scrollable strip. */
+   Scrolling, swiping and snapping are native; siteapp.js only builds the
+   dots and routes the keys. Without JS it stays a scrollable strip. */
 
 .carousel-track {
     display: flex;
@@ -701,10 +662,8 @@ body.projects-collapsed .project {
     cursor: zoom-in;
 }
 
-/* The dots are the keyboard interface — real buttons, with the page's own
-   focus ring. Browsers make scroll containers focusable of their own accord,
-   and a ring drawn tight around the strip reads as a hard rule against the
-   artwork, so it is suppressed here rather than shown twice. */
+/* Browsers make scroll containers focusable; a ring tight around the strip
+   reads as a rule against the artwork. The dots carry the focus instead. */
 .carousel-track:focus,
 .carousel-track:focus-visible {
     outline: none;
@@ -753,9 +712,8 @@ body.projects-collapsed .project {
     background-color: var(--color-accent);
 }
 
-/* No ring of any kind: the page's default outline reads as a hard box around
-   a 14px control, and a drawn ring is no better. Keyboard focus grows the
-   mark instead, which is unmistakable and cannot band or clip. */
+/* The default outline reads as a hard box around a 14px control. Keyboard
+   focus grows the mark instead — unmistakable, and it cannot band. */
 .carousel-dot:focus {
     outline: none;
 }
@@ -765,9 +723,8 @@ body.projects-collapsed .project {
 }
 
 /* --- Viewer ---
-   A native dialog, so Escape, the focus trap and the backdrop come free. It
-   holds a second carousel over the same images, driven by the same code, so
-   swipe, dots and keys behave identically enlarged. */
+   A native dialog: Escape, the focus trap and the backdrop come free. It runs
+   the same carousel code, so enlarged behaviour is identical by construction. */
 
 .viewer {
     width: 100vw;
@@ -824,13 +781,11 @@ body.projects-collapsed .project {
     transform: none;
 }
 
-/* No shadow: a cast shadow on an image this close to the screen edges has
-   nowhere to fall and reads as dark bands beside it. The blurred veil
-   already separates the image from the page. */
+/* No shadow: this close to the screen edges it has nowhere to fall and reads
+   as dark bands. The blurred veil already separates image from page. */
 
-/* Each slide is the full width of the track, so only one image is ever in
-   frame — its neighbours sit a full screen away. The image is sized well
-   inside that, which is what gives it room to sit in. */
+/* Full-width slides, so only one image is ever in frame — its neighbours sit
+   a screen away. The image is sized well inside that. */
 .viewer-slide {
     display: flex;
     align-items: center;
@@ -958,17 +913,14 @@ body.viewer-open {
     }
 }
 
-/* Some people ask their system for more contrast. That is a request, not a
-   default: the muted grey stays exactly as designed for everyone else, and
-   only those who have asked get the stronger system grey. */
+/* A request, not a default: only those who have asked get the stronger grey. */
 @media (prefers-contrast: more) {
     [data-theme="light"] { --color-muted: #6E6E73; }
     [data-theme="dark"]  { --color-muted: #98989D; }
 }
 
-/* Translucency over moving content is hard for some people to read; the OS
-   exposes that preference, so the glass becomes solid. Declared per theme so
-   it overrides both palettes at equal specificity. */
+/* Translucency is hard for some people to read. Per theme, so it overrides
+   both palettes at equal specificity. */
 @media (prefers-reduced-transparency: reduce) {
     [data-theme="light"] {
         --glass-bg: #F1F1F1;
@@ -985,8 +937,7 @@ body.viewer-open {
     }
 }
 
-/* Without backdrop-filter the frost cannot render, so the fill goes
-   near-opaque to stay legible over any content. */
+/* Without backdrop-filter the fill goes near-opaque to stay legible. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     [data-theme="light"] { --glass-bg: #F1F1F1; --veil: rgba(255, 255, 255, 0.96); }
     [data-theme="dark"]  { --glass-bg: #0A0A0A; --veil: rgba(0, 0, 0, 0.92); }
@@ -1000,10 +951,8 @@ body.viewer-open {
     :root {
         --edge-gap: 20px;
 
-        /* Chrome steps down with the page. Content falls from 24 to 16 here,
-           so holding the bar at its desktop size would leave interface and
-           content the same size — and that difference is what tells a reader
-           which is which. */
+        /* Content falls to 16 here; holding the bar at its desktop size
+           would leave interface and content indistinguishable. */
         --font-chrome: 13px;
         --font-chrome-small: 11px;
     }
@@ -1021,10 +970,8 @@ body.viewer-open {
     }
 }
 
-/* A finger is less precise than a pointer, so on touch the target grows
-   downward rather than sideways — height a finger can find, width the eye
-   still reads as one tight row. Swipe is the primary gesture here in any
-   case; the dots are chiefly an indicator. */
+/* On touch the target grows downward, not sideways: height a finger can
+   find, width the eye still reads as one tight row. */
 @media (hover: none) {
     .carousel-dot {
         height: 44px;
