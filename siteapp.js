@@ -856,31 +856,6 @@ body.viewer-open {
     will-change: auto;
 }
 
-/* --- Fading past the top ---
-   Content dissolves as it leaves the top of the screen, driven by scroll
-   position rather than by time, so it tracks the finger exactly and runs off
-   the main thread. Only the exit is animated: `forwards` means nothing is
-   applied before the range begins, which leaves the entrance transition
-   above free to do its own work.
-
-   The hero fades as a whole rather than line by line, so the greeting can go
-   on cycling its own opacity underneath.
-
-   Where scroll-driven animations are unsupported the page behaves exactly as
-   it did — content arrives and stays. */
-@supports (animation-timeline: view()) {
-    .hero,
-    [data-enter] {
-        animation: fade-past linear forwards;
-        animation-timeline: view();
-        animation-range: exit 0% exit 80%;
-    }
-}
-
-@keyframes fade-past {
-    to { opacity: 0; }
-}
-
 /* The dock settles in once, on load — chrome arrives after the content it
    frames. Its keyframe carries the centring translate through, or it would
    jump left mid-animation. */
