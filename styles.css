@@ -87,7 +87,7 @@
        frosts content at full strength. */
     --bar-wash: 24px;
     /* Where the wash begins, measured from the shell's own top. */
-    --wash-start: calc((var(--dock-height) * 2) + var(--bar-top));
+    --wash-start: var(--bar-top);
     /* The dock spans the window, at the page gutter. Below 764px that gutter
        is also where the column starts, so on a phone the dock and the column
        are exactly as wide as each other; on a desktop it reads as a floating
@@ -196,9 +196,6 @@ h1, h2 {
    artwork included. Because the pill is a child rather than a neighbour, the
    two can never drift apart.
 
-   It reaches well above the viewport: on iOS a fixed element sits against the
-   layout viewport, so when the URL bar collapses it can fall short of the
-   true top. The overhang is off-screen and costs nothing.
 
    Takes over once the hero's own date and conditions have scrolled behind
    it, carrying the same information onward, and retires when they return.
@@ -207,7 +204,7 @@ h1, h2 {
 
 .topbar-shell {
     position: fixed;
-    top: calc(var(--dock-height) * -2);          /* overhang, off-screen */
+    top: 0;
     left: 0;
     right: 0;
     height: calc(var(--wash-start) + var(--dock-height));   /* contains the pill */
@@ -241,7 +238,7 @@ h1, h2 {
    to move it. */
 .topbar {
     position: absolute;
-    top: calc((var(--dock-height) * 2) + var(--bar-top));
+    top: var(--bar-top);
     left: 0;
     right: 0;
     width: var(--dock-width);
