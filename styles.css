@@ -40,6 +40,7 @@
     --color-ink: #000000;
     --color-muted: #86868B;             /* project type, meta values */
     --color-line: rgba(0, 0, 0, 0.1);   /* chrome hairlines */
+    --color-bg-clear: rgba(255, 255, 255, 0);
     --color-accent: #007AFF;
 
     /* Spacing — one step drives every gap, so the desktop ratio
@@ -124,6 +125,7 @@
     --color-bg: #000000;
     --color-ink: #FFFFFF;
     --color-line: rgba(255, 255, 255, 0.1);
+    --color-bg-clear: rgba(0, 0, 0, 0);
 
     --glass-bg: rgba(0, 0, 0, 0.55);
     --glass-backdrop: blur(20px) saturate(190%) brightness(1.1);
@@ -179,54 +181,55 @@ h1, h2 {
     border-radius: 4px;
 }
 
-/* --- The band above the pill ---
-   The full-width bar used to cover this strip; the pill leaves 24px of open
-   page above it, and content scrolling up was visible there.
-
-   A solid band of the page's own colour fills that gap and runs 8px further,
-   under the pill's top edge, so there is no seam to catch a stray pixel. It
-   stops there rather than fading on: the pill covers everything below, and a
-   gradient continuing under it would mean two see-through layers stacked,
-   which is what left content showing at the pill's edges.
-
-   Fixed to the viewport, so it hides by position rather than by element — a
-   line half in the band is half hidden, which is the point. Against the page
-   it is invisible; at rest nothing is up there to cover. */
-body::before {
-    content: '';
-    position: fixed;
-    /* Starts well above the viewport. On iOS a fixed element is placed
-       against the layout viewport, so when the URL bar collapses it can sit
-       below the true top and leave live content showing in the strip above
-       it. The overhang is off-screen and costs nothing. */
-    top: calc(var(--dock-height) * -2);
-    left: 0;
-    right: 0;
-    height: calc((var(--dock-height) * 2) + var(--bar-top) + 8px);
-    z-index: 100;                         /* over content, under the pill */
-    pointer-events: none;
-    background-color: var(--color-bg);
-}
-
 /* ============================================
    Top bar
+
+   A full-width shell holds the pill. The shell fills the band in the page's
+   own colour, so anything scrolling up dissolves into the page before it can
+   reach the top, and nothing shows through the pill either — hard-edged
+   artwork included. Because the pill is a child rather than a neighbour, the
+   two can never drift apart.
+
+   It reaches well above the viewport: on iOS a fixed element sits against the
+   layout viewport, so when the URL bar collapses it can fall short of the
+   true top. The overhang is off-screen and costs nothing.
 
    Takes over once the hero's own date and conditions have scrolled behind
    it, carrying the same information onward, and retires when they return.
    Same glass as the dock, so the two read as one system.
    ============================================ */
 
-.topbar {
-    /* A floating capsule, inset and spaced exactly as the dock is: same
-       width, same distance from its edge, same glass. Auto margins centre it
-       without a transform, leaving the entrance free to move it. */
+.topbar-shell {
     position: fixed;
-    top: var(--bar-top);
+    top: calc(var(--dock-height) * -2);          /* overhang, off-screen */
+    left: 0;
+    right: 0;
+    height: calc((var(--dock-height) * 2) + var(--bar-top) + var(--dock-height));
+    z-index: 200;
+    pointer-events: none;                        /* the pill takes its own */
+    /* Solid only down to the pill's top edge, then clear. The fade spans the
+       pill's corner radius: the curve leaves two slivers of page beside it,
+       and on a phone the content column is exactly the pill's width, so
+       artwork would otherwise show there. Below that the shell contributes
+       nothing, which is what leaves live content for the pill to frost. */
+    background: linear-gradient(
+        to bottom,
+        var(--color-bg) 0,
+        var(--color-bg) calc((var(--dock-height) * 2) + var(--bar-top)),
+        var(--color-bg-clear) calc((var(--dock-height) * 2) + var(--bar-top) + 24px)
+    );
+}
+
+/* Inset and spaced exactly as the dock is: same width, same distance from its
+   edge. Auto margins centre it without a transform, leaving the entrance free
+   to move it. */
+.topbar {
+    position: absolute;
+    top: calc((var(--dock-height) * 2) + var(--bar-top));
     left: 0;
     right: 0;
     width: var(--dock-width);
     margin: 0 auto;
-    z-index: 200;
     height: var(--dock-height);
     display: flex;
     align-items: center;
