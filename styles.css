@@ -82,6 +82,7 @@
     /* The bar's mirror of it, so the two float the same distance in. */
     --bar-top: calc(var(--edge-gap) + env(safe-area-inset-top, 0px));
     --bar-inset: 20px;   /* text to capsule edge */
+    --bar-wash: 96px;    /* distance over which content emerges below the gap */
     /* The dock spans the window, at the page gutter. Below 764px that gutter
        is also where the column starts, so on a phone the dock and the column
        are exactly as wide as each other; on a desktop it reads as a floating
@@ -106,11 +107,6 @@
        nearly vanishes over empty page and blooms over an image. */
     --glass-bg: rgba(255, 255, 255, 0.6);
     --glass-backdrop: blur(20px) saturate(190%) brightness(1.05);
-    /* The bar's own frost, heavier than the dock's. It sits over full-bleed
-       artwork with hard edges, and a 20px blur leaves those edges legible as
-       lines; this smears them while keeping the glass reading as glass. */
-    --bar-glass-bg: rgba(255, 255, 255, 0.82);
-    --bar-glass-backdrop: blur(48px) saturate(180%);
     --glass-border: var(--color-line);
     --glass-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.7),
@@ -134,7 +130,6 @@
 
     --glass-bg: rgba(0, 0, 0, 0.55);
     --glass-backdrop: blur(20px) saturate(190%) brightness(1.1);
-    --bar-glass-bg: rgba(0, 0, 0, 0.78);
     --glass-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.14),
         inset 0 -1px 1px rgba(255, 255, 255, 0.05),
@@ -210,19 +205,20 @@ h1, h2 {
     top: calc(var(--dock-height) * -2);          /* overhang, off-screen */
     left: 0;
     right: 0;
-    height: calc((var(--dock-height) * 2) + var(--bar-top) + var(--dock-height));
+    height: calc((var(--dock-height) * 2) + var(--bar-top) + var(--bar-wash));
     z-index: 200;
     pointer-events: none;                        /* the pill takes its own */
-    /* Solid only down to the pill's top edge, then clear. The fade spans the
-       pill's corner radius: the curve leaves two slivers of page beside it,
-       and on a phone the content column is exactly the pill's width, so
-       artwork would otherwise show there. Below that the shell contributes
-       nothing, which is what leaves live content for the pill to frost. */
+    /* Solid through the gap, then washing out slowly past the pill. Content
+       is therefore already low-contrast by the time the pill reaches it —
+       which is what stops hard edges reading as lines, without touching the
+       frost. The pill sits over this and frosts the content through it: real
+       colour, real glass, simply quieter. The long tail also means content
+       emerges below the pill rather than appearing at a line. */
     background: linear-gradient(
         to bottom,
         var(--color-bg) 0,
-        var(--color-bg) calc((var(--dock-height) * 2) + var(--bar-top) + 24px),
-        var(--color-bg-clear) calc((var(--dock-height) * 2) + var(--bar-top) + 48px)
+        var(--color-bg) calc((var(--dock-height) * 2) + var(--bar-top)),
+        var(--color-bg-clear) 100%
     );
 }
 
@@ -249,9 +245,9 @@ h1, h2 {
     font-variant-numeric: tabular-nums;
     color: var(--color-ink);   /* one colour throughout — nothing muted here */
 
-    background-color: var(--bar-glass-bg);
-    backdrop-filter: var(--bar-glass-backdrop);
-    -webkit-backdrop-filter: var(--bar-glass-backdrop);
+    background-color: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop);
+    -webkit-backdrop-filter: var(--glass-backdrop);
     border: 1px solid var(--glass-border);
     border-radius: 999px;
     box-shadow: var(--glass-shadow);
@@ -968,8 +964,6 @@ body.viewer-open {
     [data-theme="light"] {
         --glass-bg: #F1F1F1;
         --glass-backdrop: none;
-        --bar-glass-bg: #F1F1F1;
-        --bar-glass-backdrop: none;
         --veil: #F1F1F1;
         --veil-blur: none;
     }
@@ -977,8 +971,6 @@ body.viewer-open {
     [data-theme="dark"] {
         --glass-bg: #0A0A0A;
         --glass-backdrop: none;
-        --bar-glass-bg: #0A0A0A;
-        --bar-glass-backdrop: none;
         --veil: #0A0A0A;
         --veil-blur: none;
     }
@@ -986,8 +978,8 @@ body.viewer-open {
 
 /* Without backdrop-filter the fill goes near-opaque to stay legible. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    [data-theme="light"] { --glass-bg: #F1F1F1; --bar-glass-bg: #F1F1F1; --veil: rgba(255, 255, 255, 0.96); }
-    [data-theme="dark"]  { --glass-bg: #0A0A0A; --bar-glass-bg: #0A0A0A; --veil: rgba(0, 0, 0, 0.92); }
+    [data-theme="light"] { --glass-bg: #F1F1F1; --veil: rgba(255, 255, 255, 0.96); }
+    [data-theme="dark"]  { --glass-bg: #0A0A0A; --veil: rgba(0, 0, 0, 0.92); }
 }
 
 /* ============================================
