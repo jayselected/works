@@ -82,7 +82,10 @@
     /* The bar's mirror of it, so the two float the same distance in. */
     --bar-top: calc(var(--edge-gap) + env(safe-area-inset-top, 0px));
     --bar-inset: 20px;   /* text to capsule edge */
-    --bar-wash: 96px;    /* distance over which content emerges below the gap */
+    /* The wash clears within the pill's corner radius, so all of it is hidden
+       behind the capsule: nothing trails below, and the pill's lower half
+       frosts content at full strength. */
+    --bar-wash: 24px;
     /* Where the wash begins, measured from the shell's own top. */
     --wash-start: calc((var(--dock-height) * 2) + var(--bar-top));
     /* The dock spans the window, at the page gutter. Below 764px that gutter
@@ -207,7 +210,7 @@ h1, h2 {
     top: calc(var(--dock-height) * -2);          /* overhang, off-screen */
     left: 0;
     right: 0;
-    height: calc(var(--wash-start) + var(--bar-wash));
+    height: calc(var(--wash-start) + var(--dock-height));   /* contains the pill */
     z-index: 200;
     pointer-events: none;                        /* the pill takes its own */
     /* Solid through the gap, then washing out slowly past the pill. Content
@@ -229,7 +232,7 @@ h1, h2 {
         rgba(var(--color-bg-rgb), 0.352) calc(var(--wash-start) + var(--bar-wash) * 0.60),
         rgba(var(--color-bg-rgb), 0.156) calc(var(--wash-start) + var(--bar-wash) * 0.75),
         rgba(var(--color-bg-rgb), 0.028) calc(var(--wash-start) + var(--bar-wash) * 0.90),
-        rgba(var(--color-bg-rgb), 0) 100%
+        rgba(var(--color-bg-rgb), 0) calc(var(--wash-start) + var(--bar-wash))
     );
 }
 
