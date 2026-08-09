@@ -110,10 +110,10 @@
     --glass-bg: rgba(255, 255, 255, 0.6);
     --glass-backdrop: blur(20px) saturate(190%) brightness(1.05);
     --glass-border: var(--color-line);
-    --glass-shadow:
+    --glass-rim:
         inset 0 1px 0 rgba(255, 255, 255, 0.7),
-        inset 0 -1px 1px rgba(255, 255, 255, 0.18),
-        0 8px 24px rgba(0, 0, 0, 0.06);
+        inset 0 -1px 1px rgba(255, 255, 255, 0.18);
+    --glass-shadow: var(--glass-rim), 0 8px 24px rgba(0, 0, 0, 0.06);
 
     /* The veil behind an enlarged image — blurred, not blacked out. */
     --veil: rgba(255, 255, 255, 0.62);
@@ -132,10 +132,10 @@
 
     --glass-bg: rgba(0, 0, 0, 0.55);
     --glass-backdrop: blur(20px) saturate(190%) brightness(1.1);
-    --glass-shadow:
+    --glass-rim:
         inset 0 1px 0 rgba(255, 255, 255, 0.14),
-        inset 0 -1px 1px rgba(255, 255, 255, 0.05),
-        0 8px 24px rgba(0, 0, 0, 0.35);
+        inset 0 -1px 1px rgba(255, 255, 255, 0.05);
+    --glass-shadow: var(--glass-rim), 0 8px 24px rgba(0, 0, 0, 0.35);
 
     --veil: rgba(0, 0, 0, 0.55);
 }
@@ -261,7 +261,9 @@ h1, h2 {
     -webkit-backdrop-filter: var(--glass-backdrop);
     border: 1px solid var(--glass-border);
     border-radius: 999px;
-    box-shadow: var(--glass-shadow);
+    /* Rim only, no cast: the pill sits on the wash rather than over content,
+       so a shadow beneath it has nothing to fall on and reads as a smudge. */
+    box-shadow: var(--glass-rim);
 
     /* Arrives as a soft fade with the smallest of rises, rather than a
        slide — the same at every width. */
