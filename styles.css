@@ -195,10 +195,14 @@ h1, h2 {
 body::before {
     content: '';
     position: fixed;
-    top: 0;
+    /* Starts well above the viewport. On iOS a fixed element is placed
+       against the layout viewport, so when the URL bar collapses it can sit
+       below the true top and leave live content showing in the strip above
+       it. The overhang is off-screen and costs nothing. */
+    top: calc(var(--dock-height) * -2);
     left: 0;
     right: 0;
-    height: calc(var(--bar-top) + 8px);   /* the gap, plus an overlap */
+    height: calc((var(--dock-height) * 2) + var(--bar-top) + 8px);
     z-index: 100;                         /* over content, under the pill */
     pointer-events: none;
     background-color: var(--color-bg);
