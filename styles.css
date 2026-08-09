@@ -40,7 +40,6 @@
     --color-ink: #000000;
     --color-muted: #86868B;             /* project type, meta values */
     --color-line: rgba(0, 0, 0, 0.1);   /* chrome hairlines */
-    --color-bg-clear: rgba(255, 255, 255, 0);
     --color-accent: #007AFF;
 
     /* Spacing — one step drives every gap, so the desktop ratio
@@ -125,7 +124,6 @@
     --color-bg: #000000;
     --color-ink: #FFFFFF;
     --color-line: rgba(255, 255, 255, 0.1);
-    --color-bg-clear: rgba(0, 0, 0, 0);
 
     --glass-bg: rgba(0, 0, 0, 0.55);
     --glass-backdrop: blur(20px) saturate(190%) brightness(1.1);
@@ -181,30 +179,29 @@ h1, h2 {
     border-radius: 4px;
 }
 
-/* --- The band above the bar ---
+/* --- The band above the pill ---
    The full-width bar used to cover this strip; the pill leaves 24px of open
-   page above it, and content scrolling up was visible in the gap. A fixed
-   wash covers that band in the page's own colour and fades out behind the
-   pill, so anything rising into it dissolves rather than sliding past.
+   page above it, and content scrolling up was visible there.
 
-   Fixed to the viewport, so it hides by position rather than by element —
-   a paragraph half in the band is half hidden, which is the whole point.
-   At rest nothing is up there, so it is never seen. */
+   A solid band of the page's own colour fills that gap and runs 8px further,
+   under the pill's top edge, so there is no seam to catch a stray pixel. It
+   stops there rather than fading on: the pill covers everything below, and a
+   gradient continuing under it would mean two see-through layers stacked,
+   which is what left content showing at the pill's edges.
+
+   Fixed to the viewport, so it hides by position rather than by element — a
+   line half in the band is half hidden, which is the point. Against the page
+   it is invisible; at rest nothing is up there to cover. */
 body::before {
     content: '';
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    height: calc(var(--bar-top) + var(--dock-height));   /* to the pill's lower edge */
-    z-index: 100;                                        /* over content, under the pill */
+    height: calc(var(--bar-top) + 8px);   /* the gap, plus an overlap */
+    z-index: 100;                         /* over content, under the pill */
     pointer-events: none;
-    background: linear-gradient(
-        to bottom,
-        var(--color-bg) 0,
-        var(--color-bg) calc(var(--bar-top) + 8px),       /* solid through the gap */
-        var(--color-bg-clear) 100%
-    );
+    background-color: var(--color-bg);
 }
 
 /* ============================================
