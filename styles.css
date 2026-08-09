@@ -1007,6 +1007,10 @@ body.viewer-open {
         --font-chrome: 12px;
         --font-chrome-small: 11px;
         --bar-inset: 12px;   /* a smaller capsule wants a tighter inset */
+        /* The column and the pill are the same width here, so artwork runs
+           right to the capsule's edges and needs longer to wash out. Desktop
+           insets the column and does not. */
+        --bar-wash: 32px;
     }
 
     .viewer-slide img {
