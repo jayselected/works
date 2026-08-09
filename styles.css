@@ -40,7 +40,7 @@
     --color-ink: #000000;
     --color-muted: #86868B;             /* project type, meta values */
     --color-line: rgba(0, 0, 0, 0.1);   /* chrome hairlines */
-    --color-bg-clear: rgba(255, 255, 255, 0);
+    --color-bg-rgb: 255, 255, 255;
     --color-accent: #007AFF;
 
     /* Spacing — one step drives every gap, so the desktop ratio
@@ -83,6 +83,8 @@
     --bar-top: calc(var(--edge-gap) + env(safe-area-inset-top, 0px));
     --bar-inset: 20px;   /* text to capsule edge */
     --bar-wash: 96px;    /* distance over which content emerges below the gap */
+    /* Where the wash begins, measured from the shell's own top. */
+    --wash-start: calc((var(--dock-height) * 2) + var(--bar-top));
     /* The dock spans the window, at the page gutter. Below 764px that gutter
        is also where the column starts, so on a phone the dock and the column
        are exactly as wide as each other; on a desktop it reads as a floating
@@ -126,7 +128,7 @@
     --color-bg: #000000;
     --color-ink: #FFFFFF;
     --color-line: rgba(255, 255, 255, 0.1);
-    --color-bg-clear: rgba(0, 0, 0, 0);
+    --color-bg-rgb: 0, 0, 0;
 
     --glass-bg: rgba(0, 0, 0, 0.55);
     --glass-backdrop: blur(20px) saturate(190%) brightness(1.1);
@@ -205,7 +207,7 @@ h1, h2 {
     top: calc(var(--dock-height) * -2);          /* overhang, off-screen */
     left: 0;
     right: 0;
-    height: calc((var(--dock-height) * 2) + var(--bar-top) + var(--bar-wash));
+    height: calc(var(--wash-start) + var(--bar-wash));
     z-index: 200;
     pointer-events: none;                        /* the pill takes its own */
     /* Solid through the gap, then washing out slowly past the pill. Content
@@ -216,9 +218,18 @@ h1, h2 {
        emerges below the pill rather than appearing at a line. */
     background: linear-gradient(
         to bottom,
-        var(--color-bg) 0,
-        var(--color-bg) calc((var(--dock-height) * 2) + var(--bar-top)),
-        var(--color-bg-clear) 100%
+        rgba(var(--color-bg-rgb), 1) 0,
+        rgba(var(--color-bg-rgb), 1) var(--wash-start),
+        /* Eased, not linear. A constant rate of change reads as an edge; this
+           starts and ends flat so both ends of the wash disappear into what
+           they meet. The stops trace 1 - (3t² - 2t³). */
+        rgba(var(--color-bg-rgb), 0.939) calc(var(--wash-start) + var(--bar-wash) * 0.15),
+        rgba(var(--color-bg-rgb), 0.784) calc(var(--wash-start) + var(--bar-wash) * 0.30),
+        rgba(var(--color-bg-rgb), 0.575) calc(var(--wash-start) + var(--bar-wash) * 0.45),
+        rgba(var(--color-bg-rgb), 0.352) calc(var(--wash-start) + var(--bar-wash) * 0.60),
+        rgba(var(--color-bg-rgb), 0.156) calc(var(--wash-start) + var(--bar-wash) * 0.75),
+        rgba(var(--color-bg-rgb), 0.028) calc(var(--wash-start) + var(--bar-wash) * 0.90),
+        rgba(var(--color-bg-rgb), 0) 100%
     );
 }
 
