@@ -292,8 +292,11 @@
                         <feGaussianBlur stdDeviation="8.421053"/>
                     </filter>
 
-                    <!-- Three inner shadows: a wide cyan rim lifted upwards, a
-                         tight dark edge, and a tight bright edge over it. -->
+                    <!-- Two inner shadows: a wide cyan rim lifted upwards, and a
+                         tight bright edge over it. The export's third layer was
+                         a hard dark ring at the circumference; with the dock's
+                         glass border gone it was the only ring left, so it is
+                         dropped and the orb ends at its own light. -->
                     <filter id="orb-frame" x="0" y="0" width="64" height="64" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
                         <feFlood flood-opacity="0" result="bg"/>
                         <feBlend in="SourceGraphic" in2="bg" result="shape"/>
@@ -306,21 +309,13 @@
                         <feComposite in="fl1" in2="al1" operator="in" result="co1"/>
                         <feBlend in="co1" in2="shape" result="sh1"/>
 
-                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="ha2"/>
-                        <feMorphology in="SourceAlpha" operator="erode" radius="1.016887" result="sp2"/>
-                        <feGaussianBlur in="sp2" stdDeviation="1.122807" result="bl2"/>
-                        <feComposite in="bl2" in2="ha2" operator="arithmetic" k2="-1" k3="1" result="al2"/>
-                        <feFlood flood-color="#008baf" result="fl2"/>
-                        <feComposite in="fl2" in2="al2" operator="in" result="co2"/>
-                        <feBlend in="co2" in2="sh1" result="sh2"/>
-
                         <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="ha3"/>
                         <feMorphology in="SourceAlpha" operator="erode" radius="1.015873" result="sp3"/>
                         <feGaussianBlur in="sp3" stdDeviation="1.122807" result="bl3"/>
                         <feComposite in="bl3" in2="ha3" operator="arithmetic" k2="-1" k3="1" result="al3"/>
                         <feFlood flood-color="#ffffff" flood-opacity="0.45" result="fl3"/>
                         <feComposite in="fl3" in2="al3" operator="in" result="co3"/>
-                        <feBlend in="co3" in2="sh2"/>
+                        <feBlend in="co3" in2="sh1"/>
                     </filter>
                 </defs>
 
@@ -347,6 +342,26 @@
                                         dur="11s" repeatCount="indefinite" calcMode="spline"
                                         keyTimes="0;0.33;0.66;1"
                                         keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>
+                                </rect>
+                            </g>
+                        </g>
+
+                        <!-- A violet bloom low in the frame, drifting against the
+                             other two. It never dominates, but it shifts the hue
+                             as it passes, so the colour breathes as well as the
+                             light. -->
+                        <g opacity="0.42">
+                            <animateTransform attributeName="transform" type="translate"
+                                values="0 0; 24 -18; -20 12; 0 0" dur="19s" repeatCount="indefinite"
+                                calcMode="spline" keyTimes="0;0.33;0.66;1"
+                                keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>
+                            <g transform="translate(20 54)">
+                                <rect x="-26" y="-24" width="52" height="48" rx="24"
+                                      fill="#7A5CFF" filter="url(#orb-core)">
+                                    <animate attributeName="opacity" values="0.7;1;0.6;0.7" dur="23s"
+                                             repeatCount="indefinite" calcMode="spline"
+                                             keyTimes="0;0.33;0.66;1"
+                                             keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>
                                 </rect>
                             </g>
                         </g>
