@@ -273,14 +273,52 @@
         <div class="dock-label" id="dock-label" aria-hidden="true"></div>
 
         <a class="dock-face" href="/" data-label="Home" aria-label="Homepage">
-            <!-- Face ID glyph redrawn as stroke paths (from face.svg's filled
-                 original) so it shares the exact stroke weight, size, and
-                 colour system of the other dock icons. -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M6.4 8.4v2"></path>
-                <path d="M17.6 8.4v2"></path>
-                <path d="M12 8.4v4.8a1.6 1.6 0 0 1-1.6 1.6h-.4"></path>
-                <path d="M7.4 18.2a6.5 6.5 0 0 0 9.2 0"></path>
+            <!-- Nova, rebuilt from the Oreo export as three blurred blooms on
+                 a teal ground. The original was a Figma dump: forty filter
+                 primitives, seven blurs it never used, and ids that would
+                 collide with anything else on the page. This draws the same
+                 thing and can be animated. Ids are prefixed so they cannot
+                 clash with the dock glyphs. -->
+            <svg class="orb" viewBox="0 0 64 64" aria-hidden="true">
+                <defs>
+                    <clipPath id="orb-clip"><circle cx="32" cy="32" r="32"/></clipPath>
+                    <filter id="orb-soft" x="-60%" y="-60%" width="220%" height="220%">
+                        <feGaussianBlur stdDeviation="7"/>
+                    </filter>
+                    <filter id="orb-core" x="-60%" y="-60%" width="220%" height="220%">
+                        <feGaussianBlur stdDeviation="9"/>
+                    </filter>
+                    <!-- Rim: bright at the very edge, clear by a third in. -->
+                    <radialGradient id="orb-rim" cx="50%" cy="50%" r="50%">
+                        <stop offset="70%" stop-color="#63D6FF" stop-opacity="0"/>
+                        <stop offset="100%" stop-color="#9FE8FF" stop-opacity="0.55"/>
+                    </radialGradient>
+                </defs>
+
+                <g clip-path="url(#orb-clip)">
+                    <rect width="64" height="64" fill="#0090B6"/>
+
+                    <!-- Each bloom drifts on its own long, prime-ish cycle, so
+                         the three never resynchronise and the motion cannot be
+                         read as a loop. -->
+                    <ellipse cx="32" cy="12" rx="34" ry="27" fill="#FFFFFF" opacity="0.55" filter="url(#orb-soft)">
+                        <animate attributeName="cx" values="32;44;26;32" dur="19s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.33;0.66;1" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
+                        <animate attributeName="cy" values="12;20;8;12" dur="23s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.33;0.66;1" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
+                    </ellipse>
+
+                    <ellipse cx="32" cy="4" rx="28" ry="30" fill="#66D1FF" filter="url(#orb-core)">
+                        <animate attributeName="cx" values="32;20;40;32" dur="29s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.33;0.66;1" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
+                        <animate attributeName="cy" values="4;14;0;4" dur="17s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.33;0.66;1" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
+                    </ellipse>
+
+                    <ellipse cx="18" cy="52" rx="22" ry="18" fill="#00719A" opacity="0.5" filter="url(#orb-soft)">
+                        <animate attributeName="cx" values="18;40;14;18" dur="31s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.33;0.66;1" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
+                    </ellipse>
+
+                    <!-- Rim and inner shadow last, so the light sits on top. -->
+                    <circle cx="32" cy="32" r="32" fill="url(#orb-rim)"/>
+                    <circle cx="32" cy="32" r="31" fill="none" stroke="#008BAF" stroke-width="2" opacity="0.35"/>
+                </g>
             </svg>
         </a>
 
