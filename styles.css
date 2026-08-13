@@ -420,6 +420,18 @@ h1, h2 {
     justify-content: center;
     border-radius: 50%;
     text-decoration: none;
+    overflow: hidden;   /* the orb fills it edge to edge */
+}
+
+/* The orb is the face, not an icon inside it: it fills the capsule and
+   carries its own colour, so it reads as a presence rather than a fifth
+   control. It sits above the glass fill, so no backdrop shows through. */
+.orb {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 50%;
+    position: relative;
 }
 
 /* macOS-dock magnification: swells under the pointer, compresses on press. */
@@ -444,8 +456,9 @@ h1, h2 {
     transition-timing-function: var(--ui-ease);
 }
 
-/* One rule for every glyph, so weight and size cannot drift apart. */
-.dock-face svg,
+/* One rule for every glyph, so weight and size cannot drift apart. The orb
+   is not a glyph and opts out below. */
+.dock-face svg:not(.orb),
 .dock-action svg {
     width: var(--dock-icon-size);
     height: var(--dock-icon-size);
@@ -957,6 +970,12 @@ body.viewer-open {
 
     .dock {
         animation: none !important;
+    }
+
+    /* SMIL ignores animation-duration, so the orb is stilled by its own
+       property. It keeps its colour and simply stops drifting. */
+    .orb * {
+        animation-play-state: paused !important;
     }
 
     /* Snapping jumps rather than glides. */
