@@ -611,9 +611,12 @@ function initializeProjectCollapse() {
         }
 
         /* Fixed chrome is named only for the length of the morph. Holding a
-           view-transition name permanently makes an element a backdrop root,
-           which stops the frosted glass inside it from sampling the page. */
-        const chrome = ['.topbar', '.dock']
+           name permanently makes an element a backdrop root, which stops the
+           frosted glass inside it from sampling the page. The shell is named
+           rather than the pill: naming the child alone would lift it out and
+           leave the wash behind in the page snapshot, stretching as the page
+           changes height. */
+        const chrome = ['.topbar-shell', '.dock']
             .map(selector => document.querySelector(selector))
             .filter(Boolean);
 
@@ -1041,6 +1044,29 @@ function initializeEntrance() {
 }
 
 /* ============================================
+   Orb
+
+   The dock's face drifts continuously, which keeps the compositor awake.
+   It is paused whenever the page is not being looked at, and stilled
+   outright for anyone who has asked for less motion.
+   ============================================ */
+
+function initializeOrb() {
+    const orb = document.querySelector('.orb');
+    if (!orb || typeof orb.pauseAnimations !== 'function') return;
+
+    if (prefersReducedMotion()) {
+        orb.pauseAnimations();
+        return;
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) orb.pauseAnimations();
+        else orb.unpauseAnimations();
+    });
+}
+
+/* ============================================
    Back to top
    ============================================ */
 
@@ -1076,6 +1102,7 @@ function start() {
         initializeScroll,
         initializeProjectCollapse,
         initializeScrollTop,
+        initializeOrb,
         initializeCarousels,
         initializeEntrance
     ].forEach(run => {
