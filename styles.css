@@ -302,14 +302,6 @@ h1, h2 {
 
 .topbar-right { flex: none; }
 
-/* The one spot of colour on the page, echoing the progress bar. */
-.topbar-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background-color: var(--color-accent);
-}
-
 /* A rule, not text — so it takes its weight from opacity rather than a
    second grey. */
 .topbar-sep {
@@ -401,7 +393,6 @@ h1, h2 {
     transition: transform 0.15s ease-out;
 }
 
-.dock-face,
 .dock-actions {
     position: relative;
     background-color: var(--glass-bg);
@@ -412,26 +403,23 @@ h1, h2 {
     color: var(--color-ink);
 }
 
+/* The orb is the face rather than an icon within it, so this element carries
+   no fill, border or blur — the orb is opaque and would hide all three. It
+   keeps only the cast shadow, which lifts it off the page as the dock does. */
 .dock-face {
     width: var(--dock-height);
     height: var(--dock-height);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block;
     border-radius: 50%;
     text-decoration: none;
-    overflow: hidden;   /* the orb fills it edge to edge */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
-/* The orb is the face, not an icon inside it: it fills the capsule and
-   carries its own colour, so it reads as a presence rather than a fifth
-   control. It sits above the glass fill, so no backdrop shows through. */
 .orb {
     width: 100%;
     height: 100%;
     display: block;
     border-radius: 50%;
-    position: relative;
 }
 
 /* macOS-dock magnification: swells under the pointer, compresses on press. */
