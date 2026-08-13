@@ -273,51 +273,91 @@
         <div class="dock-label" id="dock-label" aria-hidden="true"></div>
 
         <a class="dock-face" href="/" data-label="Home" aria-label="Homepage">
-            <!-- Nova, rebuilt from the Oreo export as three blurred blooms on
-                 a teal ground. The original was a Figma dump: forty filter
-                 primitives, seven blurs it never used, and ids that would
-                 collide with anything else on the page. This draws the same
-                 thing and can be animated. Ids are prefixed so they cannot
-                 clash with the dock glyphs. -->
+            <!-- Nova, from the Oreo export. The geometry, colours, blur radii
+                 and the three-layer inner-shadow frame are reproduced exactly
+                 — that frame is what gives it depth. What changed: the unused
+                 filters and the collision-prone ids are gone, and each bloom
+                 now sits in a wrapper that can drift.
+
+                 The blooms are large rounded rects sitting mostly above the
+                 frame, so only their lower curve shows. That is the whole
+                 trick, and it is why they must not become ellipses. -->
             <svg class="orb" viewBox="0 0 64 64" aria-hidden="true">
                 <defs>
-                    <clipPath id="orb-clip"><circle cx="32" cy="32" r="32"/></clipPath>
-                    <filter id="orb-soft" x="-60%" y="-60%" width="220%" height="220%">
-                        <feGaussianBlur stdDeviation="7"/>
+                    <clipPath id="orb-clip"><rect width="64" height="64" rx="32"/></clipPath>
+                    <filter id="orb-bloom" x="-120%" y="-120%" width="340%" height="340%" color-interpolation-filters="sRGB">
+                        <feGaussianBlur stdDeviation="5.614035"/>
                     </filter>
-                    <filter id="orb-core" x="-60%" y="-60%" width="220%" height="220%">
-                        <feGaussianBlur stdDeviation="9"/>
+                    <filter id="orb-core" x="-120%" y="-120%" width="340%" height="340%" color-interpolation-filters="sRGB">
+                        <feGaussianBlur stdDeviation="8.421053"/>
                     </filter>
-                    <!-- Rim: bright at the very edge, clear by a third in. -->
-                    <radialGradient id="orb-rim" cx="50%" cy="50%" r="50%">
-                        <stop offset="70%" stop-color="#63D6FF" stop-opacity="0"/>
-                        <stop offset="100%" stop-color="#9FE8FF" stop-opacity="0.55"/>
-                    </radialGradient>
+
+                    <!-- Three inner shadows: a wide cyan rim lifted upwards, a
+                         tight dark edge, and a tight bright edge over it. -->
+                    <filter id="orb-frame" x="0" y="0" width="64" height="64" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                        <feFlood flood-opacity="0" result="bg"/>
+                        <feBlend in="SourceGraphic" in2="bg" result="shape"/>
+
+                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="ha1"/>
+                        <feOffset in="SourceAlpha" dy="-1.122807" result="of1"/>
+                        <feGaussianBlur in="of1" stdDeviation="5.052632" result="bl1"/>
+                        <feComposite in="bl1" in2="ha1" operator="arithmetic" k2="-1" k3="1" result="al1"/>
+                        <feFlood flood-color="#63d6ff" result="fl1"/>
+                        <feComposite in="fl1" in2="al1" operator="in" result="co1"/>
+                        <feBlend in="co1" in2="shape" result="sh1"/>
+
+                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="ha2"/>
+                        <feMorphology in="SourceAlpha" operator="erode" radius="1.016887" result="sp2"/>
+                        <feGaussianBlur in="sp2" stdDeviation="1.122807" result="bl2"/>
+                        <feComposite in="bl2" in2="ha2" operator="arithmetic" k2="-1" k3="1" result="al2"/>
+                        <feFlood flood-color="#008baf" result="fl2"/>
+                        <feComposite in="fl2" in2="al2" operator="in" result="co2"/>
+                        <feBlend in="co2" in2="sh1" result="sh2"/>
+
+                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="ha3"/>
+                        <feMorphology in="SourceAlpha" operator="erode" radius="1.015873" result="sp3"/>
+                        <feGaussianBlur in="sp3" stdDeviation="1.122807" result="bl3"/>
+                        <feComposite in="bl3" in2="ha3" operator="arithmetic" k2="-1" k3="1" result="al3"/>
+                        <feFlood flood-color="#ffffff" flood-opacity="0.45" result="fl3"/>
+                        <feComposite in="fl3" in2="al3" operator="in" result="co3"/>
+                        <feBlend in="co3" in2="sh2"/>
+                    </filter>
                 </defs>
 
-                <g clip-path="url(#orb-clip)">
-                    <rect width="64" height="64" fill="#0090B6"/>
+                <g filter="url(#orb-frame)">
+                    <g clip-path="url(#orb-clip)">
+                        <rect width="64" height="64" fill="#0090b6"/>
 
-                    <!-- Each bloom drifts on its own long, prime-ish cycle, so
-                         the three never resynchronise and the motion cannot be
-                         read as a loop. -->
-                    <ellipse cx="32" cy="12" rx="34" ry="27" fill="#FFFFFF" opacity="0.55" filter="url(#orb-soft)">
-                        <animate attributeName="cx" values="32;44;26;32" dur="19s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.33;0.66;1" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
-                        <animate attributeName="cy" values="12;20;8;12" dur="23s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.33;0.66;1" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
-                    </ellipse>
+                        <!-- Wrappers carry the drift; the inner groups keep the
+                             export's own placement untouched. Cycles are set to
+                             different primes so they never resynchronise. -->
+                        <g>
+                            <animateTransform attributeName="transform" type="translate"
+                                values="0 0; 6 -4; -5 3; 0 0" dur="11s" repeatCount="indefinite"
+                                calcMode="spline" keyTimes="0;0.33;0.66;1"
+                                keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>
+                            <g transform="translate(31.940 14.731) rotate(180.219)">
+                                <rect x="-35.556" y="-41.770" width="71.111" height="83.539" rx="33.591"
+                                      fill="#ffffff" filter="url(#orb-bloom)"/>
+                            </g>
+                        </g>
 
-                    <ellipse cx="32" cy="4" rx="28" ry="30" fill="#66D1FF" filter="url(#orb-core)">
-                        <animate attributeName="cx" values="32;20;40;32" dur="29s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.33;0.66;1" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
-                        <animate attributeName="cy" values="4;14;0;4" dur="17s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.33;0.66;1" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
-                    </ellipse>
-
-                    <ellipse cx="18" cy="52" rx="22" ry="18" fill="#00719A" opacity="0.5" filter="url(#orb-soft)">
-                        <animate attributeName="cx" values="18;40;14;18" dur="31s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.33;0.66;1" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
-                    </ellipse>
-
-                    <!-- Rim and inner shadow last, so the light sits on top. -->
-                    <circle cx="32" cy="32" r="32" fill="url(#orb-rim)"/>
-                    <circle cx="32" cy="32" r="31" fill="none" stroke="#008BAF" stroke-width="2" opacity="0.35"/>
+                        <g>
+                            <animateTransform attributeName="transform" type="translate"
+                                values="0 0; -7 4; 5 -3; 0 0" dur="17s" repeatCount="indefinite"
+                                calcMode="spline" keyTimes="0;0.33;0.66;1"
+                                keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>
+                            <g transform="translate(32.003 3.832) rotate(180.056)">
+                                <rect x="-29.254" y="-31.918" width="58.507" height="63.836" rx="25.195"
+                                      fill="#66d1ff" filter="url(#orb-core)">
+                                    <!-- A slow breath, so it is never quite still. -->
+                                    <animate attributeName="opacity" values="1;0.82;1" dur="13s"
+                                             repeatCount="indefinite" calcMode="spline"
+                                             keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"/>
+                                </rect>
+                            </g>
+                        </g>
+                    </g>
                 </g>
             </svg>
         </a>
