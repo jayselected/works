@@ -21,16 +21,25 @@
     /* Type — one size for the whole page: 24 / 34 / -0.2px on desktop,
        fluid to 14px on phones. Leading and tracking are ratios, so the
        desktop proportions hold at every size. */
-    --font-size: clamp(0.875rem, 0.5rem + 1.5vw, 1.25rem);   /* 14 → 20 */
-    /* Project titles alone step up, and carry a medium weight. One ratio
-       rather than a second clamp, so they follow the body at every width. */
-    --font-size-title: calc(var(--font-size) * 1.1);         /* 15.4 → 22 */
-    --weight-title: 500;
+    /* Every fluid value on the page is built from one growth track: --fluid
+       runs 0 → 100px as the viewport crosses 400 → 800px, and each value is
+       stated as its own two ends:
+
+           calc( FLOOR px + (CAP - FLOOR) * var(--fluid) / 100 )
+
+       To retune anything, change only the two numbers on its own line.
+       Nothing else has to follow, and nothing can fall out of step. */
+    --fluid: clamp(0px, (100vw - 400px) / 4, 100px);
+
+    --font-size:       calc(14px + 4 * var(--fluid) / 100);   /* 14 → 18 */
+    --font-size-title: calc(16px + 6 * var(--fluid) / 100);   /* 16 → 22 */
+    --weight-medium: 500;
     /* A length, not a ratio: 20/14 and 28/22 are different proportions, and
        smaller type wants comparatively more leading. Both ends land exactly
        and the ratio loosens on the way down, which is how it should. */
-    --line-height: clamp(1.25rem, 0.875rem + 1.5vw, 1.625rem);   /* 20 → 26 */
-    --letter-spacing: -0.0091em;                             /* -0.2px at 22px */
+    --line-height:     calc(22px + 6 * var(--fluid) / 100);   /* 22 → 28 */
+    /* In em so it holds its proportion as the size changes. */
+    --letter-spacing: -0.0111em;                              /* -0.2px at 18px */
 
     /* Chrome type — fixed, not fluid: interface furniture is the same size on
        a laptop and a 32" display. The label sits a step below the bar. */
@@ -54,13 +63,15 @@
        is what makes a phone feel like the same page as a desktop rather than
        a squeezed one: at 22px the step is 40, at 14px it is 25.5, and the
        ratios below are unchanged either way. */
-    --step: calc(var(--font-size) * 2);   /* 40 at the 20px cap */
+    /* On the same track, but stated in its own right rather than derived
+       from the type — so a change of font size never disturbs the page's
+       spacing, and the two can be tuned independently. */
+    --step: calc(28px + 12 * var(--fluid) / 100);   /* 28 → 40 */
     --space-page:    calc(var(--step) * 4);     /* 160 — page top and bottom */
     --space-section: calc(var(--step) * 1.4);   /*  56 — between sections and projects */
     --space-stack:   calc(var(--step) * 1.2);   /*  48 — air inside an image row */
     --space-block:   calc(var(--step) * 0.8);   /*  32 — hero and project parts */
     --space-meta:    calc(var(--step) * 0.6);   /*  24 — meta rows, wrapped image lines */
-    --space-row:     calc(var(--step) * 0.2);   /*   8 — label to its values */
 
     /* Two paces: content answers the reader's scroll and arrives at interface
        speed; the hero's greeting is an ambient loop and can afford to be
@@ -603,30 +614,30 @@ h1, h2 {
 }
 
 /* The one place the page departs from a single size: a project's name is a
-   step larger and a weight heavier, so a project announces itself before its
-   type is read. Its own leading is inherited, which tightens as the size
-   grows — correct for a heading. */
+   step larger and a weight heavier, so it announces itself before its type
+   is read. Leading is inherited, tightening as the size grows — correct for
+   a heading. */
 .project-title h2 {
     font-size: var(--font-size-title);
-    font-weight: var(--weight-title);
+    font-weight: var(--weight-medium);
 }
 
 .project-type {
     color: var(--color-muted);
 }
 
-/* Rows 24 apart, label 8 above its values — the 3:1 binds each label to its
-   own values. .project-title needs no rule; a block already stacks. */
+/* Rows 24 apart; within a row the label sits directly on its values, held
+   apart by weight rather than by space. .meta-row and .project-title need
+   no rules — a block already stacks its children on their own leading. */
 .project-meta {
     display: flex;
     flex-direction: column;
     gap: var(--space-meta);
 }
 
-.meta-row {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-row);
+/* The label, the values being wrapped in .meta-values beside it. */
+.meta-row > p {
+    font-weight: var(--weight-medium);
 }
 
 .meta-values {
