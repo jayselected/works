@@ -32,11 +32,10 @@
     --fluid: clamp(0px, (100vw - 400px) / 4, 100px);
 
     --font-size:   calc(14px + 8 * var(--fluid) / 100);   /* 14 → 22 */
-    --weight-medium: 500;
     /* A length, not a ratio: 20/14 and 28/22 are different proportions, and
        smaller type wants comparatively more leading. Both ends land exactly
        and the ratio loosens on the way down, which is how it should. */
-    --line-height: calc(20px + 8 * var(--fluid) / 100);   /* 20 → 28 */
+    --line-height: calc(22px + 10 * var(--fluid) / 100);  /* 22 → 32 */
     /* In em so it holds its proportion as the size changes. */
     --letter-spacing: -0.0091em;                          /* -0.2px at 22px */
 
@@ -66,7 +65,10 @@
        from the type — so a change of font size never disturbs the page's
        spacing, and the two can be tuned independently. */
     --step: calc(28px + 12 * var(--fluid) / 100);   /* 28 → 40 */
-    --space-page:    calc(var(--step) * 4);     /* 160 — page top and bottom */
+    /* On its own track rather than a multiple of the step: at four steps a
+       phone opened with a third of the screen empty. The interior rhythm
+       below is unchanged. */
+    --space-page:    calc(72px + 88 * var(--fluid) / 100);   /*  72 → 160 */
     --space-section: calc(var(--step) * 1.4);   /*  56 — between sections and projects */
     --space-stack:   calc(var(--step) * 1.2);   /*  48 — air inside an image row */
     --space-block:   calc(var(--step) * 0.8);   /*  32 — hero and project parts */
@@ -574,14 +576,12 @@ h1, h2 {
 /* Box reserved from first paint, so filling it in JS shifts nothing. */
 .hero-hello {
     white-space: nowrap;
-    min-height: 1.4167em;   /* fallback where lh is unsupported */
-    min-height: 1lh;
+    min-height: var(--line-height);   /* exactly one line, at any size */
 }
 
 /* Tabular figures hold the ticking seconds still. */
 .hero-line {
-    min-height: 1.4167em;
-    min-height: 1lh;
+    min-height: var(--line-height);
     font-variant-numeric: tabular-nums;
 }
 
@@ -612,12 +612,6 @@ h1, h2 {
     gap: var(--space-block);
 }
 
-/* One size for the whole page, so a project's name steps forward on weight
-   alone. Nothing here sets a size. */
-.project-title h2 {
-    font-weight: var(--weight-medium);
-}
-
 .project-type {
     color: var(--color-muted);
 }
@@ -629,11 +623,6 @@ h1, h2 {
     display: flex;
     flex-direction: column;
     gap: var(--space-meta);
-}
-
-/* The label, the values being wrapped in .meta-values beside it. */
-.meta-row > p {
-    font-weight: var(--weight-medium);
 }
 
 .meta-values {
