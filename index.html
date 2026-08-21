@@ -12,9 +12,9 @@
     <!-- Inter is the fallback for anyone without SF Pro, so it must not hold
          up the first paint for everyone who has it. Loading it as print, then
          switching to all once it arrives, keeps it off the critical path. -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap"
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap"
           media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap"></noscript>
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap"></noscript>
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
@@ -303,7 +303,7 @@
                         <feOffset in="SourceAlpha" dy="-1.122807" result="of1"/>
                         <feGaussianBlur in="of1" stdDeviation="5.052632" result="bl1"/>
                         <feComposite in="bl1" in2="ha1" operator="arithmetic" k2="-1" k3="1" result="al1"/>
-                        <feFlood flood-color="#8FA8FF" result="fl1"/>
+                        <feFlood flood-color="#9ACBFF" result="fl1"/>
                         <feComposite in="fl1" in2="al1" operator="in" result="co1"/>
                         <feBlend in="co1" in2="shape" result="sh1"/>
 
@@ -312,7 +312,7 @@
 
                 <g filter="url(#orb-frame)">
                     <g clip-path="url(#orb-clip)">
-                        <rect width="64" height="64" fill="#3E63E8"/>
+                        <rect class="orb-ground" width="64" height="64"/>
 
                         <!-- Wrappers carry the drift; the inner groups keep the
                              export's own placement untouched. Cycles are set to
@@ -348,7 +348,7 @@
                                 keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>
                             <g transform="translate(20 8)">
                                 <rect x="-26" y="-24" width="52" height="48" rx="24"
-                                      fill="#2F4FD8" filter="url(#orb-core)">
+                                      fill="#0057C8" filter="url(#orb-core)">
                                     <animate attributeName="opacity" values="0.7;1;0.6;0.7" dur="23s"
                                              repeatCount="indefinite" calcMode="spline"
                                              keyTimes="0;0.33;0.66;1"
@@ -364,7 +364,7 @@
                                 keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>
                             <g transform="translate(32.003 3.832) rotate(180.056)">
                                 <rect x="-29.254" y="-31.918" width="58.507" height="63.836" rx="25.195"
-                                      fill="#6E90F5" filter="url(#orb-core)">
+                                      fill="#5AB0FF" filter="url(#orb-core)">
                                     <animateTransform attributeName="transform" type="rotate"
                                         values="0 0 -3.8; -30 0 -3.8; 24 0 -3.8; 0 0 -3.8"
                                         dur="13s" repeatCount="indefinite" calcMode="spline"
