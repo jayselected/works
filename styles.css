@@ -21,11 +21,15 @@
     /* Type — one size for the whole page: 24 / 34 / -0.2px on desktop,
        fluid to 14px on phones. Leading and tracking are ratios, so the
        desktop proportions hold at every size. */
-    --font-size: clamp(0.875rem, 0.375rem + 2vw, 1.375rem);  /* 14 → 22 */
+    --font-size: clamp(0.875rem, 0.5rem + 1.5vw, 1.25rem);   /* 14 → 20 */
+    /* Project titles alone step up, and carry a medium weight. One ratio
+       rather than a second clamp, so they follow the body at every width. */
+    --font-size-title: calc(var(--font-size) * 1.1);         /* 15.4 → 22 */
+    --weight-title: 500;
     /* A length, not a ratio: 20/14 and 28/22 are different proportions, and
        smaller type wants comparatively more leading. Both ends land exactly
        and the ratio loosens on the way down, which is how it should. */
-    --line-height: clamp(1.25rem, 0.75rem + 2vw, 1.75rem);   /* 20 → 28 */
+    --line-height: clamp(1.25rem, 0.875rem + 1.5vw, 1.625rem);   /* 20 → 26 */
     --letter-spacing: -0.0091em;                             /* -0.2px at 22px */
 
     /* Chrome type — fixed, not fluid: interface furniture is the same size on
@@ -50,7 +54,7 @@
        is what makes a phone feel like the same page as a desktop rather than
        a squeezed one: at 22px the step is 40, at 14px it is 25.5, and the
        ratios below are unchanged either way. */
-    --step: calc(var(--font-size) * 1.8182);   /* 40 at the 22px cap */
+    --step: calc(var(--font-size) * 2);   /* 40 at the 20px cap */
     --space-page:    calc(var(--step) * 4);     /* 160 — page top and bottom */
     --space-section: calc(var(--step) * 1.4);   /*  56 — between sections and projects */
     --space-stack:   calc(var(--step) * 1.2);   /*  48 — air inside an image row */
@@ -168,7 +172,8 @@ body {
     transition: color var(--ui-ms) var(--ui-ease), background-color var(--ui-ms) var(--ui-ease);
 }
 
-/* The page is one type treatment, set on body; headings stay structural. */
+/* The page is one type treatment, set on body. The h1 stays structural; only
+   project titles depart from it, below. */
 h1, h2 {
     font-size: inherit;
     font-weight: inherit;
@@ -422,6 +427,12 @@ h1, h2 {
     border-radius: 50%;
 }
 
+/* Taken from the accent rather than restated, so the orb and the progress
+   bar cannot drift apart. The blooms above it are tints of the same hue. */
+.orb-ground {
+    fill: var(--color-accent);
+}
+
 /* macOS-dock magnification: swells under the pointer, compresses on press. */
 .dock-face:hover,
 .dock-action:hover {
@@ -591,7 +602,15 @@ h1, h2 {
     gap: var(--space-block);
 }
 
-/* Colour is the only hierarchy here, since the size never changes. */
+/* The one place the page departs from a single size: a project's name is a
+   step larger and a weight heavier, so a project announces itself before its
+   type is read. Its own leading is inherited, which tightens as the size
+   grows — correct for a heading. */
+.project-title h2 {
+    font-size: var(--font-size-title);
+    font-weight: var(--weight-title);
+}
+
 .project-type {
     color: var(--color-muted);
 }
