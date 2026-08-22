@@ -70,7 +70,6 @@
        below is unchanged. */
     --space-page:    calc(72px + 88 * var(--fluid) / 100);   /*  72 → 160 */
     --space-section: calc(var(--step) * 1.4);   /*  56 — between sections and projects */
-    --space-stack:   calc(var(--step) * 1.2);   /*  48 — air inside an image row */
     --space-block:   calc(var(--step) * 0.8);   /*  32 — hero and project parts */
     --space-meta:    calc(var(--step) * 0.6);   /*  24 — meta rows, wrapped image lines */
 
@@ -89,7 +88,6 @@
     --ui-ease: ease;
     --collapse-ms: 400ms;   /* projects morphing between layouts */
     --bar-ms: 400ms;        /* top bar fading in and out */
-    --viewer-ms: 320ms;     /* enlarged image growing in and away */
 
     /* Dock — measured from the iOS 26 Safari bottom bar: 48pt capsule, 44pt
        targets, 8pt gap, 5pt inset, 22pt glyphs. Fixed at every width. */
@@ -134,9 +132,6 @@
         inset 0 -1px 1px rgba(255, 255, 255, 0.18);
     --glass-shadow: var(--glass-rim), 0 8px 24px rgba(0, 0, 0, 0.06);
 
-    /* The veil behind an enlarged image — blurred, not blacked out. */
-    --veil: rgba(255, 255, 255, 0.62);
-    --veil-blur: blur(28px) saturate(180%);
 }
 
 /* Only the values that actually differ; --glass-border resolves against
@@ -156,7 +151,6 @@
         inset 0 -1px 1px rgba(255, 255, 255, 0.05);
     --glass-shadow: var(--glass-rim), 0 8px 24px rgba(0, 0, 0, 0.35);
 
-    --veil: rgba(0, 0, 0, 0.55);
 }
 
 body {
@@ -515,17 +509,20 @@ h1, h2 {
 /* ============================================
    Page
 
-   Containers in nesting order, with the gap each sets:
+   Containers in nesting order, with the gap each sets, mirroring the
+   Figma auto-layouts one for one:
 
-     .main               56, 160 top and bottom
-       .hero             32
-       .works            56
-         .project        32
-           .project-details  32
-             .project-meta   24
-               .meta-row     8
-           .project-images   32
-             .stack-row      48 vertical, 32 horizontal
+     .main              56, page frame 72 → 160
+       .hero            32
+       .works           56
+         .project       32
+           .project-title    no gap
+           .banner           no padding, full column width
+           .project-meta     24
+             .meta-row       no gap
+           .project-description
+           .stack            32 above and below
+           .stack-row        24 between images, 32 padding all round
    ============================================ */
 
 .container {
@@ -605,12 +602,7 @@ h1, h2 {
     gap: var(--space-block);
 }
 
-.project-details {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-block);
-}
+
 
 .project-type {
     color: var(--color-muted);
@@ -630,10 +622,11 @@ h1, h2 {
 }
 
 /* --- Collapsed view (dock toggle) ---
-   Identified by position, so a new stack needs no change here. */
+   A project reduces to its title and its banner. The banner is not a .stack,
+   so hiding every .stack needs no exception and a new one needs no change. */
 body.projects-collapsed .project-meta,
 body.projects-collapsed .project-description,
-body.projects-collapsed .project-images {
+body.projects-collapsed .stack {
     display: none;
 }
 
@@ -661,21 +654,19 @@ body.projects-collapsed .project {
    <img width="2400" height="1500" src="..." alt="...">
    ============================================ */
 
-.project-images {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-block);
-}
-
-.stack {
-    width: 100%;
-}
-
+/* The banner sits directly in the project, at the column's full width and
+   with no padding of its own. */
+.banner,
 .stack img {
     width: 100%;
     height: auto;
     display: block;
+}
+
+/* A stack holds the wider frames, set apart from the copy above and below. */
+.stack {
+    width: 100%;
+    padding: var(--space-block) 0;
 }
 
 /* Wraps once a line is full, so any number stays inside the column. Wrapping
@@ -686,207 +677,14 @@ body.projects-collapsed .project {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: var(--space-meta) var(--space-block);   /* 24 between lines, 32 between images */
-    padding: var(--space-stack) var(--space-block);   /* 48 above and below, 32 either side */
+    gap: var(--space-meta);          /* 24, between images and between lines */
+    padding: var(--space-block);     /* 32 on all four sides */
 }
 
 .stack-row img {
-    /* One share at every width — three to a line throughout, so the row
-       never jumps at a breakpoint, and 172px at the full column, which is
-       the size the mockups were drawn at. */
-    width: 27%;
-}
-
-/* --- Carousel ---
-   Scrolling, swiping and snapping are native; siteapp.js only builds the
-   dots and routes the keys. Without JS it stays a scrollable strip. */
-
-.carousel-track {
-    display: flex;
-    /* Slides are set a clear space apart, so no two are ever edge to edge.
-       siteapp.js fades and settles them by distance from the centre, which
-       is what makes the neighbour arrive rather than simply sit there. */
-    gap: var(--space-section);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;              /* the dots are the indicator */
-    -ms-overflow-style: none;
-    overscroll-behavior-x: contain;     /* never scrolls the page sideways */
-}
-
-.carousel-track::-webkit-scrollbar {
-    display: none;
-}
-
-.carousel-track > * {
-    flex: 0 0 100%;
-    scroll-snap-align: center;
-    /* Set by siteapp.js as the strip moves; this is the resting value, and
-       the one that stands without JS. */
-    opacity: 1;
-}
-
-.carousel-track img {
-    cursor: zoom-in;
-}
-
-/* Browsers make scroll containers focusable; a ring tight around the strip
-   reads as a rule against the artwork. The dots carry the focus instead. */
-.carousel-track:focus,
-.carousel-track:focus-visible {
-    outline: none;
-}
-
-.carousel-dots {
-    display: flex;
-    justify-content: center;
-    padding-top: var(--space-meta);
-}
-
-/* The mark reads at 7px; the button stays 24px tall for touch and is kept
-   narrow so the marks sit close together rather than drifting apart. */
-.carousel-dot {
-    width: 14px;
-    height: 24px;
-    padding: 0;
-    border: 0;
-    background: none;
-    appearance: none;
-    -webkit-appearance: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.carousel-dot::before {
-    content: '';
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background-color: var(--color-ink);
-    opacity: 0.2;
-    transition: opacity var(--ui-ms) var(--ui-ease), transform var(--ui-ms) var(--ui-ease);
-}
-
-.carousel-dot:hover::before {
-    opacity: 0.45;
-}
-
-/* The one in frame takes the accent, as the progress bar and the bar's dot
-   do; the rest stay muted. */
-.carousel-dot[aria-current="true"]::before {
-    opacity: 1;
-    background-color: var(--color-accent);
-}
-
-/* The default outline reads as a hard box around a 14px control. Keyboard
-   focus grows the mark instead — unmistakable, and it cannot band. */
-.carousel-dot:focus {
-    outline: none;
-}
-
-.carousel-dot:focus-visible::before {
-    transform: scale(1.5);
-}
-
-/* --- Viewer ---
-   A native dialog: Escape, the focus trap and the backdrop come free. It runs
-   the same carousel code, so enlarged behaviour is identical by construction. */
-
-.viewer {
-    width: 100vw;
-    max-width: none;
-    height: 100dvh;
-    max-height: none;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    overflow: hidden;
-
-    /* The glass sits on the dialog itself: ::backdrop cannot read the theme
-       tokens dependably across browsers, and the dialog already fills the
-       screen. The page stays visible behind it, blurred back. */
-    background-color: var(--veil);
-    backdrop-filter: var(--veil-blur);
-    -webkit-backdrop-filter: var(--veil-blur);
-
-    opacity: 0;
-    transition: opacity var(--viewer-ms) var(--enter-ease);
-}
-
-.viewer::backdrop {
-    background-color: transparent;
-}
-
-.viewer.is-open { opacity: 1; }
-
-/* Focus lands here rather than on the first dot, which would otherwise take
-   the focus mark the moment the dialog opens and read as an odd dot out. */
-.viewer-inner:focus,
-.viewer-inner:focus-visible {
-    outline: none;
-}
-
-.viewer-inner {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: var(--space-meta);
-    padding: var(--space-stack) 0;
-    /* Grows in from slightly small, and shrinks away again. */
-    /* The image lifts in slightly ahead of the veil settling. */
-    opacity: 0;
-    transform: scale(0.96);
-    transition:
-        opacity var(--viewer-ms) var(--enter-ease),
-        transform var(--viewer-ms) var(--enter-ease);
-}
-
-.viewer.is-open .viewer-inner {
-    opacity: 1;
-    transform: none;
-}
-
-/* No shadow: this close to the screen edges it has nowhere to fall and reads
-   as dark bands. The blurred veil already separates image from page. */
-
-/* Full-width slides, so only one image is ever in frame — its neighbours sit
-   a screen away. The image is sized well inside that. */
-.viewer-slide {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 0;
-    cursor: zoom-out;   /* the space around the image dismisses it */
-}
-
-.viewer-slide img {
-    width: auto;
-    height: auto;
-    max-width: min(68vw, 980px);
-    max-height: 72dvh;
-    object-fit: contain;
-    cursor: default;    /* the image itself is the content, not a target */
-}
-
-.viewer .carousel-dots {
-    padding-top: 0;
-    flex: none;
-}
-
-.viewer .carousel-dot::before {
-    background-color: var(--color-ink);   /* the veil carries the theme */
-}
-
-.viewer .carousel-dot[aria-current="true"]::before {
-    background-color: var(--color-accent);
-}
-
-/* The page must not scroll behind the viewer. */
-body.viewer-open {
-    overflow: hidden;
+    /* 175px at the full column, which is the size the mockups are drawn at,
+       and three to a line at every width — so the row never jumps. */
+    width: 27.5%;
 }
 
 /* ============================================
@@ -981,10 +779,6 @@ body.viewer-open {
         animation-play-state: paused !important;
     }
 
-    /* Snapping jumps rather than glides. */
-    .carousel-track {
-        scroll-behavior: auto !important;
-    }
 }
 
 /* A request, not a default: only those who have asked get the stronger grey. */
@@ -999,22 +793,18 @@ body.viewer-open {
     [data-theme="light"] {
         --glass-bg: #F1F1F1;
         --glass-backdrop: none;
-        --veil: #F1F1F1;
-        --veil-blur: none;
     }
 
     [data-theme="dark"] {
         --glass-bg: #0A0A0A;
         --glass-backdrop: none;
-        --veil: #0A0A0A;
-        --veil-blur: none;
     }
 }
 
 /* Without backdrop-filter the fill goes near-opaque to stay legible. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    [data-theme="light"] { --glass-bg: #F1F1F1; --veil: rgba(255, 255, 255, 0.96); }
-    [data-theme="dark"]  { --glass-bg: #0A0A0A; --veil: rgba(0, 0, 0, 0.92); }
+    [data-theme="light"] { --glass-bg: #F1F1F1; }
+    [data-theme="dark"]  { --glass-bg: #0A0A0A; }
 }
 
 /* ============================================
@@ -1035,24 +825,11 @@ body.viewer-open {
         --bar-wash: 32px;
     }
 
-    .viewer-slide img {
-        max-width: 86vw;   /* a phone has no room to spare */
-        max-height: 68dvh;
-    }
-
     /* Two collapsed projects side by side would leave each too narrow, so the
        grid reverts to the stacked column. Only display needs resetting —
        .works already carries the column direction and the 80px gap. */
     body.projects-collapsed .works {
         display: flex;
-    }
-}
-
-/* On touch the target grows downward, not sideways: height a finger can
-   find, width the eye still reads as one tight row. */
-@media (hover: none) {
-    .carousel-dot {
-        height: 44px;
     }
 }
 
