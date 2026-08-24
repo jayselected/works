@@ -49,7 +49,7 @@
        one accent used only by the progress bar. */
     --color-bg: #FFFFFF;
     --color-ink: #000000;
-    --color-muted: #86868B;             /* project type, meta values */
+    --color-muted: #BABFC5;             /* project type, meta values */
     --color-line: rgba(0, 0, 0, 0.1);   /* chrome hairlines */
     --color-bg-rgb: 255, 255, 255;
     --color-accent: #007AFF;
@@ -142,6 +142,7 @@
 
     --color-bg: #000000;
     --color-ink: #FFFFFF;
+    --color-muted: #595959;
     --color-line: rgba(255, 255, 255, 0.1);
     --color-bg-rgb: 0, 0, 0;
 
