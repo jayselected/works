@@ -415,6 +415,30 @@ h1, h2 {
     color: var(--color-ink);
 }
 
+/* The orb and its readings. Bottom-aligned so the orb sits level with the
+   actions capsule opposite, whatever the readings wrap to. */
+.dock-identity {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    min-width: 0;
+}
+
+/* No glass of its own: the pill at the top of a phone is a scroll affordance
+   and needs a surface, but here the readings sit beside the orb as plain
+   text and the dock's own material stays with the controls. */
+.dock-lines {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    font-size: var(--font-chrome-small);
+    line-height: var(--line-height-chrome);
+    letter-spacing: var(--letter-spacing);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink);
+    white-space: nowrap;
+}
+
 /* The orb is the face rather than an icon within it, so this element carries
    no fill, border or blur — the orb is opaque and would hide all three. It
    keeps only the cast shadow, which lifts it off the page as the dock does. */
@@ -816,7 +840,22 @@ body.projects-collapsed .project {
    Responsive
    ============================================ */
 
+/* --- Where the readings live ---
+   Above 700px they sit beside the orb; at or below, they move into the pill
+   at the top of the page. Only one is ever present, so the clock and the
+   lookup are never displayed twice. */
 @media screen and (max-width: 700px) {
+    .dock-lines {
+        display: none;
+    }
+
+    /* The place will not fit in a capsule this narrow; the hero carries it
+       in full a little further down the page. */
+    .topbar-place,
+    .topbar-place-sep {
+        display: none;
+    }
+
     :root {
 
         /* Content falls to 16 here; holding the bar at its desktop size
@@ -838,18 +877,18 @@ body.projects-collapsed .project {
     }
 }
 
+/* The pill is a phone affordance; wider screens carry the readings in the
+   dock instead, so neither the shell nor its wash is needed. */
+@media screen and (min-width: 701px) {
+    .topbar-shell {
+        display: none;
+    }
+}
+
 /* --- Top bar: sheds what will not fit ---
    Measured at 14px against the longest strings the bar can hold — a full
    weekday and month, and "Thunderstorm". Everything dropped here is still
    carried in full by the hero, so nothing is lost, only repeated less. */
-
-/* Inside the capsule the full row needs ~673px of usable width. */
-@media screen and (max-width: 800px) {
-    .topbar-place,
-    .topbar-place-sep {
-        display: none;
-    }
-}
 
 /* Name, weather and clock need ~514px. */
 @media screen and (max-width: 540px) {
