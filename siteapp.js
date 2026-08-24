@@ -343,15 +343,11 @@ function initializeTheme() {
    Scroll progress
    ============================================ */
 
-/* How near the foot of the page counts as being at it. */
-const FOOT_SLACK_PX = 24;
-
 function initializeScroll() {
     const progress = document.getElementById('scroll-progress');
     const bar      = document.getElementById('scroll-progress-fill');
     const topbar   = document.getElementById('topbar');
     const anchor   = document.querySelector('.hero-meta');
-    const footer   = document.querySelector('.site-footer');
     if (!progress || !bar) return;
 
     let queued = false;
@@ -366,15 +362,6 @@ function initializeScroll() {
 
         bar.style.transform = `scaleX(${ratio})`;
         progress.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
-
-        /* The sign-off arrives at the foot of the page. A page too short to
-           scroll is already at its foot, so it shows there too. */
-        if (footer) {
-            footer.classList.toggle(
-                'is-visible',
-                scrollable <= 0 || window.scrollY >= scrollable - FOOT_SLACK_PX
-            );
-        }
 
         /* The bar takes over once the hero's own readings have gone behind
            it. Both edges are read here, on the frame they are needed, rather
