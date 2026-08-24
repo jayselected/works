@@ -279,6 +279,10 @@
              its own accessible label. -->
         <div class="dock-label" id="dock-label" aria-hidden="true"></div>
 
+        <!-- The orb and the readings beside it. On a phone this stack gives
+             way to the pill at the top of the page; here it is the site's
+             identity, always present rather than revealed by scrolling. -->
+        <div class="dock-identity">
         <a class="dock-face" href="/" data-label="Home" aria-label="Homepage">
             <!-- Nova, from the Oreo export. The geometry, colours, blur radii
                  and the three-layer inner-shadow frame are reproduced exactly
@@ -389,6 +393,13 @@
                 </g>
             </svg>
         </a>
+
+            <div class="dock-lines" aria-hidden="true">
+                <span>Jay Patel</span>
+                <span data-clock></span>
+                <span><span data-place></span> · <span data-weather></span></span>
+            </div>
+        </div>
 
         <div class="dock-cluster">
             <!-- Scroll progress: fills with blue as the page is read. Sits
