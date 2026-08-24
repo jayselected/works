@@ -703,32 +703,10 @@ body.projects-collapsed .project {
    Footer
    ============================================ */
 
-/* The orb and the footer, bottom-aligned so the orb stays level with the
-   actions capsule opposite. */
-.dock-identity {
-    display: flex;
-    align-items: flex-end;
-    gap: 12px;
-    min-width: 0;
-}
-
-/* Shown only at the foot of the page, which is where a sign-off belongs.
-   It is out of the flow, so nothing shifts as it arrives. */
 .site-footer {
-    font-size: var(--font-chrome-small);
-    line-height: var(--line-height-chrome);
-    letter-spacing: var(--letter-spacing);
-    color: var(--color-muted);
-    white-space: nowrap;
-    /* The dock is 48 tall and the line is not; this sits it on the baseline
-       of the capsule opposite rather than on the dock's floor. */
-    padding-bottom: 14px;
-    opacity: 0;
-    transition: opacity var(--bar-ms) var(--enter-ease);
-}
-
-.site-footer.is-visible {
-    opacity: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
 }
 
 /* ============================================
