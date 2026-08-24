@@ -72,6 +72,7 @@
     --space-section: calc(var(--step) * 1.4);   /*  56 — between sections and projects */
     --space-block:   calc(var(--step) * 0.8);   /*  32 — hero and project parts */
     --space-meta:    calc(var(--step) * 0.6);   /*  24 — meta rows, wrapped image lines */
+    --space-tight:   calc(var(--step) * 0.2);   /*   8 — air above and below an image stack */
 
     /* Two paces: content answers the reader's scroll and arrives at interface
        speed; the hero's greeting is an ambient loop and can afford to be
@@ -663,10 +664,12 @@ body.projects-collapsed .project {
     display: block;
 }
 
-/* A stack holds the wider frames, set apart from the copy above and below. */
+/* A stack holds the wider frames. Its own air is slight — the 32 between
+   parts of a project already separates it from the copy, and a fuller
+   padding on top of that reads as a gap rather than as breathing room. */
 .stack {
     width: 100%;
-    padding: var(--space-block) 0;
+    padding: var(--space-tight) 0;
 }
 
 /* Wraps once a line is full, so any number stays inside the column. Wrapping
@@ -677,8 +680,10 @@ body.projects-collapsed .project {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: var(--space-meta);          /* 24, between images and between lines */
-    padding: var(--space-block);     /* 32 on all four sides */
+    gap: var(--space-meta);   /* 24, between images and between lines */
+    /* 8 above and below, as any stack; 32 either side, which is what holds
+       the mockups at the width they are drawn. */
+    padding: var(--space-tight) var(--space-block);
 }
 
 .stack-row img {
