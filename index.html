@@ -265,10 +265,6 @@
 
             </section>
 
-            <footer class="site-footer">
-                <p>© 2026 Jay Patel</p>
-            </footer>
-
         </main>
     </div>
 
@@ -279,6 +275,10 @@
              its own accessible label. -->
         <div class="dock-label" id="dock-label" aria-hidden="true"></div>
 
+        <!-- The orb, with the footer beside it. The line is only shown once
+             the page has been read to the end, so it arrives as a sign-off
+             rather than sitting in the chrome throughout. -->
+        <div class="dock-identity">
         <a class="dock-face" href="/" data-label="Home" aria-label="Homepage">
             <!-- Nova, from the Oreo export. The geometry, colours, blur radii
                  and the three-layer inner-shadow frame are reproduced exactly
@@ -389,6 +389,9 @@
                 </g>
             </svg>
         </a>
+
+            <footer class="site-footer">© 2026 Jay Patel</footer>
+        </div>
 
         <div class="dock-cluster">
             <!-- Scroll progress: fills with blue as the page is read. Sits
