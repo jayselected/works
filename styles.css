@@ -70,8 +70,7 @@
        below is unchanged. */
     --space-page:    calc(72px + 88 * var(--fluid) / 100);   /*  72 → 160 */
     --space-section: calc(var(--step) * 1.4);   /*  56 — between sections and projects */
-    --space-block:   calc(var(--step) * 0.8);   /*  32 — hero and meta parts */
-    --space-image:   var(--step);               /*  40 — around an image */
+    --space-block:   calc(var(--step) * 0.8);   /*  32 — hero and project parts */
     --space-meta:    calc(var(--step) * 0.6);   /*  24 — meta rows, wrapped image lines */
 
     /* Corner on a web frame. The only radius in the content — see the note
@@ -612,7 +611,7 @@ h1, h2 {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--space-image);
+    gap: var(--space-block);
 }
 
 
@@ -692,9 +691,9 @@ body.projects-collapsed .project {
     box-shadow: inset 0 0 0 1px var(--color-line);
 }
 
-/* No padding of its own. A stack's air comes from the project's gap alone,
-   so the distance the eye sees is the distance the code declares — padding
-   here would add to every boundary the project has, and did. */
+/* No padding of its own: a stack's air is the project's gap, so the distance
+   the eye measures is the distance declared. Padding here would add to every
+   boundary the project has, including the one with the next project. */
 .stack {
     width: 100%;
 }
@@ -708,8 +707,8 @@ body.projects-collapsed .project {
     align-items: center;
     justify-content: center;
     gap: var(--space-meta);   /* 24, between images and between lines */
-    /* Horizontal only: this is what holds the mockups at the width they are
-       drawn, and it does not touch the gaps above or below. */
+    /* Horizontal only — this is what holds the mockups at the width they are
+       drawn, and it leaves the gaps above and below untouched. */
     padding: 0 var(--space-block);
 }
 
