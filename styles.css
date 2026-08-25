@@ -76,13 +76,17 @@
     /* Corners on the artwork. Fixed rather than fluid: a corner is a property
        of the object, not of the page it sits on.
 
-       The two are concentric — an inner corner is its outer corner less the
-       padding between them, so nested curves stay parallel:
-           inner = outer − inset      16 = 24 − 8
-       Change any one of the three and the other two follow. */
-    --radius-outer: 24px;   /* anything sitting directly on the page */
-    --radius-inner: 16px;   /* an image inside a framed container */
-    --frame-inset:  8px;    /* = outer − inner. Not air; the concentric gap. */
+       Concentric radii only bind when the inner element hugs the corner —
+       inner = outer − inset. At the inset below the image's corner sits
+       nowhere near the frame's, so the two are free of each other and 16
+       inside 24 is a choice rather than a consequence.
+
+       The inset is a share, not a step: a frame is an object and scales with
+       itself. At the 700px column it is the 32px the design specifies, and
+       both frames take the same one, so they can never diverge. */
+    --radius-outer: 24px;      /* frames, and the banner on its own */
+    --radius-inner: 16px;      /* an image inside a frame */
+    --frame-inset:  4.5714%;   /* 32 of the 700px column */
     /* One stroke for both themes — a mid grey at low alpha reads on either
        ground, so it needs no override. */
     --stroke-frame: rgba(186, 191, 197, 0.2);
@@ -692,9 +696,7 @@ body.projects-collapsed .project {
 
 /* A web screenshot is a long white slab. Framed, it reads as a screen rather
    than a hole in the page — and on a light ground the frame gives it an edge
-   its own white would otherwise lose. The inset is the concentric gap, so it
-   is fixed while the row's is a share: the row's mockups carry no corner to
-   stay parallel with. */
+   its own white would otherwise lose. */
 .stack:not(.stack-row) {
     padding: var(--frame-inset);
     border: 1px solid var(--stroke-frame);
@@ -730,7 +732,7 @@ body.projects-collapsed .project {
        aside deliberately: tie the gaps to --step and they fall to 70% while
        the column falls to 38%, which crushes the arrangement from the inside. */
     gap: 5.0473%;         /* 32 of the 634px content box */
-    padding: 4.5714%;     /* 32 of the 700px column */
+    padding: var(--frame-inset);
     /* The row is a frame around the mockups rather than a bare arrangement,
        so it carries the edge itself; the mockups inside stay untouched. */
     border: 1px solid var(--stroke-frame);
