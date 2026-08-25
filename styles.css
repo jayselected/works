@@ -74,9 +74,15 @@
     --space-meta:    calc(var(--step) * 0.6);   /*  24 — meta rows, wrapped image lines */
 
     /* Corners on the artwork. Fixed rather than fluid: a corner is a property
-       of the object, not of the page it sits on. */
-    --radius-image: 24px;   /* banners, and the frame around a mockup row */
-    --radius-slab:  16px;   /* the long web screenshots */
+       of the object, not of the page it sits on.
+
+       The two are concentric — an inner corner is its outer corner less the
+       padding between them, so nested curves stay parallel:
+           inner = outer − inset      16 = 24 − 8
+       Change any one of the three and the other two follow. */
+    --radius-outer: 24px;   /* anything sitting directly on the page */
+    --radius-inner: 16px;   /* an image inside a framed container */
+    --frame-inset:  8px;    /* = outer − inner. Not air; the concentric gap. */
     /* One stroke for both themes — a mid grey at low alpha reads on either
        ground, so it needs no override. */
     --stroke-frame: rgba(186, 191, 197, 0.2);
@@ -679,17 +685,24 @@ body.projects-collapsed .project {
     display: block;
 }
 
-/* The banner is artwork and takes the image corner. */
+/* The banner sits directly on the page and takes the outer corner. */
 .banner {
-    border-radius: var(--radius-image);
+    border-radius: var(--radius-outer);
 }
 
-/* A web screenshot is a long white slab; the corner turns it back into an
-   object, and the hairline gives it an edge on a light ground where its own
-   white would otherwise meet the page's. */
+/* A web screenshot is a long white slab. Framed, it reads as a screen rather
+   than a hole in the page — and on a light ground the frame gives it an edge
+   its own white would otherwise lose. The inset is the concentric gap, so it
+   is fixed while the row's is a share: the row's mockups carry no corner to
+   stay parallel with. */
+.stack:not(.stack-row) {
+    padding: var(--frame-inset);
+    border: 1px solid var(--stroke-frame);
+    border-radius: var(--radius-outer);
+}
+
 .stack:not(.stack-row) img {
-    border-radius: var(--radius-slab);
-    box-shadow: inset 0 0 0 1px var(--stroke-frame);
+    border-radius: var(--radius-inner);
 }
 
 /* No padding of its own: a stack's air is the project's gap, so the distance
@@ -721,7 +734,7 @@ body.projects-collapsed .project {
     /* The row is a frame around the mockups rather than a bare arrangement,
        so it carries the edge itself; the mockups inside stay untouched. */
     border: 1px solid var(--stroke-frame);
-    border-radius: var(--radius-image);
+    border-radius: var(--radius-outer);
 }
 
 .stack-row img {
