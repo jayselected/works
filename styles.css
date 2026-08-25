@@ -73,9 +73,13 @@
     --space-block:   calc(var(--step) * 0.8);   /*  32 — hero and project parts */
     --space-meta:    calc(var(--step) * 0.6);   /*  24 — meta rows, wrapped image lines */
 
-    /* Corner on a web frame. The only radius in the content — see the note
-       on .stack:not(.stack-row) img for why it earns its place. */
-    --radius-frame: calc(8px + 4 * var(--fluid) / 100);   /* 8 → 12 */
+    /* Corners on the artwork. Fixed rather than fluid: a corner is a property
+       of the object, not of the page it sits on. */
+    --radius-image: 24px;   /* banners, and the frame around a mockup row */
+    --radius-slab:  16px;   /* the long web screenshots */
+    /* One stroke for both themes — a mid grey at low alpha reads on either
+       ground, so it needs no override. */
+    --stroke-frame: rgba(186, 191, 197, 0.2);
 
     /* Two paces: content answers the reader's scroll and arrives at interface
        speed; the hero's greeting is an ambient loop and can afford to be
@@ -675,20 +679,17 @@ body.projects-collapsed .project {
     display: block;
 }
 
-/* Web frames are screenshots of white pages. Run full-bleed with square
-   corners they read as a hole in the page rather than as a screen — most
-   of all on a dark ground, where a tall white rectangle is simply a slab.
-   A corner turns the same rectangle back into an object.
+/* The banner is artwork and takes the image corner. */
+.banner {
+    border-radius: var(--radius-image);
+}
 
-   The hairline does the opposite job on a light ground, where the frame's
-   own white meets the page's and the edge would otherwise disappear. One
-   treatment, two problems, and it never has to know which theme it is in.
-
-   Not applied to the banners, which are artwork rather than screenshots,
-   nor to the mockups, which are already object-shaped. */
+/* A web screenshot is a long white slab; the corner turns it back into an
+   object, and the hairline gives it an edge on a light ground where its own
+   white would otherwise meet the page's. */
 .stack:not(.stack-row) img {
-    border-radius: var(--radius-frame);
-    box-shadow: inset 0 0 0 1px var(--color-line);
+    border-radius: var(--radius-slab);
+    box-shadow: inset 0 0 0 1px var(--stroke-frame);
 }
 
 /* No padding of its own: a stack's air is the project's gap, so the distance
@@ -706,16 +707,33 @@ body.projects-collapsed .project {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: var(--space-meta);   /* 24, between images and between lines */
-    /* Horizontal only — this is what holds the mockups at the width they are
-       drawn, and it leaves the gaps above and below untouched. */
-    padding: 0 var(--space-block);
+    /* Stated as shares of the row, not as steps of the page. A row of mockups
+       is a composition — the mockups, the air between them and the frame
+       around them are one arrangement — so it scales as a single object and
+       holds its proportions exactly at every width. Resolved at the 700px
+       column these are the 32px the design specifies.
+
+       This is the one place the page's own rhythm is set aside, and it is set
+       aside deliberately: tie the gaps to --step and they fall to 70% while
+       the column falls to 38%, which crushes the arrangement from the inside. */
+    gap: 5.0473%;         /* 32 of the 634px content box */
+    padding: 4.5714%;     /* 32 of the 700px column */
+    /* The row is a frame around the mockups rather than a bare arrangement,
+       so it carries the edge itself; the mockups inside stay untouched. */
+    border: 1px solid var(--stroke-frame);
+    border-radius: var(--radius-image);
 }
 
 .stack-row img {
-    /* 175px at the full column, which is the size the mockups are drawn at,
-       and three to a line at every width — so the row never jumps. */
-    width: 27.5%;
+    /* 175px at the full column, and that share held exactly as the row
+       scales. */
+    width: 27.6025%;      /* 175 of 634 */
+
+    /* Below this a screenshot stops being readable — at 66px an iPhone frame
+       is 138px tall and shows nothing anyone could judge. The mockup holds
+       here and the row wraps instead, which flex-wrap does on its own: the
+       size never jumps, only the number on a line changes. */
+    min-width: 100px;
 }
 
 /* ============================================
