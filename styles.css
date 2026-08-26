@@ -723,16 +723,22 @@ body.projects-collapsed .project {
     position: absolute;
     inset: 0;
     z-index: -1;
-    /* Lifted, so the light pools below the image as it would from a screen.
-       The scale gives the mask room to fade in before the banner's own edge;
-       4% either side, which stays inside the page gutter at every width. */
-    transform: scale(1.08) translateY(3%);
+    /* Scaled further vertically than horizontally, because only the sides
+       are constrained: the page gutter is all the room there is left and
+       right, while above and below the glow is free to spread — which is
+       where light from a screen pools anyway. 3% either side stays inside
+       the gutter at every width; 14% top and bottom costs nothing. */
+    transform: scale(1.06, 1.28) translateY(2%);
     filter: blur(var(--ambient-blur)) saturate(1.7);
     opacity: var(--ambient-opacity);
     pointer-events: none;
 
-    -webkit-mask-image: radial-gradient(closest-side, #000 45%, transparent 100%);
-            mask-image: radial-gradient(closest-side, #000 45%, transparent 100%);
+    /* The fade has to finish outside the banner or there is no glow left to
+       see — the banner covers everything within 78% of this layer. Solid to
+       there, then away by the layer's own edge, so Safari still finds no
+       edge to clip. */
+    -webkit-mask-image: radial-gradient(closest-side, #000 70%, transparent 100%);
+            mask-image: radial-gradient(closest-side, #000 70%, transparent 100%);
     -webkit-mask-repeat: no-repeat;
             mask-repeat: no-repeat;
 }
