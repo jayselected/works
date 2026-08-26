@@ -91,15 +91,6 @@
        ground, so it needs no override. */
     --stroke-frame: rgba(186, 191, 197, 0.2);
 
-    /* Ambient glow behind a banner — a dark-mode effect only, as it is on
-       YouTube: a glow needs somewhere dark to fall. */
-    --ambient-opacity: 0.8;
-    --ambient-blur: 64px;
-    /* How far the halo reaches past the banner, evenly on all four sides.
-       Small by default so it stays inside the page gutter unaided; the rule
-       under @supports opens it up where overflow can be clipped. */
-    --ambient-spread: 24px;
-
     /* Two paces: content answers the reader's scroll and arrives at interface
        speed; the hero's greeting is an ambient loop and can afford to be
        slow. All of it is neutralised under prefers-reduced-motion. */
@@ -691,97 +682,16 @@ body.projects-collapsed .project {
 
 /* The banner sits directly in the project, at the column's full width and
    with no padding of its own. */
-.banner img,
+.banner,
 .stack img {
     width: 100%;
     height: auto;
     display: block;
 }
 
-/* --- Banner, with its own light ---
-   A second copy of the artwork sits behind the banner, blurred and lifted a
-   little, so the page picks up the project's colours around it. The copy is
-   the same URL, so it costs one fetch, and carries no alt text — there is
-   nothing there to describe that the banner does not already say.
-
-   Dark mode only, as on YouTube: a glow needs somewhere dark to fall. It is
-   not merely faded out in light mode but not drawn at all, so it costs
-   nothing there.
-
-   The mask is what makes it work in Safari. A blur alone stops at the
-   element's edge — Chrome feathers that, Safari leaves the smeared image's
-   own straight edge visible. Fading the layer to nothing before it reaches
-   its bounds means there is no edge left to show, in any engine. */
-/* No isolation: the glow escapes to the page's own stacking context and so
-   paints behind the title and the meta rather than over them. That is what
-   allows it to be intense — contained, it would wash the text out. */
+/* The banner sits directly on the page and takes the outer corner. */
 .banner {
-    position: relative;
-}
-
-.banner-art {
-    position: relative;
     border-radius: var(--radius-outer);
-}
-
-.banner-ambient {
-    display: none;
-    position: absolute;
-    z-index: -1;
-    /* The box grows by the same distance on every side rather than by a
-       proportion, so the halo keeps an even depth all round instead of
-       running wide on a banner that is wider than it is tall. */
-    left: calc(var(--ambient-spread) * -1);
-    top: calc(var(--ambient-spread) * -1);
-    width: calc(100% + var(--ambient-spread) * 2);
-    height: calc(100% + var(--ambient-spread) * 2);
-    object-fit: cover;   /* fill the taller box without stretching the art */
-
-    filter: blur(var(--ambient-blur)) saturate(1.9);
-    opacity: var(--ambient-opacity);
-    pointer-events: none;
-
-    /* Two linear fades crossed, not a radial one: a radial mask inscribes an
-       ellipse and pulls the corners in, which is what made the glow read as
-       an oval. Crossed linears fall off squarely, so the halo follows the
-       card's own edges — solid across the banner, gone by the spread. */
-    -webkit-mask-image:
-        linear-gradient(to right, transparent, #000 var(--ambient-spread),
-                        #000 calc(100% - var(--ambient-spread)), transparent),
-        linear-gradient(to bottom, transparent, #000 var(--ambient-spread),
-                        #000 calc(100% - var(--ambient-spread)), transparent);
-            mask-image:
-        linear-gradient(to right, transparent, #000 var(--ambient-spread),
-                        #000 calc(100% - var(--ambient-spread)), transparent),
-        linear-gradient(to bottom, transparent, #000 var(--ambient-spread),
-                        #000 calc(100% - var(--ambient-spread)), transparent);
-    -webkit-mask-composite: source-in;
-            mask-composite: intersect;
-    -webkit-mask-repeat: no-repeat;
-            mask-repeat: no-repeat;
-}
-
-[data-theme="dark"] .banner-ambient {
-    display: block;
-}
-
-/* Where the page can clip its own overflow, the glow is let off the leash
-   and spreads to the window's edges as YouTube's does. Without clip support
-   it keeps the narrower spill above, which is safe unaided. */
-@supports (overflow-x: clip) {
-    .container {
-        overflow-x: clip;
-    }
-
-    :root {
-        /* Fluid, so the halo is a similar share of the banner at any width:
-           64px on a phone, 160px at the full column. */
-        --ambient-spread: calc(64px + 96 * var(--fluid) / 100);
-    }
-
-    .banner-ambient {
-        filter: blur(var(--ambient-blur)) saturate(2.2);
-    }
 }
 
 /* A web screenshot is a long white slab. Framed, it reads as a screen rather
@@ -944,10 +854,6 @@ body.projects-collapsed .project {
 /* Translucency is hard for some people to read. Per theme, so it overrides
    both palettes at equal specificity. */
 @media (prefers-reduced-transparency: reduce) {
-    [data-theme="dark"] .banner-ambient {
-        display: none;
-    }
-
     [data-theme="light"] {
         --glass-bg: #F1F1F1;
         --glass-backdrop: none;
