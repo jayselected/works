@@ -95,6 +95,10 @@
        YouTube: a glow needs somewhere dark to fall. */
     --ambient-opacity: 0.8;
     --ambient-blur: 64px;
+    /* How far the halo reaches past the banner, evenly on all four sides.
+       Small by default so it stays inside the page gutter unaided; the rule
+       under @supports opens it up where overflow can be clipped. */
+    --ambient-spread: 24px;
 
     /* Two paces: content answers the reader's scroll and arrives at interface
        speed; the hero's greeting is an ambient loop and can afford to be
@@ -723,22 +727,36 @@ body.projects-collapsed .project {
 .banner-ambient {
     display: none;
     position: absolute;
-    inset: 0;
     z-index: -1;
-    /* Uniform, always: a glow of a different shape from the banner reads as
-       a smear rather than as the image's own light. Held inside the gutter
-       here, because without clipping anything wider would scroll the page
-       sideways; where the page can clip, the rule below opens it up. */
-    transform: scale(1.06);
-    filter: blur(var(--ambient-blur)) saturate(1.7);
+    /* The box grows by the same distance on every side rather than by a
+       proportion, so the halo keeps an even depth all round instead of
+       running wide on a banner that is wider than it is tall. */
+    left: calc(var(--ambient-spread) * -1);
+    top: calc(var(--ambient-spread) * -1);
+    width: calc(100% + var(--ambient-spread) * 2);
+    height: calc(100% + var(--ambient-spread) * 2);
+    object-fit: cover;   /* fill the taller box without stretching the art */
+
+    filter: blur(var(--ambient-blur)) saturate(1.9);
     opacity: var(--ambient-opacity);
     pointer-events: none;
 
-    /* Solid well past the banner's own edge, then a long fade to nothing by
-       the layer's bounds — so there is light to see outside the image, and
-       no edge left for Safari to clip. */
-    -webkit-mask-image: radial-gradient(closest-side, #000 46%, transparent 100%);
-            mask-image: radial-gradient(closest-side, #000 46%, transparent 100%);
+    /* Two linear fades crossed, not a radial one: a radial mask inscribes an
+       ellipse and pulls the corners in, which is what made the glow read as
+       an oval. Crossed linears fall off squarely, so the halo follows the
+       card's own edges — solid across the banner, gone by the spread. */
+    -webkit-mask-image:
+        linear-gradient(to right, transparent, #000 var(--ambient-spread),
+                        #000 calc(100% - var(--ambient-spread)), transparent),
+        linear-gradient(to bottom, transparent, #000 var(--ambient-spread),
+                        #000 calc(100% - var(--ambient-spread)), transparent);
+            mask-image:
+        linear-gradient(to right, transparent, #000 var(--ambient-spread),
+                        #000 calc(100% - var(--ambient-spread)), transparent),
+        linear-gradient(to bottom, transparent, #000 var(--ambient-spread),
+                        #000 calc(100% - var(--ambient-spread)), transparent);
+    -webkit-mask-composite: source-in;
+            mask-composite: intersect;
     -webkit-mask-repeat: no-repeat;
             mask-repeat: no-repeat;
 }
@@ -755,8 +773,13 @@ body.projects-collapsed .project {
         overflow-x: clip;
     }
 
+    :root {
+        /* Fluid, so the halo is a similar share of the banner at any width:
+           64px on a phone, 160px at the full column. */
+        --ambient-spread: calc(64px + 96 * var(--fluid) / 100);
+    }
+
     .banner-ambient {
-        transform: scale(1.5);
         filter: blur(var(--ambient-blur)) saturate(2.2);
     }
 }
