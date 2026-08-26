@@ -91,10 +91,9 @@
        ground, so it needs no override. */
     --stroke-frame: rgba(186, 191, 197, 0.2);
 
-    /* Ambient glow behind a banner. Strong on a dark ground, where there is
-       somewhere for light to fall; slight on a light one, where it would
-       otherwise read as a smudge rather than a glow. */
-    --ambient-opacity: 0.3;
+    /* Ambient glow behind a banner — a dark-mode effect only, as it is on
+       YouTube: a glow needs somewhere dark to fall. */
+    --ambient-opacity: 0.55;
     --ambient-blur: 44px;
 
     /* Two paces: content answers the reader's scroll and arrives at interface
@@ -167,9 +166,6 @@
     --color-ink: #FFFFFF;
     --color-muted: #595959;
     --color-line: rgba(255, 255, 255, 0.1);
-
-    /* A glow needs somewhere dark to fall, so it carries further here. */
-    --ambient-opacity: 0.55;
     --color-bg-rgb: 0, 0, 0;
 
     --glass-bg: rgba(0, 0, 0, 0.55);
@@ -701,12 +697,17 @@ body.projects-collapsed .project {
 /* --- Banner, with its own light ---
    A second copy of the artwork sits behind the banner, blurred and lifted a
    little, so the page picks up the project's colours around it. The copy is
-   the same URL, so it costs one fetch, and it carries no alt text — there is
+   the same URL, so it costs one fetch, and carries no alt text — there is
    nothing there to describe that the banner does not already say.
 
-   Nothing clips it: the blur is what lets the colour bleed past the edges,
-   which is the whole effect. It is kept inside the page gutter at every
-   width so it can never raise a horizontal scrollbar. */
+   Dark mode only, as on YouTube: a glow needs somewhere dark to fall. It is
+   not merely faded out in light mode but not drawn at all, so it costs
+   nothing there.
+
+   The mask is what makes it work in Safari. A blur alone stops at the
+   element's edge — Chrome feathers that, Safari leaves the smeared image's
+   own straight edge visible. Fading the layer to nothing before it reaches
+   its bounds means there is no edge left to show, in any engine. */
 .banner {
     position: relative;
     isolation: isolate;
@@ -718,14 +719,26 @@ body.projects-collapsed .project {
 }
 
 .banner-ambient {
+    display: none;
     position: absolute;
     inset: 0;
     z-index: -1;
-    /* Lifted, so the light pools below the image as it would from a screen. */
-    transform: scale(1.02) translateY(3%);
+    /* Lifted, so the light pools below the image as it would from a screen.
+       The scale gives the mask room to fade in before the banner's own edge;
+       4% either side, which stays inside the page gutter at every width. */
+    transform: scale(1.08) translateY(3%);
     filter: blur(var(--ambient-blur)) saturate(1.7);
     opacity: var(--ambient-opacity);
     pointer-events: none;
+
+    -webkit-mask-image: radial-gradient(closest-side, #000 45%, transparent 100%);
+            mask-image: radial-gradient(closest-side, #000 45%, transparent 100%);
+    -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+}
+
+[data-theme="dark"] .banner-ambient {
+    display: block;
 }
 
 /* A web screenshot is a long white slab. Framed, it reads as a screen rather
@@ -888,8 +901,8 @@ body.projects-collapsed .project {
 /* Translucency is hard for some people to read. Per theme, so it overrides
    both palettes at equal specificity. */
 @media (prefers-reduced-transparency: reduce) {
-    :root {
-        --ambient-opacity: 0;
+    [data-theme="dark"] .banner-ambient {
+        display: none;
     }
 
     [data-theme="light"] {
