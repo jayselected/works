@@ -91,6 +91,12 @@
        ground, so it needs no override. */
     --stroke-frame: rgba(186, 191, 197, 0.2);
 
+    /* Ambient glow behind a banner. Strong on a dark ground, where there is
+       somewhere for light to fall; slight on a light one, where it would
+       otherwise read as a smudge rather than a glow. */
+    --ambient-opacity: 0.3;
+    --ambient-blur: 44px;
+
     /* Two paces: content answers the reader's scroll and arrives at interface
        speed; the hero's greeting is an ambient loop and can afford to be
        slow. All of it is neutralised under prefers-reduced-motion. */
@@ -161,6 +167,9 @@
     --color-ink: #FFFFFF;
     --color-muted: #595959;
     --color-line: rgba(255, 255, 255, 0.1);
+
+    /* A glow needs somewhere dark to fall, so it carries further here. */
+    --ambient-opacity: 0.55;
     --color-bg-rgb: 0, 0, 0;
 
     --glass-bg: rgba(0, 0, 0, 0.55);
@@ -682,16 +691,41 @@ body.projects-collapsed .project {
 
 /* The banner sits directly in the project, at the column's full width and
    with no padding of its own. */
-.banner,
+.banner img,
 .stack img {
     width: 100%;
     height: auto;
     display: block;
 }
 
-/* The banner sits directly on the page and takes the outer corner. */
+/* --- Banner, with its own light ---
+   A second copy of the artwork sits behind the banner, blurred and lifted a
+   little, so the page picks up the project's colours around it. The copy is
+   the same URL, so it costs one fetch, and it carries no alt text — there is
+   nothing there to describe that the banner does not already say.
+
+   Nothing clips it: the blur is what lets the colour bleed past the edges,
+   which is the whole effect. It is kept inside the page gutter at every
+   width so it can never raise a horizontal scrollbar. */
 .banner {
+    position: relative;
+    isolation: isolate;
+}
+
+.banner-art {
+    position: relative;
     border-radius: var(--radius-outer);
+}
+
+.banner-ambient {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    /* Lifted, so the light pools below the image as it would from a screen. */
+    transform: scale(1.02) translateY(3%);
+    filter: blur(var(--ambient-blur)) saturate(1.7);
+    opacity: var(--ambient-opacity);
+    pointer-events: none;
 }
 
 /* A web screenshot is a long white slab. Framed, it reads as a screen rather
@@ -854,6 +888,10 @@ body.projects-collapsed .project {
 /* Translucency is hard for some people to read. Per theme, so it overrides
    both palettes at equal specificity. */
 @media (prefers-reduced-transparency: reduce) {
+    :root {
+        --ambient-opacity: 0;
+    }
+
     [data-theme="light"] {
         --glass-bg: #F1F1F1;
         --glass-backdrop: none;
