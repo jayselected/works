@@ -725,10 +725,11 @@ body.projects-collapsed .project {
     position: absolute;
     inset: 0;
     z-index: -1;
-    /* Held inside the gutter, because without clipping anything wider would
-       scroll the page sideways. Where the page can clip, the rule below
-       lets it spread properly. */
-    transform: scale(1.06, 1.28) translateY(2%);
+    /* Uniform, always: a glow of a different shape from the banner reads as
+       a smear rather than as the image's own light. Held inside the gutter
+       here, because without clipping anything wider would scroll the page
+       sideways; where the page can clip, the rule below opens it up. */
+    transform: scale(1.06);
     filter: blur(var(--ambient-blur)) saturate(1.7);
     opacity: var(--ambient-opacity);
     pointer-events: none;
@@ -755,7 +756,7 @@ body.projects-collapsed .project {
     }
 
     .banner-ambient {
-        transform: scale(1.62, 1.5) translateY(3%);
+        transform: scale(1.5);
         filter: blur(var(--ambient-blur)) saturate(2.2);
     }
 }
