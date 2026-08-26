@@ -93,8 +93,8 @@
 
     /* Ambient glow behind a banner — a dark-mode effect only, as it is on
        YouTube: a glow needs somewhere dark to fall. */
-    --ambient-opacity: 0.55;
-    --ambient-blur: 44px;
+    --ambient-opacity: 0.8;
+    --ambient-blur: 64px;
 
     /* Two paces: content answers the reader's scroll and arrives at interface
        speed; the hero's greeting is an ambient loop and can afford to be
@@ -708,9 +708,11 @@ body.projects-collapsed .project {
    element's edge — Chrome feathers that, Safari leaves the smeared image's
    own straight edge visible. Fading the layer to nothing before it reaches
    its bounds means there is no edge left to show, in any engine. */
+/* No isolation: the glow escapes to the page's own stacking context and so
+   paints behind the title and the meta rather than over them. That is what
+   allows it to be intense — contained, it would wash the text out. */
 .banner {
     position: relative;
-    isolation: isolate;
 }
 
 .banner-art {
@@ -723,28 +725,39 @@ body.projects-collapsed .project {
     position: absolute;
     inset: 0;
     z-index: -1;
-    /* Scaled further vertically than horizontally, because only the sides
-       are constrained: the page gutter is all the room there is left and
-       right, while above and below the glow is free to spread — which is
-       where light from a screen pools anyway. 3% either side stays inside
-       the gutter at every width; 14% top and bottom costs nothing. */
+    /* Held inside the gutter, because without clipping anything wider would
+       scroll the page sideways. Where the page can clip, the rule below
+       lets it spread properly. */
     transform: scale(1.06, 1.28) translateY(2%);
     filter: blur(var(--ambient-blur)) saturate(1.7);
     opacity: var(--ambient-opacity);
     pointer-events: none;
 
-    /* The fade has to finish outside the banner or there is no glow left to
-       see — the banner covers everything within 78% of this layer. Solid to
-       there, then away by the layer's own edge, so Safari still finds no
-       edge to clip. */
-    -webkit-mask-image: radial-gradient(closest-side, #000 70%, transparent 100%);
-            mask-image: radial-gradient(closest-side, #000 70%, transparent 100%);
+    /* Solid well past the banner's own edge, then a long fade to nothing by
+       the layer's bounds — so there is light to see outside the image, and
+       no edge left for Safari to clip. */
+    -webkit-mask-image: radial-gradient(closest-side, #000 46%, transparent 100%);
+            mask-image: radial-gradient(closest-side, #000 46%, transparent 100%);
     -webkit-mask-repeat: no-repeat;
             mask-repeat: no-repeat;
 }
 
 [data-theme="dark"] .banner-ambient {
     display: block;
+}
+
+/* Where the page can clip its own overflow, the glow is let off the leash
+   and spreads to the window's edges as YouTube's does. Without clip support
+   it keeps the narrower spill above, which is safe unaided. */
+@supports (overflow-x: clip) {
+    .container {
+        overflow-x: clip;
+    }
+
+    .banner-ambient {
+        transform: scale(1.62, 1.5) translateY(3%);
+        filter: blur(var(--ambient-blur)) saturate(2.2);
+    }
 }
 
 /* A web screenshot is a long white slab. Framed, it reads as a screen rather
