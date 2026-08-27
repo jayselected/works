@@ -1,493 +1,438 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" id="theme-color" content="#000000">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jay Patel</title>
+    <meta name="description" content="Select Design Works from, Jay Patel">
 
-<title>WWWONDERLAN — Film Poster Prints</title>
-<meta name="description" content="Curated film posters designed by WWWONDERLAN">
-<link rel="canonical" href="https://wwwonderlan.com/">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link rel="icon" type="image/png" href="https://cdn.wwwonderlan.com/assets/favicon.png">
-<link rel="apple-touch-icon" href="https://cdn.wwwonderlan.com/assets/favicon.png">
+	<!-- Inter Fallback -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap"
+          media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap"></noscript>
 
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://wwwonderlan.com/">
-<meta property="og:title" content="WWWONDERLAN">
-<meta property="og:description" content="Curated film posters designed by WWWONDERLAN">
-<meta property="og:image" content="https://cdn.wwwonderlan.com/assets/og-card.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="WWWONDERLAN">
-<meta name="twitter:card" content="summary_large_image">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jayselected.vercel.app">
+    <meta property="og:title" content="Jay Patel">
+    <meta property="og:description" content="Select Design Works from, Jay Patel">
+    <meta property="og:image" content="https://jayselected.vercel.app/og-image.png">
 
-<!-- Before first paint, or the wrong theme flashes. -->
-<script>
-(() => {
-  let stored;
-  try { stored = localStorage.getItem("wwwonderlan-theme"); } catch {}
-  const theme = stored
-    || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
-  if (theme !== "light") return;
-  document.documentElement.dataset.theme = "light";
-  document.getElementById("theme-color").setAttribute("content", "#FFFFFF");
-})();
-</script>
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://jayselected.vercel.app">
+    <meta name="twitter:title" content="Jay Patel">
+    <meta name="twitter:description" content="Select Design Works from, Jay Patel">
+    <meta name="twitter:image" content="https://jayselected.vercel.app/og-image.png">
 
-<!-- No crossorigin: images are fetched in plain mode and won't reuse a CORS connection. -->
-<link rel="preconnect" href="https://cdn.wwwonderlan.com">
+    <!-- Tints the browser's own chrome to match the page; siteapp.js keeps
+         it in sync when the theme is toggled. -->
+    <meta name="theme-color" content="#FFFFFF" id="theme-color">
 
-<link rel="preload" href="HelveticaNowDisplay/HelveticaNowDisplayBold.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="HelveticaNowDisplay/HelveticaNowDisplayMedium.woff2" as="font" type="font/woff2" crossorigin>
+    <!-- Inline and blocking by design: the theme must be resolved before the
+         first paint, or the page flashes light before switching to dark.
+         This is the only script that cannot live in siteapp.js. -->
+    <script>
+        (() => {
+            try {
+                const savedTheme = localStorage.getItem('portfolio-theme');
+                if (savedTheme === 'dark' || savedTheme === 'light') {
+                    document.documentElement.dataset.theme = savedTheme;
+                    /* Keep the browser's own chrome in step from the very
+                       first paint; values mirror THEME_BACKGROUNDS in
+                       siteapp.js, which takes over once it loads. */
+                    const themeColor = document.getElementById('theme-color');
+                    if (themeColor) {
+                        themeColor.setAttribute('content', savedTheme === 'dark' ? '#000000' : '#FFFFFF');
+                    }
+                }
+            } catch (error) {
+                document.documentElement.dataset.theme = 'light';
+            }
+        })();
+    </script>
 
-<link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css">
 
-<!-- Last, so it doesn't compete with fonts and posters for connections. -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8BGK8BSWVF"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-8BGK8BSWVF');
-</script>
+    <!-- Every fade-in starts at opacity 0 and is revealed by JS; without
+         scripting, real content must simply be visible. -->
+    <noscript>
+        <style>
+            .hero-hello,
+            .hero-name,
+            [data-enter] { opacity: 1 !important; transform: none !important; }
+            /* Filled by JS; without it they would be two empty lines. */
+            .hero-meta { display: none; }
+        </style>
+    </noscript>
 </head>
-
 <body>
 
-<div class="frame">
-
-  <header class="header" id="header">
-    <a href="/" aria-label="WWWONDERLAN home">
-      <img class="header__logo is-light-only" src="https://cdn.wwwonderlan.com/assets/wwwonderlan-black.png" alt="WWWONDERLAN" width="200" height="57">
-      <img class="header__logo is-dark-only" src="https://cdn.wwwonderlan.com/assets/wwwonderlan-white.png" alt="WWWONDERLAN" width="200" height="57">
-    </a>
-  </header>
-
-  <main>
-    <h1 class="visually-hidden">Film poster prints</h1>
-
-    <!-- New poster: copy any card below and change six things —
-         the image URL, the title (three times: alt, heading, Buy label),
-         the credits line, and the Etsy link. Keep utm_content matching the
-         image filename, or the click won't be attributed. Newest first. -->
-    <ul class="grid">
-      <li class="card">
-        <img class="card__poster" src="https://cdn.wwwonderlan.com/posters/fallen-angels-1280.webp"
-             alt="Fallen Angels poster print" width="1280" height="1920"
-             fetchpriority="high" decoding="async">
-        <div class="card__details">
-          <h2 class="card__title">Fallen Angels</h2>
-
-          <div class="card__director">
-            <img class="card__avatar" src="https://cdn.wwwonderlan.com/assets/directors/wong-kar-wai.webp"
-                 alt="" width="40" height="40" decoding="async">
-            <div class="card__text">
-              <p class="card__name">Wong Kar-Wai</p>
-              <p class="card__meta">
-                <span>1995 ‧ Hong Kong ‧ Crime/Romance ‧ 1h&nbsp;36m</span>
-                <img class="card__rating" src="https://cdn.wwwonderlan.com/assets/ratings/15.svg"
-                     alt="Rated 15" width="18" height="18" decoding="async">
-              </p>
-            </div>
-          </div>
-
-          <a class="card__buy" href="https://wwwonderlan.etsy.com/uk/listing/4310610506/fallen-angels-movie-poster-print-wong?utm_source=wwwonderlan&amp;utm_medium=site&amp;utm_campaign=poster-grid&amp;utm_content=fallen-angels" target="_blank" rel="noopener">Buy Fallen Angels Poster →</a>
-        </div>
-      </li>
-
-      <li class="card">
-        <img class="card__poster" src="https://cdn.wwwonderlan.com/posters/taipei-story-1280.webp"
-             alt="Taipei Story poster print" width="1280" height="1920"
-             fetchpriority="high" decoding="async">
-        <div class="card__details">
-          <h2 class="card__title">Taipei Story</h2>
-
-          <div class="card__director">
-            <img class="card__avatar" src="https://cdn.wwwonderlan.com/assets/directors/edward-yang.webp"
-                 alt="" width="40" height="40" decoding="async">
-            <div class="card__text">
-              <p class="card__name">Edward Yang</p>
-              <p class="card__meta">
-                <span>1985 ‧ Taiwan ‧ Drama/Melodrama ‧ 1h&nbsp;59m</span>
-                <img class="card__rating" src="https://cdn.wwwonderlan.com/assets/ratings/12.svg"
-                     alt="Rated 12" width="18" height="18" decoding="async">
-              </p>
-            </div>
-          </div>
-
-          <a class="card__buy" href="https://wwwonderlan.etsy.com/uk/listing/4331048372/taipei-story-movie-poster-print-edward?utm_source=wwwonderlan&amp;utm_medium=site&amp;utm_campaign=poster-grid&amp;utm_content=taipei-story" target="_blank" rel="noopener">Buy Taipei Story Poster →</a>
-        </div>
-      </li>
-
-      <li class="card">
-        <img class="card__poster" src="https://cdn.wwwonderlan.com/posters/millennium-mambo-1280.webp"
-             alt="Millennium Mambo poster print" width="1280" height="1920"
-             fetchpriority="high" decoding="async">
-        <div class="card__details">
-          <h2 class="card__title">Millennium Mambo</h2>
-
-          <div class="card__director">
-            <img class="card__avatar" src="https://cdn.wwwonderlan.com/assets/directors/hou-hsiao-hsien.webp"
-                 alt="" width="40" height="40" decoding="async">
-            <div class="card__text">
-              <p class="card__name">Hou Hsiao-Hsien</p>
-              <p class="card__meta">
-                <span>2001 ‧ Taiwan ‧ Romance/Drama ‧ 1h&nbsp;59m</span>
-                <img class="card__rating" src="https://cdn.wwwonderlan.com/assets/ratings/15.svg"
-                     alt="Rated 15" width="18" height="18" decoding="async">
-              </p>
-            </div>
-          </div>
-
-          <a class="card__buy" href="https://wwwonderlan.etsy.com/uk/listing/4337108727/millennium-mambo-movie-poster-print-hou?utm_source=wwwonderlan&amp;utm_medium=site&amp;utm_campaign=poster-grid&amp;utm_content=millennium-mambo" target="_blank" rel="noopener">Buy Millennium Mambo Poster →</a>
-        </div>
-      </li>
-
-      <li class="card">
-        <img class="card__poster" src="https://cdn.wwwonderlan.com/posters/blue-velvet-1280.webp"
-             alt="Blue Velvet poster print" width="1280" height="1920"
-             loading="lazy" decoding="async">
-        <div class="card__details">
-          <h2 class="card__title">Blue Velvet</h2>
-
-          <div class="card__director">
-            <img class="card__avatar" src="https://cdn.wwwonderlan.com/assets/directors/david-lynch.webp"
-                 alt="" width="40" height="40" decoding="async" loading="lazy">
-            <div class="card__text">
-              <p class="card__name">David Lynch</p>
-              <p class="card__meta">
-                <span>1986 ‧ United States ‧ Mystery/Crime ‧ 2h</span>
-                <img class="card__rating" src="https://cdn.wwwonderlan.com/assets/ratings/18.svg"
-                     alt="Rated 18" width="18" height="18" decoding="async" loading="lazy">
-              </p>
-            </div>
-          </div>
-
-          <a class="card__buy" href="https://wwwonderlan.etsy.com/uk/listing/4357152684/blue-velvet-movie-poster-print-david?utm_source=wwwonderlan&amp;utm_medium=site&amp;utm_campaign=poster-grid&amp;utm_content=blue-velvet" target="_blank" rel="noopener">Buy Blue Velvet Poster →</a>
-        </div>
-      </li>
-
-      <li class="card">
-        <img class="card__poster" src="https://cdn.wwwonderlan.com/posters/a-clockwork-orange-1280.webp"
-             alt="A Clockwork Orange poster print" width="1280" height="1920"
-             loading="lazy" decoding="async">
-        <div class="card__details">
-          <h2 class="card__title">A Clockwork Orange</h2>
-
-          <div class="card__director">
-            <img class="card__avatar" src="https://cdn.wwwonderlan.com/assets/directors/stanley-kubrick.webp"
-                 alt="" width="40" height="40" decoding="async" loading="lazy">
-            <div class="card__text">
-              <p class="card__name">Stanley Kubrick</p>
-              <p class="card__meta">
-                <span>1971 ‧ United Kingdom ‧ Crime/Sci-fi ‧ 2h&nbsp;16m</span>
-                <img class="card__rating" src="https://cdn.wwwonderlan.com/assets/ratings/18.svg"
-                     alt="Rated 18" width="18" height="18" decoding="async" loading="lazy">
-              </p>
-            </div>
-          </div>
-
-          <a class="card__buy" href="https://wwwonderlan.etsy.com/uk/listing/4388658509/a-clockwork-orange-movie-poster-print?utm_source=wwwonderlan&amp;utm_medium=site&amp;utm_campaign=poster-grid&amp;utm_content=a-clockwork-orange" target="_blank" rel="noopener">Buy A Clockwork Orange Poster →</a>
-        </div>
-      </li>
-
-      <li class="card">
-        <img class="card__poster" src="https://cdn.wwwonderlan.com/posters/rosemarys-baby-1280.webp"
-             alt="Rosemary's Baby poster print" width="1280" height="1920"
-             loading="lazy" decoding="async">
-        <div class="card__details">
-          <h2 class="card__title">Rosemary's Baby</h2>
-
-          <div class="card__director">
-            <img class="card__avatar" src="https://cdn.wwwonderlan.com/assets/directors/roman-polanski.webp"
-                 alt="" width="40" height="40" decoding="async" loading="lazy">
-            <div class="card__text">
-              <p class="card__name">Roman Polanski</p>
-              <p class="card__meta">
-                <span>1968 ‧ United States ‧ Horror/Drama ‧ 2h&nbsp;17m</span>
-                <img class="card__rating" src="https://cdn.wwwonderlan.com/assets/ratings/18.svg"
-                     alt="Rated 18" width="18" height="18" decoding="async" loading="lazy">
-              </p>
-            </div>
-          </div>
-
-          <a class="card__buy" href="https://wwwonderlan.etsy.com/uk/listing/4404257444/rosemarys-baby-movie-poster-print-roman?utm_source=wwwonderlan&amp;utm_medium=site&amp;utm_campaign=poster-grid&amp;utm_content=rosemarys-baby" target="_blank" rel="noopener">Buy Rosemary's Baby Poster →</a>
-        </div>
-      </li>
-
-      <li class="card">
-        <img class="card__poster" src="https://cdn.wwwonderlan.com/posters/audition-1280.webp"
-             alt="Audition poster print" width="1280" height="1920"
-             loading="lazy" decoding="async">
-        <div class="card__details">
-          <h2 class="card__title">Audition</h2>
-
-          <div class="card__director">
-            <img class="card__avatar" src="https://cdn.wwwonderlan.com/assets/directors/takashi-miike.webp"
-                 alt="" width="40" height="40" decoding="async" loading="lazy">
-            <div class="card__text">
-              <p class="card__name">Takashi Miike</p>
-              <p class="card__meta">
-                <span>1999 ‧ Japan ‧ Horror/Mystery ‧ 1h&nbsp;55m</span>
-                <img class="card__rating" src="https://cdn.wwwonderlan.com/assets/ratings/18.svg"
-                     alt="Rated 18" width="18" height="18" decoding="async" loading="lazy">
-              </p>
-            </div>
-          </div>
-
-          <a class="card__buy" href="https://wwwonderlan.etsy.com/uk/listing/4435662082/audition-movie-poster-print-takashi?utm_source=wwwonderlan&amp;utm_medium=site&amp;utm_campaign=poster-grid&amp;utm_content=audition" target="_blank" rel="noopener">Buy Audition Poster →</a>
-        </div>
-      </li>
-
-      <li class="card">
-        <img class="card__poster" src="https://cdn.wwwonderlan.com/posters/chungking-express-1280.webp"
-             alt="Chungking Express poster print" width="1280" height="1920"
-             loading="lazy" decoding="async">
-        <div class="card__details">
-          <h2 class="card__title">Chungking Express</h2>
-
-          <div class="card__director">
-            <img class="card__avatar" src="https://cdn.wwwonderlan.com/assets/directors/wong-kar-wai.webp"
-                 alt="" width="40" height="40" decoding="async" loading="lazy">
-            <div class="card__text">
-              <p class="card__name">Wong Kar-Wai</p>
-              <p class="card__meta">
-                <span>1994 ‧ Hong Kong ‧ Romance/Crime ‧ 1h&nbsp;37m</span>
-                <img class="card__rating" src="https://cdn.wwwonderlan.com/assets/ratings/12.svg"
-                     alt="Rated 12" width="18" height="18" decoding="async" loading="lazy">
-              </p>
-            </div>
-          </div>
-
-          <a class="card__buy" href="https://wwwonderlan.etsy.com/uk/listing/4463074853/chungking-express-1994-movie-poster?utm_source=wwwonderlan&amp;utm_medium=site&amp;utm_campaign=poster-grid&amp;utm_content=chungking-express" target="_blank" rel="noopener">Buy Chungking Express Poster →</a>
-        </div>
-      </li>
-
-      <li class="card">
-        <img class="card__poster" src="https://cdn.wwwonderlan.com/posters/heat-1280.webp"
-             alt="Heat poster print" width="1280" height="1920"
-             loading="lazy" decoding="async">
-        <div class="card__details">
-          <h2 class="card__title">Heat</h2>
-
-          <div class="card__director">
-            <img class="card__avatar" src="https://cdn.wwwonderlan.com/assets/directors/michael-mann.webp"
-                 alt="" width="40" height="40" decoding="async" loading="lazy">
-            <div class="card__text">
-              <p class="card__name">Michael Mann</p>
-              <p class="card__meta">
-                <span>1995 ‧ United States ‧ Thriller/Crime ‧ 2h&nbsp;50m</span>
-                <img class="card__rating" src="https://cdn.wwwonderlan.com/assets/ratings/15.svg"
-                     alt="Rated 15" width="18" height="18" decoding="async" loading="lazy">
-              </p>
-            </div>
-          </div>
-
-          <a class="card__buy" href="https://wwwonderlan.etsy.com/uk/listing/4480799792/heat-movie-poster-print-michael-mann?utm_source=wwwonderlan&amp;utm_medium=site&amp;utm_campaign=poster-grid&amp;utm_content=heat" target="_blank" rel="noopener">Buy Heat Poster →</a>
-        </div>
-      </li>
-
-      <li class="card">
-        <img class="card__poster" src="https://cdn.wwwonderlan.com/posters/christiane-f-1280.webp"
-             alt="Christiane F. Wir Kinder vom Bahnhof Zoo poster print" width="1280" height="1920"
-             loading="lazy" decoding="async">
-        <div class="card__details">
-          <h2 class="card__title">Christiane F. Wir Kinder vom Bahnhof Zoo</h2>
-
-          <div class="card__director">
-            <img class="card__avatar" src="https://cdn.wwwonderlan.com/assets/directors/ulrich-edel.webp"
-                 alt="" width="40" height="40" decoding="async" loading="lazy">
-            <div class="card__text">
-              <p class="card__name">Ulrich Edel</p>
-              <p class="card__meta">
-                <span>1981 ‧ Germany ‧ Drama/Indie ‧ 2h&nbsp;18m</span>
-                <img class="card__rating" src="https://cdn.wwwonderlan.com/assets/ratings/18.svg"
-                     alt="Rated 18" width="18" height="18" decoding="async" loading="lazy">
-              </p>
-            </div>
-          </div>
-
-          <a class="card__buy" href="https://wwwonderlan.etsy.com/uk/listing/4499788239/christiane-f-1981-movie-poster-print-wir?utm_source=wwwonderlan&amp;utm_medium=site&amp;utm_campaign=poster-grid&amp;utm_content=christiane-f" target="_blank" rel="noopener">Buy Christiane F. Wir Kinder vom Bahnhof Zoo Poster →</a>
-        </div>
-      </li>
-
-      <li class="card">
-        <img class="card__poster" src="https://cdn.wwwonderlan.com/posters/the-red-shoes-1280.webp"
-             alt="The Red Shoes poster print" width="1280" height="1920"
-             loading="lazy" decoding="async">
-        <div class="card__details">
-          <h2 class="card__title">The Red Shoes</h2>
-
-          <div class="card__director">
-            <img class="card__avatar" src="https://cdn.wwwonderlan.com/assets/directors/pressburger-powell.webp"
-                 alt="" width="40" height="40" decoding="async" loading="lazy">
-            <div class="card__text">
-              <p class="card__name">Powell and Pressburger</p>
-              <p class="card__meta">
-                <span>1948 ‧ United Kingdom ‧ Romance/Musical ‧ 2h&nbsp;15m</span>
-                <img class="card__rating" src="https://cdn.wwwonderlan.com/assets/ratings/u.svg"
-                     alt="Rated U" width="18" height="18" decoding="async" loading="lazy">
-              </p>
-            </div>
-          </div>
-
-          <a class="card__buy" href="https://wwwonderlan.etsy.com/uk/listing/4522310080/the-red-shoes-1948-movie-poster-print?utm_source=wwwonderlan&amp;utm_medium=site&amp;utm_campaign=poster-grid&amp;utm_content=the-red-shoes" target="_blank" rel="noopener">Buy The Red Shoes Poster →</a>
-        </div>
-      </li>
-
-      <li class="card">
-        <img class="card__poster" src="https://cdn.wwwonderlan.com/posters/fire-walk-with-me-1280.webp"
-             alt="Twin Peaks: Fire Walk With Me poster print" width="1280" height="1920"
-             loading="lazy" decoding="async">
-        <div class="card__details">
-          <h2 class="card__title">Twin Peaks: Fire Walk With Me</h2>
-
-          <div class="card__director">
-            <img class="card__avatar" src="https://cdn.wwwonderlan.com/assets/directors/david-lynch.webp"
-                 alt="" width="40" height="40" decoding="async" loading="lazy">
-            <div class="card__text">
-              <p class="card__name">David Lynch</p>
-              <p class="card__meta">
-                <span>1992 ‧ United States ‧ Horror/Crime ‧ 2h&nbsp;15m</span>
-                <img class="card__rating" src="https://cdn.wwwonderlan.com/assets/ratings/18.svg"
-                     alt="Rated 18" width="18" height="18" decoding="async" loading="lazy">
-              </p>
-            </div>
-          </div>
-
-          <a class="card__buy" href="https://wwwonderlan.etsy.com/uk/listing/4541437995/twin-peaks-fire-walk-with-me-1992-movie?utm_source=wwwonderlan&amp;utm_medium=site&amp;utm_campaign=poster-grid&amp;utm_content=fire-walk-with-me" target="_blank" rel="noopener">Buy Twin Peaks: Fire Walk With Me Poster →</a>
-        </div>
-      </li>
-    </ul>
-  </main>
-
-  <div class="details" id="details" role="dialog" aria-modal="true" aria-label="Details">
-    <div class="details__content">
-      <p class="details__lead">Curated film posters designed by WWWONDERLAN</p>
-
-      <p>Available in five sizes</p>
-
-      <div class="details__sizes">
-        <div class="details__size">
-          <p class="details__heading">Standard Sizes</p>
-          <ul>
-            <li>12×18″</li>
-            <li>20×30″</li>
-            <li>24×36″</li>
-          </ul>
-
-          <!-- 8 units per inch, same scale as the A-series below. -->
-          <svg class="details__diagram" viewBox="0 0 194 290" aria-hidden="true">
-            <rect x="1" y="1" width="192" height="288"/>
-            <rect x="1" y="49" width="160" height="240"/>
-            <rect x="1" y="145" width="96" height="144"/>
-            <text x="13" y="31">24×36″</text>
-            <text x="13" y="79">20×30″</text>
-            <text x="13" y="175">12×18″</text>
-          </svg>
-        </div>
-
-        <div class="details__size">
-          <p class="details__heading">A-Series Sizes</p>
-          <ul>
-            <li>A2 (16.5″×23.3″)</li>
-            <li>A1 (23.3″×33.1″)</li>
-          </ul>
-
-          <svg class="details__diagram" viewBox="0 0 194 290" aria-hidden="true">
-            <rect x="1" y="24.2" width="186.4" height="264.8"/>
-            <rect x="1" y="102.6" width="132" height="186.4"/>
-            <text x="13" y="54">A1</text>
-            <text x="13" y="132">A2</text>
-          </svg>
-        </div>
-      </div>
-
-      <p>All posters are made to order and printed on thick, museum-quality matte paper sourced from Japan.</p>
-
-      <p class="details__heading">Paper Specifications</p>
-      <ul>
-        <li>Paper thickness: 10.3 mil</li>
-        <li>Paper weight: 189 g/m²</li>
-        <li>Opacity: 94%</li>
-        <li>ISO brightness: 104%</li>
-      </ul>
-
-      <p>Production and delivery typically take 2–3 weeks. For any inquiries, please contact WWWONDERLAN by <a href="mailto:wwwonderlan@gmail.com">email</a>.</p>
+    <div class="topbar-shell" aria-hidden="true">
+        <header class="topbar" id="topbar">
+            <span class="topbar-left">
+                <span>Jay Patel</span>
+            </span>
+            <span class="topbar-right">
+                <span class="topbar-place" data-place></span>
+                <span class="topbar-sep topbar-place-sep"></span>
+                <span class="topbar-weather" data-weather></span>
+                <span class="topbar-sep topbar-weather-sep"></span>
+                <span data-clock></span>
+            </span>
+        </header>
     </div>
 
-    <button class="details__close" type="button" id="details-close" aria-label="Close details">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M18 6 6 18"/>
-        <path d="m6 6 12 12"/>
-      </svg>
-    </button>
-  </div>
+    <div class="container">
+        <main class="main">
 
-  <div class="dock-rail">
-    <nav class="dock is-collapsed" id="dock" aria-label="Menu">
-      <div class="dock-progress" aria-hidden="true">
-        <div class="dock-progress-fill" id="scroll-progress-fill"></div>
-      </div>
+            <section class="hero">
+                <h1 class="hero-hello" id="hero-hello">Hello.</h1>
 
-      <div class="dock-panel">
-        <div class="dock-logo-slot">
-          <a href="/" aria-label="WWWONDERLAN home">
-            <img class="dock-logo is-light-only" src="https://cdn.wwwonderlan.com/assets/wwwonderlan-black.png" alt="" width="200" height="57">
-            <img class="dock-logo is-dark-only" src="https://cdn.wwwonderlan.com/assets/wwwonderlan-white.png" alt="" width="200" height="57">
-          </a>
+                <div class="hero-meta">
+                    <p class="hero-line" id="hero-date" data-clock></p>
+                    <p class="hero-line" id="hero-place" data-conditions></p>
+                </div>
+
+                <p class="hero-name">Select Design Works from, Jay Patel.<br>UK based Graphic and User Interface Designer</p>
+            </section>
+
+            <section class="works">
+
+                <article class="project">
+                <div class="project-title" data-enter>
+                    <h2>Cine Asia</h2>
+                    <p class="project-type">Application Design</p>
+                </div>
+
+                <img class="banner" data-enter width="1200" height="700" loading="lazy" decoding="async"
+                     src="images/banners/cine-asia.png" alt="Cine Asia Banner">
+
+                <div class="project-meta" data-enter>
+                    <div class="meta-row">
+                        <p>Information</p>
+                        <div class="meta-values">
+                            <p>Stage: Concept</p>
+                            <p>Services: Visual Identity · User Interface Design</p>
+                        </div>
+                    </div>
+                    <div class="meta-row">
+                        <p>Toolkit</p>
+                        <div class="meta-values">
+                            <p>Adobe Photoshop, Adobe Illustrator and Figma</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="project-description" data-enter>Cine Asia is a concept app celebrating Asian cinema through a curated streaming experience and editorial film coverage from across the continent. Designed with a clean, intuitive interface, it keeps discovery simple, focused, and enjoyable.</p>
+
+                <div class="stack stack-row" data-enter>
+                    <img width="1319" height="2748" loading="lazy" decoding="async" src="images/cineasia/cine-asia-mobile-1.png" alt="Cine Asia Home Screen on Mobile">
+                    <img width="1319" height="2748" loading="lazy" decoding="async" src="images/cineasia/cine-asia-mobile-2.png" alt="Cine Asia Film Library Screen on Mobile">
+                    <img width="1319" height="2748" loading="lazy" decoding="async" src="images/cineasia/cine-asia-mobile-3.png" alt="Cine Asia Spirited Away Screen on Mobile">
+                </div>
+
+                <div class="stack stack-row" data-enter>
+                    <img width="1319" height="2748" loading="lazy" decoding="async" src="images/cineasia/cine-asia-mobile-4.png" alt="Cine Asia News Screen on Mobile">
+                    <img width="1319" height="2748" loading="lazy" decoding="async" src="images/cineasia/cine-asia-mobile-5.png" alt="Cine Asia Article Screen on Mobile">
+                </div>
+            </article>
+
+            <article class="project">
+                <div class="project-title" data-enter>
+                    <h2>Little Hands</h2>
+                    <p class="project-type">Branding and App Design</p>
+                </div>
+
+                <img class="banner" data-enter width="1200" height="700" loading="lazy" decoding="async"
+                     src="images/banners/little-hands.png" alt="Little Hands Banner">
+
+                <div class="project-meta" data-enter>
+                    <div class="meta-row">
+                        <p>Information</p>
+                        <div class="meta-values">
+                            <p>Stage: Startup</p>
+                            <p>Services: Visual Identity · User Interface Design</p>
+                        </div>
+                    </div>
+                    <div class="meta-row">
+                        <p>Toolkit</p>
+                        <div class="meta-values">
+                            <p>Adobe Photoshop, Adobe Illustrator and Figma</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="project-description" data-enter>Little Hands is a job board built to connect freelancers and professionals with new opportunities, while also making it easy for businesses to post roles and find talent. The project included developing the brand identity and overall interface design, with a focus on clarity, usability, and a clean modern feel that works seamlessly for both sides of the platform. Illustrations by Blush Design.</p>
+
+                <div class="stack stack-row" data-enter>
+                    <img width="1319" height="2748" loading="lazy" decoding="async" src="images/littlehands/little-hands-mobile-1.png" alt="Little Hands Get Started Screen on Mobile">
+                    <img width="1319" height="2748" loading="lazy" decoding="async" src="images/littlehands/little-hands-mobile-2.png" alt="Little Hands Job Feed Screen on Mobile">
+                    <img width="1319" height="2748" loading="lazy" decoding="async" src="images/littlehands/little-hands-mobile-3.png" alt="Little Hands Job Listing Screen on Mobile">
+                </div>
+
+                <div class="stack stack-row" data-enter>
+                    <img width="1319" height="2748" loading="lazy" decoding="async" src="images/littlehands/little-hands-mobile-4.png" alt="Little Hands Job Application Screen on Mobile">
+                    <img width="1319" height="2748" loading="lazy" decoding="async" src="images/littlehands/little-hands-mobile-5.png" alt="Little Hands Application Submitted Screen on Mobile">
+                </div>
+            </article>
+
+            <article class="project">
+                <div class="project-title" data-enter>
+                    <h2>Regen</h2>
+                    <p class="project-type">Branding and Web Design</p>
+                </div>
+
+                <img class="banner" data-enter width="1200" height="700" loading="lazy" decoding="async"
+                     src="images/banners/regen.png" alt="Regen banner">
+
+                <div class="project-meta" data-enter>
+                    <div class="meta-row">
+                        <p>Information</p>
+                        <div class="meta-values">
+                            <p>Stage: Startup</p>
+                            <p>Services: Visual Identity · Website Design</p>
+                        </div>
+                    </div>
+                    <div class="meta-row">
+                        <p>Toolkit</p>
+                        <div class="meta-values">
+                            <p>Adobe Photoshop, Adobe Illustrator and Figma</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="project-description" data-enter>Regen is a US-based health startup offering premium vitamins and powder-based supplements. The project involved designing the brand identity, website, and product packaging to establish a clean, modern look that reflects the brand’s premium positioning and progressive approach to wellness.</p>
+
+                <div class="stack" data-enter>
+                    <img width="1920" height="2371" loading="lazy" decoding="async" src="images/regen/regen-web-1.png" alt="Regen Desktop Website">
+                </div>
+
+                <div class="stack" data-enter>
+                    <img width="1920" height="2897" loading="lazy" decoding="async" src="images/regen/regen-web-2.png" alt="Regen Desktop Product Page">
+                </div>
+
+                <div class="stack stack-row" data-enter>
+                    <img width="1319" height="2748" loading="lazy" decoding="async" src="images/regen/regen-mobile-1.png" alt="Regen Landing Screen on Mobile">
+                    <img width="1319" height="2748" loading="lazy" decoding="async" src="images/regen/regen-mobile-2.png" alt="Regen Products Screen on Mobile">
+                    <img width="1319" height="2748" loading="lazy" decoding="async" src="images/regen/regen-mobile-3.png" alt="Regen Product Screen on Mobile">
+                </div>
+            </article>
+
+            <article class="project">
+                <div class="project-title" data-enter>
+                    <h2>Bodi</h2>
+                    <p class="project-type">Branding and Web Design</p>
+                </div>
+
+                <img class="banner" data-enter width="1200" height="700" loading="lazy" decoding="async"
+                     src="images/banners/bodi.png" alt="Bodi Banner">
+
+                <div class="project-meta" data-enter>
+                    <div class="meta-row">
+                        <p>Information</p>
+                        <div class="meta-values">
+                            <p>Stage: Startup</p>
+                            <p>Services: Visual Identity · Website Design</p>
+                        </div>
+                    </div>
+                    <div class="meta-row">
+                        <p>Toolkit</p>
+                        <div class="meta-values">
+                            <p>Adobe Photoshop, Adobe Illustrator and Figma</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="project-description" data-enter>Bodi is a US-based startup bringing yoga into the home through online classes and stylish apparel. The project involved developing the brand identity and designing the website to create a clean, contemporary look that reflects the brand’s approachable and inspiring take on yoga.</p>
+
+                <div class="stack" data-enter>
+                    <img width="1920" height="2371" loading="lazy" decoding="async" src="images/bodi/bodi-web-1.png" alt="Bodi Desktop Website">
+                </div>
+
+                   <div class="stack" data-enter>
+                    <img width="1920" height="2371" loading="lazy" decoding="async" src="images/bodi/bodi-web-2.png" alt="Bodi Desktop Classes Page">
+                </div>
+
+                <div class="stack" data-enter>
+                    <img width="1920" height="2371" loading="lazy" decoding="async" src="images/bodi/bodi-web-3.png" alt="Bodi Desktop Product Page">
+                </div>
+                
+            </article>
+
+            </section>
+
+            <footer class="site-footer">
+                <p>© 2026 Jay Patel</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Bottom dock navigation -->
+    <nav class="dock" aria-label="Site navigation">
+        <!-- Names whichever control is under the pointer; JS fills and
+             positions it. aria-hidden because each control already carries
+             its own accessible label. -->
+        <div class="dock-label" id="dock-label" aria-hidden="true"></div>
+
+        <a class="dock-face" href="/" data-label="Home" aria-label="Homepage">
+            <!-- Nova, from the Oreo export. The geometry, colours, blur radii
+                 and the three-layer inner-shadow frame are reproduced exactly
+                 — that frame is what gives it depth. What changed: the unused
+                 filters and the collision-prone ids are gone, and each bloom
+                 now sits in a wrapper that can drift.
+
+                 The blooms are large rounded rects sitting mostly above the
+                 frame, so only their lower curve shows. That is the whole
+                 trick, and it is why they must not become ellipses. -->
+            <svg class="orb" viewBox="0 0 64 64" aria-hidden="true">
+                <defs>
+                    <clipPath id="orb-clip"><rect width="64" height="64" rx="32"/></clipPath>
+                    <filter id="orb-bloom" x="-120%" y="-120%" width="340%" height="340%" color-interpolation-filters="sRGB">
+                        <feGaussianBlur stdDeviation="5.614035"/>
+                    </filter>
+                    <filter id="orb-core" x="-120%" y="-120%" width="340%" height="340%" color-interpolation-filters="sRGB">
+                        <feGaussianBlur stdDeviation="8.421053"/>
+                    </filter>
+
+                    <!-- One inner shadow: a wide glow lifted upwards, which reads
+                         as light falling from above. The export's two tight
+                         edge layers each drew a ring at the circumference and
+                         are dropped — the orb ends at its own light. -->
+                    <filter id="orb-frame" x="0" y="0" width="64" height="64" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                        <feFlood flood-opacity="0" result="bg"/>
+                        <feBlend in="SourceGraphic" in2="bg" result="shape"/>
+
+                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="ha1"/>
+                        <feOffset in="SourceAlpha" dy="-1.122807" result="of1"/>
+                        <feGaussianBlur in="of1" stdDeviation="5.052632" result="bl1"/>
+                        <feComposite in="bl1" in2="ha1" operator="arithmetic" k2="-1" k3="1" result="al1"/>
+                        <feFlood flood-color="#9ACBFF" result="fl1"/>
+                        <feComposite in="fl1" in2="al1" operator="in" result="co1"/>
+                        <feBlend in="co1" in2="shape" result="sh1"/>
+
+                    </filter>
+                </defs>
+
+                <g filter="url(#orb-frame)">
+                    <g clip-path="url(#orb-clip)">
+                        <rect class="orb-ground" width="64" height="64"/>
+
+                        <!-- Wrappers carry the drift; the inner groups keep the
+                             export's own placement untouched. Cycles are set to
+                             different primes so they never resynchronise. -->
+                        <g>
+                            <animateTransform attributeName="transform" type="translate"
+                                values="0 0; 20 14; -16 -9; 8 18; 0 0" dur="7s" repeatCount="indefinite"
+                                calcMode="spline" keyTimes="0;0.25;0.5;0.75;1"
+                                keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>
+                            <g transform="translate(31.940 49.269)">
+                                <rect x="-35.556" y="-41.770" width="71.111" height="83.539" rx="33.591"
+                                      fill="#ffffff" filter="url(#orb-bloom)">
+                                    <!-- Rotating about the frame's centre swings the lit edge
+                                         right around, so the light changes shape and not just
+                                         position. -->
+                                    <animateTransform attributeName="transform" type="rotate"
+                                        values="0 0 -14.7; 26 0 -14.7; -20 0 -14.7; 0 0 -14.7"
+                                        dur="11s" repeatCount="indefinite" calcMode="spline"
+                                        keyTimes="0;0.33;0.66;1"
+                                        keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>
+                                </rect>
+                            </g>
+                        </g>
+
+                        <!-- A violet bloom low in the frame, drifting against the
+                             other two. It never dominates, but it shifts the hue
+                             as it passes, so the colour breathes as well as the
+                             light. -->
+                        <g opacity="0.42">
+                            <animateTransform attributeName="transform" type="translate"
+                                values="0 0; 24 -18; -20 12; 0 0" dur="19s" repeatCount="indefinite"
+                                calcMode="spline" keyTimes="0;0.33;0.66;1"
+                                keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>
+                            <g transform="translate(20 8)">
+                                <rect x="-26" y="-24" width="52" height="48" rx="24"
+                                      fill="#0057C8" filter="url(#orb-core)">
+                                    <animate attributeName="opacity" values="0.7;1;0.6;0.7" dur="23s"
+                                             repeatCount="indefinite" calcMode="spline"
+                                             keyTimes="0;0.33;0.66;1"
+                                             keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>
+                                </rect>
+                            </g>
+                        </g>
+
+                        <g>
+                            <animateTransform attributeName="transform" type="translate"
+                                values="0 0; -22 16; 18 -10; -10 20; 0 0" dur="9s" repeatCount="indefinite"
+                                calcMode="spline" keyTimes="0;0.25;0.5;0.75;1"
+                                keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>
+                            <g transform="translate(32.003 3.832) rotate(180.056)">
+                                <rect x="-29.254" y="-31.918" width="58.507" height="63.836" rx="25.195"
+                                      fill="#5AB0FF" filter="url(#orb-core)">
+                                    <animateTransform attributeName="transform" type="rotate"
+                                        values="0 0 -3.8; -30 0 -3.8; 24 0 -3.8; 0 0 -3.8"
+                                        dur="13s" repeatCount="indefinite" calcMode="spline"
+                                        keyTimes="0;0.33;0.66;1"
+                                        keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>
+                                    <!-- Breathing hard enough to read as a pulse of brightness. -->
+                                    <animate attributeName="opacity" values="1;0.5;1" dur="6s"
+                                             repeatCount="indefinite" calcMode="spline"
+                                             keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"/>
+                                </rect>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </svg>
+        </a>
+
+        <div class="dock-cluster">
+            <!-- Scroll progress: fills with blue as the page is read. Sits
+                 above the actions and inherits their exact width. -->
+            <div class="dock-progress" role="progressbar" aria-label="Scroll progress"
+                 aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="scroll-progress">
+                <div class="dock-progress-fill" id="scroll-progress-fill"></div>
+            </div>
+
+            <div class="dock-actions" role="group" aria-label="Quick actions">
+                <a class="dock-action" href="mailto:jayarchiveone@gmail.com" data-label="Email" aria-label="Email Jay Patel">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path>
+                    </svg>
+                </a>
+
+                <button class="dock-action" type="button" id="project-collapse" data-label="Collapse Projects" aria-label="Collapse projects" aria-pressed="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m14 10 7-7"></path>
+                        <path d="M20 10h-6V4"></path>
+                        <path d="m3 21 7-7"></path>
+                        <path d="M4 14h6v6"></path>
+                    </svg>
+                </button>
+
+                <button class="dock-action" type="button" id="theme-toggle" data-label="Dark Mode" aria-label="Switch to dark mode">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+
+                <button class="dock-action" type="button" id="scroll-top" data-label="Back to Top" aria-label="Back to top">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <line x1="12" y1="19" x2="12" y2="5"></line>
+                        <polyline points="5 12 12 5 19 12"></polyline>
+                    </svg>
+                </button>
+            </div>
         </div>
 
-        <ul class="dock-menu">
-          <li><a href="https://www.etsy.com/shop/WWWONDERLAN" target="_blank" rel="noopener">Shop</a></li>
-          <li>
-            <button type="button" id="details-toggle"
-                    aria-expanded="false" aria-controls="details">Details</button>
-          </li>
-          <li><a href="https://instagram.com/wwwonderlan" target="_blank" rel="noopener">Instagram</a></li>
-        </ul>
-
-        <div class="dock-controls">
-          <button class="dock-control" type="button"
-                  data-set-theme="light" aria-label="Light mode">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="5"/>
-              <line x1="12" y1="1" x2="12" y2="3"/>
-              <line x1="12" y1="21" x2="12" y2="23"/>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-              <line x1="1" y1="12" x2="3" y2="12"/>
-              <line x1="21" y1="12" x2="23" y2="12"/>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-            </svg>
-          </button>
-
-          <button class="dock-control" type="button"
-                  data-set-theme="dark" aria-label="Dark mode">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-            </svg>
-          </button>
-
-          <button class="dock-control" type="button"
-                  id="scroll-top" aria-label="Back to top">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="m5 12 7-7 7 7"/>
-              <path d="M12 19V5"/>
-            </svg>
-          </button>
-        </div>
-
-        <p class="dock-copyright">© 2026 WWWONDERLAN</p>
-      </div>
     </nav>
-  </div>
 
-</div>
-
-<script src="app.js"></script>
+    <script src="siteapp.js" defer></script>
 
 </body>
 </html>
