@@ -9,10 +9,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-	<!-- Inter Fallback -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap"
+    <!-- Inter fallback, for devices without SF Pro. Both weights the page
+         uses: font-synthesis is off, so a missing 500 would render as 400
+         rather than being faked, and every medium label would flatten. -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap"
           media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap"></noscript>
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap"></noscript>
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
@@ -34,23 +36,34 @@
 
     <!-- Inline and blocking by design: the theme must be resolved before the
          first paint, or the page flashes light before switching to dark.
-         This is the only script that cannot live in siteapp.js. -->
+         This is the only script that cannot live in siteapp.js.
+
+         A stored choice outranks everything. Without one the system decides,
+         which is what makes a first visit arrive already dark on a device set
+         to dark — on any OS, since prefers-color-scheme is what every one of
+         them reports through. siteapp.js keeps following the system until a
+         choice is actually made. -->
     <script>
         (() => {
+            let saved = null;
             try {
-                const savedTheme = localStorage.getItem('portfolio-theme');
-                if (savedTheme === 'dark' || savedTheme === 'light') {
-                    document.documentElement.dataset.theme = savedTheme;
-                    /* Keep the browser's own chrome in step from the very
-                       first paint; values mirror THEME_BACKGROUNDS in
-                       siteapp.js, which takes over once it loads. */
-                    const themeColor = document.getElementById('theme-color');
-                    if (themeColor) {
-                        themeColor.setAttribute('content', savedTheme === 'dark' ? '#000000' : '#FFFFFF');
-                    }
-                }
+                saved = localStorage.getItem('portfolio-theme');
             } catch (error) {
-                document.documentElement.dataset.theme = 'light';
+                /* Storage blocked: the system decides, as on a first visit. */
+            }
+
+            const theme = saved === 'dark' || saved === 'light'
+                ? saved
+                : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+            document.documentElement.dataset.theme = theme;
+
+            /* Keeps the browser's own chrome in step from the very first
+               paint; values mirror THEME_BACKGROUNDS in siteapp.js, which
+               takes over once it loads. */
+            const themeColor = document.getElementById('theme-color');
+            if (themeColor) {
+                themeColor.setAttribute('content', theme === 'dark' ? '#000000' : '#FFFFFF');
             }
         })();
     </script>
@@ -102,7 +115,7 @@
 
             <section class="works">
 
-                <article class="project">
+            <article class="project">
                 <div class="project-title" data-enter>
                     <h2>Cine Asia</h2>
                     <p class="project-type">Application Design</p>
@@ -253,14 +266,13 @@
                     <img width="1920" height="2371" loading="lazy" decoding="async" src="images/bodi/bodi-web-1.png" alt="Bodi Desktop Website">
                 </div>
 
-                   <div class="stack" data-enter>
+                <div class="stack" data-enter>
                     <img width="1920" height="2371" loading="lazy" decoding="async" src="images/bodi/bodi-web-2.png" alt="Bodi Desktop Classes Page">
                 </div>
 
                 <div class="stack" data-enter>
                     <img width="1920" height="2371" loading="lazy" decoding="async" src="images/bodi/bodi-web-3.png" alt="Bodi Desktop Product Page">
                 </div>
-                
             </article>
 
             </section>
