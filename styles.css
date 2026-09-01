@@ -30,17 +30,20 @@
        The track starts at 320 rather than 400 because that is where phones
        actually are: 360, 375 and 390 are the common widths, and a track
        starting at 400 leaves every one of them pinned to the floor with
-       nothing between them. The divisor is the span over 100. */
+       nothing between them. The divisor is the span over 100.
+
+       Spacing rides this track. Type does not — it steps, on its own ladder
+       in Responsive, because the sizes are drawn frame by frame in Figma
+       rather than interpolated. */
     --fluid: clamp(0px, (100vw - 320px) / 4.8, 100px);
 
-    /* Type — 17 / 26 on a phone, 20 / 30 from 800px up.
-       Leading is a length rather than a ratio: 26/17 and 30/20 are different
-       proportions, and smaller type wants comparatively more. Both ends land
-       exactly and the ratio loosens on the way down, which is correct. */
-    --font-size:   calc(17px + 3 * var(--fluid) / 100);   /* 17 → 20 */
-    --line-height: calc(26px + 4 * var(--fluid) / 100);   /* 26 → 30 */
-    /* In em, so it holds its proportion as the size changes. */
-    --letter-spacing: -0.0091em;   /* -0.18px at 20px */
+    /* Type — the floor of the ladder. It steps up at 375, 600 and 768; the
+       whole ladder is in one block in Responsive, so the four sizes can be
+       read at a glance. Tracking is the same at every step and so is stated
+       once, here, and never restated. */
+    --font-size:   14px;
+    --line-height: 24px;
+    --letter-spacing: -0.2px;
 
     /* Chrome type — fixed, not fluid: interface furniture is the same size on
        a laptop and a 32" display. The label sits a step below the bar. */
@@ -902,11 +905,47 @@ body.projects-collapsed .project {
    Responsive
    ============================================ */
 
+/* --- Type ladder ---
+   The four sizes, in one place, ascending. Each step states only what
+   changes from the step below, so there is exactly one declaration per
+   number and nothing to keep in sync:
+
+       ≤ 374    14 / 24     (the floor, in :root)
+     375–599    16 / 28
+     600–767    18 / 28
+       768+     20 / 30
+
+   390 needs no entry of its own — it sits inside the 375 step, which is why
+   it and 375 measure the same. 600 changes the size alone; the leading is
+   already where it needs to be. Tracking is -0.2px throughout and is set
+   once in :root.
+
+   Steps rather than a ramp because these are Figma frame values, not points
+   on a curve. The 768 step lands within 5px of where the column reaches its
+   full 700, so the type stops growing at the same moment the measure does. */
+@media screen and (min-width: 375px) {
+    :root {
+        --font-size:   16px;
+        --line-height: 28px;
+    }
+}
+
+@media screen and (min-width: 600px) {
+    :root { --font-size: 18px; }
+}
+
+@media screen and (min-width: 768px) {
+    :root {
+        --font-size:   20px;
+        --line-height: 30px;
+    }
+}
+
 @media screen and (max-width: 700px) {
     :root {
 
-        /* Content is at its 17px floor here; the bar steps down with it, or
-           interface and content would be indistinguishable on a phone. */
+        /* Content is on the lower rungs here — 14 to 18. The bar steps down
+           with it, or interface and content would be indistinguishable. */
         --font-chrome: 12px;
         --font-chrome-small: 11px;
         --bar-inset: 12px;   /* a smaller capsule wants a tighter inset */
