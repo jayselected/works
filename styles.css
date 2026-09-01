@@ -18,9 +18,6 @@
     /* Screen edge to dock. */
     --edge-gap: 24px;
 
-    /* Type — one size for the whole page: 24 / 34 / -0.2px on desktop,
-       fluid to 14px on phones. Leading and tracking are ratios, so the
-       desktop proportions hold at every size. */
     /* Every fluid value on the page is built from one growth track: --fluid
        runs 0 → 100px as the viewport crosses 400 → 800px, and each value is
        stated as its own two ends:
@@ -28,16 +25,17 @@
            calc( FLOOR px + (CAP - FLOOR) * var(--fluid) / 100 )
 
        To retune anything, change only the two numbers on its own line.
-       Nothing else has to follow, and nothing can fall out of step. */
+       Nothing else has to follow, and nothing can fall out of step.
+
+       Spacing rides this track. Type does not — it is fixed below, so the
+       two are free of each other and either can be retuned alone. */
     --fluid: clamp(0px, (100vw - 400px) / 4, 100px);
 
-    --font-size:   calc(14px + 8 * var(--fluid) / 100);   /* 14 → 22 */
-    /* A length, not a ratio: 20/14 and 28/22 are different proportions, and
-       smaller type wants comparatively more leading. Both ends land exactly
-       and the ratio loosens on the way down, which is how it should. */
-    --line-height: calc(22px + 10 * var(--fluid) / 100);  /* 22 → 32 */
-    /* In em so it holds its proportion as the size changes. */
-    --letter-spacing: -0.0091em;                          /* -0.2px at 22px */
+    /* Type — one size for the whole page: 20 / 30, at every width. */
+    --font-size:   20px;
+    --line-height: 30px;
+    /* In em, so it holds its proportion if the size is ever retuned. */
+    --letter-spacing: -0.0091em;   /* -0.18px at 20px */
 
     /* Chrome type — fixed, not fluid: interface furniture is the same size on
        a laptop and a 32" display. The label sits a step below the bar. */
@@ -48,10 +46,10 @@
     /* Palette — one ink, one ground, one muted grey for supporting text,
        one accent used only by the progress bar. */
     --color-bg: #FFFFFF;
-    --color-ink: #000000;
-    --color-muted: #BABFC5;             /* project type, meta values */
+    --color-ink: #0D0D0D;
+    --color-muted: #8F8F8F;             /* project type, meta values */
     --color-line: rgba(0, 0, 0, 0.1);   /* chrome hairlines */
-    --color-bg-rgb: 255, 255, 255;
+    --color-bg-rgb: 255, 255, 255;      /* keep in step with --color-bg */
     --color-accent: #007AFF;
 
     /* Spacing — one step drives every gap, so the desktop ratio
@@ -159,9 +157,9 @@
 
     --color-bg: #000000;
     --color-ink: #FFFFFF;
-    --color-muted: #595959;
+    --color-muted: #AFAFAF;
     --color-line: rgba(255, 255, 255, 0.1);
-    --color-bg-rgb: 0, 0, 0;
+    --color-bg-rgb: 0, 0, 0;            /* keep in step with --color-bg */
 
     --glass-bg: rgba(0, 0, 0, 0.55);
     --glass-backdrop: blur(20px) saturate(190%) brightness(1.1);
@@ -202,6 +200,19 @@ body {
 h1, h2 {
     font-size: inherit;
     font-weight: inherit;
+}
+
+/* The page's one departure from regular: medium marks a label — the
+   greeting, a project name, a meta heading — never a passage. Declared here
+   rather than beside each component, so the three cannot drift apart.
+
+   The Inter fallback is loaded at 400 and 500 for this rule alone. With
+   font-synthesis off, a weight that is not loaded renders as regular rather
+   than being faked, so off Apple the distinction would silently vanish. */
+.hero-hello,
+.project-title,
+.meta-row {
+    font-weight: 500;
 }
 
 ::selection {
@@ -423,16 +434,6 @@ h1, h2 {
     transition: transform 0.15s ease-out;
 }
 
-.dock-actions {
-    position: relative;
-    background-color: var(--glass-bg);
-    backdrop-filter: var(--glass-backdrop);
-    -webkit-backdrop-filter: var(--glass-backdrop);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
-    color: var(--color-ink);
-}
-
 /* The orb is the face rather than an icon within it, so this element carries
    no fill, border or blur — the orb is opaque and would hide all three. It
    keeps only the cast shadow, which lifts it off the page as the dock does. */
@@ -503,6 +504,7 @@ h1, h2 {
 /* Sized by its contents: adding an action needs no change, and the progress
    bar above inherits the new width. */
 .dock-actions {
+    position: relative;
     width: max-content;
     height: var(--dock-height);
     display: flex;
@@ -510,7 +512,14 @@ h1, h2 {
     justify-content: center;
     gap: var(--dock-action-gap);
     padding: 0 var(--dock-actions-inset);
+
     border-radius: 999px;
+    color: var(--color-ink);
+    background-color: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop);
+    -webkit-backdrop-filter: var(--glass-backdrop);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
 }
 
 .dock-action {
@@ -643,7 +652,9 @@ h1, h2 {
     gap: var(--space-meta);
 }
 
+/* The label carries the weight for the whole row, so the values revert. */
 .meta-values {
+    font-weight: 400;
     color: var(--color-muted);
 }
 
@@ -765,20 +776,23 @@ body.projects-collapsed .project {
    Motion
    ============================================ */
 
-/* Content starts lowered and transparent; JS adds .is-in on entry. */
+/* Content starts lowered and transparent; JS adds .is-in on entry.
+
+   No will-change: every unentered item would hold a compositor layer for the
+   whole scroll, and that count grows with every project added. Opacity and
+   transform are promoted on their own when the transition starts, which is
+   the one frame that needs it. */
 [data-enter] {
     opacity: 0;
     transform: translateY(var(--enter-rise));
     transition:
         opacity var(--enter-ms) var(--enter-ease),
         transform var(--enter-ms) var(--enter-ease);
-    will-change: opacity, transform;
 }
 
 [data-enter].is-in {
     opacity: 1;
     transform: none;
-    will-change: auto;
 }
 
 /* The dock settles in once, on load — chrome arrives after the content it
@@ -845,10 +859,11 @@ body.projects-collapsed .project {
 
 }
 
-/* A request, not a default: only those who have asked get the stronger grey. */
+/* A request, not a default: only those who have asked get the stronger grey.
+   Dark has no entry — its muted grey already clears the threshold, and any
+   value added here would have to beat it rather than merely differ. */
 @media (prefers-contrast: more) {
     [data-theme="light"] { --color-muted: #6E6E73; }
-    [data-theme="dark"]  { --color-muted: #98989D; }
 }
 
 /* Translucency is hard for some people to read. Per theme, so it overrides
@@ -878,8 +893,8 @@ body.projects-collapsed .project {
 @media screen and (max-width: 700px) {
     :root {
 
-        /* Content falls to 16 here; holding the bar at its desktop size
-           would leave interface and content indistinguishable. */
+        /* Content holds at 20 everywhere; the bar steps down instead, or
+           interface and content would be indistinguishable on a phone. */
         --font-chrome: 12px;
         --font-chrome-small: 11px;
         --bar-inset: 12px;   /* a smaller capsule wants a tighter inset */
