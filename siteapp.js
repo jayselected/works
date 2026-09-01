@@ -96,6 +96,13 @@ const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday',
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
                 'July', 'August', 'September', 'October', 'November', 'December'];
 
+/* Everything the lookup fills. */
+const CONDITION_FIELDS = '[data-conditions], [data-place], [data-weather]';
+/* And the rules that flank them in the bar. Each rule belongs to the field
+   before it and goes wherever it goes, or the bar is left showing pips with
+   nothing between them. */
+const CONDITION_PARTS = CONDITION_FIELDS + ', .topbar-sep';
+
 /* One clock and one lookup feed every subscriber — the hero lines and the
    top bar — so nothing is fetched or counted twice. */
 function initializeHeroMeta() {
@@ -122,7 +129,7 @@ function initializeHeroMeta() {
         tick();
     }
 
-    if (document.querySelector('[data-conditions], [data-place], [data-weather]')) {
+    if (document.querySelector(CONDITION_FIELDS)) {
         getConditions()
             .then(conditions => {
                 const where = [conditions.city, conditions.country].filter(Boolean).join(', ');
@@ -134,22 +141,28 @@ function initializeHeroMeta() {
                 fill('[data-weather]', what);
                 fill('[data-conditions]', where ? where + '. ' + what : what);
 
+                /* A lookup can succeed and still name no city. The hero
+                   sentence handles that above; the bar has to drop the field
+                   and its rule together. */
+                setHidden('[data-place], .topbar-place-sep', !where);
+
                 /* Held to the same beat, so a cached reading — which returns
                    almost at once — arrives with the rest rather than ahead
                    of it. A first visit fades in when the lookup lands. */
-                revealOnBeat([...document.querySelectorAll('[data-conditions], [data-place], [data-weather]')]);
+                revealOnBeat([...document.querySelectorAll(CONDITION_FIELDS)]);
             })
-            /* On failure the lines are removed, so the hero closes up cleanly
-               rather than holding a blank. */
-            .catch(() => {
-                document.querySelectorAll('[data-conditions], [data-place], [data-weather]')
-                    .forEach(el => { el.hidden = true; });
-            });
+            /* On failure the readings are removed, so the hero closes up
+               cleanly and the bar falls back to name and clock. */
+            .catch(() => setHidden(CONDITION_PARTS, true));
     }
 }
 
 function fill(selector, text) {
     document.querySelectorAll(selector).forEach(el => { el.textContent = text; });
+}
+
+function setHidden(selector, hidden) {
+    document.querySelectorAll(selector).forEach(el => { el.hidden = hidden; });
 }
 
 /* --------------------------------------------
@@ -307,7 +320,20 @@ const THEME_ICONS = {
     `
 };
 
-function applyTheme(theme) {
+/* The stored choice, or null while there has not been one. Null is the
+   meaningful state: it is what keeps the site following the system. */
+function storedTheme() {
+    try {
+        const saved = localStorage.getItem(THEME_STORAGE_KEY);
+        return saved === 'dark' || saved === 'light' ? saved : null;
+    } catch (error) {
+        return null;
+    }
+}
+
+/* remember: false paints the theme without recording it — used when the
+   page is following the system, which must not silently become a choice. */
+function applyTheme(theme, remember = true) {
     document.documentElement.dataset.theme = theme;
 
     const toggle = document.getElementById('theme-toggle');
@@ -321,6 +347,8 @@ function applyTheme(theme) {
     const themeColor = document.getElementById('theme-color');
     if (themeColor) themeColor.setAttribute('content', THEME_BACKGROUNDS[theme]);
 
+    if (!remember) return;
+
     try {
         localStorage.setItem(THEME_STORAGE_KEY, theme);
     } catch (error) {
@@ -330,13 +358,28 @@ function applyTheme(theme) {
 
 function initializeTheme() {
     const toggle = document.getElementById('theme-toggle');
-    applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+    const system = window.matchMedia('(prefers-color-scheme: dark)');
+
+    /* The head has already resolved and applied the theme; this only paints
+       the toggle to match. Recorded only if it was a choice to begin with,
+       so a system-resolved theme is not written back as one. */
+    applyTheme(
+        document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
+        storedTheme() !== null
+    );
 
     if (toggle) {
         toggle.addEventListener('click', () => {
             applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
         });
     }
+
+    /* Until the toggle is pressed the page is the system's, and follows it
+       without a reload — which is what macOS and iOS switching at sunset
+       looks like from here. The first press ends it for good. */
+    system.addEventListener('change', event => {
+        if (storedTheme() === null) applyTheme(event.matches ? 'dark' : 'light', false);
+    });
 }
 
 /* ============================================
