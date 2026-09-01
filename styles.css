@@ -19,7 +19,7 @@
     --edge-gap: 24px;
 
     /* Every fluid value on the page is built from one growth track: --fluid
-       runs 0 → 100px as the viewport crosses 400 → 800px, and each value is
+       runs 0 → 100px as the viewport crosses 320 → 800px, and each value is
        stated as its own two ends:
 
            calc( FLOOR px + (CAP - FLOOR) * var(--fluid) / 100 )
@@ -27,14 +27,19 @@
        To retune anything, change only the two numbers on its own line.
        Nothing else has to follow, and nothing can fall out of step.
 
-       Spacing rides this track. Type does not — it is fixed below, so the
-       two are free of each other and either can be retuned alone. */
-    --fluid: clamp(0px, (100vw - 400px) / 4, 100px);
+       The track starts at 320 rather than 400 because that is where phones
+       actually are: 360, 375 and 390 are the common widths, and a track
+       starting at 400 leaves every one of them pinned to the floor with
+       nothing between them. The divisor is the span over 100. */
+    --fluid: clamp(0px, (100vw - 320px) / 4.8, 100px);
 
-    /* Type — one size for the whole page: 20 / 30, at every width. */
-    --font-size:   20px;
-    --line-height: 30px;
-    /* In em, so it holds its proportion if the size is ever retuned. */
+    /* Type — 17 / 26 on a phone, 20 / 30 from 800px up.
+       Leading is a length rather than a ratio: 26/17 and 30/20 are different
+       proportions, and smaller type wants comparatively more. Both ends land
+       exactly and the ratio loosens on the way down, which is correct. */
+    --font-size:   calc(17px + 3 * var(--fluid) / 100);   /* 17 → 20 */
+    --line-height: calc(26px + 4 * var(--fluid) / 100);   /* 26 → 30 */
+    /* In em, so it holds its proportion as the size changes. */
     --letter-spacing: -0.0091em;   /* -0.18px at 20px */
 
     /* Chrome type — fixed, not fluid: interface furniture is the same size on
@@ -900,7 +905,7 @@ body.projects-collapsed .project {
 @media screen and (max-width: 700px) {
     :root {
 
-        /* Content holds at 20 everywhere; the bar steps down instead, or
+        /* Content is at its 17px floor here; the bar steps down with it, or
            interface and content would be indistinguishable on a phone. */
         --font-chrome: 12px;
         --font-chrome-small: 11px;
