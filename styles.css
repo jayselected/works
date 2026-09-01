@@ -206,6 +206,10 @@ h1, h2 {
    greeting, a project name, a meta heading — never a passage. Declared here
    rather than beside each component, so the three cannot drift apart.
 
+   Weight is set on the block, not the tag, so it survives a change of markup.
+   The secondary line under a block reverts on its own rule: .project-type
+   and .meta-values. Add to a block here and it arrives medium.
+
    The Inter fallback is loaded at 400 and 500 for this rule alone. With
    font-synthesis off, a weight that is not loaded renders as regular rather
    than being faked, so off Apple the distinction would silently vanish. */
@@ -639,7 +643,10 @@ h1, h2 {
 
 
 
+/* The name above carries the weight for the block; this reverts, as the
+   meta values do below. */
 .project-type {
+    font-weight: 400;
     color: var(--color-muted);
 }
 
