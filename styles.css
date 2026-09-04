@@ -1,4 +1,26 @@
 /* ============================================
+   Fonts
+   ============================================ */
+
+/* Self-hosted SF Pro Text, Regular only — the page uses one weight, so one
+   file ships. Declared at 400 so the browser matches it exactly rather than
+   selecting it for a weight it cannot draw; font-synthesis is off below, so
+   any weight but 400 would render as this file regardless.
+
+   TRAP: this sits after -apple-system in the stack, not before. Apple devices
+   resolve at the system font and never request this file, which is what you
+   want — the system font switches between the Text and Display optical cuts
+   on its own, and a static Text file cannot. Move this family earlier in the
+   stack and every Apple device downloads a worse rendering than it had. */
+@font-face {
+    font-family: 'SF Pro Text';
+    src: url('fonts/SFProText/SFProTextRegular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ============================================
    Foundation
    ============================================ */
 
@@ -37,12 +59,21 @@
        rather than interpolated. */
     --fluid: clamp(0px, (100vw - 320px) / 4.8, 100px);
 
-    /* Type — the floor of the ladder. It steps up at 375, 600 and 768; the
-       whole ladder is in one block in Responsive, so the four sizes can be
-       read at a glance. Tracking is the same at every step and so is stated
-       once, here, and never restated. */
-    --font-size:   14px;
-    --line-height: 24px;
+    /* Type — two sizes, and only two.
+
+       Regular is everything. Small is the meta rows and the footer, and is
+       applied in exactly those two places; if a third ever needs it, it joins
+       that selector list rather than being given a size of its own.
+
+       Both pairs ride --fluid, so they scale as one: the 2px between the two
+       sizes and the 2px between their leadings hold at every width, and the
+       pair can never cross or converge. To retune one end, change only the
+       two numbers on its own line. */
+    --font-size:         calc(16px + 2 * var(--fluid) / 100);   /* 16 → 18 */
+    --line-height:       calc(24px + 2 * var(--fluid) / 100);   /* 24 → 26 */
+    --font-size-small:   calc(14px + 2 * var(--fluid) / 100);   /* 14 → 16 */
+    --line-height-small: calc(22px + 2 * var(--fluid) / 100);   /* 22 → 24 */
+    /* One value at every size — a step, not a ratio, so it is stated once. */
     --letter-spacing: -0.2px;
 
     /* Chrome type — fixed, not fluid: interface furniture is the same size on
@@ -79,19 +110,13 @@
     --space-block:   calc(var(--step) * 0.8);   /*  32 — hero and project parts */
     --space-meta:    calc(var(--step) * 0.6);   /*  24 — meta rows, wrapped image lines */
 
-    /* Corners on the artwork. Fixed rather than fluid: a corner is a property
-       of the object, not of the page it sits on.
-
-       Concentric radii only bind when the inner element hugs the corner —
-       inner = outer − inset. At the inset below the image's corner sits
-       nowhere near the frame's, so the two are free of each other and 16
-       inside 24 is a choice rather than a consequence.
+    /* The artwork is square-cornered throughout — no radius on any frame,
+       stroke or image. The rounded forms left on the page are the dock, the
+       pill and their buttons, which are chrome rather than artwork.
 
        The inset is a share, not a step: a frame is an object and scales with
        itself. At the 700px column it is the 32px the design specifies, and
        both frames take the same one, so they can never diverge. */
-    --radius-outer: 24px;      /* frames, and the banner on its own */
-    --radius-inner: 16px;      /* an image inside a frame */
     --frame-inset:  4.5714%;   /* 32 of the 700px column */
     /* One stroke for both themes — a mid grey at low alpha reads on either
        ground, so it needs no override. */
@@ -180,10 +205,10 @@
 
 body {
     font-weight: 400;
-    /* SF Pro isn't licensed for self-hosting, so it comes from the system
-       stack — real SF Pro on Apple devices, Inter (loaded in the head)
-       elsewhere. */
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', system-ui, sans-serif;
+    /* Apple devices resolve at -apple-system and get real SF Pro, optically
+       sized, with no download. Everyone else falls to the self-hosted SF Pro
+       Text above, then Inter, then whatever the platform calls system-ui. */
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', system-ui, sans-serif;
     font-size: var(--font-size);
     line-height: var(--line-height);
     letter-spacing: var(--letter-spacing);
@@ -203,28 +228,21 @@ body {
     transition: color var(--ui-ms) var(--ui-ease), background-color var(--ui-ms) var(--ui-ease);
 }
 
-/* The page is one type treatment, set on body. The h1 stays structural; only
-   project titles depart from it, below. */
+/* The page is one type treatment, set on body: one family, one weight, one
+   size but for small. These stay structural and inherit all of it. */
 h1, h2 {
     font-size: inherit;
     font-weight: inherit;
 }
 
-/* The page's one departure from regular: medium marks a label — the
-   greeting, a project name, a meta heading — never a passage. Declared here
-   rather than beside each component, so the three cannot drift apart.
-
-   Weight is set on the block, not the tag, so it survives a change of markup.
-   The secondary line under a block reverts on its own rule: .project-type
-   and .meta-values. Add to a block here and it arrives medium.
-
-   The Inter fallback is loaded at 400 and 500 for this rule alone. With
-   font-synthesis off, a weight that is not loaded renders as regular rather
-   than being faked, so off Apple the distinction would silently vanish. */
-.hero-hello,
-.project-title,
-.meta-row {
-    font-weight: 500;
+/* Small — the meta rows and the footer, and nowhere else. Set on the two
+   containers so everything inside inherits it and no child needs a rule of
+   its own. A third place that needs small joins this list; it never gets a
+   size of its own. */
+.project-meta,
+.site-footer {
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-small);
 }
 
 ::selection {
@@ -651,25 +669,20 @@ h1, h2 {
 
 
 
-/* The name above carries the weight for the block; this reverts, as the
-   meta values do below. */
 .project-type {
-    font-weight: 400;
     color: var(--color-muted);
 }
 
-/* Rows 24 apart; within a row the label sits directly on its values, held
-   apart by weight rather than by space. .meta-row and .project-title need
-   no rules — a block already stacks its children on their own leading. */
+/* Rows 24 apart; within a row the label sits directly on its values, told
+   apart by colour alone — ink against muted. .meta-row and .project-title
+   need no rules: a block already stacks its children on their own leading. */
 .project-meta {
     display: flex;
     flex-direction: column;
     gap: var(--space-meta);
 }
 
-/* The label carries the weight for the whole row, so the values revert. */
 .meta-values {
-    font-weight: 400;
     color: var(--color-muted);
 }
 
@@ -715,22 +728,12 @@ body.projects-collapsed .project {
     display: block;
 }
 
-/* The banner sits directly on the page and takes the outer corner. */
-.banner {
-    border-radius: var(--radius-outer);
-}
-
 /* A web screenshot is a long white slab. Framed, it reads as a screen rather
    than a hole in the page — and on a light ground the frame gives it an edge
    its own white would otherwise lose. */
 .stack:not(.stack-row) {
     padding: var(--frame-inset);
     border: 1px solid var(--stroke-frame);
-    border-radius: var(--radius-outer);
-}
-
-.stack:not(.stack-row) img {
-    border-radius: var(--radius-inner);
 }
 
 /* No padding of its own: a stack's air is the project's gap, so the distance
@@ -762,7 +765,6 @@ body.projects-collapsed .project {
     /* The row is a frame around the mockups rather than a bare arrangement,
        so it carries the edge itself; the mockups inside stay untouched. */
     border: 1px solid var(--stroke-frame);
-    border-radius: var(--radius-outer);
 }
 
 .stack-row img {
@@ -904,42 +906,6 @@ body.projects-collapsed .project {
 /* ============================================
    Responsive
    ============================================ */
-
-/* --- Type ladder ---
-   The four sizes, in one place, ascending. Each step states only what
-   changes from the step below, so there is exactly one declaration per
-   number and nothing to keep in sync:
-
-       ≤ 374    14 / 24     (the floor, in :root)
-     375–599    16 / 28
-     600–767    18 / 28
-       768+     20 / 30
-
-   390 needs no entry of its own — it sits inside the 375 step, which is why
-   it and 375 measure the same. 600 changes the size alone; the leading is
-   already where it needs to be. Tracking is -0.2px throughout and is set
-   once in :root.
-
-   Steps rather than a ramp because these are Figma frame values, not points
-   on a curve. The 768 step lands within 5px of where the column reaches its
-   full 700, so the type stops growing at the same moment the measure does. */
-@media screen and (min-width: 375px) {
-    :root {
-        --font-size:   16px;
-        --line-height: 28px;
-    }
-}
-
-@media screen and (min-width: 600px) {
-    :root { --font-size: 18px; }
-}
-
-@media screen and (min-width: 768px) {
-    :root {
-        --font-size:   20px;
-        --line-height: 30px;
-    }
-}
 
 @media screen and (max-width: 700px) {
     :root {
