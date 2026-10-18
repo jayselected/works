@@ -36,14 +36,15 @@
 
     /* Type — two sizes, one weight.
 
-       Body is 22/30 at every width: everything but the footer. Small is
-       15/23 on a phone, growing to 17/25, for the footer alone.
+       Body is everything but the footer: 17/25 on the smallest phone,
+       growing to 22/30 on a desktop. Small is the footer alone: 15/23,
+       growing to 17/25.
 
        Leading is size + 8 throughout: a constant gap keeps the white between
        lines optically even from one size to the next, where a ratio would
        open small text up and pinch large text shut. */
-    --font-size:         22px;
-    --line-height:       30px;
+    --font-size:         calc(17px + 5 * var(--fluid) / 100);   /* 17 → 22 */
+    --line-height:       calc(25px + 5 * var(--fluid) / 100);   /* 25 → 30 */
     --font-size-small:   calc(15px + 2 * var(--fluid) / 100);   /* 15 → 17 */
     --line-height-small: calc(23px + 2 * var(--fluid) / 100);   /* 23 → 25 */
 
@@ -130,10 +131,13 @@
         inset 0 0 12px rgba(255, 255, 255, 0.35);
 }
 
-/* Whole pixels where the browser can round, so Small steps 15, 16, 17 and
-   every baseline lands on a pixel. Elsewhere the values above stand. */
+/* Whole pixels where the browser can round, so the type steps through
+   each size rather than gliding between them, and every baseline lands on a
+   pixel. Elsewhere the values above stand. */
 @supports (width: round(1.5px, 1px)) {
     :root {
+        --font-size:         round(calc(17px + 5 * var(--fluid) / 100), 1px);
+        --line-height:       round(calc(25px + 5 * var(--fluid) / 100), 1px);
         --font-size-small:   round(calc(15px + 2 * var(--fluid) / 100), 1px);
         --line-height-small: round(calc(23px + 2 * var(--fluid) / 100), 1px);
     }
@@ -141,9 +145,9 @@
 
 /* Apple's tracking table, by hand, wherever the self-hosted file is the face
    actually drawing (siteapp.js sets this once it has loaded):
-   22 −0.26 · 15 −0.23, 17 −0.43 · 12 0. */
+   17 −0.43, 22 −0.26 · 15 −0.23, 17 −0.43 · 12 0. */
 [data-font="static"] {
-    --tracking:       -0.26px;
+    --tracking:       calc(-0.43px + 0.17 * var(--fluid) / 100);
     --tracking-small: calc(-0.23px - 0.20 * var(--fluid) / 100);
     --tracking-label: 0px;
 }
