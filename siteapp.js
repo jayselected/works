@@ -291,15 +291,40 @@ function initializeTheme() {
 }
 
 /* ============================================
-   Scroll progress
+   Scroll
+
+   The dock answers the scroll twice: the progress bar fills, and the light
+   on its glass rim turns, a full turn every RIM_TURN_PX. The angle eases
+   toward the scroll rather than jumping with it, settling over about a
+   second once the page stops.
    ============================================ */
 
-function initializeScrollProgress() {
+const RIM_TURN_PX = 2400;
+const RIM_EASE_MS = 300;   /* time constant: ~95% of the way in three */
+
+function initializeScroll() {
+    const dock = document.querySelector('.dock');
     const progress = document.getElementById('scroll-progress');
     const fill = document.getElementById('scroll-progress-fill');
-    if (!progress || !fill) return;
+    if (!dock || !progress || !fill) return;
 
     let queued = false;
+    let rimTarget = (window.scrollY / RIM_TURN_PX) * 360;
+    let rimAngle = rimTarget;
+    let rimFrame = 0;
+    let rimLast = 0;
+
+    const paintRim = () => dock.style.setProperty('--rim-turn', `${rimAngle.toFixed(2)}deg`);
+
+    function turnRim(now) {
+        const dt = Math.min(64, now - rimLast);
+        rimLast = now;
+        rimAngle += (rimTarget - rimAngle) * (1 - Math.exp(-dt / RIM_EASE_MS));
+        if (Math.abs(rimTarget - rimAngle) < 0.05) rimAngle = rimTarget;
+
+        paintRim();
+        rimFrame = rimAngle === rimTarget ? 0 : requestAnimationFrame(turnRim);
+    }
 
     function render() {
         queued = false;
@@ -308,6 +333,14 @@ function initializeScrollProgress() {
 
         fill.style.transform = `scaleX(${ratio})`;
         progress.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
+
+        /* Tied to the reader's own scrolling, but still motion: held still
+           for anyone who has asked for less. */
+        rimTarget = (window.scrollY / RIM_TURN_PX) * 360;
+        if (!rimFrame && rimTarget !== rimAngle && !prefersReducedMotion()) {
+            rimLast = performance.now();
+            rimFrame = requestAnimationFrame(turnRim);
+        }
     }
 
     /* Scroll fires far more often than the screen refreshes. */
@@ -322,6 +355,8 @@ function initializeScrollProgress() {
     /* The page changes height as images load and projects collapse. */
     new ResizeObserver(queue).observe(document.body);
 
+    /* A page restored part-way down starts with its rim already turned. */
+    paintRim();
     render();
 }
 
@@ -553,7 +588,11 @@ function initializeProjectCollapse() {
            still: a permanent name would stop its glass sampling the page. */
         if (dock) dock.style.viewTransitionName = 'dock';
         const release = () => { if (dock) dock.style.viewTransitionName = ''; };
-        document.startViewTransition(update).finished.then(release, release);
+        const transition = document.startViewTransition(update);
+        /* A morph cut short, by a second click or a hidden tab, is not an
+           error: the page still updates, it just doesn't animate. */
+        transition.ready.catch(() => {});
+        transition.finished.then(release, release);
     }
 
     paint();
@@ -610,17 +649,22 @@ function initializeEntrance() {
    draws the self-hosted SF Pro Text, which cannot; once it is known to be
    the face in use, the stylesheet applies Apple's tracking by hand. A face
    the stack never reached is never requested, so "loaded" is proof.
+
+   Checked after load, not at start: only once the page has been laid out
+   has every face it needs been requested, for fonts.ready to wait on.
    ============================================ */
 
 function initializeFallbackFont() {
-    document.fonts?.ready.then(() => {
-        for (const face of document.fonts) {
-            if (face.family.replace(/["']/g, '') === 'SF Pro Text' && face.status === 'loaded') {
-                document.documentElement.dataset.font = 'static';
-                return;
-            }
-        }
-    });
+    if (!document.fonts) return;
+
+    const check = () => {
+        const inUse = [...document.fonts].some(face =>
+            face.family.replace(/["']/g, '') === 'SF Pro Text' && face.status === 'loaded');
+        if (inUse) document.documentElement.dataset.font = 'static';
+    };
+
+    if (document.readyState === 'complete') document.fonts.ready.then(check);
+    else window.addEventListener('load', () => document.fonts.ready.then(check), { once: true });
 }
 
 /* ============================================
@@ -649,7 +693,7 @@ function start() {
         initializeClock,
         initializeConditions,
         initializeTheme,
-        initializeScrollProgress,
+        initializeScroll,
         initializeProjectCollapse,
         initializeEntrance,
         initializeFallbackFont,
