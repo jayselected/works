@@ -478,9 +478,10 @@ const dockLabel = (() => {
 /* ============================================
    Project collapse
 
-   Reduces every project to its title and banner, two across. A layout
-   change cannot be transitioned directly, so where the browser supports
-   view transitions the swap runs inside one and is interpolated.
+   Reduces the projects to an index: one row each, the banner as a
+   thumbnail beside the title and type. A layout change cannot be
+   transitioned directly, so where the browser supports view transitions
+   the swap runs inside one and is interpolated.
 
    Collapsing keeps the project being read in view; opening a card brings
    that project to the top. Either way the scroll happens inside the same

@@ -23,7 +23,7 @@
 :root {
     color-scheme: light;
 
-    --content-width: 700px;
+    --content-width: 720px;
     --page-edge: clamp(1.75rem, 1.5rem + 1vw, 2rem);   /* 28 on phones, 32 on desktop */
 
     /* One growth track for every fluid value: 0 → 100px as the viewport
@@ -34,17 +34,16 @@
        so retuning anything means changing the two numbers on its line. */
     --fluid: clamp(0px, (100vw - 320px) / 4.8, 100px);
 
-    /* Type — two sizes, on Apple's ladder.
+    /* Type — two sizes, one weight.
 
-       A phone opens on 17/25, iOS Body at the leading apple.com sets it in
-       for reading, with Small on 15, iOS Subheadline. Both grow 2px toward a
-       desktop, where 19px puts about 73 characters on the 700px column.
+       Body is 22/30 at every width: everything but the footer. Small is
+       15/23 on a phone, growing to 17/25, for the footer alone.
 
        Leading is size + 8 throughout: a constant gap keeps the white between
        lines optically even from one size to the next, where a ratio would
        open small text up and pinch large text shut. */
-    --font-size:         calc(17px + 2 * var(--fluid) / 100);   /* 17 → 19 */
-    --line-height:       calc(25px + 2 * var(--fluid) / 100);   /* 25 → 27 */
+    --font-size:         22px;
+    --line-height:       30px;
     --font-size-small:   calc(15px + 2 * var(--fluid) / 100);   /* 15 → 17 */
     --line-height-small: calc(23px + 2 * var(--fluid) / 100);   /* 23 → 25 */
 
@@ -78,8 +77,11 @@
 
     /* Frames — square-cornered, and inset by a share rather than a step: a
        frame is an object and scales with itself. 32px at the full column. */
-    --frame-inset: 4.5714%;                     /* 32 of 700 */
+    --frame-inset: 4.4444%;                     /* 32 of 720 */
     --stroke-frame: rgba(186, 191, 197, 0.2);   /* reads on either ground */
+
+    /* The index: a project's banner as a thumbnail, fixed in width. */
+    --thumb-width: 300px;
 
     /* Motion — calm and modest throughout. Nothing travels more than a few
        pixels, nothing arrives quickly, and every curve starts and ends
@@ -128,12 +130,10 @@
         inset 0 0 12px rgba(255, 255, 255, 0.35);
 }
 
-/* Whole pixels where the browser can round, so the type steps 17, 18, 19
-   and every baseline lands on a pixel. Elsewhere the values above stand. */
+/* Whole pixels where the browser can round, so Small steps 15, 16, 17 and
+   every baseline lands on a pixel. Elsewhere the values above stand. */
 @supports (width: round(1.5px, 1px)) {
     :root {
-        --font-size:         round(calc(17px + 2 * var(--fluid) / 100), 1px);
-        --line-height:       round(calc(25px + 2 * var(--fluid) / 100), 1px);
         --font-size-small:   round(calc(15px + 2 * var(--fluid) / 100), 1px);
         --line-height-small: round(calc(23px + 2 * var(--fluid) / 100), 1px);
     }
@@ -141,9 +141,9 @@
 
 /* Apple's tracking table, by hand, wherever the self-hosted file is the face
    actually drawing (siteapp.js sets this once it has loaded):
-   17 −0.43, 19 −0.45 · 15 −0.23, 17 −0.43 · 12 0. */
+   22 −0.26 · 15 −0.23, 17 −0.43 · 12 0. */
 [data-font="static"] {
-    --tracking:       calc(-0.43px - 0.02 * var(--fluid) / 100);
+    --tracking:       -0.26px;
     --tracking-small: calc(-0.23px - 0.20 * var(--fluid) / 100);
     --tracking-label: 0px;
 }
@@ -218,8 +218,7 @@ h1, h2 {
     font-weight: inherit;
 }
 
-/* Small: the meta rows and the footer, and nowhere else. */
-.project-meta,
+/* Small: the footer, and nowhere else. */
 .site-footer {
     font-size: var(--font-size-small);
     line-height: var(--line-height-small);
@@ -499,7 +498,9 @@ p {
     color: var(--color-muted);
 }
 
-/* Collapsed: each project is its title and banner, two across. */
+/* Collapsed: an index. One row per project, its banner as a 300px
+   thumbnail and its title and type beside it, the title's capitals trimmed
+   flush with the top of the image. */
 .projects-collapsed .project-meta,
 .projects-collapsed .project-description,
 .projects-collapsed .stack {
@@ -507,13 +508,26 @@ p {
 }
 
 .projects-collapsed .works {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-section) var(--space-block);
+    gap: var(--space-block);
 }
 
 .projects-collapsed .project {
+    display: grid;
+    grid-template-columns: var(--thumb-width) 1fr;
+    align-items: start;
     cursor: pointer;
+}
+
+.projects-collapsed .banner {
+    grid-area: 1 / 1;
+}
+
+.projects-collapsed .project-title {
+    grid-area: 1 / 2;
+}
+
+.projects-collapsed hgroup {
+    text-box: trim-start cap alphabetic;
 }
 
 /* ============================================
@@ -548,11 +562,11 @@ p {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 5.0473%;          /* 32 of 634 */
+    gap: 4.8930%;          /* 32 of 654 */
 }
 
 .stack-row img {
-    width: 27.6025%;       /* 175 of 634 */
+    width: 26.7584%;       /* 175 of 654 */
     min-width: 100px;
 }
 
@@ -636,8 +650,9 @@ p {
         --tracking-label: 0.06px;   /* Apple's table at 11 */
     }
 
-    /* Two collapsed projects side by side would each be too narrow. */
-    .projects-collapsed .works {
+    /* Half a phone's column is too narrow to set text beside the image, so
+       each index row stacks its title above a full-width thumbnail. */
+    .projects-collapsed .project {
         display: flex;
     }
 }
