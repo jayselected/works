@@ -34,11 +34,12 @@
        so retuning anything means changing the two numbers on its line. */
     --fluid: clamp(0px, (100vw - 320px) / 4.8, 100px);
 
-    /* Type — two sizes, one weight.
+    /* Type — one weight; body, small, and a greeting at twice the body.
 
        Body is everything but the footer: 16/24 on every phone, holding to
        430px (the widest iPhone), then growing to 22/30 by 800px. Small is
-       the footer alone: 15/23, growing to 17/25 on the shared track.
+       the footer alone: 15/23, growing to 17/25 on the shared track. The
+       greeting is twice the body, 32/40 → 44/52, so it moves with it.
 
        Leading is size + 8 throughout: a constant gap keeps the white between
        lines optically even from one size to the next, where a ratio would
@@ -48,6 +49,8 @@
     --line-height:       calc(24px + var(--body-grow));        /* 24 → 30 */
     --font-size-small:   calc(15px + 2 * var(--fluid) / 100);   /* 15 → 17 */
     --line-height-small: calc(23px + 2 * var(--fluid) / 100);   /* 23 → 25 */
+    --font-size-display:   calc(var(--font-size) * 2);            /* 32 → 44 */
+    --line-height-display: calc(var(--font-size-display) + 8px);  /* 40 → 52 */
 
     /* The dock's label: interface furniture, fixed at every width. */
     --font-label: 12px;
@@ -62,10 +65,12 @@
     --tracking-small: normal;
     --tracking-label: normal;
 
-    /* Palette — one ink, one ground, one muted grey, one accent. */
+    /* Palette — one ink, one ground, one muted grey, one accent; and the
+       loading text at rest, dim enough for the ink's sweep to show. */
     --color-bg: #FFFFFF;
     --color-ink: #0D0D0D;
     --color-muted: #8F8F8F;
+    --color-faint: #9E9E9E;
     --color-line: rgba(0, 0, 0, 0.1);
     --color-accent: #007AFF;
 
@@ -99,6 +104,8 @@
     --ui-ms:       320ms;    /* hover, press, a label appearing */
     --theme-ms:    500ms;    /* light to dark and back */
     --collapse-ms: 850ms;    /* projects morphing between layouts */
+    --shimmer-ms:  2000ms;   /* one sweep of the loading text; siteapp.js reads this */
+    --loader-ms:   700ms;    /* the loading screen fading away */
 
     /* Dock — measured from the iOS 26 Safari bottom bar: 48pt capsule, 44pt
        targets, 8pt gap, 5pt inset, 22pt glyphs. */
@@ -117,9 +124,9 @@
 
     /* Liquid glass, after Apple's. A light tint lets the colour behind come
        through; blur and saturation make it read as a lens rather than a
-       veil; a rim catches light at one point of its edge, with a softer
-       return opposite; a sheen falls from the top as if lit from above; and
-       a faint inner glow gives the glass its thickness. */
+       veil; a faint rim of light traces its edge; a sheen falls from the
+       top as if lit from above; and a faint inner glow gives the glass its
+       thickness. */
     --glass-tint: rgba(255, 255, 255, 0.42);
     --glass-filter: blur(14px) saturate(180%) brightness(1.06);
     --glass-rim-light: rgba(255, 255, 255, 0.95);
@@ -130,6 +137,17 @@
         0 0 0 0.5px rgba(0, 0, 0, 0.08),
         0 6px 20px rgba(0, 0, 0, 0.08),
         inset 0 0 12px rgba(255, 255, 255, 0.35);
+
+    /* The beam (dark theme only): five hues in the order they pass, one lap
+       time, and how strongly the stroke and the glow inside the edge show. */
+    --beam-1: rgb(255, 50, 100);
+    --beam-2: rgb(100, 70, 255);
+    --beam-3: rgb(40, 140, 255);
+    --beam-4: rgb(30, 185, 170);
+    --beam-5: rgb(50, 200, 80);
+    --beam-lap: 2.4s;
+    --beam-stroke: 0.6;
+    --beam-glow: 0.42;
 }
 
 /* Whole pixels where the browser can round, so the type steps through
@@ -159,6 +177,7 @@
     --color-bg: #000000;
     --color-ink: #FFFFFF;
     --color-muted: #AFAFAF;
+    --color-faint: #666666;
     --color-line: rgba(255, 255, 255, 0.1);
 
     --glass-tint: rgba(28, 28, 30, 0.45);
@@ -217,7 +236,7 @@ body {
         background-color var(--theme-ms) var(--ui-ease);
 }
 
-/* One type treatment for the page; headings stay structural. */
+/* One weight for the page; headings stay structural. */
 h1, h2 {
     font-size: inherit;
     font-weight: inherit;
@@ -245,6 +264,63 @@ p {
 :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
+}
+
+/* ============================================
+   Loading screen
+
+   Shown from the first paint, while the page loads: the head sets
+   .is-loading, and siteapp.js removes it once the page is ready, at which
+   the screen fades away and the page makes its entrance behind it.
+
+   The message shimmers, after transitions.dev's Shimmer text: a narrow band
+   of ink sweeps across muted text, clipped to the letters.
+   ============================================ */
+
+.loader {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: grid;
+    place-items: center;
+    background-color: var(--color-bg);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity var(--loader-ms) var(--ease-calm),
+        visibility 0s var(--loader-ms);
+}
+
+.is-loading .loader {
+    opacity: 1;
+    visibility: visible;
+    transition: none;
+}
+
+/* The body's desktop size, at every width. */
+.shimmer {
+    font-size: 22px;
+    line-height: 30px;
+    background:
+        linear-gradient(90deg,
+            var(--color-faint) 40%,
+            var(--color-ink) 50%,
+            var(--color-faint) 60%)
+        100% 0 / 400% 100% no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer var(--shimmer-ms) linear infinite;
+}
+
+@keyframes shimmer {
+    to { background-position: 0 0; }
+}
+
+/* The dock waits, so its entrance plays when the page appears. */
+.is-loading .dock {
+    animation: none;
+    opacity: 0;
 }
 
 /* ============================================
@@ -285,10 +361,10 @@ p {
     box-shadow: var(--glass-depth);
 }
 
-/* The rim: light caught at the top left with a softer return opposite,
-   cut down to a 1px ring by masking out its middle. As the page scrolls the
-   light travels round — clockwise going down, back going up — turned by
-   --rim-turn, which siteapp.js eases on the dock. */
+/* The glass's rim: a 1px ring, cut from a full fill by masking out its
+   middle, with light at the top left and a softer return opposite. As the
+   page scrolls the light travels round — clockwise going down, back going
+   up — turned by --rim-turn, which siteapp.js eases on the dock. */
 .dock-label::before,
 .dock-actions::before {
     content: '';
@@ -296,14 +372,82 @@ p {
     inset: 0;
     padding: 1px;
     border-radius: inherit;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    pointer-events: none;
     background: conic-gradient(from calc(-45deg + var(--rim-turn, 0deg)),
         var(--glass-rim-light),
         var(--glass-rim-shade) 25%,
         var(--glass-rim-return) 50%,
         var(--glass-rim-shade) 75%,
         var(--glass-rim-light));
-    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+
+/* ---- The beam: dark theme only ----
+   An arc of colour that laps the dock's rim with a soft glow inside the
+   edge, after Libraries.dev's Border Beam, built here in plain CSS. Light
+   from colour needs a dark ground to read as light; on the light theme it
+   reads as a stain, so there the glass keeps its turning rim. */
+
+/* The beam's place on the rim. Registered so it can be animated; the dock
+   turns it a full circle every lap, and the stroke and glow both read it,
+   so they travel as one. Where @property is unsupported it holds still and
+   the dock is simply unanimated. */
+@property --beam-angle {
+    syntax: '<angle>';
+    inherits: true;
+    initial-value: 0deg;
+}
+
+@keyframes beam-spin {
+    to { --beam-angle: 360deg; }
+}
+
+/* The hues drift slowly as the beam turns, so its colour never settles. */
+@keyframes beam-hue {
+    50% { filter: hue-rotate(40deg); }
+}
+
+/* Under the beam, the glass's own faint ring. */
+[data-theme="dark"] .dock-actions {
+    box-shadow: var(--glass-depth), inset 0 0 0 1px var(--glass-rim-return);
+    animation: beam-spin var(--beam-lap) linear infinite;
+}
+
+/* The stroke: the beam's arc, white at its heart. */
+[data-theme="dark"] .dock-actions::before {
+    background: conic-gradient(from var(--beam-angle),
+        transparent 0 55%,
+        var(--beam-1) 66%,
+        var(--beam-2) 72%,
+        #FFF 76%,
+        var(--beam-3) 80%,
+        var(--beam-4) 86%,
+        var(--beam-5) 92%,
+        transparent);
+    opacity: var(--beam-stroke);
+    animation: beam-hue 12s ease-in-out infinite;
+}
+
+/* The glow: the same arc, shown only in a soft band just inside the edge. */
+[data-theme="dark"] .dock-actions::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: conic-gradient(from var(--beam-angle),
+        transparent 0 50%,
+        var(--beam-1) 62%,
+        var(--beam-2) 70%,
+        var(--beam-3) 78%,
+        var(--beam-4) 86%,
+        var(--beam-5) 92%,
+        transparent);
+    mask:
+        linear-gradient(#000, transparent 12px calc(100% - 12px), #000),
+        linear-gradient(to right, #000, transparent 24px calc(100% - 24px), #000);
+    opacity: var(--beam-glow);
     pointer-events: none;
+    animation: beam-hue 12s ease-in-out infinite;
 }
 
 /* Names the control under the pointer; siteapp.js fills and places it. */
@@ -383,14 +527,16 @@ p {
     cursor: pointer;
 
     transition:
-        color var(--ui-ms) var(--ui-ease),
+        color var(--theme-ms) var(--ui-ease),
         transform var(--ui-ms) var(--ui-ease);
 }
 
-/* Enough to answer the pointer, never enough to bounce. */
-.dock-action:hover {
-    color: var(--color-accent);
-    transform: scale(1.06);
+/* Under a pointer, the icon in hand swells a touch: enough to answer,
+   never enough to bounce. Pointers only, or a tap would leave it swollen. */
+@media (hover: hover) {
+    .dock-action:hover {
+        transform: scale(1.06);
+    }
 }
 
 .dock-action:active {
@@ -460,17 +606,16 @@ p {
 }
 
 /* Each line's box is held from first paint, so filling it shifts nothing. */
-.hero-hello,
-.hero-line {
-    min-height: var(--line-height);
-}
-
 .hero-hello {
+    font-size: var(--font-size-display);
+    line-height: var(--line-height-display);
+    min-height: var(--line-height-display);
     white-space: nowrap;
 }
 
 /* Tabular figures hold the ticking seconds still. */
 .hero-line {
+    min-height: var(--line-height);
     font-variant-numeric: tabular-nums;
 }
 
@@ -622,6 +767,15 @@ p {
     [data-enter] {
         opacity: 1;
         transform: none;
+    }
+
+    /* Endless animations stop outright: at 0.01ms a loop would flicker. The
+       beam holds still where it starts; the loading text stays muted. */
+    .shimmer,
+    .dock-actions,
+    .dock-actions::before,
+    .dock-actions::after {
+        animation: none !important;
     }
 }
 

@@ -32,8 +32,9 @@
          it in sync when the theme is toggled. -->
     <meta name="theme-color" content="#FFFFFF" id="theme-color">
 
-    <!-- Inline and blocking by design: the theme must be resolved before the
-         first paint, or the page flashes light before switching to dark.
+    <!-- Inline and blocking by design: the theme and the loading screen must
+         both be set before the first paint, or the page flashes light before
+         switching to dark, or shows for a frame before the screen covers it.
          This is the only script that cannot live in siteapp.js.
 
          A stored choice outranks everything. Without one the system decides,
@@ -43,6 +44,7 @@
          choice is actually made. -->
     <script>
         (() => {
+            const root = document.documentElement;
             let saved = null;
             try {
                 saved = localStorage.getItem('portfolio-theme');
@@ -54,7 +56,7 @@
                 ? saved
                 : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 
-            document.documentElement.dataset.theme = theme;
+            root.dataset.theme = theme;
 
             /* Keeps the browser's own chrome in step from the very first
                paint; values mirror THEME_BACKGROUNDS in siteapp.js, which
@@ -63,6 +65,13 @@
             if (themeColor) {
                 themeColor.setAttribute('content', theme === 'dark' ? '#000000' : '#FFFFFF');
             }
+
+            /* The loading screen. siteapp.js lets it go once the page has
+               loaded; the timeout, matching its LOADER_MAX_MS, is a backstop
+               in case siteapp.js never arrives. Without scripting the class
+               is never set, and there is no loading screen at all. */
+            root.classList.add('is-loading');
+            setTimeout(() => root.classList.remove('is-loading'), 8000);
         })();
     </script>
 
@@ -81,6 +90,11 @@
     </noscript>
 </head>
 <body>
+
+    <!-- Shown only while the page loads. -->
+    <div class="loader" role="status">
+        <p class="shimmer">Loading Jay’s Website</p>
+    </div>
 
     <div class="container">
         <main class="main">

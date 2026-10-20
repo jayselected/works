@@ -1,8 +1,8 @@
 /**
- * Portfolio behaviour: the hero (cycling greeting, live date, local
- * conditions) and the dock (theme, scroll progress, labels, collapse).
- * The one script outside this file is the theme bootstrap in the head,
- * which must run before first paint.
+ * Portfolio behaviour: the loading screen, the hero (cycling greeting, live
+ * date, local conditions) and the dock (theme, scroll progress, labels,
+ * collapse). The one script outside this file is the bootstrap in the head,
+ * which sets the theme and the loading screen before first paint.
  */
 
 /* ============================================
@@ -37,7 +37,7 @@ const HELLO_LANGUAGES = [
 ];
 
 const HELLO_HOLD_MS = 2400;   /* how long each greeting is held */
-const HERO_BEAT_MS = 300;     /* when the hero arrives, after the script starts */
+const HERO_BEAT_MS = 300;     /* when the hero arrives, after the loading screen lets go */
 
 let startedAt = 0;
 let fadeMs = 1100;            /* replaced by --hero-ms at start */
@@ -46,8 +46,8 @@ let languageIndex = 0;
 /* Everything in the hero reveals on one beat, never sooner: a class added in
    the frame an element first paints has nothing to fade from. */
 function revealOnBeat(elements) {
-    const wait = Math.max(0, startedAt + HERO_BEAT_MS - Date.now());
-    setTimeout(() => elements.forEach(el => el.classList.add('visible')), wait);
+    const delay = Math.max(0, startedAt + HERO_BEAT_MS - Date.now());
+    setTimeout(() => elements.forEach(el => el.classList.add('visible')), delay);
 }
 
 function nextGreeting(el) {
@@ -182,8 +182,13 @@ async function resolveLocation() {
              latitude: data.latitude, longitude: data.longitude };
 }
 
-/* Resolves to { city, country, label, temperature }. */
-async function getConditions() {
+/* Resolves to { city, country, label, temperature }. Asked for once: the
+   lookup starts under the loading screen, and the hero takes the same
+   answer, so the reading is usually there by the time the hero arrives. */
+let conditions = null;
+const getConditions = () => conditions ??= fetchConditions();
+
+async function fetchConditions() {
     const cached = readCachedWeather();
     if (cached) return cached;
 
@@ -296,7 +301,8 @@ function initializeTheme() {
    The dock answers the scroll twice: the progress bar fills, and the light
    on its glass rim turns, a full turn every RIM_TURN_PX. The angle eases
    toward the scroll rather than jumping with it, settling over about a
-   second once the page stops.
+   second once the page stops. (In the dark theme the rim carries the beam
+   instead, which ignores the angle.)
    ============================================ */
 
 const RIM_TURN_PX = 2400;
@@ -679,32 +685,64 @@ function initializeScrollTop() {
 }
 
 /* ============================================
+   Loading screen
+
+   Resolves when the loading screen should let go: once the page has
+   loaded, but never before one full sweep of the shimmer, so even a cached
+   visit reads the message rather than a flash of it. Never later than
+   LOADER_MAX_MS, so one stalled image cannot hold the page hostage.
+   ============================================ */
+
+const LOADER_MAX_MS = 8000;
+
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+function pageReady() {
+    const loaded = document.readyState === 'complete'
+        ? Promise.resolve()
+        : new Promise(resolve => window.addEventListener('load', resolve, { once: true }));
+    const oneSweep = wait(cssDuration('--shimmer-ms', 2000) - performance.now());
+
+    return Promise.race([Promise.all([loaded, oneSweep]), wait(LOADER_MAX_MS)]);
+}
+
+/* ============================================
    Start
    ============================================ */
 
-function start() {
-    startedAt = Date.now();
-    fadeMs = cssDuration('--hero-ms', fadeMs);
-
-    /* Each module is isolated, so one failing cannot take the rest with it.
-       The dock label goes first: the theme and collapse modules refresh it. */
-    [
-        dockLabel.init,
-        initializeGreeting,
-        initializeClock,
-        initializeConditions,
-        initializeTheme,
-        initializeScroll,
-        initializeProjectCollapse,
-        initializeEntrance,
-        initializeFallbackFont,
-        initializeScrollTop
-    ].forEach(run => {
+/* Each module is isolated, so one failing cannot take the rest with it. */
+function runAll(modules) {
+    modules.forEach(run => {
         try {
             run();
         } catch (error) {
             console.error('[site] module failed:', error);
         }
+    });
+}
+
+function start() {
+    fadeMs = cssDuration('--hero-ms', fadeMs);
+
+    /* What sits behind the loading screen starts at once, the weather
+       lookup with it. The dock label goes first: the theme and collapse
+       modules refresh it. */
+    getConditions().catch(() => {});
+    runAll([
+        dockLabel.init,
+        initializeTheme,
+        initializeScroll,
+        initializeProjectCollapse,
+        initializeFallbackFont,
+        initializeScrollTop
+    ]);
+
+    /* The entrance waits for the screen to let go, and its beat counts from
+       that moment, so it plays for the reader rather than behind the screen. */
+    pageReady().then(() => {
+        document.documentElement.classList.remove('is-loading');
+        startedAt = Date.now();
+        runAll([initializeGreeting, initializeClock, initializeConditions, initializeEntrance]);
     });
 }
 
