@@ -26,31 +26,36 @@
     --content-width: 720px;
     --page-edge: clamp(1.75rem, 1.5rem + 1vw, 2rem);   /* 28 on phones, 32 on desktop */
 
-    /* One growth track for every fluid value: 0 → 100px as the viewport
-       crosses 320 → 800px. Each value states its own two ends,
+    /* Growth tracks. Every fluid value on the page grows along one of two
+       tracks, each running 0 → 100px across its span of viewport widths:
+
+           --fluid        320 → 800px   spacing and the footer
+           --fluid-body   430 → 800px   body text, which holds on every phone
+
+       Each value states its own two ends,
 
            calc(FLOOR + (CAP − FLOOR) * var(--fluid) / 100)
 
        so retuning anything means changing the two numbers on its line. */
-    --fluid: clamp(0px, (100vw - 320px) / 4.8, 100px);
+    --fluid:      clamp(0px, (100vw - 320px) / 4.8, 100px);
+    --fluid-body: clamp(0px, (100vw - 430px) / 3.7, 100px);
 
     /* Type — one weight; body, small, and a greeting at twice the body.
 
-       Body is everything but the footer: 16/24 on every phone, holding to
-       430px (the widest iPhone), then growing to 22/30 by 800px. Small is
-       the footer alone: 15/23, growing to 17/25 on the shared track. The
-       greeting is twice the body, 32/40 → 44/52, so it moves with it.
+       Body is everything but the footer: 16/24 on every phone, up to 430px
+       (the widest iPhone), growing to 22/30 by 800px. Small is the footer
+       alone: 15/23 → 17/25. The greeting is twice the body, 32/40 → 44/52,
+       so it moves with it.
 
        Leading is size + 8 throughout: a constant gap keeps the white between
        lines optically even from one size to the next, where a ratio would
        open small text up and pinch large text shut. */
-    --body-grow: clamp(0px, (100vw - 430px) * 6 / 370, 6px);   /* 0 → 6, 430 → 800 */
-    --font-size:         calc(16px + var(--body-grow));        /* 16 → 22 */
-    --line-height:       calc(24px + var(--body-grow));        /* 24 → 30 */
-    --font-size-small:   calc(15px + 2 * var(--fluid) / 100);   /* 15 → 17 */
-    --line-height-small: calc(23px + 2 * var(--fluid) / 100);   /* 23 → 25 */
-    --font-size-display:   calc(var(--font-size) * 2);            /* 32 → 44 */
-    --line-height-display: calc(var(--font-size-display) + 8px);  /* 40 → 52 */
+    --font-size:           calc(16px + 6 * var(--fluid-body) / 100);   /* 16 → 22 */
+    --line-height:         calc(24px + 6 * var(--fluid-body) / 100);   /* 24 → 30 */
+    --font-size-small:     calc(15px + 2 * var(--fluid) / 100);        /* 15 → 17 */
+    --line-height-small:   calc(23px + 2 * var(--fluid) / 100);        /* 23 → 25 */
+    --font-size-display:   calc(var(--font-size) * 2);                 /* 32 → 44 */
+    --line-height-display: calc(var(--font-size-display) + 8px);       /* 40 → 52 */
 
     /* The dock's label: interface furniture, fixed at every width. */
     --font-label: 12px;
@@ -155,8 +160,8 @@
    pixel. Elsewhere the values above stand. */
 @supports (width: round(1.5px, 1px)) {
     :root {
-        --font-size:         round(calc(16px + var(--body-grow)), 1px);
-        --line-height:       round(calc(24px + var(--body-grow)), 1px);
+        --font-size:         round(calc(16px + 6 * var(--fluid-body) / 100), 1px);
+        --line-height:       round(calc(24px + 6 * var(--fluid-body) / 100), 1px);
         --font-size-small:   round(calc(15px + 2 * var(--fluid) / 100), 1px);
         --line-height-small: round(calc(23px + 2 * var(--fluid) / 100), 1px);
     }
@@ -166,7 +171,7 @@
    actually drawing (siteapp.js sets this once it has loaded):
    16 −0.31, 22 −0.26 · 15 −0.23, 17 −0.43 · 12 0. */
 [data-font="static"] {
-    --tracking:       calc(-0.31px + var(--body-grow) * 0.05 / 6);
+    --tracking:       calc(-0.31px + 0.05 * var(--fluid-body) / 100);
     --tracking-small: calc(-0.23px - 0.20 * var(--fluid) / 100);
     --tracking-label: 0px;
 }
@@ -274,7 +279,7 @@ p {
    the screen fades away and the page makes its entrance behind it.
 
    The message shimmers, after transitions.dev's Shimmer text: a narrow band
-   of ink sweeps across muted text, clipped to the letters.
+   of ink sweeps across faint text, clipped to the letters.
    ============================================ */
 
 .loader {
@@ -613,6 +618,18 @@ p {
     white-space: nowrap;
 }
 
+/* Its two lines are set by hand, so they are left as written: Safari's
+   pretty wrapping would rebalance them and break the second early. Where
+   the second is too long for a phone, it breaks before the role, which is
+   held whole, rather than stranding its last word. */
+.hero-name {
+    text-wrap: wrap;
+}
+
+.hero-name span {
+    white-space: nowrap;
+}
+
 /* Tabular figures hold the ticking seconds still. */
 .hero-line {
     min-height: var(--line-height);
@@ -704,12 +721,11 @@ p {
 }
 
 /* A row of mockups is one composition, so its gap and sizes are shares of
-   the row and it scales as a single object. At the full column these are
-   the 32px gap and 175px mockups the design specifies. Below 100px a mockup
-   stops being legible, so the row wraps instead of shrinking further. */
+   the row and it scales as a single object, keeping its arrangement at every
+   width. At the full column these are the 32px gap and 175px mockups the
+   design specifies. */
 .stack-row {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     gap: 4.8930%;          /* 32 of 654 */
@@ -717,7 +733,6 @@ p {
 
 .stack-row img {
     width: 26.7584%;       /* 175 of 654 */
-    min-width: 100px;
 }
 
 /* ============================================
@@ -809,8 +824,8 @@ p {
         --tracking-label: 0.06px;   /* Apple's table at 11 */
     }
 
-    /* Half a phone's column is too narrow to set text beside the image, so
-       each index row stacks its title above a full-width thumbnail. */
+    /* There is no room for text beside a 300px thumbnail, so each index row
+       stacks its title above the image at the column's full width. */
     .projects-collapsed .project {
         display: flex;
     }
