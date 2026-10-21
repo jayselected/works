@@ -14,6 +14,7 @@ Whatever is in `main` is what Vercel serves.
 | `siteapp.js` | Behaviour, one `initialize…` function per feature, all started from `start()` at the bottom. |
 | `images/` | Project images, one folder per project, banners in `banners/`. |
 | `fonts/` | The self-hosted fallback font, for devices without Apple's system font. |
+| `favicon.png` | The site icon, for the browser tab and the iPhone home screen. |
 | `og-image.png` | The image shown when a link to the site is shared. |
 
 ## Preview locally
