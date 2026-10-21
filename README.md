@@ -13,7 +13,7 @@ Whatever is in `main` is what Vercel serves.
 | `styles.css` | Everything visual. Every value lives as a token in `:root` at the top; the sections that follow use only tokens. |
 | `siteapp.js` | Behaviour, one `initialize…` function per feature, all started from `start()` at the bottom. |
 | `images/` | Project images, one folder per project, banners in `banners/`. |
-| `fonts/` | The self-hosted fallback font, for devices without Apple's system font. |
+| `fonts/` | ABC Areal Regular by Dinamo, the page's one font file. |
 | `favicon.png` | The site icon, for the browser tab and the iPhone home screen. |
 | `og-image.png` | The image shown when a link to the site is shared. |
 
@@ -27,8 +27,8 @@ Then open http://localhost:4173.
 
 ## The system, in brief
 
-- **Type:** one weight and three sizes (body, small, the greeting at twice the body), with leading always size + 8.
-- **Fluid values** grow along one of two tracks in `:root`: `--fluid` for spacing and `--fluid-body` for body text. Each value states its two ends, so retuning means changing two numbers.
+- **Type:** ABC Areal, one weight, one size: 20/28 at every width. The exceptions are the greeting, 22/30 in the system font because it cycles through scripts Areal doesn't cover, and the dock's label at 12/16 (11/14 on phones). Leading is size + 8 everywhere but that label.
+- **Spacing** grows with the screen along one track, `--fluid` in `:root`. Each value states its two ends, so retuning means changing two numbers.
 - **Motion:** calm and modest throughout, on the eases and durations in `:root`. Everything stops or simplifies under reduced motion.
 - **Themes:** light and dark override the same tokens; nothing else changes between them.
 

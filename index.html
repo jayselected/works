@@ -10,15 +10,9 @@
     <link rel="icon" href="favicon.png" type="image/png">
     <link rel="apple-touch-icon" href="favicon.png">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <!-- Inter, third in the stack, for platforms with neither SF Pro nor a
-         cached copy of the self-hosted file. One weight, because the page
-         has one weight. -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap"
-          media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap"></noscript>
+    <!-- The page's one font file, fetched alongside the stylesheet rather
+         than after it, so the loading text draws in it from the start. -->
+    <link rel="preload" href="fonts/ABCAreal-Regular.woff2" as="font" type="font/woff2" crossorigin>
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
@@ -27,12 +21,8 @@
     <meta property="og:description" content="Selected design work by Jay Patel">
     <meta property="og:image" content="https://www.jayselected.com/og-image.png">
 
-    <!-- Twitter / X -->
+    <!-- X reads the Open Graph tags above; this only asks for the large card. -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://www.jayselected.com">
-    <meta name="twitter:title" content="Jay Patel">
-    <meta name="twitter:description" content="Selected design work by Jay Patel">
-    <meta name="twitter:image" content="https://www.jayselected.com/og-image.png">
 
     <!-- Tints the browser's own chrome to match the page; siteapp.js keeps
          it in sync when the theme is toggled. -->
@@ -99,7 +89,7 @@
 
     <!-- Shown only while the page loads. -->
     <div class="loader" role="status">
-        <p class="shimmer">Loading Jay’s Website</p>
+        <p class="shimmer">Loading Jay’s Portfolio</p>
     </div>
 
     <div class="container">
@@ -140,7 +130,7 @@
                         <div class="meta-row">
                             <p>Toolkit</p>
                             <div class="meta-values">
-                                <p>Adobe Photoshop, Adobe Illustrator and Figma</p>
+                                <p>Adobe Photoshop · Adobe Illustrator · Figma</p>
                             </div>
                         </div>
                     </div>
@@ -181,7 +171,7 @@
                         <div class="meta-row">
                             <p>Toolkit</p>
                             <div class="meta-values">
-                                <p>Adobe Photoshop, Adobe Illustrator and Figma</p>
+                                <p>Adobe Photoshop · Adobe Illustrator · Figma</p>
                             </div>
                         </div>
                     </div>
@@ -222,7 +212,7 @@
                         <div class="meta-row">
                             <p>Toolkit</p>
                             <div class="meta-values">
-                                <p>Adobe Photoshop, Adobe Illustrator and Figma</p>
+                                <p>Adobe Photoshop · Adobe Illustrator · Figma</p>
                             </div>
                         </div>
                     </div>
@@ -266,7 +256,7 @@
                         <div class="meta-row">
                             <p>Toolkit</p>
                             <div class="meta-values">
-                                <p>Adobe Photoshop, Adobe Illustrator and Figma</p>
+                                <p>Adobe Photoshop · Adobe Illustrator · Figma</p>
                             </div>
                         </div>
                     </div>
@@ -308,7 +298,7 @@
                         <div class="meta-row">
                             <p>Toolkit</p>
                             <div class="meta-values">
-                                <p>Adobe Photoshop, Adobe Illustrator and Figma</p>
+                                <p>Adobe Photoshop · Adobe Illustrator · Figma</p>
                             </div>
                         </div>
                     </div>

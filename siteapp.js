@@ -650,31 +650,6 @@ function initializeEntrance() {
 }
 
 /* ============================================
-   Fallback font
-
-   Apple devices draw the system font, which tracks itself. Everyone else
-   draws the self-hosted SF Pro Text, which cannot; once it is known to be
-   the face in use, the stylesheet applies Apple's tracking by hand. A face
-   the stack never reached is never requested, so "loaded" is proof.
-
-   Checked after load, not at start: only once the page has been laid out
-   has every face it needs been requested, for fonts.ready to wait on.
-   ============================================ */
-
-function initializeFallbackFont() {
-    if (!document.fonts) return;
-
-    const check = () => {
-        const inUse = [...document.fonts].some(face =>
-            face.family.replace(/["']/g, '') === 'SF Pro Text' && face.status === 'loaded');
-        if (inUse) document.documentElement.dataset.font = 'static';
-    };
-
-    if (document.readyState === 'complete') document.fonts.ready.then(check);
-    else window.addEventListener('load', () => document.fonts.ready.then(check), { once: true });
-}
-
-/* ============================================
    Back to top
    ============================================ */
 
@@ -733,7 +708,6 @@ function start() {
         initializeTheme,
         initializeScroll,
         initializeProjectCollapse,
-        initializeFallbackFont,
         initializeScrollTop
     ]);
 
